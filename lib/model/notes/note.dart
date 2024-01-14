@@ -48,6 +48,18 @@ class Note implements LocalDbElement, RemoteDbElement {
     };
   }
 
+  factory Note.fromMap(Map<String, dynamic> map) {
+    return Note(
+      id: map['id'],
+      title: map['title'],
+      description: map['description'],
+      from: Utils.fromDateTimeString(map['from']),
+      to: Utils.fromDateTimeString(map['to']),
+      isAllDay: map['isAllDay'],
+      noteCategory: NoteCategory.fromString(map['noteCategory']),
+    );
+  }
+
   String toJson() => json.encode(toMap());
 
   factory Note.fromEmpty() {

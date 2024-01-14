@@ -34,10 +34,15 @@ class DiaryDay implements LocalDbElement, RemoteDbElement {
     for (var rating in ratings) {
       ratingsList.add(rating.toMap());
     }
+    List<Map<String, dynamic>> notesList = [];
+    for (var note in notes) {
+      notesList.add(note.toMap());
+    }
 
     return {
       'day': Utils.toDate(day),
       'ratings': ratingsList,
+      'notes': notesList,
     };
   }
 
@@ -46,8 +51,13 @@ class DiaryDay implements LocalDbElement, RemoteDbElement {
     for (Map<String, dynamic> rating in map['ratings']) {
       ratings.add(DayRating.fromMap(rating));
     }
-
-    return DiaryDay(day: Utils.fromDate(map['day']), ratings: ratings);
+    List<Note> noteList = [];
+    for (Map<String, dynamic> notes in map['notes']) {
+      noteList.add(Note.fromMap(notes));
+    }
+    var diaryDay = DiaryDay(day: Utils.fromDate(map['day']), ratings: ratings);
+    diaryDay.notes = noteList;
+    return diaryDay;
   }
 
   factory DiaryDay.fromLocalDbMap(Map<String, dynamic> map) {

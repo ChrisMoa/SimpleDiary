@@ -17,6 +17,7 @@ class DiaryDayDataProvider extends AbstractLocalDbProviderState<DiaryDay> {
   LocalDbHelper createLocalDbHelper(String tableName, String primaryKey) {
     return DiaryDayLocalDbHelper(tableName: tableName, primaryKey: primaryKey);
   }
+  
 }
 
 //-----------------------------------------------------------------------------------------------------------------------------------

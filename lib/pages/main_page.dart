@@ -16,6 +16,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:flutter/scheduler.dart';
 
 class MainPage extends ConsumerStatefulWidget {
   const MainPage({super.key, required this.title});
@@ -122,25 +123,37 @@ class _MainPageState extends ConsumerState<MainPage> {
               },
               accountName: Text(
                 _userData.username,
-                style: Theme.of(context).textTheme.titleMedium!.copyWith(color: Theme.of(context).colorScheme.primary),
+                style: Theme.of(context)
+                    .textTheme
+                    .titleMedium!
+                    .copyWith(color: Theme.of(context).colorScheme.primary),
               ),
               currentAccountPictureSize: const Size(50, 50),
               accountEmail: Text(
                 _userData.email,
-                style: Theme.of(context).textTheme.titleMedium!.copyWith(color: Theme.of(context).colorScheme.primary),
+                style: Theme.of(context)
+                    .textTheme
+                    .titleMedium!
+                    .copyWith(color: Theme.of(context).colorScheme.primary),
               ),
               currentAccountPicture: const CircleAvatar(
                 radius: 3,
-                backgroundImage: AssetImage('assets/images/User-icon-256-blue.png'),
+                backgroundImage:
+                    AssetImage('assets/images/User-icon-256-blue.png'),
               ),
             ),
           ),
-          for (var index = 0; index < _drawerItemProvider.getDrawerItems.length; index++)
+          for (var index = 0;
+              index < _drawerItemProvider.getDrawerItems.length;
+              index++)
             ListTile(
               leading: Icon(_drawerItemProvider.getDrawerItems[index].icon),
               title: Text(
                 _drawerItemProvider.getDrawerItems[index].title,
-                style: Theme.of(context).textTheme.titleLarge!.copyWith(color: Theme.of(context).colorScheme.secondary),
+                style: Theme.of(context)
+                    .textTheme
+                    .titleLarge!
+                    .copyWith(color: Theme.of(context).colorScheme.secondary),
               ),
               selected: index == _selectedDrawerIndex,
               onTap: () {
@@ -170,14 +183,16 @@ class _MainPageState extends ConsumerState<MainPage> {
       setState(() {
         showDialog<String>(
           context: context,
-          builder: (BuildContext context) => AlertDialog(actions: const [], title: Text('${e.message}')),
+          builder: (BuildContext context) =>
+              AlertDialog(actions: const [], title: Text('${e.message}')),
         );
       });
     } catch (e) {
       setState(() {
         showDialog<String>(
           context: context,
-          builder: (BuildContext context) => AlertDialog(actions: const [], title: Text('unknown exception : $e')),
+          builder: (BuildContext context) => AlertDialog(
+              actions: const [], title: Text('unknown exception : $e')),
         );
       });
     }
@@ -194,12 +209,15 @@ class _MainPageState extends ConsumerState<MainPage> {
       LogWrapper.logger.t('create new keyfile');
       _aesEncryptor = AesEncryptor(password: Utils.generateRandomString(100));
       await _sharedPreferenceStorage.write(key: 'iv', value: _aesEncryptor.iv);
-      await _sharedPreferenceStorage.write(key: 'password', value: _aesEncryptor.password);
+      await _sharedPreferenceStorage.write(
+          key: 'password', value: _aesEncryptor.password);
       overallMap['iv'] = _aesEncryptor.iv;
       overallMap['password'] = _aesEncryptor.password;
-      File keyFile = File('${documentsDirectory.path}/$additionalKeyFilePath/DiaryKey.json');
+      File keyFile = File(
+          '${documentsDirectory.path}/$additionalKeyFilePath/DiaryKey.json');
       _aesEncryptor.saveToKeyFile(keyFile);
-      LogWrapper.logger.i('saved key to "${keyFile.path}". Dont share this file');
+      LogWrapper.logger
+          .i('saved key to "${keyFile.path}". Dont share this file');
     } else {
       LogWrapper.logger.t('uses saved aesEncryptor');
       _aesEncryptor = AesEncryptor(
