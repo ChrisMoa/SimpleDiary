@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:SimpleDiary/widgets/filesystempicker/filesystempicker_new_file_context_action.dart';
 import 'package:SimpleDiary/model/log/logger_instance.dart';
 import 'package:SimpleDiary/provider/database%20provider/diary_day_local_db_provider.dart';
 import 'package:SimpleDiary/provider/database%20provider/file_db_provider.dart';
@@ -74,6 +75,7 @@ class _SynchronizePageState extends ConsumerState<SynchronizePage> {
                   fileTileSelectMode: FileTileSelectMode.wholeTile,
                   contextActions: [
                     FilesystemPickerNewFolderContextAction(),
+                    FilesystemPickerNewFileContextAction(),
                   ],
                 );
                 if (path == null) {
