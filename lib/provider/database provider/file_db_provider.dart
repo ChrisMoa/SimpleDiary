@@ -4,10 +4,6 @@ import 'dart:io';
 
 import 'package:SimpleDiary/model/day/diary_day.dart';
 import 'package:SimpleDiary/model/log/logger_instance.dart';
-import 'package:SimpleDiary/model/notes/note.dart';
-import 'package:SimpleDiary/services/database_services/diary_day_firestore_api.dart';
-import 'package:SimpleDiary/services/database_services/note_firestore_api.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class FileDbProvider extends StateNotifier<List<DiaryDay>> {

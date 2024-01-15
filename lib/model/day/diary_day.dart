@@ -1,13 +1,12 @@
 import 'dart:convert';
 
 import 'package:SimpleDiary/model/database/local_db_element.dart';
-import 'package:SimpleDiary/model/database/remote_db_element.dart';
 import 'package:SimpleDiary/model/day/day_rating.dart';
 import 'package:SimpleDiary/model/log/logger_instance.dart';
 import 'package:SimpleDiary/model/notes/note.dart';
 import 'package:SimpleDiary/utils.dart';
 
-class DiaryDay implements LocalDbElement, RemoteDbElement {
+class DiaryDay implements LocalDbElement {
   DateTime day; //! the day for which the diary note is be done
   List<Note> notes = []; //! the list of connected notes
   List<DayRating> ratings;
@@ -103,34 +102,5 @@ class DiaryDay implements LocalDbElement, RemoteDbElement {
   @override
   getId() {
     return Utils.toDate(day);
-  }
-
-  @override
-  RemoteDbElement fromRemoteDbMap(Map<String, dynamic> map) {
-    List<DayRating> ratingsList = [];
-    if (map.containsKey('ratings')) {
-      final ratingsListFirestore = map['ratings']['arrayValue']['values'] as List<dynamic>;
-      for (var value in ratingsListFirestore) {
-        ratingsList.add(DayRating.fromFirestoreMap(value['mapValue']['fields'] as Map<String, dynamic>));
-      }
-    }
-    return DiaryDay(
-      day: Utils.fromDate(map['day']['stringValue']),
-      ratings: ratingsList,
-    );
-  }
-
-  @override
-  Map<String, dynamic> toRemoteDbMap() {
-    return {
-      'fields': {
-        'day': {'stringValue': Utils.toDate(day)},
-        'ratings': {
-          'arrayValue': {
-            'values': ratings.map((rating) => {'mapValue': rating.toFirestoreMap()}).toList()
-          }
-        },
-      },
-    };
   }
 }

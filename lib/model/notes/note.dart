@@ -2,7 +2,6 @@
 import 'dart:convert';
 
 import 'package:SimpleDiary/model/database/local_db_element.dart';
-import 'package:SimpleDiary/model/database/remote_db_element.dart';
 import 'package:SimpleDiary/model/notes/note_category.dart';
 import 'package:SimpleDiary/utils.dart';
 
@@ -17,7 +16,7 @@ final emptyNote = Note(
   noteCategory: availableNoteCategories.first,
 );
 
-class Note implements LocalDbElement, RemoteDbElement {
+class Note implements LocalDbElement {
   String? id;
   String title;
   String description;
@@ -104,33 +103,5 @@ class Note implements LocalDbElement, RemoteDbElement {
   @override
   getId() {
     return id;
-  }
-
-  @override
-  RemoteDbElement fromRemoteDbMap(Map<String, dynamic> map) {
-    return Note(
-      id: map['id']['stringValue'],
-      title: map['title']['stringValue'],
-      description: map['description']['stringValue'],
-      from: Utils.fromDateTimeString(map['from']['stringValue']),
-      to: Utils.fromDateTimeString(map['to']['stringValue']),
-      isAllDay: map['isAllDay']['booleanValue'] ?? false,
-      noteCategory: NoteCategory.fromString(map['noteCategory']['stringValue']),
-    );
-  }
-
-  @override
-  Map<String, dynamic> toRemoteDbMap() {
-    return {
-      'fields': {
-        'id': {'stringValue': id},
-        'title': {'stringValue': title},
-        'description': {'stringValue': description},
-        'from': {'stringValue': Utils.toDateTime(from)},
-        'to': {'stringValue': Utils.toDateTime(to)},
-        'noteCategory': {'stringValue': noteCategory.title},
-        'isAllDay': {'booleanValue': isAllDay},
-      },
-    };
   }
 }
