@@ -9,10 +9,10 @@ class AuthUserDataPage extends ConsumerStatefulWidget {
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() =>
-      _LoginUserDataPageState();
+      _AuthUserDataPageState();
 }
 
-class _LoginUserDataPageState extends ConsumerState<AuthUserDataPage> {
+class _AuthUserDataPageState extends ConsumerState<AuthUserDataPage> {
   final _formKey = GlobalKey<FormState>();
   var _isLogin = true;
   var _isAuthenticating = false;

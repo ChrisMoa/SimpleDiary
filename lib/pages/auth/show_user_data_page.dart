@@ -2,11 +2,9 @@
 
 import 'package:SimpleDiary/model/user/user_data.dart';
 import 'package:SimpleDiary/provider/user/user_data_provider.dart';
-import 'package:SimpleDiary/services/database_services/firestore_api.dart';
 import 'package:SimpleDiary/widgets/auth/simple_input_data_widget.dart';
 import 'package:SimpleDiary/widgets/auth/yes_no_alert_dialog.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class ShowUserDataPage extends ConsumerStatefulWidget {
@@ -19,7 +17,6 @@ class ShowUserDataPage extends ConsumerStatefulWidget {
 
 class _ShowUserDataPageState extends ConsumerState<ShowUserDataPage> {
   final _formKey = GlobalKey<FormState>();
-  var _isRemoteAccount = false;
   List<SimpleInputDataWidget> simpleInputDataWidgets = [];
 
   //? build --------------------------------------------------------------------
@@ -51,9 +48,6 @@ class _ShowUserDataPageState extends ConsumerState<ShowUserDataPage> {
           ? userDataMap[element.mapKey]
           : 'Test';
     });
-    userData.isRemoteUser
-        ? _isRemoteAccount = true
-        : _isRemoteAccount = _isRemoteAccount;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.onBackground,
@@ -97,13 +91,6 @@ class _ShowUserDataPageState extends ConsumerState<ShowUserDataPage> {
                               (element) => !element.extendedItem,
                             )
                             .map((e) => e),
-                        if (_isRemoteAccount)
-                          ...simpleInputDataWidgets
-                              .where(
-                                (element) => element.extendedItem,
-                              )
-                              .map((e) => e),
-                        _buildRemoteAccCheckbox(),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -165,36 +152,6 @@ class _ShowUserDataPageState extends ConsumerState<ShowUserDataPage> {
     );
   }
 
-  Widget _buildRemoteAccCheckbox() => Row(children: [
-        Text(
-          'Remote Account?',
-          style: Theme.of(context)
-              .textTheme
-              .titleLarge!
-              .copyWith(color: Theme.of(context).colorScheme.primary),
-        ),
-        Checkbox(
-          value: _isRemoteAccount,
-          checkColor: Colors.white,
-          fillColor: MaterialStateProperty.resolveWith((states) {
-            const Set<MaterialState> interactiveStates = <MaterialState>{
-              MaterialState.pressed,
-              MaterialState.hovered,
-              MaterialState.focused,
-            };
-            if (states.any(interactiveStates.contains)) {
-              return Colors.blue;
-            }
-            return Colors.red;
-          }),
-          onChanged: (bool? value) {
-            setState(() {
-              _isRemoteAccount = value!;
-            });
-          },
-        ),
-      ]);
-
   //? callbacks ----------------------------------------------------------------
 
   void _onSaveClicked() async {
@@ -216,15 +173,6 @@ class _ShowUserDataPageState extends ConsumerState<ShowUserDataPage> {
                     userDataMap[userDataInput.mapKey] = userDataInput.value;
                   }
                   final userData = UserData.fromMap(userDataMap);
-                  if (userData.isRemoteUser) {
-                    var isValidFirestoreUser =
-                        await FirestoreAPI.isCredentialValid(
-                            apiKey: dotenv.env['FIRESTORE_API_KEY'] ?? '',
-                            email: userData.email,
-                            password: userData.password);
-                    assert(isValidFirestoreUser,
-                        '${userData.email} has wrong firestore login credentials (use email, password and the api-Key)');
-                  }
                   await ref
                       .read(userDataProvider.notifier)
                       .updateUser(userData);

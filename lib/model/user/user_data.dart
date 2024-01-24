@@ -12,10 +12,6 @@ class UserData implements LocalDbElement {
   String? userId;
   bool isLoggedIn = false;
 
-  get isRemoteUser {
-    return email.isNotEmpty && password.isNotEmpty;
-  }
-
   UserData({
     username,
     pin,

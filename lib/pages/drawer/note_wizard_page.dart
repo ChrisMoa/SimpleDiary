@@ -2,7 +2,6 @@ import 'package:SimpleDiary/model/log/logger_instance.dart';
 import 'package:SimpleDiary/provider/database%20provider/diary_day_local_db_provider.dart';
 import 'package:SimpleDiary/provider/database%20provider/note_local_db_provider.dart';
 import 'package:SimpleDiary/provider/note_selected_date_provider.dart';
-import 'package:SimpleDiary/provider/user/remote_user_login_provider.dart';
 import 'package:SimpleDiary/utils.dart';
 import 'package:SimpleDiary/widgets/diary_day_editing_wizard_widget.dart';
 import 'package:SimpleDiary/widgets/notes_day_view_widget.dart';
@@ -30,37 +29,29 @@ class _NoteWizardPageState extends ConsumerState<NoteWizardPage> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: ref.read(remoteUserLoginProvider),
-      builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-        if (!snapshot.hasData) {
-          return const SizedBox(height: 20, width: 20, child: CircularProgressIndicator());
-        }
-        Widget wizardWidget;
-        if (!isNotesOfSelectedDayFinished()) {
-          wizardWidget = buildEditNotes();
-        } else if (!isDiaryDayOfSelectedDayComplete()) {
-          wizardWidget = buildEditDiaryDay();
-        } else {
-          wizardWidget = buildWizardFinished();
-        }
-        ref.read(notesLocalDataProvider.notifier).readObjectsFromDatabase();
-        _selectedDate = ref.watch(noteSelectedDateProvider);
+    Widget wizardWidget;
+    if (!isNotesOfSelectedDayFinished()) {
+      wizardWidget = buildEditNotes();
+    } else if (!isDiaryDayOfSelectedDayComplete()) {
+      wizardWidget = buildEditDiaryDay();
+    } else {
+      wizardWidget = buildWizardFinished();
+    }
+    ref.read(notesLocalDataProvider.notifier).readObjectsFromDatabase();
+    _selectedDate = ref.watch(noteSelectedDateProvider);
 
-        return Container(
-          color: Theme.of(context).colorScheme.background,
-          child: ListView(
-            scrollDirection: Axis.vertical,
-            children: [
-              buildSelectDateDropdown(context),
-              const SizedBox(height: 15),
-              buildNotesOfDayOverview(context),
-              const SizedBox(height: 15),
-              wizardWidget,
-            ],
-          ),
-        );
-      },
+    return Container(
+      color: Theme.of(context).colorScheme.background,
+      child: ListView(
+        scrollDirection: Axis.vertical,
+        children: [
+          buildSelectDateDropdown(context),
+          const SizedBox(height: 15),
+          buildNotesOfDayOverview(context),
+          const SizedBox(height: 15),
+          wizardWidget,
+        ],
+      ),
     );
   }
 
