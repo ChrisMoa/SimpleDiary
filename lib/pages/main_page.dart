@@ -5,6 +5,7 @@ import 'package:SimpleDiary/model/encryption/aes_encryptor.dart';
 import 'package:SimpleDiary/model/log/logger_instance.dart';
 import 'package:SimpleDiary/model/user/user_data.dart';
 import 'package:SimpleDiary/pages/auth/auth_user_data_page.dart';
+import 'package:SimpleDiary/pages/auth/pin_authentication_page.dart';
 import 'package:SimpleDiary/pages/auth/show_user_data_page.dart';
 import 'package:SimpleDiary/provider/database%20provider/diary_day_local_db_provider.dart';
 import 'package:SimpleDiary/provider/database%20provider/note_local_db_provider.dart';
@@ -16,7 +17,6 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:flutter/scheduler.dart';
 
 class MainPage extends ConsumerStatefulWidget {
   const MainPage({super.key, required this.title});
@@ -78,6 +78,11 @@ class _MainPageState extends ConsumerState<MainPage> {
           // go to login/register page
           return const AuthUserDataPage();
         }
+        if (userData.username.isNotEmpty && !userData.isLoggedIn) {
+          // go to login/register page
+          return const PinAuthenticationPage();
+        }
+
         if (userData.username != _userData.username) {
           dbRead = false;
           _onUserChanged(userData);

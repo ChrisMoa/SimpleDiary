@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 class SimpleInputDataWidget extends StatefulWidget {
   final String mapKey;
-  String value = '';
+  String value;
   final bool shouldNotBeEmpty;
   final bool extendedItem;
   final bool obscureText;

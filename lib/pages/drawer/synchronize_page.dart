@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:SimpleDiary/model/active_platform.dart';
 import 'package:SimpleDiary/widgets/filesystempicker/filesystempicker_new_file_context_action.dart';
 import 'package:SimpleDiary/model/log/logger_instance.dart';
 import 'package:SimpleDiary/provider/database%20provider/diary_day_local_db_provider.dart';
@@ -17,10 +18,12 @@ class SynchronizePage extends ConsumerStatefulWidget {
   ConsumerState<SynchronizePage> createState() => _SynchronizePageState();
 }
 
+
 class _SynchronizePageState extends ConsumerState<SynchronizePage> {
   // bool _isUploading = false;
   // double _uploadProcess = 100;
-  late Directory _rootDirectory; //! the root directory of the dialog
+  late Directory _importExportRootDirectory; //! the root directory of the import/export dialog
+  // todo: the root directory should be the current user directory on desktop and the internal storage on android
 
   @override
   void initState() {
@@ -29,7 +32,7 @@ class _SynchronizePageState extends ConsumerState<SynchronizePage> {
   }
 
   void _onInitAsync() async {
-    _rootDirectory = await getApplicationDocumentsDirectory();
+    _importExportRootDirectory = await _getPlatformSpecificDocumentsDirectory();
   }
 
   @override
@@ -82,8 +85,9 @@ class _SynchronizePageState extends ConsumerState<SynchronizePage> {
         title: 'Select or create a file in which the data should be exported',
         context: context,
         fsType: FilesystemType.file,
-        rootDirectory: _rootDirectory,
+        rootDirectory: _importExportRootDirectory,
         fileTileSelectMode: FileTileSelectMode.wholeTile,
+  
         contextActions: [
           FilesystemPickerNewFolderContextAction(),
           FilesystemPickerNewFileContextAction(),
@@ -112,7 +116,7 @@ class _SynchronizePageState extends ConsumerState<SynchronizePage> {
         title: 'Select or create a file that should be imported',
         context: context,
         fsType: FilesystemType.file,
-        rootDirectory: _rootDirectory,
+        rootDirectory: _importExportRootDirectory,
         fileTileSelectMode: FileTileSelectMode.wholeTile,
         contextActions: [],
       );
@@ -160,6 +164,14 @@ class _SynchronizePageState extends ConsumerState<SynchronizePage> {
         ),
       );
       errorMsg = '';
+    }
+  }
+
+  Future<Directory> _getPlatformSpecificDocumentsDirectory() async{
+    if(activePlatform.platform == ActivePlatform.android || activePlatform.platform == ActivePlatform.ios){
+        return Directory('/storage/emulated/0/');
+    } else {
+      return await getApplicationDocumentsDirectory();
     }
   }
 }

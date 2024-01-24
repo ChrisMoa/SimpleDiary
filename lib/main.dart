@@ -52,7 +52,6 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) => MaterialApp(
         darkTheme: ThemeData.dark().copyWith(
-          useMaterial3: true,
           colorScheme: kDarkColorScheme,
           textTheme: GoogleFonts.latoTextTheme(),
           cardTheme: const CardTheme().copyWith(
@@ -70,7 +69,6 @@ class MyApp extends StatelessWidget {
           ),
         ),
         theme: ThemeData().copyWith(
-          useMaterial3: true,
           colorScheme: kColorScheme,
           appBarTheme: const AppBarTheme().copyWith(backgroundColor: kColorScheme.onPrimaryContainer, foregroundColor: kColorScheme.primaryContainer),
           cardTheme: const CardTheme().copyWith(

@@ -18,7 +18,7 @@ class UserDataProvider extends StateNotifier<UserData> {
 
   @override
   void dispose() {
-    writeSharedPreferences();
+    writeSharedPreferences(false);
     super.dispose();
   }
 
@@ -32,8 +32,8 @@ class UserDataProvider extends StateNotifier<UserData> {
     }
   }
 
-  Future<void> writeSharedPreferences() async {
-    if (state.username.isEmpty) {
+  Future<void> writeSharedPreferences(bool ignoreEmptyUser) async {
+    if (!ignoreEmptyUser && state.username.isEmpty) {
       return;
     }
     LogWrapper.logger.t('writes data of user ${state.username} to the shared preferences');
@@ -48,19 +48,22 @@ class UserDataProvider extends StateNotifier<UserData> {
     assert(!userExists, '${userData.username} already exists in the database');
     await _userDataLocalDb.insert(userData);
     state = userData;
-    writeSharedPreferences();
+    writeSharedPreferences(false);
   }
 
-  Future<void> login(String username, String pin) async {
+  Future<bool> login(String username, String pin) async {
     var tmpUser = UserData(username: username, pin: pin);
     bool userExists = await _userDataLocalDb.checkIfElementExists(tmpUser);
     assert(userExists, '$username doesnt exist in the database');
     var user = (await _userDataLocalDb.getElement(tmpUser.getId())) as UserData;
-    assert(pin == user.pin, 'invalid login credentials');
+    if(pin != user.pin){
+      return false;
+    }
     user.isLoggedIn = true;
     state = user;
-    writeSharedPreferences();
+    writeSharedPreferences(false);
     LogWrapper.logger.t('logged in as ${state.username}');
+    return true;
   }
 
   Future<void> updateUser(UserData userData) async {
@@ -69,13 +72,13 @@ class UserDataProvider extends StateNotifier<UserData> {
     assert(userExists, '${userData.username} does not exists in the database');
     await _userDataLocalDb.update(userData);
     state = userData;
-    writeSharedPreferences();
+    writeSharedPreferences(false);
   }
 
   Future<void> logout() async {
     LogWrapper.logger.t('logout from user ${state.username}');
     state = UserData.fromEmpty();
-    writeSharedPreferences();
+    writeSharedPreferences(true);
   }
 }
 
