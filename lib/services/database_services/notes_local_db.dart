@@ -3,14 +3,14 @@ import 'package:SimpleDiary/model/database/local_db_helper.dart';
 import 'package:SimpleDiary/model/notes/note.dart';
 
 class NotesLocalDbHelper extends LocalDbHelper {
-  NotesLocalDbHelper({required tableName, required primaryKey})
-      : super(mainTableName: tableName, primaryKey: primaryKey);
+  NotesLocalDbHelper({required tableName, required primaryKey, required dbFile})
+      : super(tableName: tableName, primaryKey: primaryKey, dbFile: dbFile);
 
   @override
   Future<void> onCreateSqlTable() async {
     //* create table
     await database!.execute('''
-          CREATE TABLE IF NOT EXISTS $mainTableName (
+          CREATE TABLE IF NOT EXISTS $tableName (
             $primaryKey TEXT PRIMARY KEY, 
             title TEXT NOT NULL, 
             description TEXT NOT NULL,

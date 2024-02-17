@@ -385,7 +385,7 @@ class _NoteEditingwizardWidgetState extends ConsumerState<NoteEditingWizardWidge
   void calculateNextFreeNoteOfDay() {
     final selectedDate = ref.read(noteSelectedDateProvider);
     final notesOfDay = ref.read(notesOfSelecteDayProvider);
-    LogWrapper.logger.t('updates notes of day ${Utils.toDateTime(selectedDate)}');
+    LogWrapper.logger.t('updates notes of day ${Utils.toDate(selectedDate)}');
 
     final dayBegin = selectedDate.copyWith(hour: 7, minute: 0, second: 0);
     final dayEnd = selectedDate.copyWith(hour: 22, minute: 0, second: 0);
@@ -417,6 +417,5 @@ class _NoteEditingwizardWidgetState extends ConsumerState<NoteEditingWizardWidge
       to: curTime.add(const Duration(minutes: 30)),
       noteCategory: availableNoteCategories.first,
     );
-    _calculateNewNote = false;
   }
 }

@@ -1,6 +1,8 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:SimpleDiary/model/user/user_data.dart';
+import 'package:SimpleDiary/provider/database%20provider/diary_day_local_db_provider.dart';
+import 'package:SimpleDiary/provider/database%20provider/note_local_db_provider.dart';
 import 'package:SimpleDiary/provider/user/user_data_provider.dart';
 import 'package:SimpleDiary/widgets/auth/simple_input_data_widget.dart';
 import 'package:SimpleDiary/widgets/auth/yes_no_alert_dialog.dart';
@@ -132,6 +134,8 @@ class _ShowUserDataPageState extends ConsumerState<ShowUserDataPage> {
             builder: (BuildContext context) => YesNoAlertDialog(
               onYesPressed: () async {
                 await ref.read(userDataProvider.notifier).logout();
+                await ref.read(diaryDayLocalDbDataProvider.notifier).clearProvider();
+                await ref.read(notesLocalDataProvider.notifier).clearProvider();
                 Navigator.of(context).pop();
                 if (Navigator.of(context).canPop()) {
                   Navigator.of(context).pop();

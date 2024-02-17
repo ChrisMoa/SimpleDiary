@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:ui';
 
+import 'package:SimpleDiary/model/Settings/settings_container.dart';
 import 'package:SimpleDiary/model/encryption/aes_encryptor.dart';
 import 'package:SimpleDiary/model/log/logger_instance.dart';
 import 'package:SimpleDiary/model/user/user_data.dart';
@@ -11,12 +12,8 @@ import 'package:SimpleDiary/provider/database%20provider/diary_day_local_db_prov
 import 'package:SimpleDiary/provider/database%20provider/note_local_db_provider.dart';
 import 'package:SimpleDiary/provider/user/user_data_provider.dart';
 import 'package:SimpleDiary/services/drawer_item_builder.dart';
-import 'package:SimpleDiary/utils.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:path_provider/path_provider.dart';
 
 class MainPage extends ConsumerStatefulWidget {
   const MainPage({super.key, required this.title});
@@ -34,9 +31,6 @@ class _MainPageState extends ConsumerState<MainPage> {
   var _userData = UserData.fromEmpty();
   bool dbRead = false;
   bool _asyncInit = false;
-  late AesEncryptor _aesEncryptor;
-  final _sharedPreferenceStorage = const FlutterSecureStorage();
-  late File _databaseFile;
   late final AppLifecycleListener _listener;
 
   //* builds -----------------------------------------------------------------------------------------------------------------------------------------
@@ -76,10 +70,12 @@ class _MainPageState extends ConsumerState<MainPage> {
         var userData = ref.watch(userDataProvider);
         if (userData.username.isEmpty) {
           // go to login/register page
+          LogWrapper.logger.t('changed to authUserDataPage');
           return const AuthUserDataPage();
         }
         if (userData.username.isNotEmpty && !userData.isLoggedIn) {
           // go to login/register page
+          LogWrapper.logger.t('changed to PinAuthenticationPage');
           return const PinAuthenticationPage();
         }
 
@@ -177,6 +173,8 @@ class _MainPageState extends ConsumerState<MainPage> {
 
   Future<void> _onUserChanged(UserData userData) async {
     try {
+      _decryptDatabase(_userData, userData);
+      
       // user changed
       await ref.read(diaryDayLocalDbDataProvider.notifier).changeUser(userData);
       await ref.read(notesLocalDataProvider.notifier).changeUser(userData);
@@ -203,41 +201,34 @@ class _MainPageState extends ConsumerState<MainPage> {
     }
   }
 
+  Future<void> _decryptDatabase(UserData oldUserData, UserData newUserData) async{
+    // encrypt old database
+    if(oldUserData.username.isNotEmpty){
+      var aesEncryptor = AesEncryptor(password: oldUserData.password);
+      File file = ref.read(notesLocalDataProvider.notifier).dbFile;
+      LogWrapper.logger.d('encrypts the database of user ${oldUserData.userId}');
+      try {
+        aesEncryptor.encryptFile(file); // only one database file has to be encrypted as the databases uses the same file  
+      } catch (e) {
+        LogWrapper.logger.e('error during decrypting file of user ${oldUserData.userId}: $e');
+      }
+    }
+
+    // decrypt new database
+    if(newUserData.username.isNotEmpty){
+      try{
+        var aesEncryptor = AesEncryptor(password: newUserData.password);
+        ref.read(notesLocalDataProvider.notifier).changeDbFileToUser(newUserData);
+        File file = ref.read(notesLocalDataProvider.notifier).dbFile;
+        LogWrapper.logger.d('decrypts the database of user ${newUserData.userId}');
+        aesEncryptor.decryptFile(file); // only one database file has to be encrypted as the databases uses the same file  
+      } catch (e) {
+        LogWrapper.logger.e('error during decrypting file of user ${newUserData.userId}: $e');
+      }
+    }
+  }
+
   Future<void> _onInitAsync() async {
-    //* create encryptor
-    var overallMap = await _sharedPreferenceStorage.readAll();
-    Directory documentsDirectory = await getApplicationDocumentsDirectory();
-    var additionalDbFilePath = dotenv.env['LOCAL_DB_PATH'] ?? 'test.db';
-    var additionalKeyFilePath = dotenv.env['LOCAL_APP_DIR'] ?? 'Test/';
-    _databaseFile = File('${documentsDirectory.path}/$additionalDbFilePath');
-    if (!overallMap.containsKey('password') || !overallMap.containsKey('iv')) {
-      LogWrapper.logger.t('create new keyfile');
-      _aesEncryptor = AesEncryptor(password: Utils.generateRandomString(100));
-      await _sharedPreferenceStorage.write(key: 'iv', value: _aesEncryptor.iv);
-      await _sharedPreferenceStorage.write(
-          key: 'password', value: _aesEncryptor.password);
-      overallMap['iv'] = _aesEncryptor.iv;
-      overallMap['password'] = _aesEncryptor.password;
-      File keyFile = File(
-          '${documentsDirectory.path}/$additionalKeyFilePath/DiaryKey.json');
-      _aesEncryptor.saveToKeyFile(keyFile);
-      LogWrapper.logger
-          .i('saved key to "${keyFile.path}". Dont share this file');
-    } else {
-      LogWrapper.logger.t('uses saved aesEncryptor');
-      _aesEncryptor = AesEncryptor(
-        password: overallMap['password']!,
-        ivAsBase64: overallMap['iv'],
-      );
-    }
-
-    //* decrypt file
-    try {
-      _aesEncryptor.decryptFile(_databaseFile);
-    } catch (e) {
-      LogWrapper.logger.e('wasnt be able to decrypt file');
-    }
-
     setState(() {
       _asyncInit = true;
     });
@@ -245,20 +236,16 @@ class _MainPageState extends ConsumerState<MainPage> {
 
   Future<AppExitResponse> _handleExitRequest() async {
     LogWrapper.logger.i('leaves app');
-    try {
-      _aesEncryptor.encryptFile(_databaseFile);
-      LogWrapper.logger.t('decrypted database');
-    } catch (e) {
-      LogWrapper.logger.e('Error during encryption: $e');
-    }
+    _decryptDatabase(_userData, UserData.fromEmpty());
+    settingsContainer.saveSettings();
     return AppExitResponse.exit;
   }
 
   _handleOnDetach() {
-    LogWrapper.logger.e('detached app');
+    LogWrapper.logger.d('detached app');
   }
 
   void _handleOnResume() {
-    LogWrapper.logger.e('resumes app');
+    LogWrapper.logger.d('resumes app');
   }
 }

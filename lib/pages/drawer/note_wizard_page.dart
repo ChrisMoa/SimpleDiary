@@ -196,7 +196,7 @@ class _NoteWizardPageState extends ConsumerState<NoteWizardPage> {
 
     var timeIncrease = 15; // check 15minute chunks
 
-    for (var curTime = dayBegin; curTime.isBefore(dayEnd); curTime = curTime.add(Duration(minutes: timeIncrease))) {
+    for (var curTime = dayBegin; curTime.isBefore(dayEnd);) {
       bool found = false;
       for (final note in notesOfDay) {
         if (Utils.isDateTimeWithinTimeSpan(curTime, note.from, note.to)) {
@@ -208,6 +208,7 @@ class _NoteWizardPageState extends ConsumerState<NoteWizardPage> {
       if (!found) {
         return false;
       }
+      curTime = curTime.add(Duration(minutes: timeIncrease)); // Move to the next time slot directly at the end of the previous slot
     }
 
     // all chunks are found -> return true

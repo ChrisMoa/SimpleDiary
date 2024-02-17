@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:SimpleDiary/model/Settings/settings_container.dart';
 import 'package:SimpleDiary/model/database/local_db_element.dart';
 import 'package:SimpleDiary/model/database/local_db_helper.dart';
 import 'package:SimpleDiary/model/log/logger_instance.dart';
@@ -11,12 +14,15 @@ class AbstractLocalDbProviderState<T extends LocalDbElement> extends StateNotifi
   bool _databaseRead = false;
   String tableName;
   final String primaryKey;
-  final String splitChars = '_';
+  var _dbFile = File('${settingsContainer.pathSettings.applicationDocumentsPath.value}/empty.db'); 
 
   AbstractLocalDbProviderState({required this.tableName, required this.primaryKey}) : super([]) {
-    tableName = 'default$splitChars$tableName'; //! tableName should not constist of any further numbers
     helper = createLocalDbHelper(tableName, primaryKey);
     initDatabase();
+  }
+
+  File get dbFile{
+    return _dbFile;
   }
 
   Future<void> initDatabase() async {
@@ -26,15 +32,27 @@ class AbstractLocalDbProviderState<T extends LocalDbElement> extends StateNotifi
     await helper.initDatabase();
   }
 
-  Future<void> changeUser(UserData userData) async {
-    // tableName = [user_name + 'originalTableName']
-    var tableNameParts = tableName.split(splitChars);
-    if (tableNameParts.length != 2) {
+  void changeDbFileToUser(UserData userData){
+    LogWrapper.logger.d('$tableName change db file to user "${userData.userId}"');
+    if(userData.username.isEmpty){
       return;
     }
-    tableName = '${userData.username}$splitChars${tableNameParts[1]}';
-    LogWrapper.logger.t('change table to $tableName');
-    helper.mainTableName = tableName;
+    
+    _dbFile = File('${settingsContainer.pathSettings.applicationDocumentsPath.value}/${userData.userId}.db');
+    if(!_dbFile.existsSync()){
+      LogWrapper.logger.t('creates dbFile ${_dbFile.path}');
+      _dbFile.createSync(recursive: true);
+    }
+  }
+
+  Future<void> changeUser(UserData userData) async {
+    if(userData.username.isEmpty){
+      LogWrapper.logger.d('log in as empty user');
+      return;
+    }
+    LogWrapper.logger.d('$tableName change to user "${userData.userId}"');
+    helper.dbFile = _dbFile;
+    createLocalDbHelper(tableName, primaryKey);
     _databaseRead = false;
     await readObjectsFromDatabase();
   }
@@ -46,7 +64,7 @@ class AbstractLocalDbProviderState<T extends LocalDbElement> extends StateNotifi
     await initDatabase();
 
     List<T> elements = [];
-    var objectsFromDb = await helper.getAllRecordsAsObject(helper.mainTableName);
+    var objectsFromDb = await helper.getAllRecordsAsObject();
     if (objectsFromDb.isEmpty) {
       LogWrapper.logger.t('$tableName is empty');
       _databaseRead = true;
@@ -77,22 +95,16 @@ class AbstractLocalDbProviderState<T extends LocalDbElement> extends StateNotifi
     state = state.map((curElement) => curElement.getId() == oldElement.getId() ? newElement as T : curElement).toList();
   }
 
-  Future<void> clearTable([String tableName = '']) async {
-    tableName.isEmpty ? tableName = this.tableName : tableName;
-    await helper.clearTable(tableName);
-    if (tableName == helper.mainTableName) {
+  Future<void> clearTable() async {
+    await helper.clearTable();
+    if (tableName == helper.tableName) {
       // reset only in case of mainTable, others are helper tables
       state = [];
     }
   }
 
-  Future<void> copyTable(String newTableName) async {
-    LogWrapper.logger.t('start to copy table to $newTableName');
-    await helper.createSqlTable(newTableName);
-    LogWrapper.logger.t('inserts elements to table $newTableName');
-    for (var element in state) {
-      await helper.insert(element);
-    }
+  Future<void> clearProvider() async{
+    state = [];
   }
 
   @protected
