@@ -14,14 +14,14 @@ class AbstractLocalDbProviderState<T extends LocalDbElement> extends StateNotifi
   bool _databaseRead = false;
   String tableName;
   final String primaryKey;
-  var _dbFile = File('${settingsContainer.pathSettings.applicationDocumentsPath.value}/empty.db'); 
+  var _dbFile = File('${settingsContainer.pathSettings.applicationDocumentsPath.value}/empty.db');
 
   AbstractLocalDbProviderState({required this.tableName, required this.primaryKey}) : super([]) {
     helper = createLocalDbHelper(tableName, primaryKey);
     initDatabase();
   }
 
-  File get dbFile{
+  File get dbFile {
     return _dbFile;
   }
 
@@ -32,21 +32,21 @@ class AbstractLocalDbProviderState<T extends LocalDbElement> extends StateNotifi
     await helper.initDatabase();
   }
 
-  void changeDbFileToUser(UserData userData){
+  void changeDbFileToUser(UserData userData) {
     LogWrapper.logger.d('$tableName change db file to user "${userData.userId}"');
-    if(userData.username.isEmpty){
+    if (userData.username.isEmpty) {
       return;
     }
-    
+
     _dbFile = File('${settingsContainer.pathSettings.applicationDocumentsPath.value}/${userData.userId}.db');
-    if(!_dbFile.existsSync()){
+    if (!_dbFile.existsSync()) {
       LogWrapper.logger.t('creates dbFile ${_dbFile.path}');
       _dbFile.createSync(recursive: true);
     }
   }
 
   Future<void> changeUser(UserData userData) async {
-    if(userData.username.isEmpty){
+    if (userData.username.isEmpty) {
       LogWrapper.logger.d('log in as empty user');
       return;
     }
@@ -80,6 +80,9 @@ class AbstractLocalDbProviderState<T extends LocalDbElement> extends StateNotifi
 
   Future<void> addElement(LocalDbElement element) async {
     assert(element is T, 'conversion error at element');
+    if (await helper.checkIfElementExists(element)) {
+      return;
+    }
     await helper.insert(element);
     state = [...state, element as T];
   }
@@ -103,7 +106,7 @@ class AbstractLocalDbProviderState<T extends LocalDbElement> extends StateNotifi
     }
   }
 
-  Future<void> clearProvider() async{
+  Future<void> clearProvider() async {
     state = [];
   }
 
