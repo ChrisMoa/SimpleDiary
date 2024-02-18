@@ -1,3 +1,4 @@
+import 'package:SimpleDiary/model/Settings/settings_container.dart';
 import 'package:SimpleDiary/model/active_platform.dart';
 import 'package:SimpleDiary/model/log/custom_log_printer.dart';
 import 'package:SimpleDiary/model/log/logger_instance.dart';
@@ -23,6 +24,7 @@ var kDarkColorScheme = ColorScheme.fromSeed(
 
 void main() async {
   await dotenv.load(fileName: ".env");
+  await settingsContainer.readSettings();
   if (activePlatform.platform == ActivePlatform.windows || activePlatform.platform == ActivePlatform.linux) {
     //* Initialize FFI
     sqfliteFfiInit();
@@ -30,7 +32,7 @@ void main() async {
   }
 
   //* init logger
-  bool debugging = int.tryParse(dotenv.env['DEBUG_MODE'] ?? '1') == 1;
+  bool debugging = settingsContainer.userSettings.debugMode;
   LogWrapper.logger = Logger(
     level: debugging ? Level.trace : Level.info,
     output: FileOutput(
@@ -90,7 +92,7 @@ class MyApp extends StatelessWidget {
         //   title: 'Simple Diary',
         // ),
 
-        debugShowCheckedModeBanner: int.tryParse(dotenv.env['DEBUG_MODE'] ?? '1') == 1,
+        debugShowCheckedModeBanner: settingsContainer.userSettings.debugMode,
         home: const MainPage(
           title: 'Simple Diary',
         ),

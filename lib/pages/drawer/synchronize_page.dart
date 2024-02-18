@@ -1,6 +1,7 @@
 import 'dart:io';
-
-import 'package:SimpleDiary/model/active_platform.dart';
+import 'package:SimpleDiary/model/Settings/settings_container.dart';
+import 'package:SimpleDiary/model/encryption/aes_encryptor.dart';
+import 'package:SimpleDiary/provider/user/user_data_provider.dart';
 import 'package:SimpleDiary/widgets/filesystempicker/filesystempicker_new_file_context_action.dart';
 import 'package:SimpleDiary/model/log/logger_instance.dart';
 import 'package:SimpleDiary/provider/database%20provider/diary_day_local_db_provider.dart';
@@ -9,7 +10,6 @@ import 'package:SimpleDiary/provider/database%20provider/note_local_db_provider.
 import 'package:filesystem_picker/filesystem_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:path_provider/path_provider.dart';
 
 class SynchronizePage extends ConsumerStatefulWidget {
   const SynchronizePage({super.key});
@@ -18,23 +18,7 @@ class SynchronizePage extends ConsumerStatefulWidget {
   ConsumerState<SynchronizePage> createState() => _SynchronizePageState();
 }
 
-
 class _SynchronizePageState extends ConsumerState<SynchronizePage> {
-  // bool _isUploading = false;
-  // double _uploadProcess = 100;
-  late Directory _importExportRootDirectory; //! the root directory of the import/export dialog
-  // todo: the root directory should be the current user directory on desktop and the internal storage on android
-
-  @override
-  void initState() {
-    _onInitAsync();
-    super.initState();
-  }
-
-  void _onInitAsync() async {
-    _importExportRootDirectory = await _getPlatformSpecificDocumentsDirectory();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -80,14 +64,16 @@ class _SynchronizePageState extends ConsumerState<SynchronizePage> {
   void _onExportToFile() async {
     try {
       LogWrapper.logger.i('export started');
+      var rootDirectory = Directory(settingsContainer.pathSettings.applicationDocumentsPath.value);
 
       String? path = await FilesystemPicker.openDialog(
         title: 'Select or create a file in which the data should be exported',
         context: context,
         fsType: FilesystemType.file,
-        rootDirectory: _importExportRootDirectory,
+        allowedExtensions: ['.json'],
+        showGoUp: true,
+        rootDirectory: rootDirectory,
         fileTileSelectMode: FileTileSelectMode.wholeTile,
-  
         contextActions: [
           FilesystemPickerNewFolderContextAction(),
           FilesystemPickerNewFileContextAction(),
@@ -97,11 +83,16 @@ class _SynchronizePageState extends ConsumerState<SynchronizePage> {
         return;
       }
       try {
-        await ref.read(fileDbStateProvider.notifier).export(ref.read(diaryDayFullDataProvider), File(path));
+        File file = File(path);
+        var userData = ref.read(userDataProvider);
+        var encryptor = AesEncryptor(password: userData.password);
+        await ref.read(fileDbStateProvider.notifier).export(ref.read(diaryDayFullDataProvider), file);
+        encryptor.encryptFile(file);
       } catch (e) {
         LogWrapper.logger.e('Error exporting "$path": "$e"');
       }
       LogWrapper.logger.i('export finished');
+      _onImportExportSuccessfully();
     } catch (e) {
       LogWrapper.logger.e('Error during exporting: ${e.toString()}');
       // ignore: use_build_context_synchronously
@@ -112,11 +103,13 @@ class _SynchronizePageState extends ConsumerState<SynchronizePage> {
   void _onImportFromFile() async {
     try {
       LogWrapper.logger.i('import database');
+      var rootDirectory = Directory(settingsContainer.pathSettings.applicationDocumentsPath.value);
       String? path = await FilesystemPicker.openDialog(
         title: 'Select or create a file that should be imported',
         context: context,
         fsType: FilesystemType.file,
-        rootDirectory: _importExportRootDirectory,
+        allowedExtensions: ['.json'],
+        rootDirectory: rootDirectory,
         fileTileSelectMode: FileTileSelectMode.wholeTile,
         contextActions: [],
       );
@@ -124,12 +117,15 @@ class _SynchronizePageState extends ConsumerState<SynchronizePage> {
         return;
       }
       try {
-        LogWrapper.logger.i('downloads database');
-        //* download data
+        File file = File(path);
+        LogWrapper.logger.i('import from file ${file.path}');
+        var userData = ref.read(userDataProvider);
+        var decryptor = AesEncryptor(password: userData.password);
+        decryptor.decryptFile(file);
         await ref.read(fileDbStateProvider.notifier).import(File(path));
-        //* clear local dbs
-        await ref.read(diaryDayLocalDbDataProvider.notifier).clearTable();
-        await ref.read(notesLocalDataProvider.notifier).clearTable();
+        decryptor.encryptFile(file);
+
+        //* read data
         //* add diaryDay to local dbs
         for (var diaryDay in ref.read(fileDbStateProvider)) {
           await ref.read(diaryDayLocalDbDataProvider.notifier).addElement(diaryDay);
@@ -137,15 +133,32 @@ class _SynchronizePageState extends ConsumerState<SynchronizePage> {
             await ref.read(notesLocalDataProvider.notifier).addElement(note);
           }
         }
-        LogWrapper.logger.i('import finished');
+        LogWrapper.logger.i('import finished successfully');
+        _onImportExportSuccessfully();
       } catch (e) {
-        LogWrapper.logger.i('Error exporting "$path": "$e"');
+        LogWrapper.logger.i('Error importing from file "$path": "$e"');
       }
     } catch (e) {
       LogWrapper.logger.t('Error during importing: ${e.toString()}');
       // ignore: use_build_context_synchronously
       _onError(context, 'Error during importing');
     }
+  }
+
+  void _onImportExportSuccessfully() {
+    ScaffoldMessenger.of(context).clearSnackBars();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        duration: const Duration(seconds: 3),
+        content: const Text('Import/Export was successfully'),
+        action: SnackBarAction(
+          label: 'OK',
+          onPressed: () {
+            ScaffoldMessenger.of(context).clearSnackBars();
+          },
+        ),
+      ),
+    );
   }
 
   void _onError(BuildContext context, String errorMsg) {
@@ -164,14 +177,6 @@ class _SynchronizePageState extends ConsumerState<SynchronizePage> {
         ),
       );
       errorMsg = '';
-    }
-  }
-
-  Future<Directory> _getPlatformSpecificDocumentsDirectory() async{
-    if(activePlatform.platform == ActivePlatform.android || activePlatform.platform == ActivePlatform.ios){
-        return Directory('/storage/emulated/0/');
-    } else {
-      return await getApplicationDocumentsDirectory();
     }
   }
 }

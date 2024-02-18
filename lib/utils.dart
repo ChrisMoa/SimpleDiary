@@ -14,7 +14,7 @@ class Utils {
   }
 
   static String toTimeFine(DateTime dateTime) {
-    var pattern = 'dd.MM.yy HH:mm::ss.SSS';
+    var pattern = 'dd.MM.yy HH:mm:ss.SSS';
     final date = DateFormat(pattern).format(dateTime);
     return date;
   }

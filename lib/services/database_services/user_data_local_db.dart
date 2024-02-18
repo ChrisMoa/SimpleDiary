@@ -3,19 +3,19 @@ import 'package:SimpleDiary/model/database/local_db_helper.dart';
 import 'package:SimpleDiary/model/user/user_data.dart';
 
 class UserDataLocalDb extends LocalDbHelper {
-  UserDataLocalDb({required tableName, required primaryKey})
-      : super(mainTableName: tableName, primaryKey: primaryKey);
+  UserDataLocalDb({required tableName, required primaryKey, required dbFile})
+      : super(tableName: tableName, primaryKey: primaryKey, dbFile: dbFile);
 
   @override
   Future<void> onCreateSqlTable() async {
     //* create table
     await database!.execute('''
-          CREATE TABLE $mainTableName (
+          CREATE TABLE $tableName (
             $primaryKey TEXT PRIMARY KEY, 
             pin TEXT, 
             email TEXT,
             password TEXT,
-            apiKey TEXT,
+            settings TEXT,
             userId TEXT NOT NULL
           )
           ''');

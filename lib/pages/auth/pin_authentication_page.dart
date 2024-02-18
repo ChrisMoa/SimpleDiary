@@ -76,7 +76,7 @@ class _PinAuthenticationPageState extends ConsumerState<PinAuthenticationPage> {
               onPressed: () {
                 if (_formKey.currentState!.validate()) {
                   final userData = ref.read(userDataProvider);
-                  if (userData.username.isNotEmpty && userData.pin == _pinController.text) {
+                  if (userData.username.isNotEmpty) {
                     ref.read(userDataProvider.notifier).login(userData.username, _pinController.text);
                     // Pin is correct, proceed to next page or action
                   } else {

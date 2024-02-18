@@ -1,16 +1,13 @@
 import 'dart:io';
+import 'package:SimpleDiary/model/Settings/settings_container.dart';
 import 'package:SimpleDiary/utils.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:logger/logger.dart';
-import 'package:path_provider/path_provider.dart';
 
 class LogWrapper {
   LogWrapper();
 
   static Future<File> createLogfile() async {
-    var appDocs = (await getApplicationDocumentsDirectory()).path;
-    var appDir = dotenv.env['LOCAL_APP_DIR'] ?? 'Test/';
-    var logDir = Directory('$appDocs/${appDir}Logs');
+    var logDir = Directory('${settingsContainer.pathSettings.applicationDocumentsPath.value}/Logs');
     await logDir.create(recursive: true);
     var logFiles = logDir.listSync(recursive: false).whereType<File>().toList();
     logFiles.sort((a, b) {

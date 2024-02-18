@@ -14,7 +14,7 @@ class NotesLocalDataProvider extends AbstractLocalDbProviderState<Note> {
 
   @override
   LocalDbHelper createLocalDbHelper(String tableName, String primaryKey) {
-    return NotesLocalDbHelper(tableName: tableName, primaryKey: primaryKey);
+    return NotesLocalDbHelper(tableName: tableName, primaryKey: primaryKey, dbFile: dbFile);
   }
 }
 

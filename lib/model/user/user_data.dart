@@ -4,6 +4,14 @@ import 'dart:convert';
 import 'package:SimpleDiary/model/database/local_db_element.dart';
 import 'package:SimpleDiary/utils.dart';
 
+final testUserData = UserData(
+  username: 'Test',
+  pin : '1234',
+  email: 'test@gmail.de',
+  password: '123456789',
+  userId: 'test'
+);
+
 class UserData implements LocalDbElement {
   String username;
   String pin;
