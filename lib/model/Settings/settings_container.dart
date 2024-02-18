@@ -8,17 +8,17 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 class SettingsContainer {
   final _sharedPreferenceStorage = const FlutterSecureStorage();
   var userSettings = UserSettings();
-  var pathSettings = PathSettings(); 
+  var pathSettings = PathSettings();
   List<Settings> settings = [];
 
-  SettingsContainer(){
+  SettingsContainer() {
     settings.add(userSettings);
     settings.add(pathSettings);
   }
 
-  Future<void> readSettings() async{
+  Future<void> readSettings() async {
     var overallSettingsMap = await _sharedPreferenceStorage.readAll();
-    for(var curSetting in settings){
+    for (var curSetting in settings) {
       try {
         await curSetting.fromMap(overallSettingsMap);
       } catch (e) {
@@ -34,10 +34,10 @@ class SettingsContainer {
 
   Future<void> saveSettings() async {
     LogWrapper.logger.i('saves settings');
-    for(var curSetting in settings){
+    for (var curSetting in settings) {
       try {
         var settingMap = await curSetting.toMap();
-        for(var entry in settingMap.entries){
+        for (var entry in settingMap.entries) {
           await _sharedPreferenceStorage.write(key: entry.key, value: entry.value);
         }
       } catch (e) {

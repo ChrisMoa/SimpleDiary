@@ -18,48 +18,104 @@ class SynchronizePage extends ConsumerStatefulWidget {
   ConsumerState<SynchronizePage> createState() => _SynchronizePageState();
 }
 
-class _SynchronizePageState extends ConsumerState<SynchronizePage> {
+class _ListItem extends StatelessWidget {
+  final VoidCallback onPressed;
+  final Icon icon;
+  final String buttonText;
+  final String headerText;
+  final String subText;
+
+  const _ListItem({required this.onPressed, required this.icon, required this.buttonText, required this.headerText, required this.subText});
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        color: Theme.of(context).colorScheme.background,
-        child: Column(
-          children: [
-            _buildFileSynchronization(context),
-            const SizedBox(
-              height: 50,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildFileSynchronization(BuildContext context) {
-    return SizedBox(
-      width: double.infinity,
-      height: 70,
+    return Container(
+      padding: const EdgeInsets.all(15),
+      color: Theme.of(context).colorScheme.secondaryContainer,
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          TextButton.icon(
-            onPressed: _onExportToFile,
-            icon: const Icon(Icons.cloud_upload),
-            label: const Text("Export"),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                style: Theme.of(context).textTheme.titleLarge!.copyWith(color: Theme.of(context).colorScheme.onSecondaryContainer, fontWeight: FontWeight.bold),
+                headerText,
+              ),
+              Text(
+                subText,
+                style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                      color: Theme.of(context).colorScheme.onSecondaryContainer, // Change font color based on theme
+                    ),
+              ),
+            ],
           ),
-          const SizedBox(
-            width: 40,
-          ),
-          TextButton.icon(
-            onPressed: _onImportFromFile,
-            icon: const Icon(Icons.cloud_download),
-            label: const Text("Import"),
+          SizedBox(
+            height: 50,
+            child: TextButton.icon(
+              onPressed: onPressed,
+              icon: icon,
+              label: Text(
+                buttonText,
+                style: Theme.of(context).textTheme.bodyMedium!.copyWith(color: Theme.of(context).colorScheme.onTertiaryContainer, fontWeight: FontWeight.bold),
+              ),
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.resolveWith<Color>(
+                  (Set<MaterialState> states) {
+                    if (states.contains(MaterialState.pressed)) {
+                      return Theme.of(context).colorScheme.tertiaryContainer.withOpacity(0.6); // Change color when pressed
+                    }
+                    return Theme.of(context).colorScheme.tertiaryContainer; // Default color
+                  },
+                ),
+              ),
+            ),
           ),
         ],
       ),
     );
   }
+}
+
+class _SynchronizePageState extends ConsumerState<SynchronizePage> {
+  //* parameters -------------------------------------------------------------------------------------------------------------------------------------
+
+  //* builds -----------------------------------------------------------------------------------------------------------------------------------------
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.background,
+      body: Column(
+        children: [
+          Container(
+            padding: const EdgeInsetsDirectional.symmetric(vertical: 5, horizontal: 10),
+            child: _ListItem(
+              icon: const Icon(Icons.cloud_upload),
+              onPressed: _onExportToFile,
+              buttonText: 'Export',
+              headerText: 'Exportieren nach .json',
+              subText: 'Notizen in dem Zeitraum werden zu einer .json Datei exportiert',
+            ),
+          ),
+          Container(
+            padding: const EdgeInsetsDirectional.symmetric(vertical: 10, horizontal: 10),
+            child: _ListItem(
+              icon: const Icon(Icons.cloud_upload),
+              onPressed: _onImportFromFile,
+              buttonText: 'Import',
+              headerText: 'Importieren .json',
+              subText: 'Dateien werden von einer .json Datei importiert',
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  //* build helper -----------------------------------------------------------------------------------------------------------------------------------
+
+  //* callbacks --------------------------------------------------------------------------------------------------------------------------------------
 
   void _onExportToFile() async {
     try {

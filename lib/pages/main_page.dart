@@ -89,12 +89,8 @@ class _MainPageState extends ConsumerState<MainPage> {
 
         return Scaffold(
           appBar: AppBar(
-            backgroundColor: Colors.blue,
-            titleTextStyle: const TextStyle(
-              fontSize: 24,
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-            ),
+            backgroundColor: Theme.of(context).colorScheme.primary,
+            titleTextStyle: Theme.of(context).textTheme.headlineMedium!.copyWith(color: Theme.of(context).colorScheme.onPrimary, fontWeight: FontWeight.bold),
             title: Text(widget.title),
           ),
           drawer: _buildDrawer(context),
@@ -113,7 +109,7 @@ class _MainPageState extends ConsumerState<MainPage> {
           DrawerHeader(
             child: UserAccountsDrawerHeader(
               decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.background,
+                color: Theme.of(context).colorScheme.secondaryContainer,
               ),
               onDetailsPressed: () {
                 Navigator.of(context).push(
@@ -124,37 +120,25 @@ class _MainPageState extends ConsumerState<MainPage> {
               },
               accountName: Text(
                 _userData.username,
-                style: Theme.of(context)
-                    .textTheme
-                    .titleMedium!
-                    .copyWith(color: Theme.of(context).colorScheme.primary),
+                style: Theme.of(context).textTheme.titleMedium!.copyWith(color: Theme.of(context).colorScheme.onSecondaryContainer),
               ),
               currentAccountPictureSize: const Size(50, 50),
               accountEmail: Text(
                 _userData.email,
-                style: Theme.of(context)
-                    .textTheme
-                    .titleMedium!
-                    .copyWith(color: Theme.of(context).colorScheme.primary),
+                style: Theme.of(context).textTheme.titleMedium!.copyWith(color: Theme.of(context).colorScheme.onSecondaryContainer),
               ),
               currentAccountPicture: const CircleAvatar(
                 radius: 3,
-                backgroundImage:
-                    AssetImage('assets/images/User-icon-256-blue.png'),
+                backgroundImage: AssetImage('assets/images/User-icon-256-blue.png'),
               ),
             ),
           ),
-          for (var index = 0;
-              index < _drawerItemProvider.getDrawerItems.length;
-              index++)
+          for (var index = 0; index < _drawerItemProvider.getDrawerItems.length; index++)
             ListTile(
               leading: Icon(_drawerItemProvider.getDrawerItems[index].icon),
               title: Text(
                 _drawerItemProvider.getDrawerItems[index].title,
-                style: Theme.of(context)
-                    .textTheme
-                    .titleLarge!
-                    .copyWith(color: Theme.of(context).colorScheme.secondary),
+                style: Theme.of(context).textTheme.titleLarge!.copyWith(color: Theme.of(context).colorScheme.onSecondaryContainer),
               ),
               selected: index == _selectedDrawerIndex,
               onTap: () {
@@ -174,7 +158,7 @@ class _MainPageState extends ConsumerState<MainPage> {
   Future<void> _onUserChanged(UserData userData) async {
     try {
       _decryptDatabase(_userData, userData);
-      
+
       // user changed
       await ref.read(diaryDayLocalDbDataProvider.notifier).changeUser(userData);
       await ref.read(notesLocalDataProvider.notifier).changeUser(userData);
@@ -186,42 +170,40 @@ class _MainPageState extends ConsumerState<MainPage> {
       setState(() {
         showDialog<String>(
           context: context,
-          builder: (BuildContext context) =>
-              AlertDialog(actions: const [], title: Text('${e.message}')),
+          builder: (BuildContext context) => AlertDialog(actions: const [], title: Text('${e.message}')),
         );
       });
     } catch (e) {
       setState(() {
         showDialog<String>(
           context: context,
-          builder: (BuildContext context) => AlertDialog(
-              actions: const [], title: Text('unknown exception : $e')),
+          builder: (BuildContext context) => AlertDialog(actions: const [], title: Text('unknown exception : $e')),
         );
       });
     }
   }
 
-  Future<void> _decryptDatabase(UserData oldUserData, UserData newUserData) async{
+  Future<void> _decryptDatabase(UserData oldUserData, UserData newUserData) async {
     // encrypt old database
-    if(oldUserData.username.isNotEmpty){
+    if (oldUserData.username.isNotEmpty) {
       var aesEncryptor = AesEncryptor(password: oldUserData.password);
       File file = ref.read(notesLocalDataProvider.notifier).dbFile;
       LogWrapper.logger.d('encrypts the database of user ${oldUserData.userId}');
       try {
-        aesEncryptor.encryptFile(file); // only one database file has to be encrypted as the databases uses the same file  
+        aesEncryptor.encryptFile(file); // only one database file has to be encrypted as the databases uses the same file
       } catch (e) {
         LogWrapper.logger.e('error during decrypting file of user ${oldUserData.userId}: $e');
       }
     }
 
     // decrypt new database
-    if(newUserData.username.isNotEmpty){
-      try{
+    if (newUserData.username.isNotEmpty) {
+      try {
         var aesEncryptor = AesEncryptor(password: newUserData.password);
         ref.read(notesLocalDataProvider.notifier).changeDbFileToUser(newUserData);
         File file = ref.read(notesLocalDataProvider.notifier).dbFile;
         LogWrapper.logger.d('decrypts the database of user ${newUserData.userId}');
-        aesEncryptor.decryptFile(file); // only one database file has to be encrypted as the databases uses the same file  
+        aesEncryptor.decryptFile(file); // only one database file has to be encrypted as the databases uses the same file
       } catch (e) {
         LogWrapper.logger.e('error during decrypting file of user ${newUserData.userId}: $e');
       }

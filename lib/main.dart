@@ -3,24 +3,13 @@ import 'package:SimpleDiary/model/active_platform.dart';
 import 'package:SimpleDiary/model/log/custom_log_printer.dart';
 import 'package:SimpleDiary/model/log/logger_instance.dart';
 import 'package:SimpleDiary/pages/main_page.dart';
+import 'package:SimpleDiary/themes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:logger/logger.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-
-var kColorScheme = ColorScheme.fromSeed(
-  seedColor: const Color.fromARGB(255, 255, 251, 0),
-  onBackground: const Color.fromARGB(255, 244, 248, 168),
-  background: const Color.fromARGB(255, 247, 250, 195),
-);
-
-var kDarkColorScheme = ColorScheme.fromSeed(
-  brightness: Brightness.dark,
-  seedColor: const Color.fromARGB(255, 2, 35, 180),
-);
 
 void main() async {
   await dotenv.load(fileName: ".env");
@@ -53,45 +42,9 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) => MaterialApp(
-        darkTheme: ThemeData.dark().copyWith(
-          colorScheme: kDarkColorScheme,
-          textTheme: GoogleFonts.latoTextTheme(),
-          cardTheme: const CardTheme().copyWith(
-            color: kDarkColorScheme.secondaryContainer,
-            margin: const EdgeInsets.symmetric(
-              horizontal: 16,
-              vertical: 8,
-            ),
-          ),
-          elevatedButtonTheme: ElevatedButtonThemeData(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: kDarkColorScheme.primaryContainer,
-              foregroundColor: kDarkColorScheme.onPrimaryContainer,
-            ),
-          ),
-        ),
-        theme: ThemeData().copyWith(
-          colorScheme: kColorScheme,
-          appBarTheme: const AppBarTheme().copyWith(backgroundColor: kColorScheme.onPrimaryContainer, foregroundColor: kColorScheme.primaryContainer),
-          cardTheme: const CardTheme().copyWith(
-            color: kColorScheme.secondaryContainer,
-            margin: const EdgeInsets.symmetric(
-              horizontal: 16,
-              vertical: 8,
-            ),
-          ),
-          elevatedButtonTheme: ElevatedButtonThemeData(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: kColorScheme.primaryContainer,
-            ),
-          ),
-          textTheme: GoogleFonts.latoTextTheme(),
-        ),
+        darkTheme: darkTheme,
+        theme: lightTheme,
         themeMode: ThemeMode.light,
-        // home: const MainPage(
-        //   title: 'Simple Diary',
-        // ),
-
         debugShowCheckedModeBanner: settingsContainer.userSettings.debugMode,
         home: const MainPage(
           title: 'Simple Diary',
