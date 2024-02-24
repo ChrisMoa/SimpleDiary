@@ -4,7 +4,6 @@ import 'package:SimpleDiary/model/log/custom_log_printer.dart';
 import 'package:SimpleDiary/model/log/logger_instance.dart';
 import 'package:SimpleDiary/pages/main_page.dart';
 import 'package:SimpleDiary/provider/theme_provider.dart';
-import 'package:SimpleDiary/themes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -24,7 +23,7 @@ void main() async {
   }
 
   //* init logger
-  bool debugging = settingsContainer.userSettings.debugMode;
+  bool debugging = settingsContainer.debugMode;
   LogWrapper.logger = Logger(
     level: debugging ? Level.trace : Level.info,
     output: FileOutput(
@@ -52,7 +51,7 @@ class _MyAppState extends ConsumerState<MyApp> {
   @override
   Widget build(BuildContext context) => MaterialApp(
         theme: ref.watch(themeProvider),
-        debugShowCheckedModeBanner: settingsContainer.userSettings.debugMode,
+        debugShowCheckedModeBanner: settingsContainer.debugMode,
         home: const MainPage(
           title: 'Simple Diary',
         ),

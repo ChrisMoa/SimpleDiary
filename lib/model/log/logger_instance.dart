@@ -7,7 +7,7 @@ class LogWrapper {
   LogWrapper();
 
   static Future<File> createLogfile() async {
-    var logDir = Directory('${settingsContainer.pathSettings.applicationDocumentsPath.value}/Logs');
+    var logDir = Directory('${settingsContainer.applicationDocumentsPath}/Logs');
     await logDir.create(recursive: true);
     var logFiles = logDir.listSync(recursive: false).whereType<File>().toList();
     logFiles.sort((a, b) {

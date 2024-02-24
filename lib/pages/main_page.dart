@@ -68,12 +68,12 @@ class _MainPageState extends ConsumerState<MainPage> {
     return Builder(
       builder: (context) {
         var userData = ref.watch(userDataProvider);
+
         if (userData.username.isEmpty) {
           // go to login/register page
           LogWrapper.logger.t('changed to authUserDataPage');
           return const AuthUserDataPage();
-        }
-        if (userData.username.isNotEmpty && !userData.isLoggedIn) {
+        } else if (userData.username.isNotEmpty && !userData.isLoggedIn) {
           // go to login/register page
           LogWrapper.logger.t('changed to PinAuthenticationPage');
           return const PinAuthenticationPage();

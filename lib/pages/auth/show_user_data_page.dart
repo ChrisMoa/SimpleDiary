@@ -13,8 +13,7 @@ class ShowUserDataPage extends ConsumerStatefulWidget {
   const ShowUserDataPage({super.key});
 
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() =>
-      _ShowUserDataPageState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _ShowUserDataPageState();
 }
 
 class _ShowUserDataPageState extends ConsumerState<ShowUserDataPage> {
@@ -33,9 +32,7 @@ class _ShowUserDataPageState extends ConsumerState<ShowUserDataPage> {
           value: entry.value,
           shouldNotBeEmpty: entry.key == 'username',
           extendedItem: !(entry.key == 'username' || entry.key == 'pin'),
-          obscureText: entry.key == 'pin' ||
-              entry.key ==
-                  'password', // can maybe be changed with an additional button
+          obscureText: entry.key == 'pin' || entry.key == 'password', // can maybe be changed with an additional button
         ),
       );
     }
@@ -46,16 +43,12 @@ class _ShowUserDataPageState extends ConsumerState<ShowUserDataPage> {
     var userData = ref.watch(userDataProvider);
     var userDataMap = userData.toMap();
     simpleInputDataWidgets.forEach((element) {
-      element.value = userDataMap.containsKey(element.mapKey)
-          ? userDataMap[element.mapKey]
-          : 'Test';
+      element.value = userDataMap.containsKey(element.mapKey) ? userDataMap[element.mapKey] : 'Test';
     });
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.onBackground,
-        titleTextStyle: Theme.of(context).textTheme.titleLarge!.copyWith(
-            color: Theme.of(context).colorScheme.primary,
-            fontWeight: FontWeight.bold),
+        titleTextStyle: Theme.of(context).textTheme.titleLarge!.copyWith(color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.bold),
         title: const Text('Account settings'),
       ),
       backgroundColor: Theme.of(context).colorScheme.background,
@@ -119,8 +112,7 @@ class _ShowUserDataPageState extends ConsumerState<ShowUserDataPage> {
       onPressed: () {
         _onSaveClicked();
       },
-      style: ElevatedButton.styleFrom(
-          backgroundColor: Theme.of(context).colorScheme.primaryContainer),
+      style: ElevatedButton.styleFrom(backgroundColor: Theme.of(context).colorScheme.primaryContainer),
       child: const Text('Save'),
     );
   }
@@ -133,7 +125,7 @@ class _ShowUserDataPageState extends ConsumerState<ShowUserDataPage> {
             context: context,
             builder: (BuildContext context) => YesNoAlertDialog(
               onYesPressed: () async {
-                await ref.read(userDataProvider.notifier).logout();
+                ref.read(userDataProvider.notifier).logout();
                 await ref.read(diaryDayLocalDbDataProvider.notifier).clearProvider();
                 await ref.read(notesLocalDataProvider.notifier).clearProvider();
                 Navigator.of(context).pop();
@@ -150,8 +142,7 @@ class _ShowUserDataPageState extends ConsumerState<ShowUserDataPage> {
           );
         });
       },
-      style: ElevatedButton.styleFrom(
-          backgroundColor: Theme.of(context).colorScheme.primaryContainer),
+      style: ElevatedButton.styleFrom(backgroundColor: Theme.of(context).colorScheme.primaryContainer),
       child: const Text('Logout'),
     );
   }
@@ -177,25 +168,20 @@ class _ShowUserDataPageState extends ConsumerState<ShowUserDataPage> {
                     userDataMap[userDataInput.mapKey] = userDataInput.value;
                   }
                   final userData = UserData.fromMap(userDataMap);
-                  await ref
-                      .read(userDataProvider.notifier)
-                      .updateUser(userData);
+                  ref.read(userDataProvider.notifier).updateUser(userData);
                   Navigator.of(context).pop();
                 } on AssertionError catch (e) {
                   setState(() {
                     showDialog<String>(
                       context: context,
-                      builder: (BuildContext context) => AlertDialog(
-                          actions: const [], title: Text('${e.message}')),
+                      builder: (BuildContext context) => AlertDialog(actions: const [], title: Text('${e.message}')),
                     );
                   });
                 } catch (e) {
                   setState(() {
                     showDialog<String>(
                       context: context,
-                      builder: (BuildContext context) => AlertDialog(
-                          actions: const [],
-                          title: Text('unknown exception : $e')),
+                      builder: (BuildContext context) => AlertDialog(actions: const [], title: Text('unknown exception : $e')),
                     );
                   });
                 }
