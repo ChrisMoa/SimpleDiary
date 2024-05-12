@@ -82,6 +82,7 @@ class SettingsContainer {
       case ActivePlatform.ios:
       case ActivePlatform.android:
         return '/storage/emulated/0/${dotenv.env['PROJECT_NAME'] ?? 'SimpleDiary'}';
+      case ActivePlatform.linux:
       case ActivePlatform.windows:
         var addAppPath = dotenv.env['PROJECT_NAME'] ?? 'SimpleDiary';
         return '${(await getApplicationDocumentsDirectory()).path}/$addAppPath';
