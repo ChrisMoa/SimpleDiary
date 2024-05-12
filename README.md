@@ -55,11 +55,15 @@ It is also a good step to download the package "Flutter" within VS-Code
 ```
 
 ### linux
-
-This is only supported on a linux machine because windows doesnt support the linux compiler
-
 ```bash
    flutter build linux
+```
+
+This is only supported on a linux machine. Be sure that all required packages and libraries are installed. On ubuntu it needs for example the *libsqlite3-0* and *libsqlite3-dev* library. Build the app in the debug mode if some other packages are required. There can be a requirements installer for this project which will install all needed libraries and packages.
+
+or debug with debug information:
+```bash
+   flutter run -d linux -v
 ```
 
 ## adding an app image
