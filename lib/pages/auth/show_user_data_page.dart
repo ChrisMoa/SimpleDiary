@@ -31,7 +31,7 @@ class _ShowUserDataPageState extends ConsumerState<ShowUserDataPage> {
           mapKey: entry.key,
           value: entry.value,
           shouldNotBeEmpty: entry.key == 'username',
-          extendedItem: !(entry.key == 'username' || entry.key == 'pin'),
+          extendedItem: false,
           obscureText: entry.key == 'pin' || entry.key == 'password', // can maybe be changed with an additional button
         ),
       );

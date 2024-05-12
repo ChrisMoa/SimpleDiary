@@ -47,6 +47,7 @@ class UserDataProvider extends StateNotifier<UserData> {
       return false;
     }
     var decryptor = AesEncryptor(password: pin);
+    stateUserData.email = savedUserData.email;
     stateUserData.password = decryptor.decryptStringFromBase64(savedUserData.password);
     stateUserData.isLoggedIn = true;
     stateUserData.userId = savedUserData.userId;
@@ -58,16 +59,35 @@ class UserDataProvider extends StateNotifier<UserData> {
     return true;
   }
 
-  void updateUser(UserData userData) {
-    LogWrapper.logger.i('update user ${userData.username}');
-    assert(userData.username == settingsContainer.activeUserSettings.savedUserData.username, '${userData.username} does not exist in the database');
-    settingsContainer.activeUserSettings.savedUserData = userData;
+  void updateUser(UserData clearUserData) {
+    LogWrapper.logger.i('update user ${clearUserData.username}');
+    var username = clearUserData.username;
+    assert(username == settingsContainer.activeUserSettings.savedUserData.username, '${clearUserData.username} does not exist in the database');
+    var stateUserData = clearUserData;
+    var savedUserData = settingsContainer.userSettings.firstWhere((userSetting) => userSetting.savedUserData.username == username).savedUserData;
 
+    // udate pin
+    var hashedPin = sha256.convert(utf8.encode(stateUserData.pin)).toString();
+    savedUserData.pin = hashedPin;
+
+    // update password
+    var encryptor = AesEncryptor(password: stateUserData.pin);
+    savedUserData.password = encryptor.encryptStringAsBase64(stateUserData.password);
+
+    // update saved user
+    settingsContainer.activeUserSettings.savedUserData = savedUserData;
     var existingUserIndex = settingsContainer.userSettings.indexWhere((userSetting) => userSetting == settingsContainer.activeUserSettings);
     if (existingUserIndex != -1) {
       settingsContainer.userSettings[existingUserIndex] = settingsContainer.activeUserSettings;
     }
-    state = userData;
+    settingsContainer.saveSettings();
+
+    // update state user
+    state = stateUserData;
+  }
+
+  void updateUserPassword(UserData userData) {
+    login(userData.username, userData.pin);
   }
 
   void logout() {

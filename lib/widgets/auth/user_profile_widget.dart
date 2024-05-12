@@ -20,8 +20,7 @@ class UserProfileWidget extends ConsumerStatefulWidget {
   final formKey = GlobalKey<FormState>();
 
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() =>
-      _UserProfileWidgetState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _UserProfileWidgetState();
 }
 
 class _UserProfileWidgetState extends ConsumerState<UserProfileWidget> {
@@ -35,10 +34,7 @@ class _UserProfileWidgetState extends ConsumerState<UserProfileWidget> {
     super.initState();
     var userDataMap = _userData.toMap();
     for (var entry in userDataMap.entries) {
-      simpleInputDataWidgets.add(SimpleInputDataWidget(
-          mapKey: entry.key,
-          value: entry.value,
-          extendedItem: !(entry.key == 'username' || entry.key == 'pin')));
+      simpleInputDataWidgets.add(SimpleInputDataWidget(mapKey: entry.key, value: entry.value, extendedItem: false));
     }
   }
 
@@ -55,9 +51,7 @@ class _UserProfileWidgetState extends ConsumerState<UserProfileWidget> {
       backgroundColor: Theme.of(context).colorScheme.primary,
       appBar: AppBar(
         title: const Text('Simple Diary'),
-        leading: widget.enableReturn
-            ? const CloseButton()
-            : TextButton(onPressed: () {}, child: const Text('')),
+        leading: widget.enableReturn ? const CloseButton() : TextButton(onPressed: () {}, child: const Text('')),
       ),
       body: Center(
         child: SingleChildScrollView(
@@ -97,17 +91,7 @@ class _UserProfileWidgetState extends ConsumerState<UserProfileWidget> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                ...simpleInputDataWidgets
-                    .where(
-                      (element) => !element.extendedItem,
-                    )
-                    .map((e) => e),
-                if (_isRemoteAccount)
-                  ...simpleInputDataWidgets
-                      .where(
-                        (element) => element.extendedItem,
-                      )
-                      .map((e) => e),
+                ...simpleInputDataWidgets.map((e) => e),
                 if (widget.enableRemoteAccount) _buildRemoteAccCheckbox(),
                 _buildButtons(context),
               ],
@@ -121,10 +105,7 @@ class _UserProfileWidgetState extends ConsumerState<UserProfileWidget> {
   Widget _buildRemoteAccCheckbox() => Row(children: [
         Text(
           'Remote Account?',
-          style: Theme.of(context)
-              .textTheme
-              .titleLarge!
-              .copyWith(color: Theme.of(context).colorScheme.primary),
+          style: Theme.of(context).textTheme.titleLarge!.copyWith(color: Theme.of(context).colorScheme.primary),
         ),
         Checkbox(
           value: _isRemoteAccount,
