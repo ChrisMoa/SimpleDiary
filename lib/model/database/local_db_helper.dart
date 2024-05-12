@@ -18,12 +18,11 @@ class LocalDbHelper {
     //   LogWrapper.logger.t('${dbFile.path}-$tableName: alread exist');
     //   return;
     // }
-    settingsContainer.pathSettings.applicationDocumentsPath;
-    if(!dbFile.existsSync()){
+    settingsContainer.applicationDocumentsPath;
+    if (!dbFile.existsSync()) {
       LogWrapper.logger.t('creates database file ${dbFile.path}');
       dbFile.createSync(recursive: true);
     }
-
 
     LogWrapper.logger.t('opens ${dbFile.path}');
     database = await openDatabase(dbFile.path, version: 1, onCreate: _onCreateDatabase);
@@ -82,7 +81,9 @@ class LocalDbHelper {
     return Sqflite.firstIntValue(await database!.rawQuery('SELECT COUNT(*) FROM "$tableName"')) ?? 0;
   }
 
-  Future<void> update(LocalDbElement element, ) async {
+  Future<void> update(
+    LocalDbElement element,
+  ) async {
     assert(database != null, 'database of table "$tableName" is not opened');
     LogWrapper.logger.t('${dbFile.path}: update note');
     final row = element.toLocalDbMap(element);
@@ -91,15 +92,19 @@ class LocalDbHelper {
 
   // Deletes the row specified by the id. The number of affected rows is
   // returned. This should be 1 as long as the row exists.
-  Future<void> delete(LocalDbElement element, ) async {
+  Future<void> delete(
+    LocalDbElement element,
+  ) async {
     assert(database != null, 'database of table "$tableName" is not opened');
     LogWrapper.logger.t('${dbFile.path}: delete note');
     await database!.delete(tableName, where: '$primaryKey = ?', whereArgs: [element.getId()]);
   }
 
-  Future<bool> checkIfElementExists(LocalDbElement element, ) async {
+  Future<bool> checkIfElementExists(
+    LocalDbElement element,
+  ) async {
     assert(database != null, 'database of table "$tableName" is not opened');
-    
+
     final List<Map<String, dynamic>> result = await database!.query(
       tableName,
       where: '$primaryKey = ?',

@@ -75,8 +75,8 @@ class _NoteWizardPageState extends ConsumerState<NoteWizardPage> {
         ),
         gradient: LinearGradient(
           colors: [
-            Theme.of(context).colorScheme.onBackground,
-            Theme.of(context).colorScheme.background,
+            Theme.of(context).colorScheme.secondaryContainer,
+            Theme.of(context).colorScheme.secondaryContainer.withOpacity(0.5),
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -102,8 +102,8 @@ class _NoteWizardPageState extends ConsumerState<NoteWizardPage> {
         ),
         gradient: LinearGradient(
           colors: [
-            Theme.of(context).colorScheme.onBackground,
-            Theme.of(context).colorScheme.background,
+            Theme.of(context).colorScheme.secondaryContainer,
+            Theme.of(context).colorScheme.secondaryContainer.withOpacity(0.5),
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -118,8 +118,8 @@ class _NoteWizardPageState extends ConsumerState<NoteWizardPage> {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            Theme.of(context).colorScheme.onBackground,
-            Theme.of(context).colorScheme.background,
+            Theme.of(context).colorScheme.secondaryContainer,
+            Theme.of(context).colorScheme.secondaryContainer.withOpacity(0.5),
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -148,8 +148,8 @@ class _NoteWizardPageState extends ConsumerState<NoteWizardPage> {
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            Theme.of(context).colorScheme.onBackground,
-            Theme.of(context).colorScheme.background,
+            Theme.of(context).colorScheme.secondaryContainer,
+            Theme.of(context).colorScheme.secondaryContainer.withOpacity(0.5),
           ],
           begin: Alignment.topRight,
           end: Alignment.bottomLeft,

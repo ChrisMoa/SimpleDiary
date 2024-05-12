@@ -3,8 +3,7 @@ import 'package:SimpleDiary/utils.dart';
 import 'package:flutter/material.dart';
 
 class NotesOverviewListItem extends StatelessWidget {
-  const NotesOverviewListItem(
-      {super.key, required this.note, required this.onSelectNote});
+  const NotesOverviewListItem({super.key, required this.note, required this.onSelectNote});
 
   final Note note;
   final void Function(Note note) onSelectNote;
@@ -12,8 +11,8 @@ class NotesOverviewListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      color: Theme.of(context).colorScheme.onBackground,
       margin: const EdgeInsets.all(8),
+      color: Theme.of(context).colorScheme.secondaryContainer,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(8),
       ),
@@ -34,7 +33,7 @@ class NotesOverviewListItem extends StatelessWidget {
                   Text(
                     '${note.from.day}',
                     style: Theme.of(context).textTheme.headlineSmall!.copyWith(
-                          color: Theme.of(context).colorScheme.inversePrimary,
+                          color: Theme.of(context).colorScheme.primary,
                           fontWeight: FontWeight.bold,
                           decoration: TextDecoration.underline,
                           decorationThickness: 2.0,
@@ -44,7 +43,7 @@ class NotesOverviewListItem extends StatelessWidget {
                   Text(
                     Utils.printMonth(note.from),
                     style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                          color: Theme.of(context).colorScheme.inversePrimary,
+                          color: Theme.of(context).colorScheme.primary,
                           fontWeight: FontWeight.bold,
                         ),
                   ),
@@ -63,16 +62,14 @@ class NotesOverviewListItem extends StatelessWidget {
                   Text(
                     note.title,
                     style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                          color: Theme.of(context).colorScheme.primary,
+                          color: Theme.of(context).colorScheme.secondary,
                           fontWeight: FontWeight.bold,
                         ),
                   ),
                 ],
               ),
               Text(
-                note.description.isNotEmpty
-                    ? note.description
-                    : 'no description',
+                note.description.isNotEmpty ? note.description : 'no description',
                 style: Theme.of(context).textTheme.labelMedium!.copyWith(
                       color: Theme.of(context).colorScheme.secondary,
                       fontWeight: FontWeight.bold,

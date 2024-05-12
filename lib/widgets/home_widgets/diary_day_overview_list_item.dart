@@ -6,22 +6,20 @@ import 'package:SimpleDiary/widgets/home_widgets/diary_day_overview_rating_list_
 import 'package:flutter/material.dart';
 
 class DiaryDayOverviewListItem extends StatefulWidget {
-  const DiaryDayOverviewListItem(
-      {super.key, required this.diaryDay, required this.onSelectDiaryDay});
+  const DiaryDayOverviewListItem({super.key, required this.diaryDay, required this.onSelectDiaryDay});
 
   final DiaryDay diaryDay;
   final void Function(DiaryDay diaryDay) onSelectDiaryDay;
 
   @override
-  State<DiaryDayOverviewListItem> createState() =>
-      _DiaryDayOverviewListItemState();
+  State<DiaryDayOverviewListItem> createState() => _DiaryDayOverviewListItemState();
 }
 
 class _DiaryDayOverviewListItemState extends State<DiaryDayOverviewListItem> {
   @override
   Widget build(BuildContext context) {
     return Card(
-      color: Theme.of(context).colorScheme.onBackground,
+      color: Theme.of(context).colorScheme.primaryContainer,
       margin: const EdgeInsets.all(8),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(8),
@@ -41,7 +39,7 @@ class _DiaryDayOverviewListItemState extends State<DiaryDayOverviewListItem> {
                   Text(
                     '${widget.diaryDay.day.day}',
                     style: Theme.of(context).textTheme.headlineSmall!.copyWith(
-                          color: Theme.of(context).colorScheme.inversePrimary,
+                          color: Theme.of(context).colorScheme.primary,
                           fontWeight: FontWeight.bold,
                           decoration: TextDecoration.underline,
                           decorationThickness: 2.0,
@@ -51,7 +49,7 @@ class _DiaryDayOverviewListItemState extends State<DiaryDayOverviewListItem> {
                   Text(
                     Utils.printMonth(widget.diaryDay.day),
                     style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                          color: Theme.of(context).colorScheme.inversePrimary,
+                          color: Theme.of(context).colorScheme.primary,
                           fontWeight: FontWeight.bold,
                         ),
                   ),
@@ -71,7 +69,7 @@ class _DiaryDayOverviewListItemState extends State<DiaryDayOverviewListItem> {
                   Text(
                     widget.diaryDay.overallScore.toString(),
                     style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                          color: Theme.of(context).colorScheme.primary,
+                          color: Theme.of(context).colorScheme.secondary,
                           fontWeight: FontWeight.bold,
                         ),
                   ),
@@ -82,14 +80,10 @@ class _DiaryDayOverviewListItemState extends State<DiaryDayOverviewListItem> {
               height: 30,
               child: Row(
                 children: [
-                  DiaryDayOverviewRatingListItem(
-                      diaryDayRating: widget.diaryDay.ratings[0]),
-                  DiaryDayOverviewRatingListItem(
-                      diaryDayRating: widget.diaryDay.ratings[1]),
-                  DiaryDayOverviewRatingListItem(
-                      diaryDayRating: widget.diaryDay.ratings[2]),
-                  DiaryDayOverviewRatingListItem(
-                      diaryDayRating: widget.diaryDay.ratings[3]),
+                  DiaryDayOverviewRatingListItem(diaryDayRating: widget.diaryDay.ratings[0]),
+                  DiaryDayOverviewRatingListItem(diaryDayRating: widget.diaryDay.ratings[1]),
+                  DiaryDayOverviewRatingListItem(diaryDayRating: widget.diaryDay.ratings[2]),
+                  DiaryDayOverviewRatingListItem(diaryDayRating: widget.diaryDay.ratings[3]),
                 ],
               ),
             ),

@@ -8,8 +8,7 @@ class NotesOverViewPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       color: Theme.of(context).colorScheme.background,
-      width: double.infinity,
-      height: double.infinity,
+      padding: const EdgeInsetsDirectional.symmetric(vertical: 5, horizontal: 0),
       child: Column(
         children: [
           _buildNotesOverviewList(),
