@@ -47,6 +47,7 @@ class UserDataProvider extends StateNotifier<UserData> {
       return false;
     }
     var decryptor = AesEncryptor(password: pin);
+    stateUserData.email = savedUserData.email;
     stateUserData.password = decryptor.decryptStringFromBase64(savedUserData.password);
     stateUserData.isLoggedIn = true;
     stateUserData.userId = savedUserData.userId;
