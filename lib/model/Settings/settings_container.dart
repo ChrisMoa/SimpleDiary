@@ -15,9 +15,17 @@ class SettingsContainer {
   bool debugMode = kDebugMode;
   final String projectName = dotenv.env['PROJECT_NAME'] ?? 'SimpleDiary';
   String applicationDocumentsPath = '';
+  String applicationExternalDocumentsPath = '';
 
   Future<void> readSettings() async {
     applicationDocumentsPath = await _readAppDocumentsPath();
+
+    // create the external documents storage
+    applicationExternalDocumentsPath = await _readAppExternalDocumentsPath();
+    var applicationExternalDocumentsDir = Directory(applicationExternalDocumentsPath);
+    if (!applicationExternalDocumentsDir.existsSync()) {
+      applicationExternalDocumentsDir.createSync(recursive: true);
+    }
 
     // read base settings
     File settingsFile = File('$applicationDocumentsPath/settings.json');
@@ -78,14 +86,19 @@ class SettingsContainer {
   //* private methods --------------------------------------------------------------------------------------------------------------------------------------
 
   Future<String> _readAppDocumentsPath() async {
+    var addAppPath = dotenv.env['PROJECT_NAME'] ?? 'SimpleDiary';
+    return '${(await getApplicationDocumentsDirectory()).path}/$addAppPath';
+  }
+
+  Future<String> _readAppExternalDocumentsPath() async {
+    var addAppPath = dotenv.env['PROJECT_NAME'] ?? 'SimpleDiary';
     switch (activePlatform.platform) {
       case ActivePlatform.ios:
       case ActivePlatform.android:
-        return '/storage/emulated/0/${dotenv.env['PROJECT_NAME'] ?? 'SimpleDiary'}';
+        return '/storage/emulated/0/$addAppPath';
       case ActivePlatform.linux:
       case ActivePlatform.windows:
-        var addAppPath = dotenv.env['PROJECT_NAME'] ?? 'SimpleDiary';
-        return '${(await getApplicationDocumentsDirectory()).path}/$addAppPath';
+        return await _readAppDocumentsPath();
       default:
         throw Exception('platform not supported');
     }

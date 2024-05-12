@@ -10,11 +10,15 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logger/logger.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 //* main() -------------------------------------------------------------------------------------------------------------------------------------
 
 void main() async {
   await dotenv.load(fileName: ".env");
+  if (activePlatform.platform == ActivePlatform.android) {
+    await Permission.manageExternalStorage.request();
+  }
   await settingsContainer.readSettings();
   if (activePlatform.platform == ActivePlatform.windows || activePlatform.platform == ActivePlatform.linux) {
     //* Initialize FFI

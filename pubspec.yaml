@@ -60,6 +60,7 @@ dependencies:
   filesystem_picker: ^4.1.0
   flex_color_picker: ^3.3.1
   shared_preferences: ^2.2.2
+  permission_handler: ^11.3.1
 
 dependency_overrides:
   intl: ^0.18.1

@@ -120,7 +120,7 @@ class _SynchronizePageState extends ConsumerState<SynchronizePage> {
   void _onExportToFile() async {
     try {
       LogWrapper.logger.i('export started');
-      var rootDirectory = Directory(settingsContainer.applicationDocumentsPath);
+      var rootDirectory = Directory(settingsContainer.applicationExternalDocumentsPath);
 
       String? path = await FilesystemPicker.openDialog(
         title: 'Select or create a file in which the data should be exported',
@@ -159,7 +159,7 @@ class _SynchronizePageState extends ConsumerState<SynchronizePage> {
   void _onImportFromFile() async {
     try {
       LogWrapper.logger.i('import database');
-      var rootDirectory = Directory(settingsContainer.applicationDocumentsPath);
+      var rootDirectory = Directory(settingsContainer.applicationExternalDocumentsPath);
       String? path = await FilesystemPicker.openDialog(
         title: 'Select or create a file that should be imported',
         context: context,
