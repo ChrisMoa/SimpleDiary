@@ -14,7 +14,7 @@ class AbstractLocalDbProviderState<T extends LocalDbElement> extends StateNotifi
   bool _databaseRead = false;
   String tableName;
   final String primaryKey;
-  var _dbFile = File('${settingsContainer.pathSettings.applicationDocumentsPath.value}/empty.db');
+  var _dbFile = File('${settingsContainer.applicationDocumentsPath}/empty.db');
 
   AbstractLocalDbProviderState({required this.tableName, required this.primaryKey}) : super([]) {
     helper = createLocalDbHelper(tableName, primaryKey);
@@ -38,7 +38,7 @@ class AbstractLocalDbProviderState<T extends LocalDbElement> extends StateNotifi
       return;
     }
 
-    _dbFile = File('${settingsContainer.pathSettings.applicationDocumentsPath.value}/${userData.userId}.db');
+    _dbFile = File('${settingsContainer.applicationDocumentsPath}/${userData.userId}.db');
     if (!_dbFile.existsSync()) {
       LogWrapper.logger.t('creates dbFile ${_dbFile.path}');
       _dbFile.createSync(recursive: true);

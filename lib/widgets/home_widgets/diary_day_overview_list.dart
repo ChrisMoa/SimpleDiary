@@ -9,8 +9,7 @@ class DiaryDayOverviewList extends ConsumerStatefulWidget {
   const DiaryDayOverviewList({super.key});
 
   @override
-  ConsumerState<DiaryDayOverviewList> createState() =>
-      _DiaryDayOverviewListState();
+  ConsumerState<DiaryDayOverviewList> createState() => _DiaryDayOverviewListState();
 }
 
 class _DiaryDayOverviewListState extends ConsumerState<DiaryDayOverviewList> {
@@ -19,6 +18,8 @@ class _DiaryDayOverviewListState extends ConsumerState<DiaryDayOverviewList> {
     final notes = ref.watch(notesLocalDataProvider);
     return notes.isEmpty ? _buildEmptyList() : _buildFilledList();
   }
+
+  //* build helper -----------------------------------------------------------------------------------------------------------------------------------
 
   Widget _buildEmptyList() {
     return const Text("There is no day fully recorded...Add a complete day");
@@ -43,14 +44,14 @@ class _DiaryDayOverviewListState extends ConsumerState<DiaryDayOverviewList> {
     );
   }
 
+  //* callbacks --------------------------------------------------------------------------------------------------------------------------------------
+
   void onSelectDiaryDay(DiaryDay diaryDay) {
     //
   }
 
   void onRemoveDiaryDay(DiaryDay removedDiaryDay) {
-    ref
-        .read(diaryDayLocalDbDataProvider.notifier)
-        .deleteElement(removedDiaryDay);
+    ref.read(diaryDayLocalDbDataProvider.notifier).deleteElement(removedDiaryDay);
     ScaffoldMessenger.of(context).clearSnackBars();
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -59,9 +60,7 @@ class _DiaryDayOverviewListState extends ConsumerState<DiaryDayOverviewList> {
         action: SnackBarAction(
           label: 'Undo',
           onPressed: () {
-            ref
-                .read(diaryDayLocalDbDataProvider.notifier)
-                .addElement(removedDiaryDay);
+            ref.read(diaryDayLocalDbDataProvider.notifier).addElement(removedDiaryDay);
           },
         ),
       ),

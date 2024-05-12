@@ -28,7 +28,6 @@ class _HomePageState extends ConsumerState<HomePage> {
             _buildNotesOverviewList(context),
             const SizedBox(
               height: 20,
-              width: double.infinity,
             ),
             // const Expanded(
             //     flex: 1, child: Text("Only a placeholder for the charts")),

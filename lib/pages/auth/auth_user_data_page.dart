@@ -1,3 +1,4 @@
+import 'package:SimpleDiary/model/Settings/settings_container.dart';
 import 'package:SimpleDiary/model/user/user_data.dart';
 import 'package:SimpleDiary/provider/user/user_data_provider.dart';
 import 'package:SimpleDiary/widgets/auth/simple_input_data_widget.dart';
@@ -8,13 +9,12 @@ class AuthUserDataPage extends ConsumerStatefulWidget {
   const AuthUserDataPage({super.key});
 
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() =>
-      _AuthUserDataPageState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _AuthUserDataPageState();
 }
 
 class _AuthUserDataPageState extends ConsumerState<AuthUserDataPage> {
   final _formKey = GlobalKey<FormState>();
-  var _isLogin = true;
+  var _isLogin = settingsContainer.userSettings.isNotEmpty;
   var _isAuthenticating = false;
   var _isRemoteAccount = false;
   List<SimpleInputDataWidget> simpleInputDataWidgets = [];
@@ -108,8 +108,7 @@ class _AuthUserDataPageState extends ConsumerState<AuthUserDataPage> {
       onPressed: () {
         _onAuthClicked(_isLogin);
       },
-      style: ElevatedButton.styleFrom(
-          backgroundColor: Theme.of(context).colorScheme.primaryContainer),
+      style: ElevatedButton.styleFrom(backgroundColor: Theme.of(context).colorScheme.primaryContainer),
       child: Text(_isLogin ? 'Login' : 'Signup'),
     );
   }
@@ -124,10 +123,7 @@ class _AuthUserDataPageState extends ConsumerState<AuthUserDataPage> {
   Widget _buildRemoteAccCheckbox() => Row(children: [
         Text(
           'Remote Account?',
-          style: Theme.of(context)
-              .textTheme
-              .titleLarge!
-              .copyWith(color: Theme.of(context).colorScheme.primary),
+          style: Theme.of(context).textTheme.titleLarge!.copyWith(color: Theme.of(context).colorScheme.primary),
         ),
         Checkbox(
           value: _isRemoteAccount,
@@ -159,7 +155,7 @@ class _AuthUserDataPageState extends ConsumerState<AuthUserDataPage> {
     });
   }
 
-  void _onAuthClicked(bool login) async {
+  void _onAuthClicked(bool login) {
     final isValid = _formKey.currentState!.validate();
     if (!isValid) {
       return;
@@ -177,26 +173,22 @@ class _AuthUserDataPageState extends ConsumerState<AuthUserDataPage> {
       }
       final userData = UserData.fromMap(userDataMap);
       if (login) {
-        await ref
-            .read(userDataProvider.notifier)
-            .login(userData.username, userData.pin);
+        ref.read(userDataProvider.notifier).login(userData.username, userData.pin);
       } else {
-        await ref.read(userDataProvider.notifier).createUser(userData);
+        ref.read(userDataProvider.notifier).createUser(userData);
       }
     } on AssertionError catch (e) {
       setState(() {
         showDialog<String>(
           context: context,
-          builder: (BuildContext context) =>
-              AlertDialog(actions: const [], title: Text('${e.message}')),
+          builder: (BuildContext context) => AlertDialog(actions: const [], title: Text('${e.message}')),
         );
       });
     } catch (e) {
       setState(() {
         showDialog<String>(
           context: context,
-          builder: (BuildContext context) => AlertDialog(
-              actions: const [], title: Text('unknown exception : $e')),
+          builder: (BuildContext context) => AlertDialog(actions: const [], title: Text('unknown exception : $e')),
         );
       });
     }

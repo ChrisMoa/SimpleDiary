@@ -1,22 +1,27 @@
+import 'package:SimpleDiary/widgets/settings/theme_settings_widget.dart';
 import 'package:flutter/material.dart';
-// import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class SettingsPage extends StatelessWidget {
+class SettingsPage extends ConsumerStatefulWidget {
   const SettingsPage({super.key});
 
-  void _readSharedPreferences() async {
-    // const storage = FlutterSecureStorage();
-    // there arent currently any changeable settings
-  }
+  @override
+  ConsumerState<SettingsPage> createState() => _SettingsPageState();
+}
 
+class _SettingsPageState extends ConsumerState<SettingsPage> {
+  //* builds -----------------------------------------------------------------------------------------------------------------------------------------
   @override
   Widget build(BuildContext context) {
-    _readSharedPreferences();
     return Container(
       color: Theme.of(context).colorScheme.background,
-      child: const Center(
-        child: Text("settings screen"),
+      child: const Column(
+        children: [
+          ThemeSettingsWidget(),
+        ],
       ),
     );
   }
+
+  //* build helper -----------------------------------------------------------------------------------------------------------------------------------
 }

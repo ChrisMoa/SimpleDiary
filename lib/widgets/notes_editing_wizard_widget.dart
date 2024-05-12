@@ -4,6 +4,7 @@ import 'package:SimpleDiary/model/notes/note_category.dart';
 import 'package:SimpleDiary/provider/database%20provider/note_local_db_provider.dart';
 import 'package:SimpleDiary/provider/note_editing_page_provider.dart';
 import 'package:SimpleDiary/provider/note_selected_date_provider.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:SimpleDiary/model/notes/note.dart';
@@ -19,7 +20,7 @@ class NoteEditingWizardWidget extends ConsumerStatefulWidget {
   final void Function(Note note) onSavedNote;
 
   const NoteEditingWizardWidget({
-    Key? key,
+    super.key,
     navigateBack,
     addAdditionalSaveButton,
     editNote,
@@ -27,8 +28,7 @@ class NoteEditingWizardWidget extends ConsumerStatefulWidget {
   })  : navigateBack = navigateBack ?? true,
         addAdditionalSaveButton = addAdditionalSaveButton ?? false,
         editNote = editNote ?? false,
-        onSavedNote = onSaveNote ?? _onSaveNote,
-        super(key: key);
+        onSavedNote = onSaveNote ?? _onSaveNote;
 
   @override
   ConsumerState<ConsumerStatefulWidget> createState() => _NoteEditingwizardWidgetState();
@@ -40,10 +40,11 @@ class _NoteEditingwizardWidgetState extends ConsumerState<NoteEditingWizardWidge
   final _formKey = GlobalKey<FormState>();
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
-  String recordedAudioString = "";
+  String _oldText = '';
   final SpeechToText speechToTextInstance = SpeechToText();
   DateTime selectedDate = DateTime.now().copyWith(hour: 0, second: 0, minute: 0);
   bool _calculateNewNote = true;
+  bool _isListening = false;
 
   Note note = Note.fromEmpty();
 
@@ -251,13 +252,17 @@ class _NoteEditingwizardWidgetState extends ConsumerState<NoteEditingWizardWidge
             if (!_supportsPlatformSpeechRecognition()) {
               return;
             }
-            speechToTextInstance.isListening ? _stopListeningNow() : _startListeningNow();
+            if (speechToTextInstance.isListening) {
+              _stopListeningNow();
+            } else {
+              _startListeningNow();
+            }
           },
-          child: speechToTextInstance.isListening
+          child: _isListening
               ? Center(
                   child: LoadingAnimationWidget.beat(
                     size: 30,
-                    color: speechToTextInstance.isListening ? Colors.deepPurple : Colors.deepPurple[200]!,
+                    color: _isListening ? Colors.deepPurple : Colors.deepPurple[200]!,
                   ),
                 )
               : Image.asset(
@@ -332,6 +337,7 @@ class _NoteEditingwizardWidgetState extends ConsumerState<NoteEditingWizardWidge
   void reloadForm() {
     setState(() {
       _calculateNewNote = true;
+      _descriptionController.text = "";
     });
   }
 
@@ -348,38 +354,53 @@ class _NoteEditingwizardWidgetState extends ConsumerState<NoteEditingWizardWidge
     }
   }
 
-  void _startListeningNow() async {
+  Future<void> _startListeningNow() async {
+    if (kDebugMode) {
+      print('start listening');
+    }
     if (_supportsPlatformSpeechRecognition()) {
       FocusScope.of(context).unfocus();
+      _oldText = _descriptionController.text;
       await speechToTextInstance.listen(
         onResult: _onSpeechToTextResult,
-        listenMode: ListenMode.dictation,
-        listenFor: const Duration(minutes: 1),
+        listenFor: const Duration(minutes: 2),
+        listenOptions: SpeechListenOptions(partialResults: false, listenMode: ListenMode.dictation),
       );
-      setState(() {});
+      setState(() {
+        _isListening = true;
+      });
     }
   }
 
-  void _stopListeningNow() async {
+  Future<void> _stopListeningNow() async {
     if (_supportsPlatformSpeechRecognition()) {
       await speechToTextInstance.stop();
-      setState(() {});
+      setState(() {
+        _descriptionController.text = _descriptionController.text.replaceAll(RegExp(r'Notiz Ende'), '');
+        _isListening = false;
+      });
     }
   }
 
-  void _onSpeechToTextResult(SpeechRecognitionResult recognitionResult) {
+  Future<void> _onSpeechToTextResult(SpeechRecognitionResult recognitionResult) async {
     var text = recognitionResult.recognizedWords;
+    if (_oldText.isNotEmpty) {
+      text = "$_oldText $text";
+    }
     text.replaceAll(RegExp('%unkt'), '. ');
     text.replaceAll(RegExp('%omma'), ', ');
-    if (text.contains(RegExp('Notiz Ende'))) {
-      text.replaceAll(RegExp('Notiz Ende'), '');
-      _stopListeningNow();
-    }
     setState(() {
+      if (text.contains('Notiz Ende')) {
+        _stopListeningNow();
+      }
       _descriptionController.text = text;
       note.description = text;
       _calculateNewNote = false;
     });
+    if (speechToTextInstance.isNotListening) {
+      print("restart listening");
+      _startListeningNow();
+    }
   }
 
   void calculateNextFreeNoteOfDay() {
