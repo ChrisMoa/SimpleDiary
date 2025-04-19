@@ -248,6 +248,8 @@ class _MainPageState extends ConsumerState<MainPage> {
               .read(notesLocalDataProvider.notifier)
               .changeDbFileToUser(newUserData);
           File file = ref.read(notesLocalDataProvider.notifier).dbFile;
+          // create backup file before decrypting
+          await file.copy('${file.path}.bak');
 
           if (file.existsSync() && file.lengthSync() > 0) {
             LogWrapper.logger
