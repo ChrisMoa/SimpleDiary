@@ -1,5 +1,8 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:io';
 
+import 'package:day_tracker/core/authentication/password_auth_service.dart';
 import 'package:day_tracker/core/encryption/aes_encryptor.dart';
 import 'package:day_tracker/core/log/logger_instance.dart';
 import 'package:day_tracker/core/settings/settings_container.dart';
@@ -72,9 +75,9 @@ class _ListItem extends StatelessWidget {
                     fontWeight: FontWeight.bold),
               ),
               style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.resolveWith<Color>(
-                  (Set<MaterialState> states) {
-                    if (states.contains(MaterialState.pressed)) {
+                backgroundColor: WidgetStateProperty.resolveWith<Color>(
+                  (Set<WidgetState> states) {
+                    if (states.contains(WidgetState.pressed)) {
                       return Theme.of(context)
                           .colorScheme
                           .tertiaryContainer
@@ -102,7 +105,7 @@ class _SynchronizePageState extends ConsumerState<SynchronizePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.background,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: Column(
         children: [
           Container(
@@ -162,11 +165,19 @@ class _SynchronizePageState extends ConsumerState<SynchronizePage> {
       try {
         File file = File(path);
         var userData = ref.read(userDataProvider);
-        var encryptor = AesEncryptor(password: userData.password);
-        await ref
-            .read(fileDbStateProvider.notifier)
-            .export(ref.read(diaryDayFullDataProvider), file);
-        encryptor.encryptFile(file);
+        if (userData.clearPassword.isNotEmpty) {
+          String encryptionKey = PasswordAuthService.getDatabaseEncryptionKey(
+              userData.clearPassword, userData.salt);
+          var encryptor = AesEncryptor(encryptionKey: encryptionKey);
+          await ref
+              .read(fileDbStateProvider.notifier)
+              .export(ref.read(diaryDayFullDataProvider), file);
+          encryptor.encryptFile(file);
+        } else {
+          LogWrapper.logger
+              .e('Cannot encrypt file: no valid password available');
+          _onError(context, 'Authentication error: Please log in again');
+        }
       } catch (e) {
         LogWrapper.logger.e('Error exporting "$path": "$e"');
       }
@@ -174,7 +185,6 @@ class _SynchronizePageState extends ConsumerState<SynchronizePage> {
       _onImportExportSuccessfully();
     } catch (e) {
       LogWrapper.logger.e('Error during exporting: ${e.toString()}');
-      // ignore: use_build_context_synchronously
       _onError(context, 'Error during exporting');
     }
   }
@@ -200,10 +210,16 @@ class _SynchronizePageState extends ConsumerState<SynchronizePage> {
         File file = File(path);
         LogWrapper.logger.i('import from file ${file.path}');
         var userData = ref.read(userDataProvider);
-        var decryptor = AesEncryptor(password: userData.password);
-        decryptor.decryptFile(file);
-        await ref.read(fileDbStateProvider.notifier).import(File(path));
-        decryptor.encryptFile(file);
+        if (userData.clearPassword.isNotEmpty) {
+          String encryptionKey = PasswordAuthService.getDatabaseEncryptionKey(
+              userData.clearPassword, userData.salt);
+          var decryptor = AesEncryptor(encryptionKey: encryptionKey);
+          decryptor.decryptFile(file);
+        } else {
+          LogWrapper.logger
+              .e('Cannot decrypt file: no valid password available');
+          _onError(context, 'Authentication error: Please log in again');
+        }
 
         //* read data
         //* add diaryDay to local dbs
@@ -222,7 +238,6 @@ class _SynchronizePageState extends ConsumerState<SynchronizePage> {
       }
     } catch (e) {
       LogWrapper.logger.t('Error during importing: ${e.toString()}');
-      // ignore: use_build_context_synchronously
       _onError(context, 'Error during importing');
     }
   }
