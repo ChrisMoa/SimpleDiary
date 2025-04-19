@@ -17,6 +17,9 @@ jobs:
         with:
           flutter-version: '3.29.3'
           channel: 'stable'
+      - uses : SpicyPizza/create-envfile@v2.0
+        with:
+          envkey_PROJECT_NAME: ${{ secrets.PROJECT_NAME }}
       - name: Ensure platform directories exist
         run: flutter create --platforms=windows --org com.example . || true
       - run: flutter clean || true
@@ -37,6 +40,9 @@ jobs:
         with:
           flutter-version: '3.29.3'
           channel: 'stable'
+      - uses : SpicyPizza/create-envfile@v2.0
+        with:
+          envkey_PROJECT_NAME: ${{ secrets.PROJECT_NAME }}
       - name: Install dependencies
         run: |
           sudo apt-get update
@@ -65,6 +71,9 @@ jobs:
         with:
           flutter-version: '3.29.3'
           channel: 'stable'
+      - uses : SpicyPizza/create-envfile@v2.0
+        with:
+          envkey_PROJECT_NAME: ${{ secrets.PROJECT_NAME }}
       - name: Ensure platform directories exist
         run: flutter create --platforms=android --org com.example . || true
       - run: flutter clean || true
