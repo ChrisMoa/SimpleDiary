@@ -1,4 +1,4 @@
-# SimpleDiary
+# day_tracker
 
 Just a simple diary app which is used for my further projects
 

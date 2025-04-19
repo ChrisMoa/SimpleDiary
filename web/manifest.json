@@ -1,6 +1,6 @@
 {
-  "name": "SimpleDiary",
-  "short_name": "SimpleDiary",
+  "name": "day_tracker",
+  "short_name": "day_tracker",
   "start_url": ".",
   "display": "standalone",
   "background_color": "#0175C2",
