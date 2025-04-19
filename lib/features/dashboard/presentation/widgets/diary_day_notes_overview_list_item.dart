@@ -1,5 +1,6 @@
 import 'package:day_tracker/features/notes/data/models/note.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class DiaryDayNotesOverviewListItem extends StatelessWidget {
   const DiaryDayNotesOverviewListItem(
@@ -10,54 +11,62 @@ class DiaryDayNotesOverviewListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      title: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 4),
+      child: Row(
         children: [
-          Row(
-            children: [
-              Container(
-                width: 16,
-                height: 16,
-                color: note.noteCategory.color,
-              ),
-              const SizedBox(
-                width: 5,
-              ),
-              Text(
-                note.title,
-                style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                      color: Theme.of(context).colorScheme.primary,
-                      fontWeight: FontWeight.bold,
-                    ),
-              ),
-            ],
+          Container(
+            width: 12,
+            height: 12,
+            decoration: BoxDecoration(
+              color: note.noteCategory.color,
+              shape: BoxShape.circle,
+            ),
           ),
-          Text(
-            note.description.isNotEmpty ? note.description : 'no description',
-            style: Theme.of(context).textTheme.labelMedium!.copyWith(
-                  color: Theme.of(context).colorScheme.secondary,
-                  fontWeight: FontWeight.bold,
+          const SizedBox(width: 8),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  note.title,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
                 ),
-            overflow: TextOverflow.ellipsis,
-            maxLines: 1,
+                if (note.description.isNotEmpty)
+                  Text(
+                    note.description,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: Theme.of(context).colorScheme.secondary,
+                        ),
+                  ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 8),
+          Text(
+            _getTimeRangeText(note),
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: Theme.of(context).colorScheme.secondary,
+                ),
           ),
         ],
       ),
     );
   }
+
+  String _getTimeRangeText(Note note) {
+    if (note.isAllDay) {
+      return 'All day';
+    }
+
+    final timeFormat = DateFormat('HH:mm');
+    return '${timeFormat.format(note.from)} - ${timeFormat.format(note.to)}';
+  }
 }
-
-// child: ListTile(
-//             title: Text(
-//               note.title,
-//               style: Theme.of(context)
-//                   .textTheme
-//                   .titleLarge!
-//                   .copyWith(color: Theme.of(context).colorScheme.primary),
-//             ),
-//             leading: const Icon(Icons.note),
-//             trailing: Text(note.description),
-            
-//           ),
-
