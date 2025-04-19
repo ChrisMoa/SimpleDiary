@@ -61,6 +61,7 @@ dependencies:
   flex_color_picker: ^3.3.1
   shared_preferences: ^2.2.2
   permission_handler: ^12.0.0+1
+  package_info_plus: ^8.3.0
 
 dependency_overrides:
   intl: ^0.18.1
@@ -100,6 +101,7 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/images/chat.png
+    - assets/
     - assets/images/assistant_icon.png
     - assets/images/User-icon-256-blue.png
     - .env
