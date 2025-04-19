@@ -1,3 +1,4 @@
+// lib/features/synchronization/presentation/pages/synchronize_page.dart
 // ignore_for_file: use_build_context_synchronously
 
 import 'dart:io';
@@ -10,7 +11,6 @@ import 'package:day_tracker/features/authentication/domain/providers/user_data_p
 import 'package:day_tracker/features/day_rating/domain/providers/diary_day_local_db_provider.dart';
 import 'package:day_tracker/features/notes/domain/providers/note_local_db_provider.dart';
 import 'package:day_tracker/features/synchronization/domain/providers/file_db_provider.dart';
-import 'package:day_tracker/features/synchronization/presentation/widgets/filesystempicker_new_file_context_action.dart';
 import 'package:filesystem_picker/filesystem_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -22,22 +22,55 @@ class SynchronizePage extends ConsumerStatefulWidget {
   ConsumerState<SynchronizePage> createState() => _SynchronizePageState();
 }
 
-class _ListItem extends StatelessWidget {
-  final VoidCallback onPressed;
-  final Icon icon;
-  final String buttonText;
-  final String headerText;
-  final String subText;
+class _SynchronizePageState extends ConsumerState<SynchronizePage> {
+  //* parameters -------------------------------------------------------------------------------------------------------------------------------------
 
-  const _ListItem(
-      {required this.onPressed,
-      required this.icon,
-      required this.buttonText,
-      required this.headerText,
-      required this.subText});
+  //* builds -----------------------------------------------------------------------------------------------------------------------------------------
 
   @override
   Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Theme.of(context).colorScheme.surface,
+      body: Column(
+        children: [
+          Container(
+            padding: const EdgeInsetsDirectional.symmetric(
+                vertical: 5, horizontal: 10),
+            child: _buildListItem(
+              context,
+              icon: const Icon(Icons.cloud_upload),
+              onPressed: () => _onExportToFile(context),
+              buttonText: 'Export',
+              headerText: 'Export to .json',
+              subText:
+                  'Notes within the period will be exported to a .json file',
+            ),
+          ),
+          Container(
+            padding: const EdgeInsetsDirectional.symmetric(
+                vertical: 10, horizontal: 10),
+            child: _buildListItem(
+              context,
+              icon: const Icon(Icons.cloud_download),
+              onPressed: () => _onImportFromFile(context),
+              buttonText: 'Import',
+              headerText: 'Import .json',
+              subText: 'Files will be imported from a .json file',
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildListItem(
+    BuildContext context, {
+    required VoidCallback onPressed,
+    required Icon icon,
+    required String buttonText,
+    required String headerText,
+    required String subText,
+  }) {
     return Container(
       padding: const EdgeInsets.all(15),
       color: Theme.of(context).colorScheme.secondaryContainer,
@@ -48,17 +81,15 @@ class _ListItem extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
+                headerText,
                 style: Theme.of(context).textTheme.titleLarge!.copyWith(
                     color: Theme.of(context).colorScheme.onSecondaryContainer,
                     fontWeight: FontWeight.bold),
-                headerText,
               ),
               Text(
                 subText,
                 style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                      color: Theme.of(context)
-                          .colorScheme
-                          .onSecondaryContainer, // Change font color based on theme
+                      color: Theme.of(context).colorScheme.onSecondaryContainer,
                     ),
               ),
             ],
@@ -81,11 +112,9 @@ class _ListItem extends StatelessWidget {
                       return Theme.of(context)
                           .colorScheme
                           .tertiaryContainer
-                          .withOpacity(0.6); // Change color when pressed
+                          .withOpacity(0.6);
                     }
-                    return Theme.of(context)
-                        .colorScheme
-                        .tertiaryContainer; // Default color
+                    return Theme.of(context).colorScheme.tertiaryContainer;
                   },
                 ),
               ),
@@ -95,161 +124,166 @@ class _ListItem extends StatelessWidget {
       ),
     );
   }
-}
 
-class _SynchronizePageState extends ConsumerState<SynchronizePage> {
-  //* parameters -------------------------------------------------------------------------------------------------------------------------------------
-
-  //* builds -----------------------------------------------------------------------------------------------------------------------------------------
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surface,
-      body: Column(
-        children: [
-          Container(
-            padding: const EdgeInsetsDirectional.symmetric(
-                vertical: 5, horizontal: 10),
-            child: _ListItem(
-              icon: const Icon(Icons.cloud_upload),
-              onPressed: _onExportToFile,
-              buttonText: 'Export',
-              headerText: 'Exportieren nach .json',
-              subText:
-                  'Notizen in dem Zeitraum werden zu einer .json Datei exportiert',
-            ),
-          ),
-          Container(
-            padding: const EdgeInsetsDirectional.symmetric(
-                vertical: 10, horizontal: 10),
-            child: _ListItem(
-              icon: const Icon(Icons.cloud_upload),
-              onPressed: _onImportFromFile,
-              buttonText: 'Import',
-              headerText: 'Importieren .json',
-              subText: 'Dateien werden von einer .json Datei importiert',
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  //* build helper -----------------------------------------------------------------------------------------------------------------------------------
-
-  //* callbacks --------------------------------------------------------------------------------------------------------------------------------------
-
-  void _onExportToFile() async {
+  Future<void> _onExportToFile(BuildContext context) async {
     try {
-      LogWrapper.logger.i('export started');
+      LogWrapper.logger.i('Export started');
       var rootDirectory =
           Directory(settingsContainer.applicationExternalDocumentsPath);
 
-      String? path = await FilesystemPicker.openDialog(
-        title: 'Select or create a file in which the data should be exported',
-        context: context,
-        fsType: FilesystemType.file,
-        allowedExtensions: ['.json'],
-        showGoUp: true,
-        rootDirectory: rootDirectory,
-        fileTileSelectMode: FileTileSelectMode.wholeTile,
-        contextActions: [
-          FilesystemPickerNewFolderContextAction(),
-          FilesystemPickerNewFileContextAction(),
-        ],
+      // Show dialog to enter filename first
+      final fileName = await _promptForFileName(
+        context,
+        'Export Data',
+        'data_export.json',
       );
-      if (path == null) {
-        return;
-      }
-      try {
-        File file = File(path);
-        var userData = ref.read(userDataProvider);
-        if (userData.clearPassword.isNotEmpty) {
-          String encryptionKey = PasswordAuthService.getDatabaseEncryptionKey(
-              userData.clearPassword, userData.salt);
-          var encryptor = AesEncryptor(encryptionKey: encryptionKey);
+      if (fileName == null) return;
+
+      // Pick directory
+      String? dirPath = await FilesystemPicker.open(
+        title: 'Select directory to save export file',
+        context: context,
+        fsType: FilesystemType.folder,
+        rootDirectory: rootDirectory,
+        pickText: 'Save file here',
+        folderIconColor: Theme.of(context).colorScheme.primary,
+      );
+
+      if (dirPath != null) {
+        final fullPath = '$dirPath/$fileName';
+
+        // Prompt for encryption password, default to user's password
+        final userData = ref.read(userDataProvider);
+        final defaultPassword = userData.clearPassword;
+
+        final password = await _promptForPassword(
+          context,
+          'Encrypt Export',
+          defaultValue: defaultPassword,
+        );
+
+        try {
+          File file = File(fullPath);
           await ref
               .read(fileDbStateProvider.notifier)
               .export(ref.read(diaryDayFullDataProvider), file);
-          encryptor.encryptFile(file);
-        } else {
-          LogWrapper.logger
-              .e('Cannot encrypt file: no valid password available');
-          _onError(context, 'Authentication error: Please log in again');
+
+          if (password != null && password.isNotEmpty) {
+            // Use password for encryption
+            String encryptionKey = PasswordAuthService.getDatabaseEncryptionKey(
+                password, userData.salt);
+            var encryptor = AesEncryptor(encryptionKey: encryptionKey);
+            encryptor.encryptFile(file);
+            LogWrapper.logger.i('File encrypted with provided password');
+          } else {
+            LogWrapper.logger.i('File exported without encryption');
+          }
+
+          LogWrapper.logger.i('Export finished successfully');
+          _onImportExportSuccessfully(context);
+        } catch (e) {
+          LogWrapper.logger.e('Error exporting "$fullPath": "$e"');
+          _onError(context, 'Error during export: $e');
         }
-      } catch (e) {
-        LogWrapper.logger.e('Error exporting "$path": "$e"');
       }
-      LogWrapper.logger.i('export finished');
-      _onImportExportSuccessfully();
     } catch (e) {
       LogWrapper.logger.e('Error during exporting: ${e.toString()}');
       _onError(context, 'Error during exporting');
     }
   }
 
-  void _onImportFromFile() async {
+  Future<void> _onImportFromFile(BuildContext context) async {
     try {
-      LogWrapper.logger.i('import database');
+      LogWrapper.logger.i('Import database started');
       var rootDirectory =
           Directory(settingsContainer.applicationExternalDocumentsPath);
-      String? path = await FilesystemPicker.openDialog(
-        title: 'Select or create a file that should be imported',
+
+      // Use open instead of openDialog to properly select files
+      String? path = await FilesystemPicker.open(
+        title: 'Select file to import',
         context: context,
         fsType: FilesystemType.file,
         allowedExtensions: ['.json'],
         rootDirectory: rootDirectory,
+        pickText: 'Select this file',
         fileTileSelectMode: FileTileSelectMode.wholeTile,
-        contextActions: [],
+        requestPermission: () async => true,
       );
-      if (path == null) {
-        return;
-      }
-      try {
-        File file = File(path);
-        LogWrapper.logger.i('import from file ${file.path}');
-        var userData = ref.read(userDataProvider);
-        if (userData.clearPassword.isNotEmpty) {
-          String encryptionKey = PasswordAuthService.getDatabaseEncryptionKey(
-              userData.clearPassword, userData.salt);
-          var decryptor = AesEncryptor(encryptionKey: encryptionKey);
-          decryptor.decryptFile(file);
-        } else {
-          LogWrapper.logger
-              .e('Cannot decrypt file: no valid password available');
-          _onError(context, 'Authentication error: Please log in again');
-        }
 
-        //* read data
-        //* add diaryDay to local dbs
-        for (var diaryDay in ref.read(fileDbStateProvider)) {
-          await ref
-              .read(diaryDayLocalDbDataProvider.notifier)
-              .addElement(diaryDay);
-          for (var note in diaryDay.notes) {
-            await ref.read(notesLocalDataProvider.notifier).addElement(note);
+      if (path != null) {
+        try {
+          File file = File(path);
+          LogWrapper.logger.i('Import from file ${file.path}');
+
+          // Prompt for decryption password
+          final userData = ref.read(userDataProvider);
+          final defaultPassword = userData.clearPassword;
+
+          final password = await _promptForPassword(
+            context,
+            'Decrypt Import',
+            defaultValue: defaultPassword,
+          );
+
+          if (password != null && password.isNotEmpty) {
+            // Use password for decryption
+            String encryptionKey = PasswordAuthService.getDatabaseEncryptionKey(
+                password, userData.salt);
+            var decryptor = AesEncryptor(encryptionKey: encryptionKey);
+
+            try {
+              decryptor.decryptFile(file);
+              LogWrapper.logger.i('File decrypted with provided password');
+            } catch (e) {
+              LogWrapper.logger.e('Error decrypting file: $e');
+              _onError(context, 'Error decrypting file. Wrong password?');
+              return;
+            }
           }
+
+          await ref.read(fileDbStateProvider.notifier).import(File(path));
+
+          // Re-encrypt the file if needed
+          if (password != null && password.isNotEmpty) {
+            String encryptionKey = PasswordAuthService.getDatabaseEncryptionKey(
+                password, userData.salt);
+            var encryptor = AesEncryptor(encryptionKey: encryptionKey);
+            encryptor.encryptFile(file);
+          }
+
+          // Add diary entries to local DB
+          for (var diaryDay in ref.read(fileDbStateProvider)) {
+            await ref
+                .read(diaryDayLocalDbDataProvider.notifier)
+                .addElement(diaryDay);
+            for (var note in diaryDay.notes) {
+              await ref.read(notesLocalDataProvider.notifier).addElement(note);
+            }
+          }
+
+          LogWrapper.logger.i('Import finished successfully');
+          _onImportExportSuccessfully(context);
+        } catch (e) {
+          LogWrapper.logger.e('Error importing from file "$path": "$e"');
+          _onError(context, 'Error during import: $e');
         }
-        LogWrapper.logger.i('import finished successfully');
-        _onImportExportSuccessfully();
-      } catch (e) {
-        LogWrapper.logger.i('Error importing from file "$path": "$e"');
       }
     } catch (e) {
-      LogWrapper.logger.t('Error during importing: ${e.toString()}');
+      LogWrapper.logger.e('Error during importing: ${e.toString()}');
       _onError(context, 'Error during importing');
     }
   }
 
-  void _onImportExportSuccessfully() {
+  void _onImportExportSuccessfully(BuildContext context) {
     ScaffoldMessenger.of(context).clearSnackBars();
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         duration: const Duration(seconds: 3),
-        content: const Text('Import/Export was successfully'),
+        content: const Text('Operation completed successfully'),
+        backgroundColor: Colors.green,
         action: SnackBarAction(
           label: 'OK',
+          textColor: Colors.white,
           onPressed: () {
             ScaffoldMessenger.of(context).clearSnackBars();
           },
@@ -263,17 +297,105 @@ class _SynchronizePageState extends ConsumerState<SynchronizePage> {
       ScaffoldMessenger.of(context).clearSnackBars();
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          duration: const Duration(seconds: 3),
+          duration: const Duration(seconds: 5),
           content: Text('Error: $errorMsg'),
+          backgroundColor: Colors.red,
           action: SnackBarAction(
             label: 'OK',
+            textColor: Colors.white,
             onPressed: () {
               ScaffoldMessenger.of(context).clearSnackBars();
             },
           ),
         ),
       );
-      errorMsg = '';
     }
+  }
+
+  // Helper methods for file name and password prompts
+  Future<String?> _promptForPassword(BuildContext context, String title,
+      {String? defaultValue}) async {
+    final TextEditingController controller = TextEditingController(
+      text: defaultValue ?? '',
+    );
+    final password = await showDialog<String>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(title),
+        content: TextField(
+          controller: controller,
+          obscureText: true,
+          decoration: const InputDecoration(
+            labelText: 'Password (Optional)',
+            hintText: 'Leave empty for no encryption',
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, null),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, controller.text),
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
+
+    return password != null && password.isNotEmpty ? password : null;
+  }
+
+  Future<String?> _promptForFileName(
+    BuildContext context,
+    String title,
+    String defaultName,
+  ) async {
+    final TextEditingController controller = TextEditingController(
+      text: defaultName,
+    );
+    final fileName = await showDialog<String>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(title),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: controller,
+              autofocus: true,
+              decoration: const InputDecoration(
+                labelText: 'File Name',
+                hintText: 'Enter file name with .json extension',
+              ),
+            ),
+            const SizedBox(height: 8),
+            const Text(
+              'This will create a new file or overwrite an existing file with the same name.',
+              style: TextStyle(fontSize: 12, color: Colors.grey),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, null),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () {
+              String name = controller.text.trim();
+              // Ensure the file has .json extension
+              if (!name.endsWith('.json')) {
+                name += '.json';
+              }
+              Navigator.pop(context, name);
+            },
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
+
+    return fileName;
   }
 }
