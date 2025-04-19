@@ -2,16 +2,43 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:crypto/crypto.dart';
+import 'package:day_tracker/core/log/logger_instance.dart';
 import 'package:encrypt/encrypt.dart';
 
 class AesEncryptor {
   //* constructors -----------------------------------------------------------------------------------------------------------------------------------
 
-  AesEncryptor({required this.password}) {
-    _key = Key.fromBase64(base64Encode(sha256.convert(utf8.encode(password)).bytes));
-    _encrypter = Encrypter(AES(_key, mode: _aesMode));
-    _stringDefaultIV = IV.fromBase64("13572468");
+  AesEncryptor({required this.encryptionKey}) {
+    try {
+      // Ensure the key is properly formatted for AES
+      // AES requires exactly 16, 24, or 32 bytes for 128, 192, or 256-bit encryption
+      final keyBytes = base64.decode(encryptionKey);
+      // We'll use the first 32 bytes for 256-bit AES
+      final validKeyBytes = keyBytes.length >= 32
+          ? keyBytes.sublist(0, 32)
+          : _padKey(keyBytes, 32);
+
+      _key = Key(validKeyBytes);
+      _encrypter = Encrypter(AES(_key, mode: _aesMode));
+      _stringDefaultIV = IV.fromLength(16); // Use a standard IV length
+      LogWrapper.logger.d('AES encryptor initialized successfully');
+    } catch (e) {
+      LogWrapper.logger.e('Error initializing AES encryptor: $e');
+      rethrow;
+    }
+  }
+
+  // Pad the key to the required length if needed
+  Uint8List _padKey(Uint8List key, int targetLength) {
+    if (key.length >= targetLength) return key.sublist(0, targetLength);
+
+    Uint8List paddedKey = Uint8List(targetLength);
+    paddedKey.setAll(0, key);
+    // Fill remaining bytes with a derivation of existing key bytes
+    for (int i = key.length; i < targetLength; i++) {
+      paddedKey[i] = key[i % key.length];
+    }
+    return paddedKey;
   }
 
   //* public methods ---------------------------------------------------------------------------------------------------------------------------------
@@ -41,79 +68,89 @@ class AesEncryptor {
   /// [cipherText] the cipherText that should be decrypted as byte array
   /// [return] the decrypted plainText as String
   String decryptStringFromBase64(String cipherText) {
-    return _encrypter.decrypt(Encrypted(base64.decode(cipherText)), iv: _stringDefaultIV);
+    return _encrypter.decrypt(Encrypted(base64.decode(cipherText)),
+        iv: _stringDefaultIV);
   }
 
   /// encrypts the given file
   /// [file] the file that should be encrypted
   /// [return] void
   void encryptFile(File file) {
-    // Read the file as bytes
-    Uint8List fileBytes = Uint8List.fromList(file.readAsBytesSync());
+    try {
+      LogWrapper.logger.d('Beginning file encryption');
+      // Read the file as bytes
+      Uint8List fileBytes = Uint8List.fromList(file.readAsBytesSync());
+      LogWrapper.logger.d('Read ${fileBytes.length} bytes from file');
 
-    // Generate a random IV (Initialization Vector)
-    IV iv = IV.fromLength(16);
+      // Generate a random IV (Initialization Vector)
+      IV iv = IV.fromLength(16);
+      LogWrapper.logger.d('Generated IV for encryption');
 
-    // Encrypt the file using AES in CBC mode
-    Encrypted encrypted = _encrypter.encryptBytes(fileBytes, iv: iv);
+      // Encrypt the file using AES
+      Encrypted encrypted = _encrypter.encryptBytes(fileBytes, iv: iv);
+      LogWrapper.logger.d('File content encrypted successfully');
 
-    // Save the IV and encrypted data to a new file
-    Uint8List encryptedFileBytes = Uint8List.fromList([...iv.bytes, ...encrypted.bytes]);
-    file.writeAsBytesSync(encryptedFileBytes);
+      // Save the IV and encrypted data to a new file
+      Uint8List encryptedFileBytes =
+          Uint8List.fromList([...iv.bytes, ...encrypted.bytes]);
+      file.writeAsBytesSync(encryptedFileBytes);
+      LogWrapper.logger.d('Encrypted file saved successfully');
+    } catch (e) {
+      LogWrapper.logger.e('Error during file encryption: $e');
+      rethrow;
+    }
   }
 
   /// decrypts the given file
   /// [file] the file that should be encrypted
   /// [return] void
   void decryptFile(File file) {
-    // Read the encrypted file as bytes
-    Uint8List encryptedFileBytesRead = Uint8List.fromList(file.readAsBytesSync());
+    try {
+      LogWrapper.logger.d('Beginning file decryption');
+      // Read the encrypted file as bytes
+      Uint8List encryptedFileBytesRead =
+          Uint8List.fromList(file.readAsBytesSync());
+      LogWrapper.logger
+          .d('Read ${encryptedFileBytesRead.length} bytes from encrypted file');
 
-    // Extract the IV from the encrypted file
-    IV ivRead = IV(Uint8List.fromList(encryptedFileBytesRead.sublist(0, 16).cast<int>()));
+      // Verify file has enough bytes for IV and content
+      if (encryptedFileBytesRead.length <= 16) {
+        LogWrapper.logger
+            .e('File too small to contain IV and encrypted content');
+        throw Exception('Invalid encrypted file format');
+      }
 
-    // Extract the encrypted data from the encrypted file
-    Uint8List encryptedDataRead = encryptedFileBytesRead.sublist(16);
+      // Extract the IV from the encrypted file
+      IV ivRead = IV(Uint8List.fromList(encryptedFileBytesRead.sublist(0, 16)));
+      LogWrapper.logger.d('Extracted IV from file');
 
-    // Decrypt the data
-    Uint8List decryptedBytes = Uint8List.fromList(_encrypter.decryptBytes(Encrypted(encryptedDataRead), iv: ivRead));
+      // Extract the encrypted data from the encrypted file
+      Uint8List encryptedDataRead = encryptedFileBytesRead.sublist(16);
+      LogWrapper.logger
+          .d('Extracted ${encryptedDataRead.length} bytes of encrypted data');
 
-    // Save the decrypted data to a new file
-    file.writeAsBytesSync(decryptedBytes);
-  }
+      // Decrypt the data
+      Uint8List decryptedBytes = Uint8List.fromList(
+          _encrypter.decryptBytes(Encrypted(encryptedDataRead), iv: ivRead));
+      LogWrapper.logger
+          .d('Data decrypted successfully, ${decryptedBytes.length} bytes');
 
-  /// encrypts the given folder
-  /// [folder] the directory that should be encrypted
-  /// [recursively] if true all subdirectories of the directory will be encrypted, default is true
-  /// [return] void
-  void encryptFolder(Directory folder, [bool? recursively]) {
-    var tmpRecursively = recursively ?? true;
-    for (var file in folder.listSync(recursive: tmpRecursively).whereType<File>().toList()) {
-      encryptFile(File(file.path));
-    }
-  }
-
-  /// decrypts the given folder
-  /// [folder] the directory that should be encrypted
-  /// [recursively] if true all subdirectories of the directory will be decrypted, default is true
-  /// [return] void
-  void decryptFolder(Directory folder, [bool? recursively]) {
-    var tmpRecursively = recursively ?? true;
-    for (var file in folder.listSync(recursive: tmpRecursively).whereType<File>().toList()) {
-      decryptFile(File(file.path));
+      // Save the decrypted data to the file
+      file.writeAsBytesSync(decryptedBytes);
+      LogWrapper.logger.d('Decrypted file saved successfully');
+    } catch (e) {
+      LogWrapper.logger.e('Error during file decryption: $e');
+      rethrow;
     }
   }
 
   //* public parameters ------------------------------------------------------------------------------------------------------------------------------
 
-  final String password; //! the password that is applied as aes key
-
-  //* private methods --------------------------------------------------------------------------------------------------------------------------------
+  final String encryptionKey; // The database encryption key
 
   //* private parameters -----------------------------------------------------------------------------------------------------------------------------
-  late Key _key; //! the key for aes encryption
-  late Encrypter _encrypter; //! the aes encryption module
-  final _aesMode = AESMode.ctr; //! the aes encryption mode
-  late IV _stringDefaultIV; //! the default iv for string encryption
+  late Key _key; // The key for aes encryption
+  late Encrypter _encrypter; // The aes encryption module
+  final _aesMode = AESMode.cbc; // Using CBC mode for better security
+  late IV _stringDefaultIV; // The default iv for string encryption
 }
-

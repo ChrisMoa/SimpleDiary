@@ -4,32 +4,34 @@ import 'dart:convert';
 import 'package:day_tracker/core/database/local_db_element.dart';
 import 'package:day_tracker/core/utils/utils.dart';
 
-final testUserData = UserData(
-    username: 'Test',
-    pin: '1234',
-    email: 'test@gmail.de',
-    password: '123456789',
-    userId: 'test');
-
 class UserData implements LocalDbElement {
   String username;
-  String pin;
-  String email = '';
-  String password = '';
+  String password; // Hashed password
+  String salt; // Salt for password hashing
+  String email;
   String? userId;
-  bool isLoggedIn = false;
+  bool isLoggedIn;
+  String _clearPassword; // Transient field, not stored
 
   UserData({
     username,
-    pin,
-    email,
     password,
+    salt,
+    email,
     userId,
+    isLoggedIn,
+    String? clearPassword,
   })  : username = username ?? '',
-        pin = pin ?? '',
-        email = email ?? '',
         password = password ?? '',
-        userId = userId ?? Utils.uuid.v4();
+        salt = salt ?? '',
+        email = email ?? '',
+        userId = userId ?? Utils.uuid.v4(),
+        isLoggedIn = isLoggedIn ?? false,
+        _clearPassword = clearPassword ?? '';
+
+  // Getter and setter for clearPassword
+  String get clearPassword => _clearPassword;
+  set clearPassword(String value) => _clearPassword = value;
 
   factory UserData.fromEmpty() {
     return UserData();
@@ -38,19 +40,21 @@ class UserData implements LocalDbElement {
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'username': username,
-      'pin': pin,
-      'email': email,
       'password': password,
+      'salt': salt,
+      'email': email,
       'userId': userId ?? Utils.uuid.v4(),
+      // clearPassword is not stored in the map
     };
   }
 
   factory UserData.fromMap(Map<String, dynamic> map) {
     return UserData(
       username: map['username'] as String,
-      pin: map['pin'] as String,
-      email: map['email'] as String,
       password: map['password'] as String,
+      salt: map['salt'] as String? ??
+          '', // Handle null for backward compatibility
+      email: map['email'] as String,
       userId: map['userId'] as String,
     );
   }

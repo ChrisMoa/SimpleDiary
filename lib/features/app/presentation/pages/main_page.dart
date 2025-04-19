@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:ui';
 
+import 'package:day_tracker/core/authentication/password_auth_service.dart';
 import 'package:day_tracker/core/encryption/aes_encryptor.dart';
 import 'package:day_tracker/core/log/logger_instance.dart';
 import 'package:day_tracker/core/navigation/drawer_item_builder.dart';
@@ -8,7 +9,7 @@ import 'package:day_tracker/core/settings/settings_container.dart';
 import 'package:day_tracker/features/authentication/data/models/user_data.dart';
 import 'package:day_tracker/features/authentication/domain/providers/user_data_provider.dart';
 import 'package:day_tracker/features/authentication/presentation/pages/auth_user_data_page.dart';
-import 'package:day_tracker/features/authentication/presentation/pages/pin_authentication_page.dart';
+import 'package:day_tracker/features/authentication/presentation/pages/password_authentication_page.dart';
 import 'package:day_tracker/features/authentication/presentation/pages/show_user_data_page.dart';
 import 'package:day_tracker/features/day_rating/domain/providers/diary_day_local_db_provider.dart';
 import 'package:day_tracker/features/notes/domain/providers/note_local_db_provider.dart';
@@ -76,7 +77,7 @@ class _MainPageState extends ConsumerState<MainPage> {
         } else if (userData.username.isNotEmpty && !userData.isLoggedIn) {
           // go to login/register page
           LogWrapper.logger.t('changed to PinAuthenticationPage');
-          return const PinAuthenticationPage();
+          return const PasswordAuthenticationPage();
         }
 
         if (userData.username != _userData.username) {
@@ -198,37 +199,78 @@ class _MainPageState extends ConsumerState<MainPage> {
 
   Future<void> _decryptDatabase(
       UserData oldUserData, UserData newUserData) async {
-    // encrypt old database
-    if (oldUserData.username.isNotEmpty) {
-      var aesEncryptor = AesEncryptor(password: oldUserData.password);
-      File file = ref.read(notesLocalDataProvider.notifier).dbFile;
-      LogWrapper.logger
-          .d('encrypts the database of user ${oldUserData.userId}');
+    // Encrypt old database if we have a valid user
+    if (oldUserData.username.isNotEmpty &&
+        oldUserData.clearPassword.isNotEmpty) {
       try {
-        aesEncryptor.encryptFile(
-            file); // only one database file has to be encrypted as the databases uses the same file
+        LogWrapper.logger
+            .i('Generating encryption key for user ${oldUserData.username}');
+        String encryptionKey = PasswordAuthService.getDatabaseEncryptionKey(
+            oldUserData.clearPassword, oldUserData.salt);
+
+        if (encryptionKey.isNotEmpty) {
+          var aesEncryptor = AesEncryptor(encryptionKey: encryptionKey);
+          File file = ref.read(notesLocalDataProvider.notifier).dbFile;
+
+          if (file.existsSync() && file.lengthSync() > 0) {
+            LogWrapper.logger
+                .d('Encrypting database for user ${oldUserData.userId}');
+            aesEncryptor.encryptFile(file);
+            LogWrapper.logger.d('Database encrypted successfully');
+          } else {
+            LogWrapper.logger.w(
+                'Database file empty or does not exist - skipping encryption');
+          }
+        } else {
+          LogWrapper.logger
+              .e('Empty encryption key generated for ${oldUserData.username}');
+        }
       } catch (e) {
         LogWrapper.logger.e(
-            'error during decrypting file of user ${oldUserData.userId}: $e');
+            'Error during encrypting database for user ${oldUserData.userId}: $e');
       }
+    } else {
+      LogWrapper.logger.d('No valid user credentials for encryption');
     }
 
-    // decrypt new database
-    if (newUserData.username.isNotEmpty) {
+    // Decrypt new database if we have a valid user
+    if (newUserData.username.isNotEmpty &&
+        newUserData.clearPassword.isNotEmpty) {
       try {
-        var aesEncryptor = AesEncryptor(password: newUserData.password);
-        ref
-            .read(notesLocalDataProvider.notifier)
-            .changeDbFileToUser(newUserData);
-        File file = ref.read(notesLocalDataProvider.notifier).dbFile;
         LogWrapper.logger
-            .d('decrypts the database of user ${newUserData.userId}');
-        aesEncryptor.decryptFile(
-            file); // only one database file has to be encrypted as the databases uses the same file
+            .i('Generating decryption key for user ${newUserData.username}');
+        String encryptionKey = PasswordAuthService.getDatabaseEncryptionKey(
+            newUserData.clearPassword, newUserData.salt);
+
+        if (encryptionKey.isNotEmpty) {
+          // Change database file to new user
+          ref
+              .read(notesLocalDataProvider.notifier)
+              .changeDbFileToUser(newUserData);
+          File file = ref.read(notesLocalDataProvider.notifier).dbFile;
+          // create backup file before decrypting
+          await file.copy('${file.path}.bak');
+
+          if (file.existsSync() && file.lengthSync() > 0) {
+            LogWrapper.logger
+                .d('Decrypting database for user ${newUserData.userId}');
+            var aesEncryptor = AesEncryptor(encryptionKey: encryptionKey);
+            aesEncryptor.decryptFile(file);
+            LogWrapper.logger.d('Database decrypted successfully');
+          } else {
+            LogWrapper.logger.w(
+                'Database file empty or does not exist - no decryption needed');
+          }
+        } else {
+          LogWrapper.logger
+              .e('Empty decryption key generated for ${newUserData.username}');
+        }
       } catch (e) {
         LogWrapper.logger.e(
-            'error during decrypting file of user ${newUserData.userId}: $e');
+            'Error during decrypting database for user ${newUserData.userId}: $e');
       }
+    } else {
+      LogWrapper.logger.d('No valid user credentials for decryption');
     }
   }
 
