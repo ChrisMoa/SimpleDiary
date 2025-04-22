@@ -1,8 +1,8 @@
 import 'package:day_tracker/features/dashboard/presentation/widgets/diary_day_overview_list_item.dart';
 import 'package:day_tracker/features/day_rating/data/models/diary_day.dart';
 import 'package:day_tracker/features/day_rating/domain/providers/diary_day_local_db_provider.dart';
+import 'package:day_tracker/features/day_rating/presentation/pages/diary_day_wizard_page.dart';
 import 'package:day_tracker/features/notes/domain/providers/note_local_db_provider.dart';
-import 'package:day_tracker/features/notes/presentation/pages/note_wizard_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -12,7 +12,8 @@ class DiaryDayOverviewList extends ConsumerStatefulWidget {
   const DiaryDayOverviewList({super.key});
 
   @override
-  ConsumerState<DiaryDayOverviewList> createState() => _DiaryDayOverviewListState();
+  ConsumerState<DiaryDayOverviewList> createState() =>
+      _DiaryDayOverviewListState();
 }
 
 class _DiaryDayOverviewListState extends ConsumerState<DiaryDayOverviewList> {
@@ -48,7 +49,7 @@ class _DiaryDayOverviewListState extends ConsumerState<DiaryDayOverviewList> {
             onPressed: () {
               Navigator.of(context).push(
                 MaterialPageRoute(
-                  builder: (context) => const NoteWizardPage(),
+                  builder: (context) => const DiaryDayWizardPage(),
                 ),
               );
             },
@@ -117,7 +118,9 @@ class _DiaryDayOverviewListState extends ConsumerState<DiaryDayOverviewList> {
   }
 
   void onRemoveDiaryDay(DiaryDay removedDiaryDay) {
-    ref.read(diaryDayLocalDbDataProvider.notifier).deleteElement(removedDiaryDay);
+    ref
+        .read(diaryDayLocalDbDataProvider.notifier)
+        .deleteElement(removedDiaryDay);
 
     ScaffoldMessenger.of(context).clearSnackBars();
     ScaffoldMessenger.of(context).showSnackBar(
@@ -127,7 +130,9 @@ class _DiaryDayOverviewListState extends ConsumerState<DiaryDayOverviewList> {
         action: SnackBarAction(
           label: 'Undo',
           onPressed: () {
-            ref.read(diaryDayLocalDbDataProvider.notifier).addElement(removedDiaryDay);
+            ref
+                .read(diaryDayLocalDbDataProvider.notifier)
+                .addElement(removedDiaryDay);
           },
         ),
       ),

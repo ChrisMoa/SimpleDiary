@@ -1,18 +1,27 @@
 import 'package:day_tracker/features/notes/data/models/note.dart';
+import 'package:day_tracker/core/provider/theme_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
-class DiaryDayNotesOverviewListItem extends StatelessWidget {
-  const DiaryDayNotesOverviewListItem(
-      {super.key, required this.note, required this.onSelectNote});
+class DiaryDayNotesOverviewListItem extends ConsumerWidget {
+  const DiaryDayNotesOverviewListItem({super.key, required this.note, required this.onSelectNote});
 
   final Note note;
   final void Function(Note note) onSelectNote;
 
   @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 4),
+  Widget build(BuildContext context, WidgetRef ref) {
+    final theme = ref.watch(themeProvider);
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.secondaryContainer,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: theme.colorScheme.outline.withOpacity(0.1)),
+      ),
       child: Row(
         children: [
           Container(
@@ -32,19 +41,19 @@ class DiaryDayNotesOverviewListItem extends StatelessWidget {
                   note.title,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: Theme.of(context).colorScheme.primary,
-                      ),
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: theme.colorScheme.primary,
+                  ),
                 ),
                 if (note.description.isNotEmpty)
                   Text(
                     note.description,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Theme.of(context).colorScheme.secondary,
-                        ),
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: theme.colorScheme.secondary,
+                    ),
                   ),
               ],
             ),
@@ -52,9 +61,9 @@ class DiaryDayNotesOverviewListItem extends StatelessWidget {
           const SizedBox(width: 8),
           Text(
             _getTimeRangeText(note),
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: Theme.of(context).colorScheme.secondary,
-                ),
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: theme.colorScheme.secondary,
+            ),
           ),
         ],
       ),

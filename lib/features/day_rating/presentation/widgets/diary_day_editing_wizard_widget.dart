@@ -1,10 +1,8 @@
-import 'package:day_tracker/core/log/logger_instance.dart';
-import 'package:day_tracker/core/utils/utils.dart';
-import 'package:day_tracker/features/day_rating/data/models/day_rating.dart';
-import 'package:day_tracker/features/day_rating/data/models/diary_day.dart';
-import 'package:day_tracker/features/day_rating/data/models/diary_day_rating_item.dart';
-import 'package:day_tracker/features/day_rating/domain/providers/diary_day_local_db_provider.dart';
-import 'package:day_tracker/features/notes/domain/providers/note_selected_date_provider.dart';
+import 'package:day_tracker/core/provider/theme_provider.dart';
+import 'package:day_tracker/features/day_rating/presentation/widgets/date_selector_widget.dart';
+import 'package:day_tracker/features/day_rating/presentation/widgets/day_rating_widget.dart';
+import 'package:day_tracker/features/day_rating/presentation/widgets/note_detail_widget.dart';
+import 'package:day_tracker/features/day_rating/presentation/widgets/notes_calendar_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -14,105 +12,62 @@ class DiaryDayEditingWizardWidget extends ConsumerStatefulWidget {
   final bool editNote;
 
   const DiaryDayEditingWizardWidget({
-    Key? key,
+    super.key,
     navigateBack,
     addAdditionalSaveButton,
     editNote,
-    onSaveNote,
   })  : navigateBack = navigateBack ?? true,
         addAdditionalSaveButton = addAdditionalSaveButton ?? false,
-        editNote = editNote ?? false,
-        super(key: key);
+        editNote = editNote ?? false;
 
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() =>
-      _DiaryDayEditingWizardWidget();
+  ConsumerState<DiaryDayEditingWizardWidget> createState() =>
+      _DiaryDayEditingWizardWidgetState();
 }
 
-class _DiaryDayEditingWizardWidget
+class _DiaryDayEditingWizardWidgetState
     extends ConsumerState<DiaryDayEditingWizardWidget> {
-  DateTime selectedDate =
-      DateTime.now().copyWith(hour: 0, second: 0, minute: 0);
-  List<DiaryDayRatingItem> dayRatings = [];
-
   @override
-  void initState() {
-    super.initState();
-    for (var element in DayRatings.values) {
-      var diaryDayRatingItem = DiaryDayRatingItem(dayRatings: element);
-      dayRatings.add(diaryDayRatingItem);
-    }
-  }
+  Widget build(BuildContext context) {
+    final theme = ref.watch(themeProvider);
 
-  @override
-  void dispose() {
-    super.dispose();
-  }
+    return Container(
+      color: theme.colorScheme.surface,
+      padding: const EdgeInsets.all(8.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          // Header: Day selector
+          const DateSelectorWidget(),
+          const SizedBox(height: 16),
 
-  @override
-  Widget build(BuildContext contex) {
-    selectedDate = ref.watch(noteSelectedDateProvider);
+          // Body: Two columns - Calendar and Note detail
+          Expanded(
+            flex: 3,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Left column - Calendar (now includes New Note button)
+                const Expanded(
+                  flex: 3,
+                  child: NotesCalendarWidget(),
+                ),
 
-    return buildScaffoldBody(contex);
-  }
+                // Right column - Note Detail
+                const Expanded(
+                  flex: 2,
+                  child: NoteDetailWidget(),
+                ),
+              ],
+            ),
+          ),
 
-  Widget buildScaffoldBody(BuildContext contex) => Form(
-        child: Column(
-          children: [
-            buildRatingItems(0),
-            const SizedBox(
-              height: 10,
-            ),
-            buildRatingItems(1),
-            const SizedBox(
-              height: 10,
-            ),
-            buildRatingItems(2),
-            const SizedBox(
-              height: 10,
-            ),
-            buildRatingItems(3),
-            const SizedBox(
-              height: 10,
-            ),
-            TextButton(
-              onPressed: () {
-                saveRating();
-              },
-              child: Text(
-                'save day',
-                style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                      color: Theme.of(context).colorScheme.primary,
-                      fontWeight: FontWeight.bold,
-                    ),
-              ),
-            ),
-          ],
-        ),
-      );
+          const SizedBox(height: 16),
 
-  Widget buildRatingItems(int index) {
-    if (index < 0 || index >= dayRatings.length) {
-      return const Text('Error during building rating items');
-    }
-    var dayRatingItem = dayRatings[index];
-    return Row(
-      children: [
-        Text(dayRatingItem.dayRating.dayRating.name),
-        const SizedBox(width: 20),
-        dayRatingItem.ratingBar
-      ],
+          // Footer: Day Rating section
+          const DayRatingWidget(),
+        ],
+      ),
     );
-  }
-
-  void saveRating() async {
-    LogWrapper.logger.t(
-        'saves now the diaryDate for day ${Utils.toDate(selectedDate)} to database');
-    List<DayRating> ratings = [];
-    for (var element in dayRatings) {
-      ratings.add(element.dayRating);
-    }
-    var diaryDay = DiaryDay(day: selectedDate, ratings: ratings);
-    ref.read(diaryDayLocalDbDataProvider.notifier).addElement(diaryDay);
   }
 }

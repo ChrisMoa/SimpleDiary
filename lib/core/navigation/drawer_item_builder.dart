@@ -3,7 +3,7 @@ import 'package:day_tracker/features/about/presentation/pages/about_page.dart';
 import 'package:day_tracker/features/app/presentation/pages/settings_page.dart';
 import 'package:day_tracker/features/calendar/presentation/pages/calendar_page.dart';
 import 'package:day_tracker/features/dashboard/presentation/pages/home_page.dart';
-import 'package:day_tracker/features/notes/presentation/pages/note_wizard_page.dart';
+import 'package:day_tracker/features/day_rating/presentation/pages/diary_day_wizard_page.dart'; // Updated import
 import 'package:day_tracker/features/notes/presentation/pages/notes_overview_page.dart';
 import 'package:day_tracker/features/synchronization/presentation/pages/synchronize_page.dart';
 import 'package:flutter/material.dart';
@@ -14,7 +14,7 @@ class DrawerItemProvider {
     DrawerItem("Home", Icons.home),
     DrawerItem("Settings", Icons.settings),
     DrawerItem("Calendar", Icons.calendar_month),
-    DrawerItem("Wizard", Icons.add_to_photos_rounded),
+    DrawerItem("Diary Wizard", Icons.add_to_photos_rounded), // Updated name
     DrawerItem("Notes Overview", Icons.account_balance_wallet_sharp),
     DrawerItem("Datasynchronization", Icons.cloud_upload),
     DrawerItem("About", Icons.info_outline),
@@ -31,7 +31,7 @@ class DrawerItemProvider {
       case 2:
         return const CalendarPage();
       case 3:
-        return const NoteWizardPage();
+        return const DiaryDayWizardPage(); // Updated class name
       case 4:
         return const NotesOverViewPage();
       case 5:
