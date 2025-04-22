@@ -6,12 +6,13 @@ import 'package:day_tracker/features/notes/presentation/pages/note_wizard_page.d
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../pages/diary_day_detail_page.dart';
+
 class DiaryDayOverviewList extends ConsumerStatefulWidget {
   const DiaryDayOverviewList({super.key});
 
   @override
-  ConsumerState<DiaryDayOverviewList> createState() =>
-      _DiaryDayOverviewListState();
+  ConsumerState<DiaryDayOverviewList> createState() => _DiaryDayOverviewListState();
 }
 
 class _DiaryDayOverviewListState extends ConsumerState<DiaryDayOverviewList> {
@@ -108,17 +109,15 @@ class _DiaryDayOverviewListState extends ConsumerState<DiaryDayOverviewList> {
   }
 
   void onSelectDiaryDay(DiaryDay diaryDay) {
-    // Navigator.of(context).push(
-    //   MaterialPageRoute(
-    //     builder: (context) => DiaryDayDetailPage(diaryDay: diaryDay),
-    //   ),
-    // );
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => DiaryDayDetailPage(selectedDate: diaryDay.day),
+      ),
+    );
   }
 
   void onRemoveDiaryDay(DiaryDay removedDiaryDay) {
-    ref
-        .read(diaryDayLocalDbDataProvider.notifier)
-        .deleteElement(removedDiaryDay);
+    ref.read(diaryDayLocalDbDataProvider.notifier).deleteElement(removedDiaryDay);
 
     ScaffoldMessenger.of(context).clearSnackBars();
     ScaffoldMessenger.of(context).showSnackBar(
@@ -128,9 +127,7 @@ class _DiaryDayOverviewListState extends ConsumerState<DiaryDayOverviewList> {
         action: SnackBarAction(
           label: 'Undo',
           onPressed: () {
-            ref
-                .read(diaryDayLocalDbDataProvider.notifier)
-                .addElement(removedDiaryDay);
+            ref.read(diaryDayLocalDbDataProvider.notifier).addElement(removedDiaryDay);
           },
         ),
       ),
