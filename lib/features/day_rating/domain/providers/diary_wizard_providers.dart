@@ -1,4 +1,3 @@
-// lib/features/day_rating/domain/providers/diary_wizard_providers.dart
 import 'package:day_tracker/core/log/logger_instance.dart';
 import 'package:day_tracker/core/utils/utils.dart';
 import 'package:day_tracker/features/day_rating/data/models/day_rating.dart';
@@ -9,7 +8,8 @@ import 'package:day_tracker/features/notes/domain/providers/note_selected_date_p
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 // Selected date provider for the wizard
-final wizardSelectedDateProvider = StateNotifierProvider<WizardSelectedDateNotifier, DateTime>(
+final wizardSelectedDateProvider =
+    StateNotifierProvider<WizardSelectedDateNotifier, DateTime>(
   (ref) => WizardSelectedDateNotifier(ref),
 );
 
@@ -22,7 +22,10 @@ class WizardSelectedDateNotifier extends StateNotifier<DateTime> {
 
     // Listen for changes to ensure the providers stay in sync
     _ref.listen(noteSelectedDateProvider, (previous, next) {
-      if (previous == null || previous.day != next.day || previous.month != next.month || previous.year != next.year) {
+      if (previous == null ||
+          previous.day != next.day ||
+          previous.month != next.month ||
+          previous.year != next.year) {
         state = next;
 
         // Reset note selection when date changes
@@ -39,7 +42,9 @@ class WizardSelectedDateNotifier extends StateNotifier<DateTime> {
     final oldDate = state;
 
     // Determine if the date (day/month/year) is changing
-    final dateChanging = oldDate.day != newDate.day || oldDate.month != newDate.month || oldDate.year != newDate.year;
+    final dateChanging = oldDate.day != newDate.day ||
+        oldDate.month != newDate.month ||
+        oldDate.year != newDate.year;
 
     // Update state first
     state = newDate;
@@ -65,12 +70,15 @@ final wizardDayNotesProvider = Provider<List<Note>>((ref) {
 
   // Get notes for the selected day
   return notes.where((note) {
-    return note.from.year == selectedDate.year && note.from.month == selectedDate.month && note.from.day == selectedDate.day;
+    return note.from.year == selectedDate.year &&
+        note.from.month == selectedDate.month &&
+        note.from.day == selectedDate.day;
   }).toList();
 });
 
 // Provider for the selected note in the wizard
-final selectedWizardNoteProvider = StateNotifierProvider<SelectedNoteNotifier, Note?>(
+final selectedWizardNoteProvider =
+    StateNotifierProvider<SelectedNoteNotifier, Note?>(
   (ref) => SelectedNoteNotifier(ref),
 );
 
@@ -102,7 +110,9 @@ class SelectedNoteNotifier extends StateNotifier<Note?> {
 
     if (notes.isNotEmpty) {
       // Try to find a non-empty note first
-      final nonEmptyNotes = notes.where((note) => note.title.isNotEmpty || note.description.isNotEmpty).toList();
+      final nonEmptyNotes = notes
+          .where((note) => note.title.isNotEmpty || note.description.isNotEmpty)
+          .toList();
 
       if (nonEmptyNotes.isNotEmpty) {
         state = nonEmptyNotes.first;
@@ -119,14 +129,18 @@ class SelectedNoteNotifier extends StateNotifier<Note?> {
 }
 
 // Provider for day ratings
-final dayRatingsProvider = StateNotifierProvider<DayRatingsNotifier, List<DayRating>>(
+final dayRatingsProvider =
+    StateNotifierProvider<DayRatingsNotifier, List<DayRating>>(
   (ref) => DayRatingsNotifier(),
 );
 
 class DayRatingsNotifier extends StateNotifier<List<DayRating>> {
-  DayRatingsNotifier() : super(
+  DayRatingsNotifier()
+      : super(
             // Initialize with default ratings
-            DayRatings.values.map((type) => DayRating(dayRating: type, score: 3)).toList());
+            DayRatings.values
+                .map((type) => DayRating(dayRating: type, score: 3))
+                .toList());
 
   void updateRating(DayRatings ratingType, int score) {
     state = state.map((rating) {
@@ -138,7 +152,9 @@ class DayRatingsNotifier extends StateNotifier<List<DayRating>> {
   }
 
   void resetRatings() {
-    state = DayRatings.values.map((type) => DayRating(dayRating: type, score: 3)).toList();
+    state = DayRatings.values
+        .map((type) => DayRating(dayRating: type, score: 3))
+        .toList();
   }
 }
 
@@ -147,7 +163,8 @@ final isDayFullyScheduledProvider = Provider<bool>((ref) {
   final selectedDate = ref.watch(wizardSelectedDateProvider);
   final notes = ref.watch(wizardDayNotesProvider);
 
-  LogWrapper.logger.t('Checking if day ${Utils.toDateTime(selectedDate)} is fully scheduled');
+  LogWrapper.logger.t(
+      'Checking if day ${Utils.toDateTime(selectedDate)} is fully scheduled');
 
   // If there are no notes, the day is not fully scheduled
   if (notes.isEmpty) {
@@ -155,8 +172,10 @@ final isDayFullyScheduledProvider = Provider<bool>((ref) {
   }
 
   // Define day boundaries
-  final dayStart = DateTime(selectedDate.year, selectedDate.month, selectedDate.day, 7, 0);
-  final dayEnd = DateTime(selectedDate.year, selectedDate.month, selectedDate.day, 22, 0);
+  final dayStart =
+      DateTime(selectedDate.year, selectedDate.month, selectedDate.day, 7, 0);
+  final dayEnd =
+      DateTime(selectedDate.year, selectedDate.month, selectedDate.day, 22, 0);
 
   // Sort notes by start time
   notes.sort((a, b) => a.from.compareTo(b.from));
@@ -187,8 +206,10 @@ final nextAvailableTimeSlotProvider = Provider<DateTime>((ref) {
   final notes = ref.watch(wizardDayNotesProvider);
 
   // Define day boundaries
-  final dayStart = DateTime(selectedDate.year, selectedDate.month, selectedDate.day, 7, 0);
-  final dayEnd = DateTime(selectedDate.year, selectedDate.month, selectedDate.day, 22, 0);
+  final dayStart =
+      DateTime(selectedDate.year, selectedDate.month, selectedDate.day, 7, 0);
+  final dayEnd =
+      DateTime(selectedDate.year, selectedDate.month, selectedDate.day, 22, 0);
 
   // If there are no notes, start at the beginning of the day
   if (notes.isEmpty) {
@@ -196,7 +217,8 @@ final nextAvailableTimeSlotProvider = Provider<DateTime>((ref) {
   }
 
   // Sort notes by start time
-  final sortedNotes = List<Note>.from(notes)..sort((a, b) => a.from.compareTo(b.from));
+  final sortedNotes = List<Note>.from(notes)
+    ..sort((a, b) => a.from.compareTo(b.from));
 
   // Check for a gap at the beginning of the day
   if (sortedNotes.first.from.isAfter(dayStart)) {
@@ -216,7 +238,8 @@ final nextAvailableTimeSlotProvider = Provider<DateTime>((ref) {
   }
 
   // If the day is fully scheduled, return the start of the next day
-  return DateTime(selectedDate.year, selectedDate.month, selectedDate.day + 1, 7, 0);
+  return DateTime(
+      selectedDate.year, selectedDate.month, selectedDate.day + 1, 7, 0);
 });
 
 // Provider for creating a new empty note
