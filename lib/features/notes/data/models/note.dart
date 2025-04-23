@@ -35,6 +35,26 @@ class Note implements LocalDbElement {
     id,
   }) : id = id ?? Utils.uuid.v4();
 
+  Note copyWith({
+    String? id,
+    String? title,
+    String? description,
+    DateTime? from,
+    DateTime? to,
+    bool? isAllDay,
+    NoteCategory? noteCategory,
+  }) {
+    return Note(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      description: description ?? this.description,
+      from: from ?? this.from,
+      to: to ?? this.to,
+      isAllDay: isAllDay ?? this.isAllDay,
+      noteCategory: noteCategory ?? this.noteCategory,
+    );
+  }
+
   Map<String, dynamic> toMap() {
     return {
       'id': id,
