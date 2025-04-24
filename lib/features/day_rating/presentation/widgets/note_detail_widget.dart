@@ -1,4 +1,3 @@
-// lib/features/day_rating/presentation/widgets/note_detail_widget.dart
 import 'package:day_tracker/core/provider/theme_provider.dart';
 import 'package:day_tracker/core/utils/platform_utils.dart';
 import 'package:day_tracker/core/utils/utils.dart';
@@ -27,9 +26,6 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
   bool _isListening = false;
   String _oldText = '';
   String? _lastNoteId;
-
-  // Track if keyboard is active to manage UI layout
-  bool _isKeyboardVisible = false;
 
   @override
   void initState() {
@@ -62,8 +58,11 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
     final selectedNote = ref.watch(selectedWizardNoteProvider);
     final theme = ref.watch(themeProvider);
 
-    // Check if keyboard is visible to adapt UI
-    _isKeyboardVisible = MediaQuery.of(context).viewInsets.bottom > 0;
+    // Get screen dimensions for responsive design
+    final mediaQuery = MediaQuery.of(context);
+    final screenWidth = mediaQuery.size.width;
+    final isSmallScreen = screenWidth < 600;
+    final isKeyboardVisible = mediaQuery.viewInsets.bottom > 0;
 
     // Update controllers when selected note changes
     if (selectedNote != null && selectedNote.id != _lastNoteId) {
@@ -78,92 +77,40 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
     }
 
     // Show the note details when a note is selected
-    return _buildNoteDetailView(theme, selectedNote);
-  }
-
-  Widget _buildEmptyNoteView(ThemeData theme) {
     return Card(
       margin: const EdgeInsets.all(8),
       color: theme.colorScheme.secondaryContainer,
       elevation: 2,
-      shadowColor: theme.colorScheme.shadow.withOpacity(0.3),
-      child: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: GridView(
-            gridDelegate:
-                SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 1),
-            children: [
-              Icon(
-                Icons.note_add,
-                size: 48,
-                color: theme.colorScheme.primary,
-              ),
-              const SizedBox(height: 16),
-              Text(
-                'No note selected',
-                style: theme.textTheme.titleLarge!.copyWith(
-                  color: theme.colorScheme.primary,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                'Click on an existing note or create a new one',
-                textAlign: TextAlign.center,
-                style: theme.textTheme.bodyMedium!.copyWith(
-                  color: theme.colorScheme.onSecondaryContainer,
-                ),
-              ),
-              const SizedBox(height: 24),
-              ElevatedButton.icon(
-                onPressed: _addNextFreeNote,
-                icon: const Icon(Icons.add, size: 18),
-                label: const Text('Create New Note'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: theme.colorScheme.primaryContainer,
-                  foregroundColor: theme.colorScheme.onPrimaryContainer,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 24,
-                    vertical: 12,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
+      shadowColor: theme.colorScheme.shadow.withValues(alpha: 0.3),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
       ),
-    );
-  }
-
-  Widget _buildNoteDetailView(ThemeData theme, Note selectedNote) {
-    // Create a responsive layout that adapts to keyboard visibility
-    return Card(
-      margin: const EdgeInsets.all(8),
-      color: theme.colorScheme.secondaryContainer,
-      elevation: 2,
-      shadowColor: theme.colorScheme.shadow.withOpacity(0.3),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header with time info
+            // Header with time info - Responsive layout for small screens
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  'Note Details',
-                  style: theme.textTheme.titleLarge!.copyWith(
-                    color: theme.colorScheme.primary,
-                    fontWeight: FontWeight.bold,
+                Expanded(
+                  child: Text(
+                    'Note Details',
+                    style: theme.textTheme.titleLarge!.copyWith(
+                      color: theme.colorScheme.primary,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
                 Container(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
-                    color: selectedNote.noteCategory.color.withOpacity(0.2),
+                    color:
+                        selectedNote.noteCategory.color.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(4),
                     border: Border.all(
                       color: selectedNote.noteCategory.color,
@@ -224,108 +171,22 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
             ),
             const SizedBox(height: 12),
 
-            // Time and category row - disappears when keyboard is visible to save space
-            if (!_isKeyboardVisible) ...[
-              // Category dropdown
-              DropdownButtonFormField<NoteCategory>(
-                value: selectedNote.noteCategory,
-                decoration: InputDecoration(
-                  labelText: 'Category',
-                  labelStyle: TextStyle(color: theme.colorScheme.primary),
-                  border: OutlineInputBorder(
-                    borderSide: BorderSide(color: theme.colorScheme.outline),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: theme.colorScheme.outline),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: theme.colorScheme.primary),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  filled: true,
-                  fillColor: theme.colorScheme.surface,
-                ),
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: theme.colorScheme.onSurface,
-                ),
-                dropdownColor: theme.colorScheme.surface,
-                items: availableNoteCategories.map((category) {
-                  return DropdownMenuItem(
-                    value: category,
-                    child: Row(
-                      children: [
-                        Container(
-                          width: 16,
-                          height: 16,
-                          decoration: BoxDecoration(
-                            color: category.color,
-                            shape: BoxShape.circle,
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Text(category.title),
-                      ],
-                    ),
-                  );
-                }).toList(),
-                onChanged: (value) {
-                  if (value != null && value != selectedNote.noteCategory) {
-                    _updateNote(
-                      Note(
-                        id: selectedNote.id,
-                        title: selectedNote.title,
-                        description: selectedNote.description,
-                        from: selectedNote.from,
-                        to: selectedNote.to,
-                        noteCategory: value,
-                        isAllDay: selectedNote.isAllDay,
-                      ),
-                    );
-                  }
-                },
+            // Time and category row - Adaptive layout based on screen size and keyboard visibility
+            if (!isKeyboardVisible ||
+                !isSmallScreen) // Hide on small screens when keyboard is visible
+              AnimatedSize(
+                duration: const Duration(milliseconds: 300),
+                child: isSmallScreen
+                    ? _buildCompactControls(selectedNote, theme)
+                    : _buildFullControls(selectedNote, theme),
               ),
-              const SizedBox(height: 12),
-
-              // Time pickers row
-              Row(
-                children: [
-                  Expanded(
-                    child: OutlinedButton.icon(
-                      onPressed: () => _selectTime(context, selectedNote, true),
-                      icon: const Icon(Icons.access_time, size: 16),
-                      label: Text('From: ${Utils.toTime(selectedNote.from)}'),
-                      style: OutlinedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 8),
-                        side: BorderSide(color: theme.colorScheme.outline),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: OutlinedButton.icon(
-                      onPressed: () =>
-                          _selectTime(context, selectedNote, false),
-                      icon: const Icon(Icons.access_time, size: 16),
-                      label: Text('To: ${Utils.toTime(selectedNote.to)}'),
-                      style: OutlinedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 8),
-                        side: BorderSide(color: theme.colorScheme.outline),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12),
-            ],
 
             // Description field - flexible to fill remaining space
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Description field label
+                  // Description field label with speech button
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -344,7 +205,8 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
                             _isListening ? Icons.mic : Icons.mic_none,
                             color: _isListening
                                 ? theme.colorScheme.primary
-                                : theme.colorScheme.onSurface.withOpacity(0.7),
+                                : theme.colorScheme.onSurface
+                                    .withValues(alpha: 0.7),
                           ),
                           tooltip: _isListening
                               ? 'Stop dictation'
@@ -364,8 +226,8 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
                           decoration: InputDecoration(
                             hintText: 'Add details about this note...',
                             hintStyle: TextStyle(
-                              color:
-                                  theme.colorScheme.onSurface.withOpacity(0.5),
+                              color: theme.colorScheme.onSurface
+                                  .withValues(alpha: 0.5),
                             ),
                             border: OutlineInputBorder(
                               borderSide:
@@ -446,64 +308,360 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
               ),
             ),
 
-            // Action buttons for notes
-            if (!_isKeyboardVisible) ...[
-              const SizedBox(height: 16),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  // Delete button
-                  OutlinedButton.icon(
-                    onPressed: () => _deleteNote(selectedNote),
-                    icon: Icon(
-                      Icons.delete,
-                      color: theme.colorScheme.error,
-                    ),
-                    label: Text(
-                      'Delete',
-                      style: TextStyle(
+            // Action buttons for notes - show only when keyboard is not visible on small screens
+            if (!isKeyboardVisible || !isSmallScreen)
+              Padding(
+                padding: const EdgeInsets.only(top: 16),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    // Delete button
+                    OutlinedButton.icon(
+                      onPressed: () => _deleteNote(selectedNote),
+                      icon: Icon(
+                        Icons.delete,
                         color: theme.colorScheme.error,
+                        size: isSmallScreen ? 16 : 20,
+                      ),
+                      label: Text(
+                        'Delete',
+                        style: TextStyle(
+                          color: theme.colorScheme.error,
+                          fontSize: isSmallScreen ? 12 : 14,
+                        ),
+                      ),
+                      style: OutlinedButton.styleFrom(
+                        padding: isSmallScreen
+                            ? const EdgeInsets.symmetric(
+                                horizontal: 8, vertical: 4)
+                            : const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 8),
+                        side: BorderSide(
+                          color: theme.colorScheme.error.withValues(alpha: 0.5),
+                        ),
                       ),
                     ),
-                    style: OutlinedButton.styleFrom(
-                      side: BorderSide(
-                        color: theme.colorScheme.error.withOpacity(0.5),
-                      ),
-                    ),
-                  ),
 
-                  // Time editor buttons
-                  Row(
-                    children: [
-                      OutlinedButton.icon(
-                        onPressed: () => _adjustTime(selectedNote, -30),
-                        icon: const Icon(Icons.remove),
-                        label: const Text('30m'),
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: theme.colorScheme.primary,
-                          side: BorderSide(
-                            color: theme.colorScheme.primary.withOpacity(0.5),
+                    // Time editor buttons
+                    Row(
+                      children: [
+                        OutlinedButton.icon(
+                          onPressed: () => _adjustTime(selectedNote, -30),
+                          icon:
+                              Icon(Icons.remove, size: isSmallScreen ? 16 : 20),
+                          label: Text(
+                            '30m',
+                            style: TextStyle(fontSize: isSmallScreen ? 12 : 14),
+                          ),
+                          style: OutlinedButton.styleFrom(
+                            padding: isSmallScreen
+                                ? const EdgeInsets.symmetric(
+                                    horizontal: 8, vertical: 4)
+                                : const EdgeInsets.symmetric(
+                                    horizontal: 16, vertical: 8),
+                            foregroundColor: theme.colorScheme.primary,
+                            side: BorderSide(
+                              color: theme.colorScheme.primary
+                                  .withValues(alpha: 0.5),
+                            ),
                           ),
                         ),
-                      ),
-                      const SizedBox(width: 8),
-                      OutlinedButton.icon(
-                        onPressed: () => _adjustTime(selectedNote, 30),
-                        icon: const Icon(Icons.add),
-                        label: const Text('30m'),
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: theme.colorScheme.primary,
-                          side: BorderSide(
-                            color: theme.colorScheme.primary.withOpacity(0.5),
+                        const SizedBox(width: 4),
+                        OutlinedButton.icon(
+                          onPressed: () => _adjustTime(selectedNote, 30),
+                          icon: Icon(Icons.add, size: isSmallScreen ? 16 : 20),
+                          label: Text(
+                            '30m',
+                            style: TextStyle(fontSize: isSmallScreen ? 12 : 14),
+                          ),
+                          style: OutlinedButton.styleFrom(
+                            padding: isSmallScreen
+                                ? const EdgeInsets.symmetric(
+                                    horizontal: 8, vertical: 4)
+                                : const EdgeInsets.symmetric(
+                                    horizontal: 16, vertical: 8),
+                            foregroundColor: theme.colorScheme.primary,
+                            side: BorderSide(
+                              color: theme.colorScheme.primary
+                                  .withValues(alpha: 0.5),
+                            ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // Compact controls for small screens
+  Widget _buildCompactControls(Note note, ThemeData theme) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Category dropdown
+        DropdownButtonFormField<NoteCategory>(
+          value: note.noteCategory,
+          isExpanded: true,
+          decoration: InputDecoration(
+            labelText: 'Category',
+            labelStyle: TextStyle(color: theme.colorScheme.primary),
+            border: OutlineInputBorder(
+              borderSide: BorderSide(color: theme.colorScheme.outline),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: theme.colorScheme.outline),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: theme.colorScheme.primary),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            filled: true,
+            fillColor: theme.colorScheme.surface,
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          ),
+          style: theme.textTheme.bodyMedium?.copyWith(
+            color: theme.colorScheme.onSurface,
+          ),
+          dropdownColor: theme.colorScheme.surface,
+          items: availableNoteCategories.map((category) {
+            return DropdownMenuItem(
+              value: category,
+              child: Row(
+                children: [
+                  Container(
+                    width: 16,
+                    height: 16,
+                    decoration: BoxDecoration(
+                      color: category.color,
+                      shape: BoxShape.circle,
+                    ),
                   ),
+                  const SizedBox(width: 8),
+                  Text(category.title),
                 ],
               ),
-            ],
+            );
+          }).toList(),
+          onChanged: (value) {
+            if (value != null && value != note.noteCategory) {
+              _updateNote(
+                Note(
+                  id: note.id,
+                  title: note.title,
+                  description: note.description,
+                  from: note.from,
+                  to: note.to,
+                  noteCategory: value,
+                  isAllDay: note.isAllDay,
+                ),
+              );
+            }
+          },
+        ),
+        const SizedBox(height: 12),
+
+        // Time buttons in a row
+        Row(
+          children: [
+            Expanded(
+              child: OutlinedButton.icon(
+                onPressed: () => _selectTime(context, note, true),
+                icon: const Icon(Icons.access_time, size: 16),
+                label: Text(
+                  'From: ${Utils.toTime(note.from)}',
+                  style: const TextStyle(fontSize: 12),
+                ),
+                style: OutlinedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  side: BorderSide(color: theme.colorScheme.outline),
+                ),
+              ),
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: OutlinedButton.icon(
+                onPressed: () => _selectTime(context, note, false),
+                icon: const Icon(Icons.access_time, size: 16),
+                label: Text(
+                  'To: ${Utils.toTime(note.to)}',
+                  style: const TextStyle(fontSize: 12),
+                ),
+                style: OutlinedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  side: BorderSide(color: theme.colorScheme.outline),
+                ),
+              ),
+            ),
           ],
+        ),
+        const SizedBox(height: 12),
+      ],
+    );
+  }
+
+  // Full controls for larger screens
+  Widget _buildFullControls(Note note, ThemeData theme) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Category dropdown
+        DropdownButtonFormField<NoteCategory>(
+          value: note.noteCategory,
+          decoration: InputDecoration(
+            labelText: 'Category',
+            labelStyle: TextStyle(color: theme.colorScheme.primary),
+            border: OutlineInputBorder(
+              borderSide: BorderSide(color: theme.colorScheme.outline),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: theme.colorScheme.outline),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: theme.colorScheme.primary),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            filled: true,
+            fillColor: theme.colorScheme.surface,
+          ),
+          style: theme.textTheme.bodyMedium?.copyWith(
+            color: theme.colorScheme.onSurface,
+          ),
+          dropdownColor: theme.colorScheme.surface,
+          items: availableNoteCategories.map((category) {
+            return DropdownMenuItem(
+              value: category,
+              child: Row(
+                children: [
+                  Container(
+                    width: 16,
+                    height: 16,
+                    decoration: BoxDecoration(
+                      color: category.color,
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Text(category.title),
+                ],
+              ),
+            );
+          }).toList(),
+          onChanged: (value) {
+            if (value != null && value != note.noteCategory) {
+              _updateNote(
+                Note(
+                  id: note.id,
+                  title: note.title,
+                  description: note.description,
+                  from: note.from,
+                  to: note.to,
+                  noteCategory: value,
+                  isAllDay: note.isAllDay,
+                ),
+              );
+            }
+          },
+        ),
+        const SizedBox(height: 12),
+
+        // Time pickers row
+        Row(
+          children: [
+            Expanded(
+              child: OutlinedButton.icon(
+                onPressed: () => _selectTime(context, note, true),
+                icon: const Icon(Icons.access_time, size: 16),
+                label: Text('From: ${Utils.toTime(note.from)}'),
+                style: OutlinedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  side: BorderSide(color: theme.colorScheme.outline),
+                ),
+              ),
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: OutlinedButton.icon(
+                onPressed: () => _selectTime(context, note, false),
+                icon: const Icon(Icons.access_time, size: 16),
+                label: Text('To: ${Utils.toTime(note.to)}'),
+                style: OutlinedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  side: BorderSide(color: theme.colorScheme.outline),
+                ),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+      ],
+    );
+  }
+
+  Widget _buildEmptyNoteView(ThemeData theme) {
+    // Check if we're on a small screen to adapt layout
+    final mediaQuery = MediaQuery.of(context);
+    final screenWidth = mediaQuery.size.width;
+    final isSmallScreen = screenWidth < 600;
+
+    return Card(
+      margin: const EdgeInsets.all(8),
+      color: theme.colorScheme.secondaryContainer,
+      elevation: 2,
+      shadowColor: theme.colorScheme.shadow.withValues(alpha: 0.3),
+      child: Center(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.note_add,
+                size: isSmallScreen ? 36 : 48,
+                color: theme.colorScheme.primary,
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'No note selected',
+                style: theme.textTheme.titleLarge!.copyWith(
+                  color: theme.colorScheme.primary,
+                  fontWeight: FontWeight.bold,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Click on an existing note or create a new one',
+                textAlign: TextAlign.center,
+                style: theme.textTheme.bodyMedium!.copyWith(
+                  color: theme.colorScheme.onSecondaryContainer,
+                ),
+              ),
+              const SizedBox(height: 24),
+              ElevatedButton.icon(
+                onPressed: _addNextFreeNote,
+                icon: const Icon(Icons.add, size: 18),
+                label: const Text('Create New Note'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: theme.colorScheme.primaryContainer,
+                  foregroundColor: theme.colorScheme.onPrimaryContainer,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: isSmallScreen ? 16 : 24,
+                    vertical: isSmallScreen ? 8 : 12,
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

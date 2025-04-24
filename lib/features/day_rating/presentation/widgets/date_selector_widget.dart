@@ -11,12 +11,23 @@ class DateSelectorWidget extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final selectedDate = ref.watch(wizardSelectedDateProvider);
     final theme = ref.watch(themeProvider);
-    final dateFormatter = DateFormat('EEEE, MMMM d, yyyy');
+
+    // Adaptive date formatting based on screen width
+    final screenWidth = MediaQuery.of(context).size.width;
+    final bool isSmallScreen = screenWidth < 360;
+
+    // Choose appropriate date format based on screen size
+    final DateFormat dateFormatter = isSmallScreen
+        ? DateFormat('EEE, MMM d') // Compact format for very small screens
+        : DateFormat('EEEE, MMMM d, yyyy'); // Full format for larger screens
 
     return Card(
-      margin: const EdgeInsets.all(8),
+      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
       color: theme.colorScheme.secondaryContainer,
       elevation: 2,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
       child: Padding(
         padding: const EdgeInsets.all(12.0),
         child: Row(
@@ -32,39 +43,78 @@ class DateSelectorWidget extends ConsumerWidget {
                       color: theme.colorScheme.primary,
                       fontWeight: FontWeight.bold,
                     ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                   Text(
                     'Tap to change date',
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: theme.colorScheme.onSecondaryContainer
-                          .withOpacity(0.7),
+                          .withValues(alpha: 0.7),
                     ),
                   ),
                 ],
               ),
             ),
 
-            // Navigation buttons
+            // Navigation buttons - use Row instead of separate buttons for better spacing
             Row(
+              mainAxisSize: MainAxisSize.min,
               children: [
-                IconButton(
-                  icon: const Icon(Icons.chevron_left),
+                _buildIconButton(
+                  context,
+                  icon: Icons.chevron_left,
                   onPressed: () => _changeDate(ref, -1),
                   tooltip: 'Previous day',
+                  theme: theme,
                 ),
-                IconButton(
-                  icon: const Icon(Icons.calendar_today),
+                _buildIconButton(
+                  context,
+                  icon: Icons.calendar_today,
                   onPressed: () => _selectDate(context, ref),
                   tooltip: 'Select date',
+                  theme: theme,
                 ),
-                IconButton(
-                  icon: const Icon(Icons.chevron_right),
+                _buildIconButton(
+                  context,
+                  icon: Icons.chevron_right,
                   onPressed: () => _changeDate(ref, 1),
                   tooltip: 'Next day',
+                  theme: theme,
                 ),
               ],
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  // Helper method to create a consistent icon button with proper sizing for touch
+  Widget _buildIconButton(
+    BuildContext context, {
+    required IconData icon,
+    required VoidCallback onPressed,
+    required String tooltip,
+    required ThemeData theme,
+  }) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 2),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surface.withValues(alpha: 0.7),
+        borderRadius: BorderRadius.circular(24),
+      ),
+      child: IconButton(
+        icon: Icon(icon, size: 20),
+        onPressed: onPressed,
+        tooltip: tooltip,
+        padding: const EdgeInsets.all(12),
+        constraints: const BoxConstraints(
+          minWidth: 48,
+          minHeight: 48,
+        ),
+        style: IconButton.styleFrom(
+          foregroundColor: theme.colorScheme.primary,
         ),
       ),
     );

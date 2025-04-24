@@ -27,7 +27,7 @@ class DiaryDayOverviewListItem extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         // Optional subtle border
         side: BorderSide(
-          color: theme.colorScheme.outline.withOpacity(0.1),
+          color: theme.colorScheme.outline.withValues(alpha: 0.1),
           width: 1,
         ),
       ),
@@ -40,7 +40,7 @@ class DiaryDayOverviewListItem extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _buildHeader(context),
-              Divider(color: theme.colorScheme.outline.withOpacity(0.2)),
+              Divider(color: theme.colorScheme.outline.withValues(alpha: 0.2)),
               _buildRatingsSection(context),
               const SizedBox(height: 16),
               _buildNotesSection(context),
@@ -79,7 +79,8 @@ class DiaryDayOverviewListItem extends StatelessWidget {
             Text(
               dateFormat.format(date),
               style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.onSecondaryContainer.withOpacity(0.7),
+                color: theme.colorScheme.onSecondaryContainer
+                    .withValues(alpha: 0.7),
               ),
             ),
           ],
@@ -89,8 +90,8 @@ class DiaryDayOverviewListItem extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
           decoration: BoxDecoration(
             // Use semantically meaningful colors but apply theme-aware opacity
-            color: _getScoreColor(diaryDay.overallScore)
-                .withOpacity(theme.brightness == Brightness.dark ? 0.7 : 1.0),
+            color: _getScoreColor(diaryDay.overallScore).withValues(
+                alpha: theme.brightness == Brightness.dark ? 0.7 : 1.0),
             borderRadius: BorderRadius.circular(16),
           ),
           child: Text(
@@ -133,12 +134,12 @@ class DiaryDayOverviewListItem extends StatelessWidget {
           height: 36,
           decoration: BoxDecoration(
             // Apply theme-aware brightness to rating colors
-            color: _getRatingColor(score)
-                .withOpacity(theme.brightness == Brightness.dark ? 0.8 : 1.0),
+            color: _getRatingColor(score).withValues(
+                alpha: theme.brightness == Brightness.dark ? 0.8 : 1.0),
             shape: BoxShape.circle,
             // Optional subtle border for better visibility in all themes
             border: Border.all(
-              color: theme.colorScheme.outline.withOpacity(0.1),
+              color: theme.colorScheme.outline.withValues(alpha: 0.1),
               width: 1,
             ),
           ),
@@ -163,7 +164,7 @@ class DiaryDayOverviewListItem extends StatelessWidget {
       return Text(
         'No notes for this day',
         style: theme.textTheme.bodyMedium?.copyWith(
-          color: theme.colorScheme.onSecondaryContainer.withOpacity(0.7),
+          color: theme.colorScheme.onSecondaryContainer.withValues(alpha: 0.7),
           fontStyle: FontStyle.italic,
         ),
       );

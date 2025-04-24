@@ -1,3 +1,5 @@
+// ignore_for_file: unused_local_variable
+
 import 'package:day_tracker/core/provider/theme_provider.dart';
 import 'package:day_tracker/core/utils/utils.dart';
 import 'package:day_tracker/features/day_rating/domain/providers/diary_wizard_providers.dart';
@@ -34,6 +36,13 @@ class _NotesCalendarWidgetState extends ConsumerState<NotesCalendarWidget> {
     final selectedDate = ref.watch(wizardSelectedDateProvider);
     final isFullyScheduled = ref.watch(isDayFullyScheduledProvider);
 
+    // Get screen size information for responsive design
+    final mediaQuery = MediaQuery.of(context);
+    final screenWidth = mediaQuery.size.width;
+    final screenHeight = mediaQuery.size.height;
+    final isSmallScreen = screenWidth < 600;
+    final isKeyboardVisible = mediaQuery.viewInsets.bottom > 0;
+
     // Update calendar date when provider changes
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (_calendarController.displayDate?.day != selectedDate.day ||
@@ -50,73 +59,126 @@ class _NotesCalendarWidgetState extends ConsumerState<NotesCalendarWidget> {
       margin: const EdgeInsets.all(8),
       color: theme.colorScheme.secondaryContainer,
       elevation: 2,
-      shadowColor: theme.colorScheme.shadow.withOpacity(0.3),
+      shadowColor: theme.colorScheme.shadow.withValues(alpha: 0.3),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Header with action buttons
-          SizedBox(
-            height: 10,
-          ),
-          Text(
-            'Daily Schedule',
-            style: theme.textTheme.titleLarge?.copyWith(
-              color: theme.colorScheme.primary,
-              fontWeight: FontWeight.bold,
+          Padding(
+            padding: const EdgeInsets.only(left: 16, top: 16, right: 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Daily Schedule',
+                      style: theme.textTheme.titleLarge?.copyWith(
+                        color: theme.colorScheme.primary,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+
+                    // Only show the add button directly if we have space
+                    if (!isSmallScreen || !isKeyboardVisible)
+                      ElevatedButton.icon(
+                        onPressed: _addNewNote,
+                        icon: const Icon(Icons.add, size: 16),
+                        label: const Text('New Note'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: theme.colorScheme.primaryContainer,
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 8),
+                        ),
+                      ),
+                  ],
+                ),
+
+                // Status indicator
+                if (isFullyScheduled)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 4),
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.check_circle,
+                          color: theme.colorScheme.primary,
+                          size: 16,
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          'Schedule complete',
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: theme.colorScheme.primary,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+                else
+                  Padding(
+                    padding: const EdgeInsets.only(top: 4),
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.info_outline,
+                          color: theme.colorScheme.error,
+                          size: 16,
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          'Fill in your complete day',
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: theme.colorScheme.error,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+              ],
             ),
           ),
-          if (isFullyScheduled)
-            Row(
-              children: [
-                Icon(
-                  Icons.check_circle,
-                  color: theme.colorScheme.primary,
-                  size: 16,
-                ),
-                const SizedBox(width: 4),
-                Text(
-                  'Schedule complete',
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.primary,
-                    fontWeight: FontWeight.bold,
+
+          // Mobile-only add button when keyboard is visible
+          if (isSmallScreen && isKeyboardVisible)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  onPressed: _addNewNote,
+                  icon: const Icon(Icons.add, size: 16),
+                  label: const Text('New Note'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: theme.colorScheme.primaryContainer,
+                    padding: const EdgeInsets.symmetric(vertical: 8),
                   ),
                 ),
-              ],
-            )
-          else
-            Text(
-              'Fill in your complete day',
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.onSecondaryContainer,
-              ),
-            ),
-          if (!isFullyScheduled)
-            ElevatedButton.icon(
-              onPressed: _addNewNote,
-              icon: const Icon(Icons.add, size: 16),
-              label: const Text('New Note'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: theme.colorScheme.primaryContainer,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               ),
             ),
 
-          // Calendar - Changed to vertical day view
+          // Calendar - Adapted to different screen sizes
           Expanded(
             child: SfCalendar(
               controller: _calendarController,
-              view: CalendarView.day, // Using day view for vertical layout
+              view: CalendarView.day,
               dataSource: dataSource,
               timeSlotViewSettings: TimeSlotViewSettings(
-                timeInterval: const Duration(minutes: 30),
-                timeIntervalHeight:
-                    60, // Increased height for better touch targets
+                // Adjust time interval for better visibility on small screens
+                timeInterval: Duration(minutes: isSmallScreen ? 60 : 30),
+                // Adjust height based on screen size
+                timeIntervalHeight: isSmallScreen ? 50 : 60,
                 timeFormat: 'HH:mm',
                 startHour: 7,
                 endHour: 22,
                 timeTextStyle: theme.textTheme.bodyMedium!.copyWith(
                   color: theme.colorScheme.onSurface,
+                  fontSize: isSmallScreen ? 10 : 12,
                 ),
               ),
               headerHeight:
@@ -142,7 +204,7 @@ class _NotesCalendarWidgetState extends ConsumerState<NotesCalendarWidget> {
             ),
           ),
 
-          // Legend for categories
+          // Legend for categories - Wrap it for small screens
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Wrap(
@@ -159,13 +221,18 @@ class _NotesCalendarWidgetState extends ConsumerState<NotesCalendarWidget> {
   }
 
   Widget _buildCategoryChip(NoteCategory category, ThemeData theme) {
+    // Make chips more compact on small screens
+    final mediaQuery = MediaQuery.of(context);
+    final isSmallScreen = mediaQuery.size.width < 360;
+
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      padding: EdgeInsets.symmetric(
+          horizontal: isSmallScreen ? 4 : 8, vertical: isSmallScreen ? 2 : 4),
       decoration: BoxDecoration(
-        color: category.color.withOpacity(0.2),
+        color: category.color.withValues(alpha: 0.2),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: category.color.withOpacity(0.5),
+          color: category.color.withValues(alpha: 0.5),
           width: 1,
         ),
       ),
@@ -180,11 +247,12 @@ class _NotesCalendarWidgetState extends ConsumerState<NotesCalendarWidget> {
               shape: BoxShape.circle,
             ),
           ),
-          const SizedBox(width: 4),
+          SizedBox(width: isSmallScreen ? 2 : 4),
           Text(
             category.title,
             style: theme.textTheme.bodySmall?.copyWith(
               color: theme.colorScheme.onSecondaryContainer,
+              fontSize: isSmallScreen ? 10 : 12,
             ),
           ),
         ],
@@ -199,9 +267,12 @@ class _NotesCalendarWidgetState extends ConsumerState<NotesCalendarWidget> {
     final isSelected = ref.read(selectedWizardNoteProvider)?.id == note.id;
     final isEmpty = note.title.isEmpty && note.description.isEmpty;
 
+    // Adjust text sizes based on available space
+    final bool isSmallAppointment = details.bounds.height < 30;
+
     return Container(
       decoration: BoxDecoration(
-        color: note.noteCategory.color.withOpacity(isEmpty ? 0.3 : 0.7),
+        color: note.noteCategory.color.withValues(alpha: isEmpty ? 0.3 : 0.7),
         borderRadius: BorderRadius.circular(4),
         border: Border.all(
           color:
@@ -222,19 +293,20 @@ class _NotesCalendarWidgetState extends ConsumerState<NotesCalendarWidget> {
                     style: TextStyle(
                       color: theme.colorScheme.surface,
                       fontWeight: FontWeight.bold,
-                      fontSize: 11,
+                      fontSize: isSmallAppointment ? 9 : 11,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
-                Text(
-                  '${Utils.toTime(note.from)} - ${Utils.toTime(note.to)}',
-                  style: TextStyle(
-                    color: theme.colorScheme.surface,
-                    fontSize: 9,
+                if (!isSmallAppointment)
+                  Text(
+                    '${Utils.toTime(note.from)} - ${Utils.toTime(note.to)}',
+                    style: TextStyle(
+                      color: theme.colorScheme.surface,
+                      fontSize: 9,
+                    ),
                   ),
-                ),
               ],
             ),
             if (details.bounds.height > 30 && note.description.isNotEmpty)
@@ -256,6 +328,15 @@ class _NotesCalendarWidgetState extends ConsumerState<NotesCalendarWidget> {
   }
 
   void _handleCalendarTap(CalendarTapDetails details) {
+    // Handle time cell tap
+    if (details.targetElement == CalendarElement.calendarCell) {
+      // Create new note at tapped time
+      final DateTime tappedTime = details.date!;
+      _createNoteAtTime(tappedTime);
+      return;
+    }
+
+    // Handle appointment tap
     if (details.targetElement == CalendarElement.appointment &&
         details.appointments != null &&
         details.appointments!.isNotEmpty) {
@@ -263,6 +344,44 @@ class _NotesCalendarWidgetState extends ConsumerState<NotesCalendarWidget> {
       final note = details.appointments!.first as Note;
       ref.read(selectedWizardNoteProvider.notifier).selectNote(note);
     }
+  }
+
+  void _createNoteAtTime(DateTime startTime) {
+    // Round to nearest 15 minutes
+    final int minutes = startTime.minute;
+    final int roundedMinutes = (minutes ~/ 15) * 15;
+    final roundedStartTime = DateTime(
+      startTime.year,
+      startTime.month,
+      startTime.day,
+      startTime.hour,
+      roundedMinutes,
+    );
+
+    // Create a new note with 30-minute duration
+    final newNote = Note(
+      id: const Uuid().v4(),
+      title: '',
+      description: '',
+      from: roundedStartTime,
+      to: roundedStartTime.add(const Duration(minutes: 30)),
+      noteCategory: availableNoteCategories.first,
+    );
+
+    // Add to database
+    ref.read(notesLocalDataProvider.notifier).addElement(newNote);
+
+    // Select the new note
+    ref.read(selectedWizardNoteProvider.notifier).selectNote(newNote);
+
+    // Show feedback to user
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Added new note at ${Utils.toTime(roundedStartTime)}'),
+        duration: const Duration(seconds: 2),
+        behavior: SnackBarBehavior.floating,
+      ),
+    );
   }
 
   void _addNewNote() {

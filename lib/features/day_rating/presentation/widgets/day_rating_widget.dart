@@ -1,3 +1,5 @@
+// ignore_for_file: unused_local_variable
+
 import 'package:day_tracker/core/provider/theme_provider.dart';
 import 'package:day_tracker/features/day_rating/data/models/day_rating.dart';
 import 'package:day_tracker/features/day_rating/data/models/diary_day.dart';
@@ -18,6 +20,15 @@ class DayRatingWidget extends ConsumerWidget {
     final theme = ref.watch(themeProvider);
     final selectedDate = ref.watch(wizardSelectedDateProvider);
 
+    // Get screen dimensions for responsive design
+    final mediaQuery = MediaQuery.of(context);
+    final screenWidth = mediaQuery.size.width;
+    final screenHeight = mediaQuery.size.height;
+    final isSmallScreen = screenWidth < 600;
+    final isLandscape = mediaQuery.orientation == Orientation.landscape;
+    final isKeyboardVisible = mediaQuery.viewInsets.bottom > 0;
+
+    // Create a scrollable layout that adapts to different screen sizes
     return Container(
       color: theme.colorScheme.surface,
       child: Column(
@@ -36,6 +47,7 @@ class DayRatingWidget extends ConsumerWidget {
                   style: theme.textTheme.headlineMedium?.copyWith(
                     color: theme.colorScheme.primary,
                     fontWeight: FontWeight.bold,
+                    fontSize: isSmallScreen ? 20 : 24,
                   ),
                 ),
                 Text(
@@ -54,109 +66,130 @@ class DayRatingWidget extends ConsumerWidget {
           Expanded(
             child: Container(
               color: theme.colorScheme.surface,
-              child: ListView(
+              child: SingleChildScrollView(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                children: [
-                  // Information card if day is not fully scheduled
-                  if (!isFullyScheduled)
-                    Card(
-                      color: theme.colorScheme.errorContainer,
-                      margin: const EdgeInsets.only(bottom: 16),
-                      child: Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                Icon(
-                                  Icons.warning_rounded,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    // Information card if day is not fully scheduled
+                    if (!isFullyScheduled)
+                      Card(
+                        color: theme.colorScheme.errorContainer,
+                        margin: const EdgeInsets.only(bottom: 16),
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Icon(
+                                    Icons.warning_rounded,
+                                    color: theme.colorScheme.onErrorContainer,
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Expanded(
+                                    child: Text(
+                                      'Day Schedule Incomplete',
+                                      style:
+                                          theme.textTheme.titleMedium?.copyWith(
+                                        color:
+                                            theme.colorScheme.onErrorContainer,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                'Your day schedule has gaps. For a complete diary entry, '
+                                'schedule all your activities from morning to evening.',
+                                style: theme.textTheme.bodyMedium?.copyWith(
                                   color: theme.colorScheme.onErrorContainer,
                                 ),
-                                const SizedBox(width: 8),
-                                Text(
-                                  'Day Schedule Incomplete',
-                                  style: theme.textTheme.titleMedium?.copyWith(
-                                    color: theme.colorScheme.onErrorContainer,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                              ),
+                              const SizedBox(height: 12),
+                              ElevatedButton.icon(
+                                onPressed: () {
+                                  // Switch to notes page
+                                  ref
+                                      .read(
+                                          diaryWizardPageStateProvider.notifier)
+                                      .setNotesPage();
+                                },
+                                icon: const Icon(Icons.edit_calendar),
+                                label: const Text('Complete Schedule'),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: theme.colorScheme.error
+                                      .withValues(alpha: 0.2),
+                                  foregroundColor:
+                                      theme.colorScheme.onErrorContainer,
                                 ),
-                              ],
-                            ),
-                            const SizedBox(height: 8),
-                            Text(
-                              'Your day schedule has gaps. For a complete diary entry, '
-                              'schedule all your activities from morning to evening.',
-                              style: theme.textTheme.bodyMedium?.copyWith(
-                                color: theme.colorScheme.onErrorContainer,
                               ),
-                            ),
-                            const SizedBox(height: 12),
-                            ElevatedButton.icon(
-                              onPressed: () {
-                                // Switch to notes page
-                                ref
-                                    .read(diaryWizardPageStateProvider.notifier)
-                                    .setNotesPage();
-                              },
-                              icon: const Icon(Icons.edit_calendar),
-                              label: const Text('Complete Schedule'),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor:
-                                    theme.colorScheme.error.withOpacity(0.2),
-                                foregroundColor:
-                                    theme.colorScheme.onErrorContainer,
-                              ),
-                            ),
-                          ],
+                            ],
+                          ),
+                        ),
+                      ),
+
+                    // Use different layouts based on orientation and screen size
+                    if (isLandscape && !isSmallScreen)
+                      // For landscape larger screens, use a grid layout
+                      GridView.count(
+                        crossAxisCount: 2,
+                        childAspectRatio: 1.5,
+                        mainAxisSpacing: 16,
+                        crossAxisSpacing: 16,
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        children: _buildRatingCards(
+                          context,
+                          theme,
+                          ratings,
+                          ref,
+                          isSmallScreen: false,
+                        ),
+                      )
+                    else
+                      // For portrait or small screens, use a column layout
+                      Column(
+                        children: _buildRatingCards(
+                          context,
+                          theme,
+                          ratings,
+                          ref,
+                          isSmallScreen: isSmallScreen,
+                        ),
+                      ),
+
+                    // Save button - fixed at bottom
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 24.0),
+                      child: ElevatedButton.icon(
+                        onPressed: isFullyScheduled
+                            ? () => _saveDiaryDay(context, ref, selectedDate)
+                            : null,
+                        icon: const Icon(Icons.save),
+                        label: const Text('Save Day Rating'),
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 32,
+                            vertical: 16,
+                          ),
+                          backgroundColor: theme.colorScheme.primaryContainer,
+                          foregroundColor: theme.colorScheme.onPrimaryContainer,
+                          minimumSize: const Size(double.infinity, 54),
+                          disabledBackgroundColor: theme
+                              .colorScheme.primaryContainer
+                              .withValues(alpha: 0.6),
+                          disabledForegroundColor: theme
+                              .colorScheme.onPrimaryContainer
+                              .withValues(alpha: 0.6),
                         ),
                       ),
                     ),
-
-                  // Rating cards for each type
-                  ...DayRatings.values.map((ratingType) {
-                    final rating = ratings.firstWhere(
-                      (r) => r.dayRating == ratingType,
-                      orElse: () => DayRating(dayRating: ratingType),
-                    );
-
-                    return _buildRatingCard(
-                      context,
-                      theme,
-                      ratingType,
-                      rating,
-                      (score) {
-                        ref.read(dayRatingsProvider.notifier).updateRating(
-                              ratingType,
-                              score.toInt(),
-                            );
-                      },
-                    );
-                  }),
-
-                  // Save button - fixed at bottom
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 24.0),
-                    child: ElevatedButton.icon(
-                      onPressed: () {
-                        if (isFullyScheduled) {
-                          _saveDiaryDay(context, ref, selectedDate);
-                        }
-                      },
-                      icon: const Icon(Icons.save),
-                      label: const Text('Save Day Rating'),
-                      style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 32,
-                          vertical: 16,
-                        ),
-                        backgroundColor: theme.colorScheme.primaryContainer,
-                        foregroundColor: theme.colorScheme.onPrimaryContainer,
-                        minimumSize: const Size(double.infinity, 54),
-                      ),
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
@@ -165,30 +198,70 @@ class DayRatingWidget extends ConsumerWidget {
     );
   }
 
+  List<Widget> _buildRatingCards(
+    BuildContext context,
+    ThemeData theme,
+    List<DayRating> ratings,
+    WidgetRef ref, {
+    required bool isSmallScreen,
+  }) {
+    return DayRatings.values.map((ratingType) {
+      final rating = ratings.firstWhere(
+        (r) => r.dayRating == ratingType,
+        orElse: () => DayRating(dayRating: ratingType),
+      );
+
+      return _buildRatingCard(
+        context,
+        theme,
+        ratingType,
+        rating,
+        (score) {
+          ref.read(dayRatingsProvider.notifier).updateRating(
+                ratingType,
+                score.toInt(),
+              );
+        },
+        isSmallScreen: isSmallScreen,
+      );
+    }).toList();
+  }
+
   Widget _buildRatingCard(
     BuildContext context,
     ThemeData theme,
     DayRatings ratingType,
     DayRating rating,
-    Function(double) onRatingUpdate,
-  ) {
+    Function(double) onRatingUpdate, {
+    required bool isSmallScreen,
+  }) {
     final IconData headerIcon = _getRatingTypeIcon(ratingType);
     final String description = _getRatingTypeDescription(ratingType);
 
+    // Adaptive padding and spacing based on screen size
+    final double cardPadding = isSmallScreen ? 12.0 : 16.0;
+    final double spacingSmall = isSmallScreen ? 4.0 : 8.0;
+    final double spacingMedium = isSmallScreen ? 8.0 : 16.0;
+
+    // Adaptive text sizes
+    final double titleFontSize = isSmallScreen ? 16.0 : 18.0;
+    final double descriptionFontSize = isSmallScreen ? 12.0 : 14.0;
+    final double ratingLabelFontSize = isSmallScreen ? 12.0 : 14.0;
+
     return Card(
-      margin: const EdgeInsets.only(bottom: 16),
+      margin: EdgeInsets.only(bottom: isSmallScreen ? 12 : 16),
       color: theme.colorScheme.secondaryContainer,
       elevation: 4,
-      shadowColor: theme.colorScheme.shadow.withOpacity(0.3),
+      shadowColor: theme.colorScheme.shadow..withValues(alpha: 0.3),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
         side: BorderSide(
-          color: theme.colorScheme.outline.withOpacity(0.3),
+          color: theme.colorScheme.outline.withValues(alpha: 0.3),
           width: 1,
         ),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: EdgeInsets.all(cardPadding),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -198,107 +271,111 @@ class DayRatingWidget extends ConsumerWidget {
                 Icon(
                   headerIcon,
                   color: theme.colorScheme.primary,
-                  size: 24,
+                  size: isSmallScreen ? 20 : 24,
                 ),
-                const SizedBox(width: 12),
-                Text(
-                  _capitalizeFirstLetter(ratingType.name),
-                  style: theme.textTheme.titleLarge?.copyWith(
-                    color: theme.colorScheme.onSecondaryContainer,
-                    fontWeight: FontWeight.bold,
+                SizedBox(width: spacingSmall),
+                Expanded(
+                  child: Text(
+                    _capitalizeFirstLetter(ratingType.name),
+                    style: theme.textTheme.titleLarge?.copyWith(
+                      color: theme.colorScheme.onSecondaryContainer,
+                      fontWeight: FontWeight.bold,
+                      fontSize: titleFontSize,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
               ],
             ),
 
-            const SizedBox(height: 8),
+            SizedBox(height: spacingSmall),
 
-            // Description
-            Text(
-              description,
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onSecondaryContainer.withOpacity(0.8),
+            // Description - only show if there's enough space
+            if (!isSmallScreen || MediaQuery.of(context).size.height > 500)
+              Text(
+                description,
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: theme.colorScheme.onSecondaryContainer
+                      .withValues(alpha: 0.8),
+                  fontSize: descriptionFontSize,
+                ),
+                maxLines: isSmallScreen ? 2 : 3,
+                overflow: TextOverflow.ellipsis,
               ),
-            ),
 
-            const SizedBox(height: 16),
+            SizedBox(height: spacingMedium),
 
-            // Rating bar
+            // Rating bar - adapt size based on screen
             Center(
-              child: Container(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: RatingBar.builder(
-                  initialRating: rating.score > 0 ? rating.score.toDouble() : 3,
-                  minRating: 1,
-                  direction: Axis.horizontal,
-                  allowHalfRating: false,
-                  itemCount: 5,
-                  itemBuilder: (context, index) {
-                    // Use theme colors for rating icons
-                    Color iconColor;
-                    switch (index) {
-                      case 0:
-                        iconColor = Colors.red;
-                        break;
-                      case 1:
-                        iconColor = Colors.red.shade400;
-                        break;
-                      case 2:
-                        iconColor = Colors.yellow.shade700;
-                        break;
-                      case 3:
-                        iconColor = Colors.lightGreen;
-                        break;
-                      case 4:
-                        iconColor = Colors.green;
-                        break;
-                      default:
-                        iconColor = Colors.yellow.shade700;
-                    }
+              child: RatingBar.builder(
+                initialRating: rating.score > 0 ? rating.score.toDouble() : 3,
+                minRating: 1,
+                direction: Axis.horizontal,
+                allowHalfRating: false,
+                itemCount: 5,
+                itemSize: isSmallScreen ? 24 : 32,
+                itemBuilder: (context, index) {
+                  // Use theme colors for rating icons
+                  Color iconColor;
+                  switch (index) {
+                    case 0:
+                      iconColor = Colors.red;
+                      break;
+                    case 1:
+                      iconColor = Colors.red.shade400;
+                      break;
+                    case 2:
+                      iconColor = Colors.yellow.shade700;
+                      break;
+                    case 3:
+                      iconColor = Colors.lightGreen;
+                      break;
+                    case 4:
+                      iconColor = Colors.green;
+                      break;
+                    default:
+                      iconColor = Colors.yellow.shade700;
+                  }
 
-                    switch (index) {
-                      case 0:
-                        return Icon(
-                          Icons.sentiment_very_dissatisfied,
-                          color: iconColor,
-                        );
-                      case 1:
-                        return Icon(
-                          Icons.sentiment_dissatisfied,
-                          color: iconColor,
-                        );
-                      case 2:
-                        return Icon(
-                          Icons.sentiment_neutral,
-                          color: iconColor,
-                        );
-                      case 3:
-                        return Icon(
-                          Icons.sentiment_satisfied,
-                          color: iconColor,
-                        );
-                      case 4:
-                        return Icon(
-                          Icons.sentiment_very_satisfied,
-                          color: iconColor,
-                        );
-                      default:
-                        return Icon(
-                          Icons.sentiment_neutral,
-                          color: iconColor,
-                        );
-                    }
-                  },
-                  onRatingUpdate: onRatingUpdate,
-                ),
+                  switch (index) {
+                    case 0:
+                      return Icon(
+                        Icons.sentiment_very_dissatisfied,
+                        color: iconColor,
+                      );
+                    case 1:
+                      return Icon(
+                        Icons.sentiment_dissatisfied,
+                        color: iconColor,
+                      );
+                    case 2:
+                      return Icon(
+                        Icons.sentiment_neutral,
+                        color: iconColor,
+                      );
+                    case 3:
+                      return Icon(
+                        Icons.sentiment_satisfied,
+                        color: iconColor,
+                      );
+                    case 4:
+                      return Icon(
+                        Icons.sentiment_very_satisfied,
+                        color: iconColor,
+                      );
+                    default:
+                      return Icon(
+                        Icons.sentiment_neutral,
+                        color: iconColor,
+                      );
+                  }
+                },
+                onRatingUpdate: onRatingUpdate,
               ),
             ),
 
-            const SizedBox(height: 8),
+            SizedBox(height: spacingSmall),
 
             // Rating label
             Center(
@@ -307,6 +384,7 @@ class DayRatingWidget extends ConsumerWidget {
                 style: theme.textTheme.titleMedium?.copyWith(
                   color: _getRatingColor(rating.score, theme),
                   fontWeight: FontWeight.bold,
+                  fontSize: ratingLabelFontSize,
                 ),
               ),
             ),
@@ -369,11 +447,11 @@ class DayRatingWidget extends ConsumerWidget {
       case 1:
         return theme.colorScheme.error;
       case 2:
-        return theme.colorScheme.error.withOpacity(0.7);
+        return theme.colorScheme.error..withValues(alpha: 0.7);
       case 3:
         return theme.colorScheme.tertiary;
       case 4:
-        return theme.colorScheme.tertiary.withOpacity(0.7);
+        return theme.colorScheme.tertiary..withValues(alpha: 0.7);
       case 5:
         return theme.colorScheme.primary;
       default:
@@ -413,10 +491,14 @@ class DayRatingWidget extends ConsumerWidget {
         ),
         backgroundColor: theme.colorScheme.primary,
         duration: const Duration(seconds: 2),
+        behavior: SnackBarBehavior.floating,
       ),
     );
 
     // Reset ratings for next day
     ref.read(dayRatingsProvider.notifier).resetRatings();
+
+    // Return to the notes page
+    ref.read(diaryWizardPageStateProvider.notifier).setNotesPage();
   }
 }

@@ -45,7 +45,7 @@ class _AboutPageState extends State<AboutPage> {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
               side: BorderSide(
-                color: colorScheme.outline.withOpacity(0.1),
+                color: colorScheme.outline.withValues(alpha: 0.1),
                 width: 1,
               ),
             ),
@@ -62,7 +62,7 @@ class _AboutPageState extends State<AboutPage> {
                         shape: BoxShape.circle,
                         boxShadow: [
                           BoxShadow(
-                            color: colorScheme.shadow.withOpacity(0.1),
+                            color: colorScheme.shadow.withValues(alpha: 0.1),
                             blurRadius: 4,
                             offset: const Offset(0, 2),
                           ),
@@ -89,15 +89,15 @@ class _AboutPageState extends State<AboutPage> {
                     child: Text(
                       'Version: $_version',
                       style: theme.textTheme.bodyLarge?.copyWith(
-                        color:
-                            colorScheme.onSecondaryContainer.withOpacity(0.8),
+                        color: colorScheme.onSecondaryContainer
+                            .withValues(alpha: 0.8),
                       ),
                     ),
                   ),
                   const SizedBox(height: 24),
                   _buildInfoRow(context, 'Developer', 'Your Name'),
                   _buildInfoRow(context, 'Contact', 'your.email@example.com'),
-                  Divider(color: colorScheme.outline.withOpacity(0.2)),
+                  Divider(color: colorScheme.outline.withValues(alpha: 0.2)),
                   const SizedBox(height: 8),
                   Text(
                     'Description',
@@ -183,7 +183,7 @@ class _AboutPageState extends State<AboutPage> {
               child: Text(
                 '© ${DateTime.now().year} Your Company',
                 style: theme.textTheme.bodySmall?.copyWith(
-                  color: colorScheme.onSurface.withOpacity(0.6),
+                  color: colorScheme.onSurface.withValues(alpha: 0.6),
                 ),
               ),
             ),
@@ -204,7 +204,7 @@ class _AboutPageState extends State<AboutPage> {
           Text(
             '$label: ',
             style: theme.textTheme.titleSmall?.copyWith(
-              color: colorScheme.onSecondaryContainer.withOpacity(0.8),
+              color: colorScheme.onSecondaryContainer.withValues(alpha: 0.8),
               fontWeight: FontWeight.bold,
             ),
           ),
