@@ -16,43 +16,29 @@ class _DiaryDayWizardPageState extends ConsumerState<DiaryDayWizardPage> {
   @override
   void initState() {
     super.initState();
-    // Set initial date if needed
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      // Load saved notes for the selected date
       _loadData();
     });
   }
 
   Future<void> _loadData() async {
     LogWrapper.logger.d('Loading data for diary day wizard');
-
-    // Load notes from database
     await ref.read(notesLocalDataProvider.notifier).readObjectsFromDatabase();
-
-    // Set selected date to today if not already set
     ref.read(noteSelectedDateProvider);
-
-    // No need to create an initial empty note automatically
   }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Theme.of(context).colorScheme.surface,
-      child: Column(
-        children: [
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              // Use the new DiaryDayEditingWizardWidget
-              child: const DiaryDayEditingWizardWidget(
-                navigateBack: false,
-                addAdditionalSaveButton: true,
-                editNote: false,
-              ),
-            ),
+    return Scaffold(
+      body: Container(
+        color: Theme.of(context).colorScheme.surface,
+        child: const SafeArea(
+          child: DiaryDayEditingWizardWidget(
+            navigateBack: false,
+            addAdditionalSaveButton: true,
+            editNote: false,
           ),
-        ],
+        ),
       ),
     );
   }

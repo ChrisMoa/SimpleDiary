@@ -1,3 +1,4 @@
+// lib/features/day_rating/presentation/widgets/note_detail_widget.dart
 import 'package:day_tracker/core/provider/theme_provider.dart';
 import 'package:day_tracker/core/utils/platform_utils.dart';
 import 'package:day_tracker/core/utils/utils.dart';
@@ -26,6 +27,9 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
   bool _isListening = false;
   String _oldText = '';
   String? _lastNoteId;
+
+  // Track if keyboard is active to manage UI layout
+  bool _isKeyboardVisible = false;
 
   @override
   void initState() {
@@ -58,6 +62,9 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
     final selectedNote = ref.watch(selectedWizardNoteProvider);
     final theme = ref.watch(themeProvider);
 
+    // Check if keyboard is visible to adapt UI
+    _isKeyboardVisible = MediaQuery.of(context).viewInsets.bottom > 0;
+
     // Update controllers when selected note changes
     if (selectedNote != null && selectedNote.id != _lastNoteId) {
       _titleController.text = selectedNote.title;
@@ -67,82 +74,70 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
 
     // If no note is selected, suggest creating a new note
     if (selectedNote == null) {
-      return Card(
-        margin: const EdgeInsets.all(8),
-        color: theme.colorScheme.secondaryContainer,
-        elevation: 2,
-        shadowColor: theme.colorScheme.shadow.withOpacity(0.3),
-        child: Center(
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.note_add,
-                  size: 48,
-                  color: theme.colorScheme.primary.withOpacity(0.7),
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  'No note selected',
-                  style: theme.textTheme.titleLarge!.copyWith(
-                    color: theme.colorScheme.primary,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'Click on an existing note or create a new one',
-                  textAlign: TextAlign.center,
-                  style: theme.textTheme.bodyMedium!.copyWith(
-                    color: theme.colorScheme.onSecondaryContainer,
-                  ),
-                ),
-                const SizedBox(height: 24),
-                ElevatedButton.icon(
-                  onPressed: () {
-                    // Get next free time slot
-                    final nextStartTime =
-                        ref.read(nextAvailableTimeSlotProvider);
-                    final emptyNote = Note(
-                      id: const Uuid().v4(),
-                      title: '',
-                      description: '',
-                      from: nextStartTime,
-                      to: nextStartTime.add(const Duration(minutes: 30)),
-                      noteCategory: availableNoteCategories.first,
-                    );
-
-                    // Add to database
-                    ref
-                        .read(notesLocalDataProvider.notifier)
-                        .addElement(emptyNote);
-
-                    // Select the new note
-                    ref
-                        .read(selectedWizardNoteProvider.notifier)
-                        .selectNote(emptyNote);
-                  },
-                  icon: const Icon(Icons.add),
-                  label: const Text('Create New Note'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: theme.colorScheme.primaryContainer,
-                    foregroundColor: theme.colorScheme.onPrimaryContainer,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 24,
-                      vertical: 12,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      );
+      return _buildEmptyNoteView(theme);
     }
 
     // Show the note details when a note is selected
+    return _buildNoteDetailView(theme, selectedNote);
+  }
+
+  Widget _buildEmptyNoteView(ThemeData theme) {
+    return Card(
+      margin: const EdgeInsets.all(8),
+      color: theme.colorScheme.secondaryContainer,
+      elevation: 2,
+      shadowColor: theme.colorScheme.shadow.withOpacity(0.3),
+      child: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: GridView(
+            gridDelegate:
+                SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 1),
+            children: [
+              Icon(
+                Icons.note_add,
+                size: 48,
+                color: theme.colorScheme.primary,
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'No note selected',
+                style: theme.textTheme.titleLarge!.copyWith(
+                  color: theme.colorScheme.primary,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'Click on an existing note or create a new one',
+                textAlign: TextAlign.center,
+                style: theme.textTheme.bodyMedium!.copyWith(
+                  color: theme.colorScheme.onSecondaryContainer,
+                ),
+              ),
+              const SizedBox(height: 24),
+              ElevatedButton.icon(
+                onPressed: _addNextFreeNote,
+                icon: const Icon(Icons.add, size: 18),
+                label: const Text('Create New Note'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: theme.colorScheme.primaryContainer,
+                  foregroundColor: theme.colorScheme.onPrimaryContainer,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 12,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNoteDetailView(ThemeData theme, Note selectedNote) {
+    // Create a responsive layout that adapts to keyboard visibility
     return Card(
       margin: const EdgeInsets.all(8),
       color: theme.colorScheme.secondaryContainer,
@@ -185,7 +180,7 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
                 ),
               ],
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 12),
 
             // Title field
             TextFormField(
@@ -193,12 +188,24 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
               decoration: InputDecoration(
                 labelText: 'Title',
                 labelStyle: TextStyle(color: theme.colorScheme.primary),
-                border: const OutlineInputBorder(),
+                border: OutlineInputBorder(
+                  borderSide: BorderSide(color: theme.colorScheme.outline),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderSide: BorderSide(color: theme.colorScheme.outline),
+                  borderRadius: BorderRadius.circular(8),
+                ),
                 focusedBorder: OutlineInputBorder(
                   borderSide: BorderSide(color: theme.colorScheme.primary),
+                  borderRadius: BorderRadius.circular(8),
                 ),
+                filled: true,
+                fillColor: theme.colorScheme.surface,
               ),
-              style: theme.textTheme.titleMedium,
+              style: theme.textTheme.titleMedium?.copyWith(
+                color: theme.colorScheme.onSurface,
+              ),
               onChanged: (value) {
                 if (value != selectedNote.title) {
                   _updateNote(
@@ -215,207 +222,287 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
                 }
               },
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 12),
 
-            // Category dropdown
-            DropdownButtonFormField<NoteCategory>(
-              value: selectedNote.noteCategory,
-              decoration: InputDecoration(
-                labelText: 'Category',
-                labelStyle: TextStyle(color: theme.colorScheme.primary),
-                border: const OutlineInputBorder(),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: theme.colorScheme.primary),
-                ),
-              ),
-              items: availableNoteCategories.map((category) {
-                return DropdownMenuItem(
-                  value: category,
-                  child: Row(
-                    children: [
-                      Container(
-                        width: 16,
-                        height: 16,
-                        decoration: BoxDecoration(
-                          color: category.color,
-                          shape: BoxShape.circle,
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Text(category.title),
-                    ],
+            // Time and category row - disappears when keyboard is visible to save space
+            if (!_isKeyboardVisible) ...[
+              // Category dropdown
+              DropdownButtonFormField<NoteCategory>(
+                value: selectedNote.noteCategory,
+                decoration: InputDecoration(
+                  labelText: 'Category',
+                  labelStyle: TextStyle(color: theme.colorScheme.primary),
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide(color: theme.colorScheme.outline),
+                    borderRadius: BorderRadius.circular(8),
                   ),
-                );
-              }).toList(),
-              onChanged: (value) {
-                if (value != null && value != selectedNote.noteCategory) {
-                  _updateNote(
-                    Note(
-                      id: selectedNote.id,
-                      title: selectedNote.title,
-                      description: selectedNote.description,
-                      from: selectedNote.from,
-                      to: selectedNote.to,
-                      noteCategory: value,
-                      isAllDay: selectedNote.isAllDay,
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: theme.colorScheme.outline),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: theme.colorScheme.primary),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  filled: true,
+                  fillColor: theme.colorScheme.surface,
+                ),
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: theme.colorScheme.onSurface,
+                ),
+                dropdownColor: theme.colorScheme.surface,
+                items: availableNoteCategories.map((category) {
+                  return DropdownMenuItem(
+                    value: category,
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 16,
+                          height: 16,
+                          decoration: BoxDecoration(
+                            color: category.color,
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Text(category.title),
+                      ],
                     ),
                   );
-                }
-              },
-            ),
-            const SizedBox(height: 16),
+                }).toList(),
+                onChanged: (value) {
+                  if (value != null && value != selectedNote.noteCategory) {
+                    _updateNote(
+                      Note(
+                        id: selectedNote.id,
+                        title: selectedNote.title,
+                        description: selectedNote.description,
+                        from: selectedNote.from,
+                        to: selectedNote.to,
+                        noteCategory: value,
+                        isAllDay: selectedNote.isAllDay,
+                      ),
+                    );
+                  }
+                },
+              ),
+              const SizedBox(height: 12),
 
-            // Time pickers
-            Row(
-              children: [
-                Expanded(
-                  child: TextButton.icon(
-                    onPressed: () => _selectTime(context, selectedNote, true),
-                    icon: const Icon(Icons.access_time),
-                    label: Row(
-                      children: [
-                        Text('From: '),
-                        Text(
-                          Utils.toTime(selectedNote.from),
-                          style: const TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                      ],
-                    ),
-                    style: TextButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 8),
-                      backgroundColor:
-                          theme.colorScheme.surfaceContainerHighest,
+              // Time pickers row
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      onPressed: () => _selectTime(context, selectedNote, true),
+                      icon: const Icon(Icons.access_time, size: 16),
+                      label: Text('From: ${Utils.toTime(selectedNote.from)}'),
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 8),
+                        side: BorderSide(color: theme.colorScheme.outline),
+                      ),
                     ),
                   ),
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: TextButton.icon(
-                    onPressed: () => _selectTime(context, selectedNote, false),
-                    icon: const Icon(Icons.access_time),
-                    label: Row(
-                      children: [
-                        Text('To: '),
-                        Text(
-                          Utils.toTime(selectedNote.to),
-                          style: const TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                      ],
-                    ),
-                    style: TextButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 8),
-                      backgroundColor:
-                          theme.colorScheme.surfaceContainerHighest,
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      onPressed: () =>
+                          _selectTime(context, selectedNote, false),
+                      icon: const Icon(Icons.access_time, size: 16),
+                      label: Text('To: ${Utils.toTime(selectedNote.to)}'),
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 8),
+                        side: BorderSide(color: theme.colorScheme.outline),
+                      ),
                     ),
                   ),
-                ),
-              ],
-            ),
+                ],
+              ),
+              const SizedBox(height: 12),
+            ],
 
-            const SizedBox(height: 16),
-
-            // Description
+            // Description field - flexible to fill remaining space
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'Description',
-                    style: theme.textTheme.titleMedium!.copyWith(
-                      color: theme.colorScheme.primary,
-                    ),
+                  // Description field label
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Description',
+                        style: theme.textTheme.titleMedium!.copyWith(
+                          color: theme.colorScheme.primary,
+                        ),
+                      ),
+                      // Speech-to-text button only on supported platforms
+                      if (_supportsPlatformSpeechRecognition())
+                        IconButton(
+                          onPressed:
+                              _isListening ? _stopListening : _startListening,
+                          icon: Icon(
+                            _isListening ? Icons.mic : Icons.mic_none,
+                            color: _isListening
+                                ? theme.colorScheme.primary
+                                : theme.colorScheme.onSurface.withOpacity(0.7),
+                          ),
+                          tooltip: _isListening
+                              ? 'Stop dictation'
+                              : 'Dictate description',
+                        ),
+                    ],
                   ),
                   const SizedBox(height: 8),
+
+                  // Description text field - takes all available space
                   Expanded(
-                    child: TextFormField(
-                      controller: _descriptionController,
-                      decoration: InputDecoration(
-                        border: const OutlineInputBorder(),
-                        hintText: 'Add description...',
-                        alignLabelWithHint: true,
-                        filled: true,
-                        fillColor: theme.colorScheme.surface,
-                      ),
-                      maxLines: null,
-                      expands: true,
-                      textAlignVertical: TextAlignVertical.top,
-                      style: theme.textTheme.bodyMedium,
-                      onChanged: (value) {
-                        if (value != selectedNote.description) {
-                          _updateNote(
-                            Note(
-                              id: selectedNote.id,
-                              title: selectedNote.title,
-                              description: value,
-                              from: selectedNote.from,
-                              to: selectedNote.to,
-                              noteCategory: selectedNote.noteCategory,
-                              isAllDay: selectedNote.isAllDay,
+                    child: Stack(
+                      children: [
+                        // Text field
+                        TextField(
+                          controller: _descriptionController,
+                          decoration: InputDecoration(
+                            hintText: 'Add details about this note...',
+                            hintStyle: TextStyle(
+                              color:
+                                  theme.colorScheme.onSurface.withOpacity(0.5),
                             ),
-                          );
-                        }
-                      },
+                            border: OutlineInputBorder(
+                              borderSide:
+                                  BorderSide(color: theme.colorScheme.outline),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderSide:
+                                  BorderSide(color: theme.colorScheme.outline),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide:
+                                  BorderSide(color: theme.colorScheme.primary),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            filled: true,
+                            fillColor: theme.colorScheme.surface,
+                            contentPadding: const EdgeInsets.all(16),
+                          ),
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            color: theme.colorScheme.onSurface,
+                          ),
+                          maxLines: null,
+                          expands: true,
+                          textAlignVertical: TextAlignVertical.top,
+                          onChanged: (value) {
+                            if (value != selectedNote.description) {
+                              _updateNote(
+                                Note(
+                                  id: selectedNote.id,
+                                  title: selectedNote.title,
+                                  description: value,
+                                  from: selectedNote.from,
+                                  to: selectedNote.to,
+                                  noteCategory: selectedNote.noteCategory,
+                                  isAllDay: selectedNote.isAllDay,
+                                ),
+                              );
+                            }
+                          },
+                        ),
+
+                        // Speech to text indicator
+                        if (_isListening)
+                          Positioned(
+                            bottom: 16,
+                            right: 16,
+                            child: Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                color: theme.colorScheme.primaryContainer,
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  LoadingAnimationWidget.staggeredDotsWave(
+                                    color: theme.colorScheme.onPrimaryContainer,
+                                    size: 20,
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    'Listening...',
+                                    style: theme.textTheme.bodySmall!.copyWith(
+                                      color:
+                                          theme.colorScheme.onPrimaryContainer,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                      ],
                     ),
                   ),
                 ],
               ),
             ),
 
-            // Voice input button (only for supported platforms)
-            if (_supportsPlatformSpeechRecognition())
-              Padding(
-                padding: const EdgeInsets.only(top: 8.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    TextButton.icon(
-                      onPressed: () {
-                        if (_speechToText.isListening) {
-                          _stopListeningNow();
-                        } else {
-                          _startListeningNow();
-                        }
-                      },
-                      icon: _isListening
-                          ? LoadingAnimationWidget.beat(
-                              size: 20,
-                              color: theme.colorScheme.primary,
-                            )
-                          : const Icon(Icons.mic),
-                      label:
-                          Text(_isListening ? 'Recording...' : 'Voice Input'),
-                      style: TextButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 8,
-                        ),
-                        backgroundColor: _isListening
-                            ? theme.colorScheme.error.withOpacity(0.1)
-                            : theme.colorScheme.primaryContainer
-                                .withOpacity(0.3),
+            // Action buttons for notes
+            if (!_isKeyboardVisible) ...[
+              const SizedBox(height: 16),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  // Delete button
+                  OutlinedButton.icon(
+                    onPressed: () => _deleteNote(selectedNote),
+                    icon: Icon(
+                      Icons.delete,
+                      color: theme.colorScheme.error,
+                    ),
+                    label: Text(
+                      'Delete',
+                      style: TextStyle(
+                        color: theme.colorScheme.error,
                       ),
                     ),
-                  ],
-                ),
-              ),
-
-            // Delete button
-            Padding(
-              padding: const EdgeInsets.only(top: 8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  TextButton.icon(
-                    onPressed: () => _deleteNote(selectedNote),
-                    icon: const Icon(Icons.delete, color: Colors.red),
-                    label: const Text(
-                      'Delete',
-                      style: TextStyle(color: Colors.red),
+                    style: OutlinedButton.styleFrom(
+                      side: BorderSide(
+                        color: theme.colorScheme.error.withOpacity(0.5),
+                      ),
                     ),
+                  ),
+
+                  // Time editor buttons
+                  Row(
+                    children: [
+                      OutlinedButton.icon(
+                        onPressed: () => _adjustTime(selectedNote, -30),
+                        icon: const Icon(Icons.remove),
+                        label: const Text('30m'),
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: theme.colorScheme.primary,
+                          side: BorderSide(
+                            color: theme.colorScheme.primary.withOpacity(0.5),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      OutlinedButton.icon(
+                        onPressed: () => _adjustTime(selectedNote, 30),
+                        icon: const Icon(Icons.add),
+                        label: const Text('30m'),
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: theme.colorScheme.primary,
+                          side: BorderSide(
+                            color: theme.colorScheme.primary.withOpacity(0.5),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
-            ),
+            ],
           ],
         ),
       ),
@@ -534,7 +621,36 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
     );
   }
 
-  Future<void> _startListeningNow() async {
+  void _addNextFreeNote() {
+    // Get the next available time slot
+    final nextStartTime = ref.read(nextAvailableTimeSlotProvider);
+
+    // Create a new note with 30-minute duration
+    final newNote = Note(
+      id: const Uuid().v4(),
+      title: '',
+      description: '',
+      from: nextStartTime,
+      to: nextStartTime.add(const Duration(minutes: 30)),
+      noteCategory: availableNoteCategories.first,
+    );
+
+    // Add to database
+    ref.read(notesLocalDataProvider.notifier).addElement(newNote);
+
+    // Select the new note
+    ref.read(selectedWizardNoteProvider.notifier).selectNote(newNote);
+
+    // Show feedback to user
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Added new note at ${Utils.toTime(nextStartTime)}'),
+        duration: const Duration(seconds: 2),
+      ),
+    );
+  }
+
+  Future<void> _startListening() async {
     if (_supportsPlatformSpeechRecognition()) {
       FocusScope.of(context).unfocus();
       _oldText = _descriptionController.text;
@@ -552,7 +668,7 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
     }
   }
 
-  Future<void> _stopListeningNow() async {
+  Future<void> _stopListening() async {
     if (_supportsPlatformSpeechRecognition()) {
       await _speechToText.stop();
       setState(() {
@@ -591,7 +707,7 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
 
     setState(() {
       if (text.contains('Notiz Ende')) {
-        _stopListeningNow();
+        _stopListening();
       }
       _descriptionController.text = text;
     });
@@ -613,7 +729,39 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
     }
 
     if (_speechToText.isNotListening) {
-      _startListeningNow();
+      _startListening();
     }
+  }
+
+  void _adjustTime(Note note, int minutes) {
+    final newDateTime = DateTime(
+      note.from.year,
+      note.from.month,
+      note.from.day,
+      note.from.hour + (note.from.minute + minutes) ~/ 60,
+      (note.from.minute + minutes) % 60,
+    );
+
+    if (newDateTime.isAfter(note.to) || newDateTime.isAtSameMomentAs(note.to)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('End time must be after start time'),
+          duration: Duration(seconds: 2),
+        ),
+      );
+      return;
+    }
+
+    _updateNote(
+      Note(
+        id: note.id,
+        title: note.title,
+        description: note.description,
+        from: newDateTime,
+        to: note.to,
+        noteCategory: note.noteCategory,
+        isAllDay: note.isAllDay,
+      ),
+    );
   }
 }
