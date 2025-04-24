@@ -38,11 +38,7 @@ class _DiaryDayWizardPageState extends ConsumerState<DiaryDayWizardPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Daily Journal'),
-        centerTitle: true,
-        elevation: 0,
-      ),
+      // Removed the AppBar to save vertical space
       body: _isLoading
           ? const Center(
               child: Column(
@@ -54,10 +50,12 @@ class _DiaryDayWizardPageState extends ConsumerState<DiaryDayWizardPage> {
                 ],
               ),
             )
-          : const DiaryDayEditingWizardWidget(
-              navigateBack: false,
-              addAdditionalSaveButton: true,
-              editNote: false,
+          : const SafeArea(
+              child: DiaryDayEditingWizardWidget(
+                navigateBack: false,
+                addAdditionalSaveButton: true,
+                editNote: false,
+              ),
             ),
       // Using resizeToAvoidBottomInset: false to prevent the keyboard
       // from automatically pushing up the content

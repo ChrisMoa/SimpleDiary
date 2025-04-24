@@ -27,6 +27,9 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
   String _oldText = '';
   String? _lastNoteId;
 
+  // Controller for the scrollable view
+  final ScrollController _scrollController = ScrollController();
+
   @override
   void initState() {
     super.initState();
@@ -37,6 +40,7 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
   void dispose() {
     _titleController.dispose();
     _descriptionController.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -81,318 +85,333 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
       margin: const EdgeInsets.all(8),
       color: theme.colorScheme.secondaryContainer,
       elevation: 2,
-      shadowColor: theme.colorScheme.shadow.withValues(alpha: 0.3),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
       ),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Header with time info - Responsive layout for small screens
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Text(
-                    'Note Details',
-                    style: theme.textTheme.titleLarge!.copyWith(
-                      color: theme.colorScheme.primary,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(
-                    color:
-                        selectedNote.noteCategory.color.withValues(alpha: 0.2),
-                    borderRadius: BorderRadius.circular(4),
-                    border: Border.all(
-                      color: selectedNote.noteCategory.color,
-                      width: 1,
-                    ),
-                  ),
-                  child: Text(
-                    '${Utils.toTime(selectedNote.from)} - ${Utils.toTime(selectedNote.to)}',
-                    style: theme.textTheme.bodySmall!.copyWith(
-                      color: theme.colorScheme.onSecondaryContainer,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-
-            // Title field
-            TextFormField(
-              controller: _titleController,
-              decoration: InputDecoration(
-                labelText: 'Title',
-                labelStyle: TextStyle(color: theme.colorScheme.primary),
-                border: OutlineInputBorder(
-                  borderSide: BorderSide(color: theme.colorScheme.outline),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: theme.colorScheme.outline),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color: theme.colorScheme.primary),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                filled: true,
-                fillColor: theme.colorScheme.surface,
-              ),
-              style: theme.textTheme.titleMedium?.copyWith(
-                color: theme.colorScheme.onSurface,
-              ),
-              onChanged: (value) {
-                if (value != selectedNote.title) {
-                  _updateNote(
-                    Note(
-                      id: selectedNote.id,
-                      title: value,
-                      description: selectedNote.description,
-                      from: selectedNote.from,
-                      to: selectedNote.to,
-                      noteCategory: selectedNote.noteCategory,
-                      isAllDay: selectedNote.isAllDay,
-                    ),
-                  );
-                }
-              },
-            ),
-            const SizedBox(height: 12),
-
-            // Time and category row - Adaptive layout based on screen size and keyboard visibility
-            if (!isKeyboardVisible ||
-                !isSmallScreen) // Hide on small screens when keyboard is visible
-              AnimatedSize(
-                duration: const Duration(milliseconds: 300),
-                child: isSmallScreen
-                    ? _buildCompactControls(selectedNote, theme)
-                    : _buildFullControls(selectedNote, theme),
-              ),
-
-            // Description field - flexible to fill remaining space
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+      child: SingleChildScrollView(
+        controller: _scrollController,
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Header with time info - Responsive layout for small screens
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  // Description field label with speech button
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Description',
-                        style: theme.textTheme.titleMedium!.copyWith(
-                          color: theme.colorScheme.primary,
-                        ),
-                      ),
-                      // Speech-to-text button only on supported platforms
-                      if (_supportsPlatformSpeechRecognition())
-                        IconButton(
-                          onPressed:
-                              _isListening ? _stopListening : _startListening,
-                          icon: Icon(
-                            _isListening ? Icons.mic : Icons.mic_none,
-                            color: _isListening
-                                ? theme.colorScheme.primary
-                                : theme.colorScheme.onSurface
-                                    .withValues(alpha: 0.7),
-                          ),
-                          tooltip: _isListening
-                              ? 'Stop dictation'
-                              : 'Dictate description',
-                        ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-
-                  // Description text field - takes all available space
                   Expanded(
-                    child: Stack(
-                      children: [
-                        // Text field
-                        TextField(
-                          controller: _descriptionController,
-                          decoration: InputDecoration(
-                            hintText: 'Add details about this note...',
-                            hintStyle: TextStyle(
-                              color: theme.colorScheme.onSurface
-                                  .withValues(alpha: 0.5),
-                            ),
-                            border: OutlineInputBorder(
-                              borderSide:
-                                  BorderSide(color: theme.colorScheme.outline),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderSide:
-                                  BorderSide(color: theme.colorScheme.outline),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderSide:
-                                  BorderSide(color: theme.colorScheme.primary),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            filled: true,
-                            fillColor: theme.colorScheme.surface,
-                            contentPadding: const EdgeInsets.all(16),
-                          ),
-                          style: theme.textTheme.bodyMedium?.copyWith(
-                            color: theme.colorScheme.onSurface,
-                          ),
-                          maxLines: null,
-                          expands: true,
-                          textAlignVertical: TextAlignVertical.top,
-                          onChanged: (value) {
-                            if (value != selectedNote.description) {
-                              _updateNote(
-                                Note(
-                                  id: selectedNote.id,
-                                  title: selectedNote.title,
-                                  description: value,
-                                  from: selectedNote.from,
-                                  to: selectedNote.to,
-                                  noteCategory: selectedNote.noteCategory,
-                                  isAllDay: selectedNote.isAllDay,
-                                ),
-                              );
-                            }
-                          },
-                        ),
-
-                        // Speech to text indicator
-                        if (_isListening)
-                          Positioned(
-                            bottom: 16,
-                            right: 16,
-                            child: Container(
-                              padding: const EdgeInsets.all(8),
-                              decoration: BoxDecoration(
-                                color: theme.colorScheme.primaryContainer,
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  LoadingAnimationWidget.staggeredDotsWave(
-                                    color: theme.colorScheme.onPrimaryContainer,
-                                    size: 20,
-                                  ),
-                                  const SizedBox(width: 8),
-                                  Text(
-                                    'Listening...',
-                                    style: theme.textTheme.bodySmall!.copyWith(
-                                      color:
-                                          theme.colorScheme.onPrimaryContainer,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                      ],
+                    child: Text(
+                      'Note Details',
+                      style: theme.textTheme.titleLarge!.copyWith(
+                        color: theme.colorScheme.primary,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: selectedNote.noteCategory.color
+                          .withValues(alpha: 0.2),
+                      borderRadius: BorderRadius.circular(4),
+                      border: Border.all(
+                        color: selectedNote.noteCategory.color,
+                        width: 1,
+                      ),
+                    ),
+                    child: Text(
+                      '${Utils.toTime(selectedNote.from)} - ${Utils.toTime(selectedNote.to)}',
+                      style: theme.textTheme.bodySmall!.copyWith(
+                        color: theme.colorScheme.onSecondaryContainer,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ],
               ),
-            ),
+              const SizedBox(height: 12),
 
-            // Action buttons for notes - show only when keyboard is not visible on small screens
-            if (!isKeyboardVisible || !isSmallScreen)
-              Padding(
-                padding: const EdgeInsets.only(top: 16),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    // Delete button
-                    OutlinedButton.icon(
-                      onPressed: () => _deleteNote(selectedNote),
+              // Title field
+              TextFormField(
+                controller: _titleController,
+                decoration: InputDecoration(
+                  labelText: 'Title',
+                  labelStyle: TextStyle(color: theme.colorScheme.primary),
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide(color: theme.colorScheme.outline),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: theme.colorScheme.outline),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: theme.colorScheme.primary),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  filled: true,
+                  fillColor: theme.colorScheme.surface,
+                ),
+                style: theme.textTheme.titleMedium?.copyWith(
+                  color: theme.colorScheme.onSurface,
+                ),
+                onChanged: (value) {
+                  if (value != selectedNote.title) {
+                    _updateNote(
+                      Note(
+                        id: selectedNote.id,
+                        title: value,
+                        description: selectedNote.description,
+                        from: selectedNote.from,
+                        to: selectedNote.to,
+                        noteCategory: selectedNote.noteCategory,
+                        isAllDay: selectedNote.isAllDay,
+                      ),
+                    );
+                  }
+                },
+              ),
+              const SizedBox(height: 12),
+
+              // Time and category row - Adaptive layout based on screen size and keyboard visibility
+              if (!isKeyboardVisible ||
+                  !isSmallScreen) // Hide on small screens when keyboard is visible
+                AnimatedSize(
+                  duration: const Duration(milliseconds: 300),
+                  child: isSmallScreen
+                      ? _buildCompactControls(selectedNote, theme)
+                      : _buildFullControls(selectedNote, theme),
+                ),
+
+              // Description field - with label and speech button
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Description',
+                    style: theme.textTheme.titleMedium!.copyWith(
+                      color: theme.colorScheme.primary,
+                    ),
+                  ),
+                  // Speech-to-text button only on supported platforms
+                  if (_supportsPlatformSpeechRecognition())
+                    IconButton(
+                      onPressed:
+                          _isListening ? _stopListening : _startListening,
                       icon: Icon(
-                        Icons.delete,
-                        color: theme.colorScheme.error,
-                        size: isSmallScreen ? 16 : 20,
+                        _isListening ? Icons.mic : Icons.mic_none,
+                        color: _isListening
+                            ? theme.colorScheme.primary
+                            : theme.colorScheme.onSurface
+                                .withValues(alpha: 0.7),
                       ),
-                      label: Text(
-                        'Delete',
-                        style: TextStyle(
-                          color: theme.colorScheme.error,
-                          fontSize: isSmallScreen ? 12 : 14,
+                      tooltip: _isListening
+                          ? 'Stop dictation'
+                          : 'Dictate description',
+                    ),
+                ],
+              ),
+              const SizedBox(height: 8),
+
+              // Description text field - Larger height for better visibility on small screens
+              SizedBox(
+                height:
+                    200, // Fixed height to ensure visibility on small screens
+                child: Stack(
+                  children: [
+                    // Text field
+                    TextField(
+                      controller: _descriptionController,
+                      decoration: InputDecoration(
+                        hintText: 'Add details about this note...',
+                        hintStyle: TextStyle(
+                          color: theme.colorScheme.onSurface
+                              .withValues(alpha: 0.5),
                         ),
-                      ),
-                      style: OutlinedButton.styleFrom(
-                        padding: isSmallScreen
-                            ? const EdgeInsets.symmetric(
-                                horizontal: 8, vertical: 4)
-                            : const EdgeInsets.symmetric(
-                                horizontal: 16, vertical: 8),
-                        side: BorderSide(
-                          color: theme.colorScheme.error.withValues(alpha: 0.5),
+                        border: OutlineInputBorder(
+                          borderSide:
+                              BorderSide(color: theme.colorScheme.outline),
+                          borderRadius: BorderRadius.circular(8),
                         ),
+                        enabledBorder: OutlineInputBorder(
+                          borderSide:
+                              BorderSide(color: theme.colorScheme.outline),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide:
+                              BorderSide(color: theme.colorScheme.primary),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        filled: true,
+                        fillColor: theme.colorScheme.surface,
+                        contentPadding: const EdgeInsets.all(16),
                       ),
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: theme.colorScheme.onSurface,
+                      ),
+                      maxLines: null,
+                      expands: true,
+                      textAlignVertical: TextAlignVertical.top,
+                      onTap: () {
+                        // Auto-scroll to ensure the text field is visible when tapped
+                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                          _scrollController.animateTo(
+                            _scrollController.position.maxScrollExtent,
+                            duration: const Duration(milliseconds: 300),
+                            curve: Curves.easeOut,
+                          );
+                        });
+                      },
+                      onChanged: (value) {
+                        if (value != selectedNote.description) {
+                          _updateNote(
+                            Note(
+                              id: selectedNote.id,
+                              title: selectedNote.title,
+                              description: value,
+                              from: selectedNote.from,
+                              to: selectedNote.to,
+                              noteCategory: selectedNote.noteCategory,
+                              isAllDay: selectedNote.isAllDay,
+                            ),
+                          );
+                        }
+                      },
                     ),
 
-                    // Time editor buttons
-                    Row(
-                      children: [
-                        OutlinedButton.icon(
-                          onPressed: () => _adjustTime(selectedNote, -30),
-                          icon:
-                              Icon(Icons.remove, size: isSmallScreen ? 16 : 20),
-                          label: Text(
-                            '30m',
-                            style: TextStyle(fontSize: isSmallScreen ? 12 : 14),
+                    // Speech to text indicator
+                    if (_isListening)
+                      Positioned(
+                        bottom: 16,
+                        right: 16,
+                        child: Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: theme.colorScheme.primaryContainer,
+                            borderRadius: BorderRadius.circular(8),
                           ),
-                          style: OutlinedButton.styleFrom(
-                            padding: isSmallScreen
-                                ? const EdgeInsets.symmetric(
-                                    horizontal: 8, vertical: 4)
-                                : const EdgeInsets.symmetric(
-                                    horizontal: 16, vertical: 8),
-                            foregroundColor: theme.colorScheme.primary,
-                            side: BorderSide(
-                              color: theme.colorScheme.primary
-                                  .withValues(alpha: 0.5),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 4),
-                        OutlinedButton.icon(
-                          onPressed: () => _adjustTime(selectedNote, 30),
-                          icon: Icon(Icons.add, size: isSmallScreen ? 16 : 20),
-                          label: Text(
-                            '30m',
-                            style: TextStyle(fontSize: isSmallScreen ? 12 : 14),
-                          ),
-                          style: OutlinedButton.styleFrom(
-                            padding: isSmallScreen
-                                ? const EdgeInsets.symmetric(
-                                    horizontal: 8, vertical: 4)
-                                : const EdgeInsets.symmetric(
-                                    horizontal: 16, vertical: 8),
-                            foregroundColor: theme.colorScheme.primary,
-                            side: BorderSide(
-                              color: theme.colorScheme.primary
-                                  .withValues(alpha: 0.5),
-                            ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              LoadingAnimationWidget.staggeredDotsWave(
+                                color: theme.colorScheme.onPrimaryContainer,
+                                size: 20,
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                'Listening...',
+                                style: theme.textTheme.bodySmall!.copyWith(
+                                  color: theme.colorScheme.onPrimaryContainer,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                      ],
-                    ),
+                      ),
                   ],
                 ),
               ),
-          ],
+
+              // Add some extra space at the bottom for better scrolling
+              const SizedBox(height: 16),
+
+              // Action buttons for notes - show only when keyboard is not visible on small screens
+              if (!isKeyboardVisible || !isSmallScreen)
+                Padding(
+                  padding: const EdgeInsets.only(top: 16),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      // Delete button
+                      OutlinedButton.icon(
+                        onPressed: () => _deleteNote(selectedNote),
+                        icon: Icon(
+                          Icons.delete,
+                          color: theme.colorScheme.error,
+                          size: isSmallScreen ? 16 : 20,
+                        ),
+                        label: Text(
+                          'Delete',
+                          style: TextStyle(
+                            color: theme.colorScheme.error,
+                            fontSize: isSmallScreen ? 12 : 14,
+                          ),
+                        ),
+                        style: OutlinedButton.styleFrom(
+                          padding: isSmallScreen
+                              ? const EdgeInsets.symmetric(
+                                  horizontal: 8, vertical: 4)
+                              : const EdgeInsets.symmetric(
+                                  horizontal: 16, vertical: 8),
+                          side: BorderSide(
+                            color:
+                                theme.colorScheme.error.withValues(alpha: 0.5),
+                          ),
+                        ),
+                      ),
+
+                      // Time editor buttons
+                      Row(
+                        children: [
+                          OutlinedButton.icon(
+                            onPressed: () => _adjustTime(selectedNote, -30),
+                            icon: Icon(Icons.remove,
+                                size: isSmallScreen ? 16 : 20),
+                            label: Text(
+                              '30m',
+                              style:
+                                  TextStyle(fontSize: isSmallScreen ? 12 : 14),
+                            ),
+                            style: OutlinedButton.styleFrom(
+                              padding: isSmallScreen
+                                  ? const EdgeInsets.symmetric(
+                                      horizontal: 8, vertical: 4)
+                                  : const EdgeInsets.symmetric(
+                                      horizontal: 16, vertical: 8),
+                              foregroundColor: theme.colorScheme.primary,
+                              side: BorderSide(
+                                color: theme.colorScheme.primary
+                                    .withValues(alpha: 0.5),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 4),
+                          OutlinedButton.icon(
+                            onPressed: () => _adjustTime(selectedNote, 30),
+                            icon:
+                                Icon(Icons.add, size: isSmallScreen ? 16 : 20),
+                            label: Text(
+                              '30m',
+                              style:
+                                  TextStyle(fontSize: isSmallScreen ? 12 : 14),
+                            ),
+                            style: OutlinedButton.styleFrom(
+                              padding: isSmallScreen
+                                  ? const EdgeInsets.symmetric(
+                                      horizontal: 8, vertical: 4)
+                                  : const EdgeInsets.symmetric(
+                                      horizontal: 16, vertical: 8),
+                              foregroundColor: theme.colorScheme.primary,
+                              side: BorderSide(
+                                color: theme.colorScheme.primary
+                                    .withValues(alpha: 0.5),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+
+              // Extra padding at the bottom for keyboard space
+              SizedBox(height: isKeyboardVisible ? 100 : 20),
+            ],
+          ),
         ),
       ),
     );
@@ -617,7 +636,9 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
       margin: const EdgeInsets.all(8),
       color: theme.colorScheme.secondaryContainer,
       elevation: 2,
-      shadowColor: theme.colorScheme.shadow.withValues(alpha: 0.3),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
       child: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16.0),
