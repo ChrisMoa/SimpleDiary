@@ -18,139 +18,150 @@ class DayRatingWidget extends ConsumerWidget {
     final theme = ref.watch(themeProvider);
     final selectedDate = ref.watch(wizardSelectedDateProvider);
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // Header with day info
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Day Rating',
-                style: theme.textTheme.headlineMedium?.copyWith(
-                  color: theme.colorScheme.primary,
-                  fontWeight: FontWeight.bold,
+    return Container(
+      color: theme.colorScheme.surface,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Header with day info
+          Container(
+            color: theme.colorScheme.surface,
+            padding:
+                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Day Rating',
+                  style: theme.textTheme.headlineMedium?.copyWith(
+                    color: theme.colorScheme.primary,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-              ),
-              Text(
-                'How was your day? Rate the different aspects of your experience.',
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: theme.colorScheme.onSurface.withOpacity(0.7),
+                Text(
+                  'How was your day? Rate the different aspects of your experience.',
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: theme.colorScheme.onSurface,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
 
-        const SizedBox(height: 8),
+          const SizedBox(height: 8),
 
-        // Rating cards - scrollable area
-        Expanded(
-          child: ListView(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            children: [
-              // Information card if day is not fully scheduled
-              if (!isFullyScheduled)
-                Card(
-                  color: theme.colorScheme.errorContainer.withOpacity(0.7),
-                  margin: const EdgeInsets.only(bottom: 16),
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
+          // Rating cards - scrollable area
+          Expanded(
+            child: Container(
+              color: theme.colorScheme.surface,
+              child: ListView(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                children: [
+                  // Information card if day is not fully scheduled
+                  if (!isFullyScheduled)
+                    Card(
+                      color: theme.colorScheme.errorContainer,
+                      margin: const EdgeInsets.only(bottom: 16),
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Icon(
-                              Icons.warning_rounded,
-                              color: theme.colorScheme.onErrorContainer,
+                            Row(
+                              children: [
+                                Icon(
+                                  Icons.warning_rounded,
+                                  color: theme.colorScheme.onErrorContainer,
+                                ),
+                                const SizedBox(width: 8),
+                                Text(
+                                  'Day Schedule Incomplete',
+                                  style: theme.textTheme.titleMedium?.copyWith(
+                                    color: theme.colorScheme.onErrorContainer,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
                             ),
-                            const SizedBox(width: 8),
+                            const SizedBox(height: 8),
                             Text(
-                              'Day Schedule Incomplete',
-                              style: theme.textTheme.titleMedium?.copyWith(
+                              'Your day schedule has gaps. For a complete diary entry, '
+                              'schedule all your activities from morning to evening.',
+                              style: theme.textTheme.bodyMedium?.copyWith(
                                 color: theme.colorScheme.onErrorContainer,
-                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                            ElevatedButton.icon(
+                              onPressed: () {
+                                // Switch to notes page
+                                ref
+                                    .read(diaryWizardPageStateProvider.notifier)
+                                    .setNotesPage();
+                              },
+                              icon: const Icon(Icons.edit_calendar),
+                              label: const Text('Complete Schedule'),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor:
+                                    theme.colorScheme.error.withOpacity(0.2),
+                                foregroundColor:
+                                    theme.colorScheme.onErrorContainer,
                               ),
                             ),
                           ],
                         ),
-                        const SizedBox(height: 8),
-                        Text(
-                          'Your day schedule has gaps. For a complete diary entry, '
-                          'schedule all your activities from morning to evening.',
-                          style: theme.textTheme.bodyMedium?.copyWith(
-                            color: theme.colorScheme.onErrorContainer,
-                          ),
+                      ),
+                    ),
+
+                  // Rating cards for each type
+                  ...DayRatings.values.map((ratingType) {
+                    final rating = ratings.firstWhere(
+                      (r) => r.dayRating == ratingType,
+                      orElse: () => DayRating(dayRating: ratingType),
+                    );
+
+                    return _buildRatingCard(
+                      context,
+                      theme,
+                      ratingType,
+                      rating,
+                      (score) {
+                        ref.read(dayRatingsProvider.notifier).updateRating(
+                              ratingType,
+                              score.toInt(),
+                            );
+                      },
+                    );
+                  }),
+
+                  // Save button - fixed at bottom
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 24.0),
+                    child: ElevatedButton.icon(
+                      onPressed: () {
+                        if (isFullyScheduled) {
+                          _saveDiaryDay(context, ref, selectedDate);
+                        }
+                      },
+                      icon: const Icon(Icons.save),
+                      label: const Text('Save Day Rating'),
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 32,
+                          vertical: 16,
                         ),
-                        const SizedBox(height: 12),
-                        ElevatedButton.icon(
-                          onPressed: () {
-                            // Switch to notes page
-                            ref
-                                .read(diaryWizardPageStateProvider.notifier)
-                                .setNotesPage();
-                          },
-                          icon: const Icon(Icons.edit_calendar),
-                          label: const Text('Complete Schedule'),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: theme.colorScheme.onErrorContainer
-                                .withOpacity(0.2),
-                            foregroundColor: theme.colorScheme.onErrorContainer,
-                          ),
-                        ),
-                      ],
+                        backgroundColor: theme.colorScheme.primaryContainer,
+                        foregroundColor: theme.colorScheme.onPrimaryContainer,
+                        minimumSize: const Size(double.infinity, 54),
+                      ),
                     ),
                   ),
-                ),
-
-              // Rating cards for each type
-              ...DayRatings.values.map((ratingType) {
-                final rating = ratings.firstWhere(
-                  (r) => r.dayRating == ratingType,
-                  orElse: () => DayRating(dayRating: ratingType),
-                );
-
-                return _buildRatingCard(
-                  context,
-                  theme,
-                  ratingType,
-                  rating,
-                  (score) {
-                    ref.read(dayRatingsProvider.notifier).updateRating(
-                          ratingType,
-                          score.toInt(),
-                        );
-                  },
-                );
-              }),
-
-              // Save button - fixed at bottom
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 24.0),
-                child: ElevatedButton.icon(
-                  onPressed: isFullyScheduled
-                      ? () => _saveDiaryDay(context, ref, selectedDate)
-                      : null,
-                  icon: const Icon(Icons.save),
-                  label: const Text('Save Day Rating'),
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 32,
-                      vertical: 16,
-                    ),
-                    backgroundColor: theme.colorScheme.primaryContainer,
-                    foregroundColor: theme.colorScheme.onPrimaryContainer,
-                    minimumSize: const Size(double.infinity, 54),
-                  ),
-                ),
+                ],
               ),
-            ],
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -166,7 +177,16 @@ class DayRatingWidget extends ConsumerWidget {
 
     return Card(
       margin: const EdgeInsets.only(bottom: 16),
-      elevation: 2,
+      color: theme.colorScheme.secondaryContainer,
+      elevation: 4,
+      shadowColor: theme.colorScheme.shadow.withOpacity(0.3),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: BorderSide(
+          color: theme.colorScheme.outline.withOpacity(0.3),
+          width: 1,
+        ),
+      ),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -184,7 +204,7 @@ class DayRatingWidget extends ConsumerWidget {
                 Text(
                   _capitalizeFirstLetter(ratingType.name),
                   style: theme.textTheme.titleLarge?.copyWith(
-                    color: theme.colorScheme.primary,
+                    color: theme.colorScheme.onSecondaryContainer,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -197,7 +217,7 @@ class DayRatingWidget extends ConsumerWidget {
             Text(
               description,
               style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onSurface.withOpacity(0.7),
+                color: theme.colorScheme.onSecondaryContainer.withOpacity(0.8),
               ),
             ),
 
@@ -205,47 +225,76 @@ class DayRatingWidget extends ConsumerWidget {
 
             // Rating bar
             Center(
-              child: RatingBar.builder(
-                initialRating: rating.score > 0 ? rating.score.toDouble() : 3,
-                minRating: 1,
-                direction: Axis.horizontal,
-                allowHalfRating: false,
-                itemCount: 5,
-                itemBuilder: (context, index) {
-                  switch (index) {
-                    case 0:
-                      return const Icon(
-                        Icons.sentiment_very_dissatisfied,
-                        color: Colors.red,
-                      );
-                    case 1:
-                      return const Icon(
-                        Icons.sentiment_dissatisfied,
-                        color: Colors.redAccent,
-                      );
-                    case 2:
-                      return const Icon(
-                        Icons.sentiment_neutral,
-                        color: Colors.amber,
-                      );
-                    case 3:
-                      return const Icon(
-                        Icons.sentiment_satisfied,
-                        color: Colors.lightGreen,
-                      );
-                    case 4:
-                      return const Icon(
-                        Icons.sentiment_very_satisfied,
-                        color: Colors.green,
-                      );
-                    default:
-                      return const Icon(
-                        Icons.sentiment_neutral,
-                        color: Colors.amber,
-                      );
-                  }
-                },
-                onRatingUpdate: onRatingUpdate,
+              child: Container(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: RatingBar.builder(
+                  initialRating: rating.score > 0 ? rating.score.toDouble() : 3,
+                  minRating: 1,
+                  direction: Axis.horizontal,
+                  allowHalfRating: false,
+                  itemCount: 5,
+                  itemBuilder: (context, index) {
+                    // Use theme colors for rating icons
+                    Color iconColor;
+                    switch (index) {
+                      case 0:
+                        iconColor = Colors.red;
+                        break;
+                      case 1:
+                        iconColor = Colors.red.shade400;
+                        break;
+                      case 2:
+                        iconColor = Colors.yellow.shade700;
+                        break;
+                      case 3:
+                        iconColor = Colors.lightGreen;
+                        break;
+                      case 4:
+                        iconColor = Colors.green;
+                        break;
+                      default:
+                        iconColor = Colors.yellow.shade700;
+                    }
+
+                    switch (index) {
+                      case 0:
+                        return Icon(
+                          Icons.sentiment_very_dissatisfied,
+                          color: iconColor,
+                        );
+                      case 1:
+                        return Icon(
+                          Icons.sentiment_dissatisfied,
+                          color: iconColor,
+                        );
+                      case 2:
+                        return Icon(
+                          Icons.sentiment_neutral,
+                          color: iconColor,
+                        );
+                      case 3:
+                        return Icon(
+                          Icons.sentiment_satisfied,
+                          color: iconColor,
+                        );
+                      case 4:
+                        return Icon(
+                          Icons.sentiment_very_satisfied,
+                          color: iconColor,
+                        );
+                      default:
+                        return Icon(
+                          Icons.sentiment_neutral,
+                          color: iconColor,
+                        );
+                    }
+                  },
+                  onRatingUpdate: onRatingUpdate,
+                ),
               ),
             ),
 
@@ -256,7 +305,7 @@ class DayRatingWidget extends ConsumerWidget {
               child: Text(
                 _getRatingLabel(rating.score),
                 style: theme.textTheme.titleMedium?.copyWith(
-                  color: _getRatingColor(rating.score),
+                  color: _getRatingColor(rating.score, theme),
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -282,8 +331,6 @@ class DayRatingWidget extends ConsumerWidget {
         return Icons.fitness_center;
       case DayRatings.food:
         return Icons.restaurant;
-      default:
-        return Icons.star;
     }
   }
 
@@ -297,8 +344,6 @@ class DayRatingWidget extends ConsumerWidget {
         return 'How was your physical activity and exercise today?';
       case DayRatings.food:
         return 'How healthy and satisfying was your diet today?';
-      default:
-        return 'Rate this aspect of your day';
     }
   }
 
@@ -319,20 +364,20 @@ class DayRatingWidget extends ConsumerWidget {
     }
   }
 
-  Color _getRatingColor(int score) {
+  Color _getRatingColor(int score, ThemeData theme) {
     switch (score) {
       case 1:
-        return Colors.red;
+        return theme.colorScheme.error;
       case 2:
-        return Colors.redAccent;
+        return theme.colorScheme.error.withOpacity(0.7);
       case 3:
-        return Colors.amber;
+        return theme.colorScheme.tertiary;
       case 4:
-        return Colors.lightGreen;
+        return theme.colorScheme.tertiary.withOpacity(0.7);
       case 5:
-        return Colors.green;
+        return theme.colorScheme.primary;
       default:
-        return Colors.grey;
+        return theme.colorScheme.onSurfaceVariant;
     }
   }
 
@@ -340,6 +385,7 @@ class DayRatingWidget extends ConsumerWidget {
       BuildContext context, WidgetRef ref, DateTime selectedDate) {
     final ratings = ref.read(dayRatingsProvider);
     final allNotes = ref.read(wizardDayNotesProvider);
+    final theme = ref.read(themeProvider);
 
     // Filter out dummy notes (empty title and description)
     final validNotes = allNotes
@@ -360,17 +406,17 @@ class DayRatingWidget extends ConsumerWidget {
 
     // Show success message
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Day rating saved successfully!'),
-        backgroundColor: Colors.green,
-        duration: Duration(seconds: 2),
+      SnackBar(
+        content: Text(
+          'Day rating saved successfully!',
+          style: TextStyle(color: theme.colorScheme.onPrimary),
+        ),
+        backgroundColor: theme.colorScheme.primary,
+        duration: const Duration(seconds: 2),
       ),
     );
 
     // Reset ratings for next day
     ref.read(dayRatingsProvider.notifier).resetRatings();
-
-    // Navigate back if needed
-    Navigator.of(context).pop();
   }
 }

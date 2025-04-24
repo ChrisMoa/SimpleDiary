@@ -23,15 +23,15 @@ class DiaryDayEditingWizardWidget extends ConsumerStatefulWidget {
         editNote = editNote ?? false;
 
   @override
-  ConsumerState<DiaryDayEditingWizardWidget> createState() =>
-      _DiaryDayEditingWizardWidgetState();
+  ConsumerState<DiaryDayEditingWizardWidget> createState() => _DiaryDayEditingWizardWidgetState();
 }
 
-class _DiaryDayEditingWizardWidgetState
-    extends ConsumerState<DiaryDayEditingWizardWidget>
-    with SingleTickerProviderStateMixin {
+class _DiaryDayEditingWizardWidgetState extends ConsumerState<DiaryDayEditingWizardWidget> with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _animation;
+
+  // Flag to track if we've already auto-navigated to ratings
+  bool _hasAutoNavigatedToRatings = false;
 
   @override
   void initState() {
@@ -60,78 +60,80 @@ class _DiaryDayEditingWizardWidgetState
     final isRatingPage = pageState == DiaryWizardPageState.ratingPage;
 
     // Control animation based on current page
-    if (isRatingPage &&
-        _animationController.status != AnimationStatus.completed) {
+    if (isRatingPage && _animationController.status != AnimationStatus.completed) {
       _animationController.forward();
-    } else if (!isRatingPage &&
-        _animationController.status != AnimationStatus.dismissed) {
+    } else if (!isRatingPage && _animationController.status != AnimationStatus.dismissed) {
       _animationController.reverse();
     }
 
-    // Determine if we should auto-navigate to ratings page
-    if (isFullyScheduled && !isRatingPage) {
+    // Auto-navigate to ratings page when day is fully scheduled, but only once
+    // and only if we're currently on the notes page
+    if (isFullyScheduled && !isRatingPage && !_hasAutoNavigatedToRatings) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         ref.read(diaryWizardPageStateProvider.notifier).setRatingPage();
+        _hasAutoNavigatedToRatings = true;
       });
     }
 
     return GestureDetector(
       // Close keyboard on tap outside of text fields
       onTap: () => FocusScope.of(context).unfocus(),
-      child: Stack(
-        children: [
-          // Main content with animation
-          AnimatedBuilder(
-            animation: _animation,
-            builder: (context, child) {
-              return Column(
-                children: [
-                  // Date selector is visible on both pages
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: DateSelectorWidget(),
-                  ),
-
-                  // Main content area - Calendar/Notes or Ratings
-                  Expanded(
-                    child: Stack(
-                      children: [
-                        // Notes page
-                        Positioned.fill(
-                          child: Opacity(
-                            opacity: 1 - _animation.value,
-                            child: IgnorePointer(
-                              ignoring: isRatingPage,
-                              child: _buildNotesPage(),
-                            ),
-                          ),
-                        ),
-
-                        // Rating page
-                        Positioned.fill(
-                          child: Opacity(
-                            opacity: _animation.value,
-                            child: IgnorePointer(
-                              ignoring: !isRatingPage,
-                              child: _buildRatingPage(),
-                            ),
-                          ),
-                        ),
-                      ],
+      child: Container(
+        color: theme.colorScheme.background,
+        child: Stack(
+          children: [
+            // Main content with animation
+            AnimatedBuilder(
+              animation: _animation,
+              builder: (context, child) {
+                return Column(
+                  children: [
+                    // Date selector is visible on both pages
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: DateSelectorWidget(),
                     ),
-                  ),
 
-                  // Preview/Navigation area
-                  SizedBox(
-                    height: 70,
-                    child:
-                        _buildNavigationPreview(isRatingPage, isFullyScheduled),
-                  ),
-                ],
-              );
-            },
-          ),
-        ],
+                    // Main content area - Calendar/Notes or Ratings
+                    Expanded(
+                      child: Stack(
+                        children: [
+                          // Notes page
+                          Positioned.fill(
+                            child: Opacity(
+                              opacity: 1 - _animation.value,
+                              child: IgnorePointer(
+                                ignoring: isRatingPage,
+                                child: _buildNotesPage(),
+                              ),
+                            ),
+                          ),
+
+                          // Rating page
+                          Positioned.fill(
+                            child: Opacity(
+                              opacity: _animation.value,
+                              child: IgnorePointer(
+                                ignoring: !isRatingPage,
+                                child: _buildRatingPage(),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    // Preview/Navigation area
+                    SizedBox(
+                      height: 70,
+                      child: _buildNavigationPreview(isRatingPage, isFullyScheduled),
+                    ),
+                  ],
+                );
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -142,13 +144,13 @@ class _DiaryDayEditingWizardWidgetState
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Left column - Calendar
+          // Left column - Calendar (1/3 of space)
           Expanded(
-            flex: 3,
+            flex: 1,
             child: NotesCalendarWidget(),
           ),
 
-          // Right column - Note Detail
+          // Right column - Note Detail (2/3 of space)
           Expanded(
             flex: 2,
             child: NoteDetailWidget(),
@@ -178,10 +180,17 @@ class _DiaryDayEditingWizardWidgetState
           color: theme.colorScheme.surface,
           border: Border(
             top: BorderSide(
-              color: theme.colorScheme.outline.withOpacity(0.2),
+              color: theme.colorScheme.outline,
               width: 1,
             ),
           ),
+          boxShadow: [
+            BoxShadow(
+              color: theme.colorScheme.shadow.withOpacity(0.1),
+              blurRadius: 4,
+              offset: const Offset(0, -2),
+            ),
+          ],
         ),
         padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
         child: Row(
@@ -194,11 +203,9 @@ class _DiaryDayEditingWizardWidgetState
             const SizedBox(width: 12),
             Expanded(
               child: Text(
-                isRatingPage
-                    ? 'View and edit your schedule notes'
-                    : 'Rate your day experiences',
+                isRatingPage ? 'View and edit your schedule notes' : 'Rate your day experiences',
                 style: theme.textTheme.bodyMedium?.copyWith(
-                  color: theme.colorScheme.secondary,
+                  color: theme.colorScheme.onSurface,
                 ),
               ),
             ),

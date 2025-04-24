@@ -244,7 +244,7 @@ final nextAvailableTimeSlotProvider = Provider<DateTime>((ref) {
 
 // Provider for creating a new empty note
 final createEmptyNoteProvider = Provider<Note>((ref) {
-  final selectedDate = ref.watch(wizardSelectedDateProvider);
+  ref.watch(wizardSelectedDateProvider);
   final nextAvailableTime = ref.watch(nextAvailableTimeSlotProvider);
 
   // Create a new note with default values
