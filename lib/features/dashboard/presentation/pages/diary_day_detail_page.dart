@@ -53,8 +53,8 @@ class DiaryDayDetailPage extends ConsumerWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => _addNewNote(context, selectedDate),
-        child: const Icon(Icons.add),
         tooltip: 'Add a note',
+        child: const Icon(Icons.add),
       ),
     );
   }
@@ -79,7 +79,7 @@ class DiaryDayDetailPage extends ConsumerWidget {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
             side: BorderSide(
-              color: theme.colorScheme.outline.withOpacity(0.1),
+              color: theme.colorScheme.outline.withValues(alpha: 0.1),
               width: 1,
             ),
           ),
@@ -113,7 +113,7 @@ class DiaryDayDetailPage extends ConsumerWidget {
             Text(
               'Notes & Activities',
               style: theme.textTheme.titleMedium?.copyWith(
-                color: theme.colorScheme.onBackground,
+                color: theme.colorScheme.onSurface,
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -127,7 +127,9 @@ class DiaryDayDetailPage extends ConsumerWidget {
           ],
         ),
         const SizedBox(height: 8),
-        notes.isEmpty ? _buildEmptyNotesMessage(context) : _buildNotesList(context, notes),
+        notes.isEmpty
+            ? _buildEmptyNotesMessage(context)
+            : _buildNotesList(context, notes),
       ],
     );
   }
@@ -158,7 +160,8 @@ class DiaryDayDetailPage extends ConsumerWidget {
           fontWeight: FontWeight.bold,
         ),
       ),
-      backgroundColor: color.withOpacity(theme.brightness == Brightness.dark ? 0.3 : 0.2),
+      backgroundColor: color.withValues(
+          alpha: theme.brightness == Brightness.dark ? 0.3 : 0.2),
       side: BorderSide(color: color),
       avatar: Icon(
         _getRatingIcon(rating),
@@ -182,7 +185,8 @@ class DiaryDayDetailPage extends ConsumerWidget {
       children: [
         CircleAvatar(
           radius: 32,
-          backgroundColor: scoreColor.withOpacity(theme.brightness == Brightness.dark ? 0.3 : 0.2),
+          backgroundColor: scoreColor.withValues(
+              alpha: theme.brightness == Brightness.dark ? 0.3 : 0.2),
           child: Text(
             '$score',
             style: TextStyle(
@@ -207,7 +211,9 @@ class DiaryDayDetailPage extends ConsumerWidget {
               const SizedBox(height: 4),
               LinearProgressIndicator(
                 value: percentage,
-                backgroundColor: theme.brightness == Brightness.dark ? theme.colorScheme.surfaceVariant : Colors.grey.shade300,
+                backgroundColor: theme.brightness == Brightness.dark
+                    ? theme.colorScheme.surfaceContainerHighest
+                    : Colors.grey.shade300,
                 valueColor: AlwaysStoppedAnimation<Color>(scoreColor),
                 minHeight: 8,
                 borderRadius: BorderRadius.circular(4),
@@ -227,7 +233,7 @@ class DiaryDayDetailPage extends ConsumerWidget {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
         side: BorderSide(
-          color: theme.colorScheme.outline.withOpacity(0.1),
+          color: theme.colorScheme.outline.withValues(alpha: 0.1),
           width: 1,
         ),
       ),
@@ -238,7 +244,7 @@ class DiaryDayDetailPage extends ConsumerWidget {
             Icon(
               Icons.note_add_outlined,
               size: 48,
-              color: theme.colorScheme.primary.withOpacity(0.5),
+              color: theme.colorScheme.primary.withValues(alpha: 0.5),
             ),
             const SizedBox(height: 16),
             Text(
@@ -253,7 +259,8 @@ class DiaryDayDetailPage extends ConsumerWidget {
               'Add your thoughts, activities or memories',
               textAlign: TextAlign.center,
               style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onSecondaryContainer.withOpacity(0.7),
+                color: theme.colorScheme.onSecondaryContainer
+                    .withValues(alpha: 0.7),
                 fontStyle: FontStyle.italic,
               ),
             ),
@@ -288,7 +295,7 @@ class DiaryDayDetailPage extends ConsumerWidget {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(8),
         side: BorderSide(
-          color: theme.colorScheme.outline.withOpacity(0.1),
+          color: theme.colorScheme.outline.withValues(alpha: 0.1),
           width: 1,
         ),
       ),
@@ -328,7 +335,8 @@ class DiaryDayDetailPage extends ConsumerWidget {
                   maxLines: 3,
                   overflow: TextOverflow.ellipsis,
                   style: theme.textTheme.bodyMedium?.copyWith(
-                    color: theme.colorScheme.onSecondaryContainer.withOpacity(0.9),
+                    color: theme.colorScheme.onSecondaryContainer
+                        .withValues(alpha: 0.9),
                   ),
                 ),
               ],
@@ -339,13 +347,17 @@ class DiaryDayDetailPage extends ConsumerWidget {
                   Icon(
                     Icons.access_time,
                     size: 16,
-                    color: theme.colorScheme.onSecondaryContainer.withOpacity(0.7),
+                    color: theme.colorScheme.onSecondaryContainer
+                        .withValues(alpha: 0.7),
                   ),
                   const SizedBox(width: 4),
                   Text(
-                    note.isAllDay ? 'All day' : '${_formatTime(note.from)} - ${_formatTime(note.to)}',
+                    note.isAllDay
+                        ? 'All day'
+                        : '${_formatTime(note.from)} - ${_formatTime(note.to)}',
                     style: theme.textTheme.bodySmall?.copyWith(
-                      color: theme.colorScheme.onSecondaryContainer.withOpacity(0.7),
+                      color: theme.colorScheme.onSecondaryContainer
+                          .withValues(alpha: 0.7),
                     ),
                   ),
                 ],
@@ -373,7 +385,7 @@ class DiaryDayDetailPage extends ConsumerWidget {
       try {
         categoryTitle = category.title;
         // If the category has a color property, use it
-        if (category is dynamic && category.color != null) {
+        if (category.color != null) {
           categoryColor = category.color;
         }
       } catch (e) {
@@ -388,23 +400,27 @@ class DiaryDayDetailPage extends ConsumerWidget {
     if (categoryTitle.contains('arbeit') || categoryTitle.contains('work')) {
       iconData = Icons.work;
       baseColor = categoryColor ?? Colors.blue;
-    } else if (categoryTitle.contains('freizeit') || categoryTitle.contains('leisure')) {
+    } else if (categoryTitle.contains('freizeit') ||
+        categoryTitle.contains('leisure')) {
       iconData = Icons.sports_esports;
       baseColor = categoryColor ?? Colors.purple;
-    } else if (categoryTitle.contains('essen') || categoryTitle.contains('food')) {
+    } else if (categoryTitle.contains('essen') ||
+        categoryTitle.contains('food')) {
       iconData = Icons.restaurant;
       baseColor = categoryColor ?? Colors.orange;
     } else if (categoryTitle.contains('gym')) {
       iconData = Icons.fitness_center;
       baseColor = categoryColor ?? Colors.green;
-    } else if (categoryTitle.contains('schlafen') || categoryTitle.contains('sleep')) {
+    } else if (categoryTitle.contains('schlafen') ||
+        categoryTitle.contains('sleep')) {
       iconData = Icons.bedtime;
       baseColor = categoryColor ?? Colors.indigo;
     }
 
     return CircleAvatar(
       radius: 16,
-      backgroundColor: baseColor.withOpacity(theme.brightness == Brightness.dark ? 0.3 : 0.2),
+      backgroundColor: baseColor.withValues(
+          alpha: theme.brightness == Brightness.dark ? 0.3 : 0.2),
       child: Icon(iconData, size: 16, color: baseColor),
     );
   }
@@ -506,7 +522,12 @@ final diaryDayForDateProvider = FutureProvider.family<dynamic, DateTime>(
 
     // Find the diary day with the matching date
     // Note: This might need adjustment based on how dates are compared in your app
-    final found = diaryDays.where((diaryDay) => diaryDay.day.year == date.year && diaryDay.day.month == date.month && diaryDay.day.day == date.day).toList();
+    final found = diaryDays
+        .where((diaryDay) =>
+            diaryDay.day.year == date.year &&
+            diaryDay.day.month == date.month &&
+            diaryDay.day.day == date.day)
+        .toList();
 
     if (found.isEmpty) {
       return null;

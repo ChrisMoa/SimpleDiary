@@ -13,33 +13,53 @@ class DiaryDayWizardPage extends ConsumerStatefulWidget {
 }
 
 class _DiaryDayWizardPageState extends ConsumerState<DiaryDayWizardPage> {
+  bool _isLoading = true;
+
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _loadData();
-    });
+    _loadData();
   }
 
   Future<void> _loadData() async {
+    setState(() {
+      _isLoading = true;
+    });
+
     LogWrapper.logger.d('Loading data for diary day wizard');
     await ref.read(notesLocalDataProvider.notifier).readObjectsFromDatabase();
     ref.read(noteSelectedDateProvider);
+
+    setState(() {
+      _isLoading = false;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        color: Theme.of(context).colorScheme.surface,
-        child: const SafeArea(
-          child: DiaryDayEditingWizardWidget(
-            navigateBack: false,
-            addAdditionalSaveButton: true,
-            editNote: false,
-          ),
-        ),
-      ),
+      // Removed the AppBar to save vertical space
+      body: _isLoading
+          ? const Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CircularProgressIndicator(),
+                  SizedBox(height: 16),
+                  Text('Loading your day data...'),
+                ],
+              ),
+            )
+          : const SafeArea(
+              child: DiaryDayEditingWizardWidget(
+                navigateBack: false,
+                addAdditionalSaveButton: true,
+                editNote: false,
+              ),
+            ),
+      // Using resizeToAvoidBottomInset: false to prevent the keyboard
+      // from automatically pushing up the content
+      resizeToAvoidBottomInset: false,
     );
   }
 }

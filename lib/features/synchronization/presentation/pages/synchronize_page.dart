@@ -112,7 +112,7 @@ class _SynchronizePageState extends ConsumerState<SynchronizePage> {
                       return Theme.of(context)
                           .colorScheme
                           .tertiaryContainer
-                          .withOpacity(0.6);
+                          .withValues(alpha: 0.6);
                     }
                     return Theme.of(context).colorScheme.tertiaryContainer;
                   },

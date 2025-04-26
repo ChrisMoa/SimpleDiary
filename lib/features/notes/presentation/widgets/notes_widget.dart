@@ -39,7 +39,8 @@ class _NotesWidgetState extends ConsumerState<NotesWidget> {
         appointmentBuilder: appointmentBuilder,
         headerHeight: 0,
         todayHighlightColor: Colors.black,
-        selectionDecoration: BoxDecoration(color: Colors.red.withOpacity(0.2)),
+        selectionDecoration:
+            BoxDecoration(color: Colors.red.withValues(alpha: 0.2)),
         onTap: (details) {
           if (details.appointments == null) {
             return;
@@ -62,7 +63,7 @@ class _NotesWidgetState extends ConsumerState<NotesWidget> {
       width: calendarAppointmentDetails.bounds.width,
       height: calendarAppointmentDetails.bounds.height,
       decoration: BoxDecoration(
-        color: note.noteCategory.color.withOpacity(0.5),
+        color: note.noteCategory.color.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Center(

@@ -1,11 +1,12 @@
-import 'package:day_tracker/features/notes/data/models/note.dart';
 import 'package:day_tracker/core/provider/theme_provider.dart';
+import 'package:day_tracker/features/notes/data/models/note.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
 class DiaryDayNotesOverviewListItem extends ConsumerWidget {
-  const DiaryDayNotesOverviewListItem({super.key, required this.note, required this.onSelectNote});
+  const DiaryDayNotesOverviewListItem(
+      {super.key, required this.note, required this.onSelectNote});
 
   final Note note;
   final void Function(Note note) onSelectNote;
@@ -20,7 +21,8 @@ class DiaryDayNotesOverviewListItem extends ConsumerWidget {
       decoration: BoxDecoration(
         color: theme.colorScheme.secondaryContainer,
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: theme.colorScheme.outline.withOpacity(0.1)),
+        border:
+            Border.all(color: theme.colorScheme.outline.withValues(alpha: 0.1)),
       ),
       child: Row(
         children: [

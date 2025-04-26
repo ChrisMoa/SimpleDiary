@@ -46,7 +46,8 @@ class _NotesViewDayWidgetState extends ConsumerState<NotesViewDayWidget> {
         maxDate: selectedDate.copyWith(hour: 22),
         headerHeight: 0,
         todayHighlightColor: Colors.black,
-        selectionDecoration: BoxDecoration(color: Colors.red.withOpacity(0.2)),
+        selectionDecoration:
+            BoxDecoration(color: Colors.red.withValues(alpha: 0.2)),
         onTap: (details) {
           if (details.appointments == null) {
             return;
@@ -69,7 +70,7 @@ class _NotesViewDayWidgetState extends ConsumerState<NotesViewDayWidget> {
       width: calendarAppointmentDetails.bounds.width,
       height: calendarAppointmentDetails.bounds.height,
       decoration: BoxDecoration(
-        color: note.noteCategory.color.withOpacity(0.5),
+        color: note.noteCategory.color.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Center(
