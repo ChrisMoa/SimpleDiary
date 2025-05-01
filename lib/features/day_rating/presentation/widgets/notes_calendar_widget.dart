@@ -11,7 +11,6 @@ import 'package:day_tracker/features/notes/domain/providers/note_local_db_provid
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
-import 'package:uuid/uuid.dart';
 
 class NotesCalendarWidget extends ConsumerStatefulWidget {
   const NotesCalendarWidget({super.key});
@@ -88,19 +87,6 @@ class _NotesCalendarWidgetState extends ConsumerState<NotesCalendarWidget> {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-
-                    // Only show the add button directly if we have space
-                    if (!isSmallScreen || !isKeyboardVisible)
-                      ElevatedButton.icon(
-                        onPressed: _addNewNote,
-                        icon: const Icon(Icons.add, size: 16),
-                        label: const Text('New Note'),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: theme.colorScheme.primaryContainer,
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 12, vertical: 8),
-                        ),
-                      ),
                   ],
                 ),
 
@@ -149,24 +135,6 @@ class _NotesCalendarWidgetState extends ConsumerState<NotesCalendarWidget> {
               ],
             ),
           ),
-
-          // Mobile-only add button when keyboard is visible
-          if (isSmallScreen && isKeyboardVisible)
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              child: SizedBox(
-                width: double.infinity,
-                child: ElevatedButton.icon(
-                  onPressed: _addNewNote,
-                  icon: const Icon(Icons.add, size: 16),
-                  label: const Text('New Note'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: theme.colorScheme.primaryContainer,
-                    padding: const EdgeInsets.symmetric(vertical: 8),
-                  ),
-                ),
-              ),
-            ),
 
           // Calendar - Adapted to different screen sizes
           Expanded(
@@ -334,14 +302,6 @@ class _NotesCalendarWidgetState extends ConsumerState<NotesCalendarWidget> {
   }
 
   void _handleCalendarTap(CalendarTapDetails details) {
-    // Handle time cell tap
-    if (details.targetElement == CalendarElement.calendarCell) {
-      // Create new note at tapped time
-      final DateTime tappedTime = details.date!;
-      _createNoteAtTime(tappedTime);
-      return;
-    }
-
     // Handle appointment tap
     if (details.targetElement == CalendarElement.appointment &&
         details.appointments != null &&
@@ -350,74 +310,6 @@ class _NotesCalendarWidgetState extends ConsumerState<NotesCalendarWidget> {
       final note = details.appointments!.first as Note;
       ref.read(selectedWizardNoteProvider.notifier).selectNote(note);
     }
-  }
-
-  void _createNoteAtTime(DateTime startTime) {
-    // Round to nearest 15 minutes
-    final int minutes = startTime.minute;
-    final int roundedMinutes = (minutes ~/ 15) * 15;
-    final roundedStartTime = DateTime(
-      startTime.year,
-      startTime.month,
-      startTime.day,
-      startTime.hour,
-      roundedMinutes,
-    );
-
-    // Create a new note with 30-minute duration
-    final newNote = Note(
-      id: const Uuid().v4(),
-      title: '',
-      description: '',
-      from: roundedStartTime,
-      to: roundedStartTime.add(const Duration(minutes: 30)),
-      noteCategory: availableNoteCategories.first,
-    );
-
-    // Add to database
-    ref.read(notesLocalDataProvider.notifier).addElement(newNote);
-
-    // Select the new note
-    ref.read(selectedWizardNoteProvider.notifier).selectNote(newNote);
-
-    // Show feedback to user
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Added new note at ${Utils.toTime(roundedStartTime)}'),
-        duration: const Duration(seconds: 2),
-        behavior: SnackBarBehavior.floating,
-      ),
-    );
-  }
-
-  void _addNewNote() {
-    // Get the next available time slot
-    final nextStartTime = ref.read(nextAvailableTimeSlotProvider);
-
-    // Create a new note with 30-minute duration
-    final newNote = Note(
-      id: const Uuid().v4(),
-      title: '',
-      description: '',
-      from: nextStartTime,
-      to: nextStartTime.add(const Duration(minutes: 30)),
-      noteCategory: availableNoteCategories.first,
-    );
-
-    // Add to database
-    ref.read(notesLocalDataProvider.notifier).addElement(newNote);
-
-    // Select the new note
-    ref.read(selectedWizardNoteProvider.notifier).selectNote(newNote);
-
-    // Show feedback to user
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Added new note at ${Utils.toTime(nextStartTime)}'),
-        duration: const Duration(seconds: 2),
-        behavior: SnackBarBehavior.floating,
-      ),
-    );
   }
 
   void _handleDragEnd(AppointmentDragEndDetails details) {
