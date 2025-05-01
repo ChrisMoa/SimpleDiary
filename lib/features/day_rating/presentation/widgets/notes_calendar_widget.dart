@@ -3,6 +3,7 @@
 import 'package:day_tracker/core/provider/theme_provider.dart';
 import 'package:day_tracker/core/utils/utils.dart';
 import 'package:day_tracker/features/day_rating/domain/providers/diary_wizard_providers.dart';
+import 'package:day_tracker/features/day_rating/presentation/widgets/date_selector_widget.dart';
 import 'package:day_tracker/features/notes/data/models/note.dart';
 import 'package:day_tracker/features/notes/data/models/note_category.dart';
 import 'package:day_tracker/features/notes/data/models/note_data_source.dart';
@@ -66,6 +67,11 @@ class _NotesCalendarWidgetState extends ConsumerState<NotesCalendarWidget> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          Container(
+            padding: const EdgeInsets.all(8.0),
+            child: const DateSelectorWidget(),
+          ),
+
           // Header with action buttons
           Padding(
             padding: const EdgeInsets.only(left: 16, top: 16, right: 16),
