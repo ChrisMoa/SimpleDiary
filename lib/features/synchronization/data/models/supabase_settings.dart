@@ -3,14 +3,14 @@ class SupabaseSettings {
   final String supabaseAnonKey;
   final String email;
   final String password;
-  
+
   SupabaseSettings({
     required this.supabaseUrl,
     required this.supabaseAnonKey,
     required this.email,
     required this.password,
   });
-  
+
   Map<String, dynamic> toMap() {
     return {
       'supabase_url': supabaseUrl,
@@ -19,7 +19,7 @@ class SupabaseSettings {
       'password': password,
     };
   }
-  
+
   factory SupabaseSettings.fromMap(Map<String, dynamic> map) {
     return SupabaseSettings(
       supabaseUrl: map['supabase_url'] ?? '',
@@ -28,13 +28,27 @@ class SupabaseSettings {
       password: map['password'] ?? '',
     );
   }
-  
+
   factory SupabaseSettings.empty() {
     return SupabaseSettings(
       supabaseUrl: '',
       supabaseAnonKey: '',
       email: '',
       password: '',
+    );
+  }
+
+  SupabaseSettings copyWith({
+    String? supabaseUrl,
+    String? supabaseAnonKey,
+    String? email,
+    String? password,
+  }) {
+    return SupabaseSettings(
+      supabaseUrl: supabaseUrl ?? this.supabaseUrl,
+      supabaseAnonKey: supabaseAnonKey ?? this.supabaseAnonKey,
+      email: email ?? this.email,
+      password: password ?? this.password,
     );
   }
 }

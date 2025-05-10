@@ -4,16 +4,19 @@ import 'dart:ui';
 
 import 'package:day_tracker/core/theme/themes.dart';
 import 'package:day_tracker/features/authentication/data/models/user_data.dart';
+import 'package:day_tracker/features/synchronization/data/models/supabase_settings.dart';
 
 class UserSettings {
   bool darkThemeMode;
   Color themeSeedColor;
   UserData savedUserData;
+  SupabaseSettings supabaseSettings;
 
   UserSettings(
     this.darkThemeMode,
     this.themeSeedColor,
     this.savedUserData,
+    this.supabaseSettings,
   );
 
   Map<String, dynamic> toMap() {
@@ -21,6 +24,7 @@ class UserSettings {
       'darkThemeMode': darkThemeMode,
       'themeSeedColor': themeSeedColor.value,
       'userData': savedUserData.toMap(),
+      'supabaseSettings': supabaseSettings.toMap(),
     };
   }
 
@@ -29,6 +33,7 @@ class UserSettings {
       map['darkThemeMode'] as bool,
       Color(map['themeSeedColor'] as int),
       UserData.fromMap(map['userData']),
+      SupabaseSettings.fromMap(map['supabaseSettings'] ?? {}),
     );
   }
 
@@ -36,11 +41,11 @@ class UserSettings {
         false,
         lightBaseColor,
         UserData.fromEmpty(),
+        SupabaseSettings.empty(),
       );
 
   String get name => 'UserSettings';
   String toJson() => json.encode(toMap());
 
-  factory UserSettings.fromJson(String source) =>
-      UserSettings.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory UserSettings.fromJson(String source) => UserSettings.fromMap(json.decode(source) as Map<String, dynamic>);
 }

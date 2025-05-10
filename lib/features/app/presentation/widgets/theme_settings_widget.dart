@@ -8,76 +8,162 @@ class ThemeSettingsWidget extends ConsumerStatefulWidget {
   const ThemeSettingsWidget({super.key});
 
   @override
-  ConsumerState<ThemeSettingsWidget> createState() =>
-      _ThemeSettingsWidgetState();
+  ConsumerState<ThemeSettingsWidget> createState() => _ThemeSettingsWidgetState();
 }
 
 class _ThemeSettingsWidgetState extends ConsumerState<ThemeSettingsWidget> {
-  Color _dialogPickerColor =
-      settingsContainer.activeUserSettings.themeSeedColor;
+  Color _dialogPickerColor = settingsContainer.activeUserSettings.themeSeedColor;
   var _darkModeSwitch = settingsContainer.activeUserSettings.darkThemeMode;
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Container(
-          color: Theme.of(context).colorScheme.primaryContainer,
-          child: ListTile(
-            leading: Text(
-              style: Theme.of(context).textTheme.headlineMedium!.copyWith(
-                  color: Theme.of(context).colorScheme.onSecondaryContainer,
-                  fontWeight: FontWeight.bold),
-              'Theme Color',
-            ),
-            title: Text(
-              style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                  color: Theme.of(context).colorScheme.onSecondaryContainer,
-                  fontWeight: FontWeight.bold),
-              'Click this color to change it in a dialog',
-            ),
-            trailing: ColorIndicator(
-              width: 44,
-              height: 44,
-              borderRadius: 4,
-              color: _dialogPickerColor,
-              onSelectFocus: false,
-              onSelect: () async {
-                final Color colorBeforeDialog = _dialogPickerColor;
-                if (!(await colorPickerDialog())) {
-                  setState(() {
-                    _dialogPickerColor = colorBeforeDialog;
-                  });
-                }
-              },
-            ),
+    final theme = ref.watch(themeProvider);
+    final mediaQuery = MediaQuery.of(context);
+    final screenWidth = mediaQuery.size.width;
+    final isSmallScreen = screenWidth < 600;
+
+    return Card(
+      elevation: 4,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              theme.colorScheme.surfaceContainerHighest,
+              theme.colorScheme.surface,
+            ],
+          ),
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Header
+              Row(
+                children: [
+                  Icon(
+                    Icons.palette,
+                    color: theme.colorScheme.primary,
+                    size: isSmallScreen ? 24 : 28,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    'Theme Settings',
+                    style: theme.textTheme.titleLarge?.copyWith(
+                      color: theme.colorScheme.primary,
+                      fontWeight: FontWeight.bold,
+                      fontSize: isSmallScreen ? 18 : 22,
+                    ),
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 16),
+
+              Text(
+                'Customize the appearance of your diary application.',
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: theme.colorScheme.onSurface,
+                ),
+              ),
+
+              const SizedBox(height: 24),
+
+              // Theme Color
+              Container(
+                padding: EdgeInsets.all(isSmallScreen ? 12 : 16),
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.surfaceContainer,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: theme.colorScheme.outline.withValues(alpha: .2),
+                  ),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Theme Color',
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        color: theme.colorScheme.onSurface,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Click this color to change it in a dialog',
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: theme.colorScheme.onSurface.withValues(alpha: .7),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    ColorIndicator(
+                      width: 44,
+                      height: 44,
+                      borderRadius: 4,
+                      color: _dialogPickerColor,
+                      onSelectFocus: false,
+                      onSelect: () async {
+                        final Color colorBeforeDialog = _dialogPickerColor;
+                        if (!(await colorPickerDialog())) {
+                          setState(() {
+                            _dialogPickerColor = colorBeforeDialog;
+                          });
+                        }
+                      },
+                    ),
+                  ],
+                ),
+              ),
+
+              SizedBox(height: isSmallScreen ? 16 : 20),
+
+              // Theme Mode
+              Container(
+                padding: EdgeInsets.all(isSmallScreen ? 12 : 16),
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.surfaceContainer,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(
+                    color: theme.colorScheme.outline.withValues(alpha: .2),
+                  ),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Theme Mode',
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        color: theme.colorScheme.onSurface,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Toggle this button to switch between dark and light theme',
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: theme.colorScheme.onSurface.withValues(alpha: .7),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    Switch(
+                      value: _darkModeSwitch,
+                      onChanged: _onSwitchDarkModeClicked,
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
         ),
-        const SizedBox(
-          height: 20,
-        ),
-        Container(
-          color: Theme.of(context).colorScheme.primaryContainer,
-          child: ListTile(
-            leading: Text(
-              style: Theme.of(context).textTheme.headlineMedium!.copyWith(
-                  color: Theme.of(context).colorScheme.onSecondaryContainer,
-                  fontWeight: FontWeight.bold),
-              'Theme Mode',
-            ),
-            title: Text(
-              style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                  color: Theme.of(context).colorScheme.onSecondaryContainer,
-                  fontWeight: FontWeight.bold),
-              'Toggle this button to switch between dark and light theme',
-            ),
-            trailing: Switch(
-              value: _darkModeSwitch,
-              onChanged: _onSwitchDarkModeClicked,
-            ),
-          ),
-        )
-      ],
+      ),
     );
   }
 
@@ -125,12 +211,9 @@ class _ThemeSettingsWidgetState extends ConsumerState<ThemeSettingsWidget> {
     ).showPickerDialog(
       context,
       actionsPadding: const EdgeInsets.all(16),
-      constraints:
-          const BoxConstraints(minHeight: 480, minWidth: 300, maxWidth: 320),
+      constraints: const BoxConstraints(minHeight: 480, minWidth: 300, maxWidth: 320),
     );
   }
-
-  //* callbacks --------------------------------------------------------------------------------------------------------------------------------------
 
   void _onColorPickerAcceptedClicked(Color color) {
     setState(() {
