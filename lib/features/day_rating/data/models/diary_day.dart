@@ -101,6 +101,6 @@ class DiaryDay implements LocalDbElement {
 
   @override
   getId() {
-    return Utils.toDate(day);
+    return day.toIso8601String().split('T')[0];
   }
 }
