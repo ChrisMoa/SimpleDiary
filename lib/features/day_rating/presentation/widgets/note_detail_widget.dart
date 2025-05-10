@@ -11,6 +11,7 @@ import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 import 'package:uuid/uuid.dart';
+import 'package:day_tracker/core/log/logger_instance.dart';
 
 class NoteDetailWidget extends ConsumerStatefulWidget {
   const NoteDetailWidget({super.key});
@@ -45,16 +46,19 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
   }
 
   Future<void> _initializeSpeechToText() async {
+    LogWrapper.logger.d('Initializing speech to text');
     if (_supportsPlatformSpeechRecognition()) {
       await _speechToText.initialize(
         finalTimeout: const Duration(minutes: 1),
       );
+      LogWrapper.logger.d('Speech to text initialized successfully');
+    } else {
+      LogWrapper.logger.w('Speech recognition not supported on this platform');
     }
   }
 
   bool _supportsPlatformSpeechRecognition() {
-    return activePlatform.platform == ActivePlatform.android ||
-        activePlatform.platform == ActivePlatform.ios;
+    return activePlatform.platform == ActivePlatform.android || activePlatform.platform == ActivePlatform.ios;
   }
 
   @override
@@ -111,11 +115,9 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
                     ),
                   ),
                   Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
-                      color: selectedNote.noteCategory.color
-                          .withValues(alpha: 0.2),
+                      color: selectedNote.noteCategory.color.withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(4),
                       border: Border.all(
                         color: selectedNote.noteCategory.color,
@@ -177,13 +179,10 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
               const SizedBox(height: 12),
 
               // Time and category row - Adaptive layout based on screen size and keyboard visibility
-              if (!isKeyboardVisible ||
-                  !isSmallScreen) // Hide on small screens when keyboard is visible
+              if (!isKeyboardVisible || !isSmallScreen) // Hide on small screens when keyboard is visible
                 AnimatedSize(
                   duration: const Duration(milliseconds: 300),
-                  child: isSmallScreen
-                      ? _buildCompactControls(selectedNote, theme)
-                      : _buildFullControls(selectedNote, theme),
+                  child: isSmallScreen ? _buildCompactControls(selectedNote, theme) : _buildFullControls(selectedNote, theme),
                 ),
 
               // Description field - with label and speech button
@@ -199,18 +198,12 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
                   // Speech-to-text button only on supported platforms
                   if (_supportsPlatformSpeechRecognition())
                     IconButton(
-                      onPressed:
-                          _isListening ? _stopListening : _startListening,
+                      onPressed: _isListening ? _stopListening : _startListening,
                       icon: Icon(
                         _isListening ? Icons.mic : Icons.mic_none,
-                        color: _isListening
-                            ? theme.colorScheme.primary
-                            : theme.colorScheme.onSurface
-                                .withValues(alpha: 0.7),
+                        color: _isListening ? theme.colorScheme.primary : theme.colorScheme.onSurface.withValues(alpha: 0.7),
                       ),
-                      tooltip: _isListening
-                          ? 'Stop dictation'
-                          : 'Dictate description',
+                      tooltip: _isListening ? 'Stop dictation' : 'Dictate description',
                     ),
                 ],
               ),
@@ -218,8 +211,7 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
 
               // Description text field - Larger height for better visibility on small screens
               SizedBox(
-                height:
-                    200, // Fixed height to ensure visibility on small screens
+                height: 200, // Fixed height to ensure visibility on small screens
                 child: Stack(
                   children: [
                     // Text field
@@ -228,22 +220,18 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
                       decoration: InputDecoration(
                         hintText: 'Add details about this note...',
                         hintStyle: TextStyle(
-                          color: theme.colorScheme.onSurface
-                              .withValues(alpha: 0.5),
+                          color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
                         ),
                         border: OutlineInputBorder(
-                          borderSide:
-                              BorderSide(color: theme.colorScheme.outline),
+                          borderSide: BorderSide(color: theme.colorScheme.outline),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         enabledBorder: OutlineInputBorder(
-                          borderSide:
-                              BorderSide(color: theme.colorScheme.outline),
+                          borderSide: BorderSide(color: theme.colorScheme.outline),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         focusedBorder: OutlineInputBorder(
-                          borderSide:
-                              BorderSide(color: theme.colorScheme.primary),
+                          borderSide: BorderSide(color: theme.colorScheme.primary),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         filled: true,
@@ -342,14 +330,9 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
                           ),
                         ),
                         style: OutlinedButton.styleFrom(
-                          padding: isSmallScreen
-                              ? const EdgeInsets.symmetric(
-                                  horizontal: 8, vertical: 4)
-                              : const EdgeInsets.symmetric(
-                                  horizontal: 16, vertical: 8),
+                          padding: isSmallScreen ? const EdgeInsets.symmetric(horizontal: 8, vertical: 4) : const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                           side: BorderSide(
-                            color:
-                                theme.colorScheme.error.withValues(alpha: 0.5),
+                            color: theme.colorScheme.error.withValues(alpha: 0.5),
                           ),
                         ),
                       ),
@@ -369,14 +352,9 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
                           ),
                         ),
                         style: OutlinedButton.styleFrom(
-                          padding: isSmallScreen
-                              ? const EdgeInsets.symmetric(
-                                  horizontal: 8, vertical: 4)
-                              : const EdgeInsets.symmetric(
-                                  horizontal: 16, vertical: 8),
+                          padding: isSmallScreen ? const EdgeInsets.symmetric(horizontal: 8, vertical: 4) : const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                           side: BorderSide(
-                            color:
-                                theme.colorScheme.error.withValues(alpha: 0.5),
+                            color: theme.colorScheme.error.withValues(alpha: 0.5),
                           ),
                         ),
                       ),
@@ -386,46 +364,32 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
                         children: [
                           OutlinedButton.icon(
                             onPressed: () => _adjustTime(selectedNote, -30),
-                            icon: Icon(Icons.remove,
-                                size: isSmallScreen ? 16 : 20),
+                            icon: Icon(Icons.remove, size: isSmallScreen ? 16 : 20),
                             label: Text(
                               '30m',
-                              style:
-                                  TextStyle(fontSize: isSmallScreen ? 12 : 14),
+                              style: TextStyle(fontSize: isSmallScreen ? 12 : 14),
                             ),
                             style: OutlinedButton.styleFrom(
-                              padding: isSmallScreen
-                                  ? const EdgeInsets.symmetric(
-                                      horizontal: 8, vertical: 4)
-                                  : const EdgeInsets.symmetric(
-                                      horizontal: 16, vertical: 8),
+                              padding: isSmallScreen ? const EdgeInsets.symmetric(horizontal: 8, vertical: 4) : const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                               foregroundColor: theme.colorScheme.primary,
                               side: BorderSide(
-                                color: theme.colorScheme.primary
-                                    .withValues(alpha: 0.5),
+                                color: theme.colorScheme.primary.withValues(alpha: 0.5),
                               ),
                             ),
                           ),
                           const SizedBox(width: 4),
                           OutlinedButton.icon(
                             onPressed: () => _adjustTime(selectedNote, 30),
-                            icon:
-                                Icon(Icons.add, size: isSmallScreen ? 16 : 20),
+                            icon: Icon(Icons.add, size: isSmallScreen ? 16 : 20),
                             label: Text(
                               '30m',
-                              style:
-                                  TextStyle(fontSize: isSmallScreen ? 12 : 14),
+                              style: TextStyle(fontSize: isSmallScreen ? 12 : 14),
                             ),
                             style: OutlinedButton.styleFrom(
-                              padding: isSmallScreen
-                                  ? const EdgeInsets.symmetric(
-                                      horizontal: 8, vertical: 4)
-                                  : const EdgeInsets.symmetric(
-                                      horizontal: 16, vertical: 8),
+                              padding: isSmallScreen ? const EdgeInsets.symmetric(horizontal: 8, vertical: 4) : const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                               foregroundColor: theme.colorScheme.primary,
                               side: BorderSide(
-                                color: theme.colorScheme.primary
-                                    .withValues(alpha: 0.5),
+                                color: theme.colorScheme.primary.withValues(alpha: 0.5),
                               ),
                             ),
                           ),
@@ -470,8 +434,7 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
             ),
             filled: true,
             fillColor: theme.colorScheme.surface,
-            contentPadding:
-                const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           ),
           style: theme.textTheme.bodyMedium?.copyWith(
             color: theme.colorScheme.onSurface,
@@ -715,8 +678,7 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
     );
   }
 
-  Future<void> _selectTime(
-      BuildContext context, Note note, bool isFromTime) async {
+  Future<void> _selectTime(BuildContext context, Note note, bool isFromTime) async {
     final theme = ref.read(themeProvider);
     final currentTime = isFromTime ? note.from : note.to;
 
@@ -742,10 +704,7 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
 
       if (isFromTime) {
         // Ensure end time is at least 15 minutes after start time
-        final endTime =
-            note.to.isBefore(newDateTime.add(const Duration(minutes: 15)))
-                ? newDateTime.add(const Duration(minutes: 15))
-                : note.to;
+        final endTime = note.to.isBefore(newDateTime.add(const Duration(minutes: 15))) ? newDateTime.add(const Duration(minutes: 15)) : note.to;
 
         _updateNote(
           Note(
@@ -794,9 +753,7 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
           );
 
       // Update selected note
-      ref
-          .read(selectedWizardNoteProvider.notifier)
-          .updateNote(originalNote, updatedNote);
+      ref.read(selectedWizardNoteProvider.notifier).updateNote(originalNote, updatedNote);
     }
   }
 
@@ -828,32 +785,38 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
   }
 
   void _addNextFreeNote() {
-    // Get the next available time slot
-    final nextStartTime = ref.read(nextAvailableTimeSlotProvider);
+    LogWrapper.logger.d('Adding next free note');
+    try {
+      // Get the next available time slot
+      final nextStartTime = ref.read(nextAvailableTimeSlotProvider);
 
-    // Create a new note with 30-minute duration
-    final newNote = Note(
-      id: const Uuid().v4(),
-      title: '',
-      description: '',
-      from: nextStartTime,
-      to: nextStartTime.add(const Duration(minutes: 30)),
-      noteCategory: availableNoteCategories.first,
-    );
+      // Create a new note with 30-minute duration
+      final newNote = Note(
+        id: const Uuid().v4(),
+        title: '',
+        description: '',
+        from: nextStartTime,
+        to: nextStartTime.add(const Duration(minutes: 30)),
+        noteCategory: availableNoteCategories.first,
+      );
 
-    // Add to database
-    ref.read(notesLocalDataProvider.notifier).addElement(newNote);
+      LogWrapper.logger.d('Creating new note with ID: ${newNote.id}');
+      // Add to database
+      ref.read(notesLocalDataProvider.notifier).addElement(newNote);
 
-    // Select the new note
-    ref.read(selectedWizardNoteProvider.notifier).selectNote(newNote);
+      // Select the new note
+      ref.read(selectedWizardNoteProvider.notifier).selectNote(newNote);
 
-    // Show feedback to user
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Added new note at ${Utils.toTime(nextStartTime)}'),
-        duration: const Duration(seconds: 2),
-      ),
-    );
+      // Show feedback to user
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Added new note at ${Utils.toTime(nextStartTime)}'),
+          duration: const Duration(seconds: 2),
+        ),
+      );
+    } catch (e) {
+      LogWrapper.logger.e('Error adding new note: $e');
+    }
   }
 
   Future<void> _startListening() async {
@@ -878,8 +841,7 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
     if (_supportsPlatformSpeechRecognition()) {
       await _speechToText.stop();
       setState(() {
-        _descriptionController.text =
-            _descriptionController.text.replaceAll(RegExp(r'Notiz Ende'), '');
+        _descriptionController.text = _descriptionController.text.replaceAll(RegExp(r'Notiz Ende'), '');
         _isListening = false;
       });
 

@@ -1,5 +1,6 @@
 // lib/features/synchronization/presentation/widgets/supabase_sync_widget.dart
 import 'package:day_tracker/core/provider/theme_provider.dart';
+import 'package:day_tracker/core/log/logger_instance.dart';
 import 'package:day_tracker/features/synchronization/data/models/supabase_settings.dart';
 import 'package:day_tracker/features/synchronization/domain/providers/supabase_provider.dart';
 import 'package:flutter/material.dart';
@@ -91,7 +92,7 @@ class _SupabaseSyncWidgetState extends ConsumerState<SupabaseSyncWidget> {
                     icon: Icons.cloud_upload,
                     label: 'Upload to Supabase',
                     description: 'Save your diary data to the cloud',
-                    onPressed: _canSync(settings) ? () => ref.read(supabaseSyncProvider.notifier).syncToSupabase() : null,
+                    onPressed: _canSync(settings) ? _onSyncToSupabase : null,
                     theme: theme,
                     isSmallScreen: isSmallScreen,
                   ),
@@ -101,7 +102,7 @@ class _SupabaseSyncWidgetState extends ConsumerState<SupabaseSyncWidget> {
                     icon: Icons.cloud_download,
                     label: 'Download from Supabase',
                     description: 'Load diary data from the cloud',
-                    onPressed: _canSync(settings) ? () => ref.read(supabaseSyncProvider.notifier).syncFromSupabase() : null,
+                    onPressed: _canSync(settings) ? _onSyncFromSupabase : null,
                     theme: theme,
                     isSmallScreen: isSmallScreen,
                   ),
@@ -245,5 +246,23 @@ class _SupabaseSyncWidgetState extends ConsumerState<SupabaseSyncWidget> {
 
   bool _canSync(SupabaseSettings settings) {
     return settings.supabaseUrl.isNotEmpty && settings.supabaseAnonKey.isNotEmpty && settings.email.isNotEmpty && settings.password.isNotEmpty;
+  }
+
+  Future<void> _onSyncToSupabase() async {
+    LogWrapper.logger.d('Sync to Supabase button clicked');
+    try {
+      await ref.read(supabaseSyncProvider.notifier).syncToSupabase();
+    } catch (e) {
+      LogWrapper.logger.e('Error during sync to Supabase: $e');
+    }
+  }
+
+  Future<void> _onSyncFromSupabase() async {
+    LogWrapper.logger.d('Sync from Supabase button clicked');
+    try {
+      await ref.read(supabaseSyncProvider.notifier).syncFromSupabase();
+    } catch (e) {
+      LogWrapper.logger.e('Error during sync from Supabase: $e');
+    }
   }
 }
