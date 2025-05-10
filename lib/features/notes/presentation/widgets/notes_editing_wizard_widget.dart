@@ -31,21 +31,18 @@ class NoteEditingWizardWidget extends ConsumerStatefulWidget {
         onSavedNote = onSaveNote ?? _onSaveNote;
 
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() =>
-      _NoteEditingwizardWidgetState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _NoteEditingwizardWidgetState();
 
   static void _onSaveNote(Note note) {}
 }
 
-class _NoteEditingwizardWidgetState
-    extends ConsumerState<NoteEditingWizardWidget> {
+class _NoteEditingwizardWidgetState extends ConsumerState<NoteEditingWizardWidget> {
   final _formKey = GlobalKey<FormState>();
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
   String _oldText = '';
   final SpeechToText speechToTextInstance = SpeechToText();
-  DateTime selectedDate =
-      DateTime.now().copyWith(hour: 0, second: 0, minute: 0);
+  DateTime selectedDate = DateTime.now().copyWith(hour: 0, second: 0, minute: 0);
   bool _calculateNewNote = true;
   bool _isListening = false;
 
@@ -121,10 +118,7 @@ class _NoteEditingwizardWidgetState
         alignment: Alignment.centerLeft,
         child: Text(
           'Date: ${Utils.toDate(note.from)}',
-          style: Theme.of(context)
-              .textTheme
-              .titleMedium!
-              .copyWith(color: Theme.of(context).colorScheme.primary),
+          style: Theme.of(context).textTheme.titleMedium!.copyWith(color: Theme.of(context).colorScheme.primary),
         ),
       );
 
@@ -132,10 +126,7 @@ class _NoteEditingwizardWidgetState
         children: [
           Text(
             'from',
-            style: Theme.of(context)
-                .textTheme
-                .titleMedium!
-                .copyWith(color: Theme.of(context).colorScheme.primary),
+            style: Theme.of(context).textTheme.titleMedium!.copyWith(color: Theme.of(context).colorScheme.primary),
           ),
           Expanded(
             flex: 2,
@@ -149,10 +140,7 @@ class _NoteEditingwizardWidgetState
           ),
           Text(
             'To',
-            style: Theme.of(context)
-                .textTheme
-                .titleMedium!
-                .copyWith(color: Theme.of(context).colorScheme.primary),
+            style: Theme.of(context).textTheme.titleMedium!.copyWith(color: Theme.of(context).colorScheme.primary),
           ),
           Expanded(
             flex: 2,
@@ -170,10 +158,7 @@ class _NoteEditingwizardWidgetState
           TextButton.icon(
             onPressed: reloadForm,
             style: TextButton.styleFrom(
-              textStyle: Theme.of(context)
-                  .textTheme
-                  .titleLarge!
-                  .copyWith(color: Theme.of(context).colorScheme.secondary),
+              textStyle: Theme.of(context).textTheme.titleLarge!.copyWith(color: Theme.of(context).colorScheme.secondary),
             ),
             label: const Text('reload'),
             icon: const Icon(Icons.sync),
@@ -181,10 +166,7 @@ class _NoteEditingwizardWidgetState
           TextButton.icon(
             onPressed: saveForm,
             style: TextButton.styleFrom(
-              textStyle: Theme.of(context)
-                  .textTheme
-                  .titleLarge!
-                  .copyWith(color: Theme.of(context).colorScheme.secondary),
+              textStyle: Theme.of(context).textTheme.titleLarge!.copyWith(color: Theme.of(context).colorScheme.secondary),
             ),
             label: const Text('save'),
             icon: const Icon(Icons.save),
@@ -211,8 +193,7 @@ class _NoteEditingwizardWidgetState
                   ),
                   Text(
                     category.title,
-                    style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                        color: Theme.of(context).colorScheme.secondary),
+                    style: Theme.of(context).textTheme.titleMedium!.copyWith(color: Theme.of(context).colorScheme.secondary),
                   ),
                 ],
               ),
@@ -232,10 +213,7 @@ class _NoteEditingwizardWidgetState
           height: 240,
           child: TextField(
             maxLines: 10,
-            style: Theme.of(context)
-                .textTheme
-                .titleMedium!
-                .copyWith(color: Theme.of(context).colorScheme.secondary),
+            style: Theme.of(context).textTheme.titleMedium!.copyWith(color: Theme.of(context).colorScheme.secondary),
             decoration: const InputDecoration(
               border: UnderlineInputBorder(),
               hintText: 'Add note',
@@ -253,10 +231,7 @@ class _NoteEditingwizardWidgetState
         title: Text(text),
         trailing: const Icon(Icons.arrow_drop_down),
         onTap: onClicked,
-        titleTextStyle: Theme.of(context)
-            .textTheme
-            .titleMedium!
-            .copyWith(color: Theme.of(context).colorScheme.secondary),
+        titleTextStyle: Theme.of(context).textTheme.titleMedium!.copyWith(color: Theme.of(context).colorScheme.secondary),
       );
 
   Widget buildHeader({
@@ -266,11 +241,7 @@ class _NoteEditingwizardWidgetState
       Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(header,
-              style: Theme.of(context)
-                  .textTheme
-                  .titleLarge!
-                  .copyWith(color: Theme.of(context).colorScheme.primary)),
+          Text(header, style: Theme.of(context).textTheme.titleLarge!.copyWith(color: Theme.of(context).colorScheme.primary)),
           child,
         ],
       );
@@ -278,12 +249,16 @@ class _NoteEditingwizardWidgetState
   Widget buildMicrophone() => Center(
         child: InkWell(
           onTap: () {
+            LogWrapper.logger.d('Microphone button clicked');
             if (!_supportsPlatformSpeechRecognition()) {
+              LogWrapper.logger.w('Speech recognition not supported on this platform');
               return;
             }
             if (speechToTextInstance.isListening) {
+              LogWrapper.logger.d('Stopping speech recognition');
               _stopListeningNow();
             } else {
+              LogWrapper.logger.d('Starting speech recognition');
               _startListeningNow();
             }
           },
@@ -291,9 +266,7 @@ class _NoteEditingwizardWidgetState
               ? Center(
                   child: LoadingAnimationWidget.beat(
                     size: 30,
-                    color: _isListening
-                        ? Colors.deepPurple
-                        : Colors.deepPurple[200]!,
+                    color: _isListening ? Colors.deepPurple : Colors.deepPurple[200]!,
                   ),
                 )
               : Image.asset(
@@ -307,9 +280,7 @@ class _NoteEditingwizardWidgetState
   Future pickTime({required bool selectToTime}) async {
     final timeOfDay = await showTimePicker(
       context: context,
-      initialTime: selectToTime
-          ? TimeOfDay.fromDateTime(note.from.add(const Duration(minutes: 30)))
-          : TimeOfDay.fromDateTime(note.from),
+      initialTime: selectToTime ? TimeOfDay.fromDateTime(note.from.add(const Duration(minutes: 30))) : TimeOfDay.fromDateTime(note.from),
       builder: (context, child) {
         return MediaQuery(
           data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
@@ -322,8 +293,7 @@ class _NoteEditingwizardWidgetState
       return null;
     }
 
-    final date = DateTime(note.from.year, note.from.month, note.from.day,
-        timeOfDay.hour, timeOfDay.minute);
+    final date = DateTime(note.from.year, note.from.month, note.from.day, timeOfDay.hour, timeOfDay.minute);
 
     setState(() {
       selectToTime ? note.to = date : note.from = date;
@@ -376,8 +346,7 @@ class _NoteEditingwizardWidgetState
   }
 
   bool _supportsPlatformSpeechRecognition() {
-    return activePlatform.platform == (ActivePlatform.android) ||
-        activePlatform.platform == (ActivePlatform.ios);
+    return activePlatform.platform == (ActivePlatform.android) || activePlatform.platform == (ActivePlatform.ios);
   }
 
   void _initializeSpeechToText() async {
@@ -390,9 +359,7 @@ class _NoteEditingwizardWidgetState
   }
 
   Future<void> _startListeningNow() async {
-    if (kDebugMode) {
-      print('start listening');
-    }
+    LogWrapper.logger.d('Initializing speech recognition');
     if (_supportsPlatformSpeechRecognition()) {
       FocusScope.of(context).unfocus();
       _oldText = _descriptionController.text;
@@ -400,7 +367,9 @@ class _NoteEditingwizardWidgetState
         onResult: _onSpeechToTextResult,
         listenFor: const Duration(minutes: 2),
         listenOptions: SpeechListenOptions(
-            partialResults: false, listenMode: ListenMode.dictation),
+          partialResults: false,
+          listenMode: ListenMode.dictation,
+        ),
       );
       setState(() {
         _isListening = true;
@@ -409,18 +378,18 @@ class _NoteEditingwizardWidgetState
   }
 
   Future<void> _stopListeningNow() async {
+    LogWrapper.logger.d('Stopping speech recognition');
     if (_supportsPlatformSpeechRecognition()) {
       await speechToTextInstance.stop();
       setState(() {
-        _descriptionController.text =
-            _descriptionController.text.replaceAll(RegExp(r'Notiz Ende'), '');
+        _descriptionController.text = _descriptionController.text.replaceAll(RegExp(r'Notiz Ende'), '');
         _isListening = false;
       });
     }
   }
 
-  Future<void> _onSpeechToTextResult(
-      SpeechRecognitionResult recognitionResult) async {
+  Future<void> _onSpeechToTextResult(SpeechRecognitionResult recognitionResult) async {
+    LogWrapper.logger.d('Speech recognition result received');
     var text = recognitionResult.recognizedWords;
     if (_oldText.isNotEmpty) {
       text = "$_oldText $text";
@@ -429,6 +398,7 @@ class _NoteEditingwizardWidgetState
     text.replaceAll(RegExp('%omma'), ', ');
     setState(() {
       if (text.contains('Notiz Ende')) {
+        LogWrapper.logger.d('End command detected, stopping speech recognition');
         _stopListeningNow();
       }
       _descriptionController.text = text;
@@ -436,7 +406,7 @@ class _NoteEditingwizardWidgetState
       _calculateNewNote = false;
     });
     if (speechToTextInstance.isNotListening) {
-      print("restart listening");
+      LogWrapper.logger.d('Speech recognition stopped, restarting');
       _startListeningNow();
     }
   }
@@ -452,9 +422,7 @@ class _NoteEditingwizardWidgetState
     var timeIncrease = 15; // check 15minute chunks
     var curTime = dayBegin;
     var stop = notesOfDay.isEmpty;
-    for (;
-        curTime.isBefore(dayEnd) && !stop;
-        curTime = curTime.add(Duration(minutes: timeIncrease))) {
+    for (; curTime.isBefore(dayEnd) && !stop; curTime = curTime.add(Duration(minutes: timeIncrease))) {
       int timeSlotAtIndex = -1;
       for (final note in notesOfDay) {
         if (Utils.isDateTimeWithinTimeSpan(curTime, note.from, note.to)) {

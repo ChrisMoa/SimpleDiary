@@ -15,32 +15,44 @@ import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 //* main() -------------------------------------------------------------------------------------------------------------------------------------
 
 void main() async {
-  await dotenv.load(fileName: ".env");
-  if (activePlatform.platform == ActivePlatform.android) {
-    await Permission.manageExternalStorage.request();
-  }
-  await settingsContainer.readSettings();
-  if (activePlatform.platform == ActivePlatform.windows ||
-      activePlatform.platform == ActivePlatform.linux) {
-    //* Initialize FFI
-    sqfliteFfiInit();
-    databaseFactory = databaseFactoryFfi;
-  }
+  LogWrapper.logger.i('Starting application initialization');
 
-  //* init logger
-  bool debugging = settingsContainer.debugMode;
-  LogWrapper.logger = Logger(
-    level: debugging ? Level.trace : Level.info,
-    output: FileOutput(
-      file: await LogWrapper.createLogfile(),
-    ),
-    printer: CustomLogPrinter(),
-  );
+  try {
+    LogWrapper.logger.d('Loading environment variables');
+    await dotenv.load(fileName: ".env");
 
-  //* run
-  runApp(
-    const ProviderScope(child: MyApp()),
-  );
+    if (activePlatform.platform == ActivePlatform.android) {
+      LogWrapper.logger.d('Requesting external storage permission for Android');
+      await Permission.manageExternalStorage.request();
+    }
+
+    LogWrapper.logger.d('Reading application settings');
+    await settingsContainer.readSettings();
+
+    if (activePlatform.platform == ActivePlatform.windows || activePlatform.platform == ActivePlatform.linux) {
+      LogWrapper.logger.d('Initializing FFI for desktop platform');
+      sqfliteFfiInit();
+      databaseFactory = databaseFactoryFfi;
+    }
+
+    //* init logger
+    bool debugging = settingsContainer.debugMode;
+    LogWrapper.logger = Logger(
+      level: debugging ? Level.trace : Level.info,
+      output: ConsoleOutput(),
+      printer: CustomLogPrinter(),
+    );
+    LogWrapper.logger.i('Logger initialized with level: ${debugging ? 'trace' : 'info'}');
+
+    LogWrapper.logger.i('Initialization complete, starting application');
+    //* run
+    runApp(
+      const ProviderScope(child: MyApp()),
+    );
+  } catch (e) {
+    LogWrapper.logger.e('Failed to initialize application: $e');
+    rethrow;
+  }
 }
 
 //* MyApp-> -------------------------------------------------------------------------------------------------------------------------------------
@@ -54,19 +66,28 @@ class MyApp extends ConsumerStatefulWidget {
 
 class _MyAppState extends ConsumerState<MyApp> {
   @override
-  Widget build(BuildContext context) => MaterialApp(
-        theme: ref.watch(themeProvider),
-        debugShowCheckedModeBanner: settingsContainer.debugMode,
-        home: const MainPage(
-          title: 'Simple Diary',
-        ),
-        localizationsDelegates: const [
-          GlobalMaterialLocalizations.delegate,
-          GlobalWidgetsLocalizations.delegate,
-          GlobalCupertinoLocalizations.delegate,
-        ],
-        supportedLocales: const [Locale('de'), Locale('en')],
-      );
+  void initState() {
+    super.initState();
+    LogWrapper.logger.d('Initializing MyApp state');
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    LogWrapper.logger.d('Building MyApp');
+    return MaterialApp(
+      theme: ref.watch(themeProvider),
+      debugShowCheckedModeBanner: settingsContainer.debugMode,
+      home: const MainPage(
+        title: 'Simple Diary',
+      ),
+      localizationsDelegates: const [
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [Locale('de'), Locale('en')],
+    );
+  }
 }
 
 //* <-MyApp -------------------------------------------------------------------------------------------------------------------------------------

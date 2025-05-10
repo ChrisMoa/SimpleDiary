@@ -12,6 +12,7 @@ class SupabaseApi {
   Future<void> initialize(String url, String anonKey) async {
     try {
       if (!_initialized) {
+        LogWrapper.logger.i('Initializing Supabase with URL: $url');
         await Supabase.initialize(
           url: url,
           anonKey: anonKey,
@@ -33,9 +34,11 @@ class SupabaseApi {
   Future<bool> signInWithEmailPassword(String email, String password) async {
     try {
       if (_client == null) {
+        LogWrapper.logger.e('Supabase client not initialized');
         throw Exception('Supabase client not initialized');
       }
 
+      LogWrapper.logger.d('Attempting to sign in with email: $email');
       final response = await _client!.auth.signInWithPassword(
         email: email,
         password: password,
@@ -46,6 +49,7 @@ class SupabaseApi {
         LogWrapper.logger.d('Auth user ID: ${response.user!.id}');
         return true;
       }
+      LogWrapper.logger.w('Sign in failed: No user returned');
       return false;
     } catch (e) {
       LogWrapper.logger.e('Supabase sign in failed: $e');
@@ -57,9 +61,11 @@ class SupabaseApi {
   Future<void> signOut() async {
     try {
       if (_client == null) {
+        LogWrapper.logger.e('Supabase client not initialized');
         throw Exception('Supabase client not initialized');
       }
 
+      LogWrapper.logger.d('Signing out from Supabase');
       await _client!.auth.signOut();
       LogWrapper.logger.i('Successfully signed out from Supabase');
     } catch (e) {
@@ -69,29 +75,31 @@ class SupabaseApi {
   }
 
   // Sync diary days to Supabase
-  Future<void> syncDiaryDays(
-      List<DiaryDay> diaryDays, String localUserId) async {
+  Future<void> syncDiaryDays(List<DiaryDay> diaryDays, String localUserId) async {
     try {
       if (_client == null) {
+        LogWrapper.logger.e('Supabase client not initialized');
         throw Exception('Supabase client not initialized');
       }
 
       // Get the authenticated user's ID from Supabase
       final supabaseUserId = _client!.auth.currentUser?.id;
       if (supabaseUserId == null) {
+        LogWrapper.logger.e('User not authenticated');
         throw Exception('User not authenticated');
       }
 
+      LogWrapper.logger.i('Syncing ${diaryDays.length} diary days for user: $supabaseUserId');
       for (var diaryDay in diaryDays) {
         final data = {
           'id': '${supabaseUserId}_${diaryDay.getId()}',
-          'user_id': supabaseUserId, // Use Supabase auth user ID
+          'user_id': supabaseUserId,
           'day': diaryDay.day.toIso8601String().split('T')[0],
           'ratings': diaryDay.ratings.map((r) => r.toMap()).toList(),
           'notes': diaryDay.notes.map((note) => note.toMap()).toList(),
         };
 
-        // Upsert the diary day
+        LogWrapper.logger.d('Upserting diary day: ${data['id']}');
         await _client!.from('diary_days').upsert(data);
       }
       LogWrapper.logger.i('Successfully synced ${diaryDays.length} diary days');
@@ -105,19 +113,22 @@ class SupabaseApi {
   Future<void> syncNotes(List<Note> notes, String localUserId) async {
     try {
       if (_client == null) {
+        LogWrapper.logger.e('Supabase client not initialized');
         throw Exception('Supabase client not initialized');
       }
 
       // Get the authenticated user's ID from Supabase
       final supabaseUserId = _client!.auth.currentUser?.id;
       if (supabaseUserId == null) {
+        LogWrapper.logger.e('User not authenticated');
         throw Exception('User not authenticated');
       }
 
+      LogWrapper.logger.i('Syncing ${notes.length} notes for user: $supabaseUserId');
       for (var note in notes) {
         final data = <String, dynamic>{
           'id': note.id,
-          'user_id': supabaseUserId, // Use Supabase auth user ID
+          'user_id': supabaseUserId,
           'title': note.title,
           'description': note.description,
           'from': note.from.toIso8601String(),
@@ -126,7 +137,7 @@ class SupabaseApi {
           'note_category': note.noteCategory.title,
         };
 
-        // Upsert the note
+        LogWrapper.logger.d('Upserting note: ${data['id']}');
         await _client!.from('notes').upsert(data);
       }
       LogWrapper.logger.i('Successfully synced ${notes.length} notes');
@@ -140,19 +151,19 @@ class SupabaseApi {
   Future<List<DiaryDay>> fetchDiaryDays(String localUserId) async {
     try {
       if (_client == null) {
+        LogWrapper.logger.e('Supabase client not initialized');
         throw Exception('Supabase client not initialized');
       }
 
       // Get the authenticated user's ID from Supabase
       final supabaseUserId = _client!.auth.currentUser?.id;
       if (supabaseUserId == null) {
+        LogWrapper.logger.e('User not authenticated');
         throw Exception('User not authenticated');
       }
 
-      final response = await _client!
-          .from('diary_days')
-          .select()
-          .eq('user_id', supabaseUserId); // Use Supabase auth user ID
+      LogWrapper.logger.d('Fetching diary days for user: $supabaseUserId');
+      final response = await _client!.from('diary_days').select().eq('user_id', supabaseUserId);
 
       final diaryDays = <DiaryDay>[];
       for (var data in response) {
@@ -174,8 +185,7 @@ class SupabaseApi {
         diaryDays.add(diaryDay);
       }
 
-      LogWrapper.logger
-          .i('Successfully fetched ${diaryDays.length} diary days');
+      LogWrapper.logger.i('Successfully fetched ${diaryDays.length} diary days');
       return diaryDays;
     } catch (e) {
       LogWrapper.logger.e('Failed to fetch diary days: $e');
@@ -187,19 +197,19 @@ class SupabaseApi {
   Future<List<Note>> fetchNotes(String localUserId) async {
     try {
       if (_client == null) {
+        LogWrapper.logger.e('Supabase client not initialized');
         throw Exception('Supabase client not initialized');
       }
 
       // Get the authenticated user's ID from Supabase
       final supabaseUserId = _client!.auth.currentUser?.id;
       if (supabaseUserId == null) {
+        LogWrapper.logger.e('User not authenticated');
         throw Exception('User not authenticated');
       }
 
-      final response = await _client!
-          .from('notes')
-          .select()
-          .eq('user_id', supabaseUserId); // Use Supabase auth user ID
+      LogWrapper.logger.d('Fetching notes for user: $supabaseUserId');
+      final response = await _client!.from('notes').select().eq('user_id', supabaseUserId);
 
       final notes = <Note>[];
       for (var data in response) {

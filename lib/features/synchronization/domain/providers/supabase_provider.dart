@@ -9,34 +9,43 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 // Supabase API instance provider
 final supabaseApiProvider = Provider<SupabaseApi>((ref) {
+  LogWrapper.logger.d('Creating new SupabaseApi instance');
   return SupabaseApi();
 });
 
 // Supabase settings provider
 final supabaseSettingsProvider = StateNotifierProvider<SupabaseSettingsNotifier, SupabaseSettings>((ref) {
+  LogWrapper.logger.d('Creating new SupabaseSettingsNotifier');
   return SupabaseSettingsNotifier();
 });
 
 class SupabaseSettingsNotifier extends StateNotifier<SupabaseSettings> {
-  SupabaseSettingsNotifier() : super(settingsContainer.activeUserSettings.supabaseSettings);
+  SupabaseSettingsNotifier() : super(settingsContainer.activeUserSettings.supabaseSettings) {
+    LogWrapper.logger.i('Initialized SupabaseSettingsNotifier with settings for user: ${settingsContainer.activeUserSettings.savedUserData.username}');
+  }
 
   void updateSettings(SupabaseSettings settings) {
+    LogWrapper.logger.d('Updating all Supabase settings');
     state = settings;
   }
 
   void updateUrl(String url) {
+    LogWrapper.logger.d('Updating Supabase URL');
     state = state.copyWith(supabaseUrl: url);
   }
 
   void updateAnonKey(String key) {
+    LogWrapper.logger.d('Updating Supabase anon key');
     state = state.copyWith(supabaseAnonKey: key);
   }
 
   void updateEmail(String email) {
+    LogWrapper.logger.d('Updating Supabase email');
     state = state.copyWith(email: email);
   }
 
   void updatePassword(String password) {
+    LogWrapper.logger.d('Updating Supabase password');
     state = state.copyWith(password: password);
   }
 }
@@ -72,9 +81,12 @@ class SyncState {
 class SupabaseSyncNotifier extends StateNotifier<SyncState> {
   final Ref ref;
 
-  SupabaseSyncNotifier(this.ref) : super(SyncState(status: SyncStatus.idle, message: 'Ready to sync'));
+  SupabaseSyncNotifier(this.ref) : super(SyncState(status: SyncStatus.idle, message: 'Ready to sync')) {
+    LogWrapper.logger.i('Initialized SupabaseSyncNotifier');
+  }
 
   Future<void> syncToSupabase() async {
+    LogWrapper.logger.i('Starting sync to Supabase');
     try {
       state = state.copyWith(
         status: SyncStatus.syncing,
@@ -86,7 +98,7 @@ class SupabaseSyncNotifier extends StateNotifier<SyncState> {
       final settings = ref.read(supabaseSettingsProvider);
       final userData = ref.read(userDataProvider);
 
-      // Initialize Supabase if not already done
+      LogWrapper.logger.d('Initializing Supabase with URL: ${settings.supabaseUrl}');
       await supabaseApi.initialize(
         settings.supabaseUrl,
         settings.supabaseAnonKey,
@@ -97,13 +109,14 @@ class SupabaseSyncNotifier extends StateNotifier<SyncState> {
         progress: 0.1,
       );
 
-      // Authenticate
+      LogWrapper.logger.d('Authenticating with email: ${settings.email}');
       final success = await supabaseApi.signInWithEmailPassword(
         settings.email,
         settings.password,
       );
 
       if (!success) {
+        LogWrapper.logger.e('Authentication failed');
         throw Exception('Authentication failed');
       }
 
@@ -112,8 +125,8 @@ class SupabaseSyncNotifier extends StateNotifier<SyncState> {
         progress: 0.3,
       );
 
-      // Sync diary days
       final diaryDays = ref.read(diaryDayLocalDbDataProvider);
+      LogWrapper.logger.i('Syncing ${diaryDays.length} diary days');
       await supabaseApi.syncDiaryDays(diaryDays, userData.userId!);
 
       state = state.copyWith(
@@ -121,17 +134,17 @@ class SupabaseSyncNotifier extends StateNotifier<SyncState> {
         progress: 0.6,
       );
 
-      // Sync notes
       final notes = ref.read(notesLocalDataProvider);
+      LogWrapper.logger.i('Syncing ${notes.length} notes');
       await supabaseApi.syncNotes(notes, userData.userId!);
 
+      LogWrapper.logger.i('Sync completed successfully');
       state = state.copyWith(
         status: SyncStatus.success,
         message: 'Sync completed successfully',
         progress: 1.0,
       );
 
-      // Reset to idle after 3 seconds
       Future.delayed(const Duration(seconds: 3), () {
         if (mounted) {
           state = state.copyWith(
@@ -148,7 +161,6 @@ class SupabaseSyncNotifier extends StateNotifier<SyncState> {
         message: 'Sync failed: ${e.toString()}',
       );
 
-      // Reset to idle after 5 seconds
       Future.delayed(const Duration(seconds: 5), () {
         if (mounted) {
           state = state.copyWith(
@@ -162,6 +174,7 @@ class SupabaseSyncNotifier extends StateNotifier<SyncState> {
   }
 
   Future<void> syncFromSupabase() async {
+    LogWrapper.logger.i('Starting sync from Supabase');
     try {
       state = state.copyWith(
         status: SyncStatus.syncing,
@@ -173,7 +186,7 @@ class SupabaseSyncNotifier extends StateNotifier<SyncState> {
       final settings = ref.read(supabaseSettingsProvider);
       final userData = ref.read(userDataProvider);
 
-      // Initialize Supabase if not already done
+      LogWrapper.logger.d('Initializing Supabase with URL: ${settings.supabaseUrl}');
       await supabaseApi.initialize(
         settings.supabaseUrl,
         settings.supabaseAnonKey,
@@ -184,13 +197,14 @@ class SupabaseSyncNotifier extends StateNotifier<SyncState> {
         progress: 0.1,
       );
 
-      // Authenticate
+      LogWrapper.logger.d('Authenticating with email: ${settings.email}');
       final success = await supabaseApi.signInWithEmailPassword(
         settings.email,
         settings.password,
       );
 
       if (!success) {
+        LogWrapper.logger.e('Authentication failed');
         throw Exception('Authentication failed');
       }
 
@@ -199,26 +213,28 @@ class SupabaseSyncNotifier extends StateNotifier<SyncState> {
         progress: 0.3,
       );
 
-      // Fetch diary days
+      LogWrapper.logger.d('Fetching diary days for user: ${userData.userId}');
       final diaryDays = await supabaseApi.fetchDiaryDays(userData.userId!);
+      LogWrapper.logger.i('Fetched ${diaryDays.length} diary days');
 
       state = state.copyWith(
         message: 'Downloading notes...',
         progress: 0.6,
       );
 
-      // Fetch notes
+      LogWrapper.logger.d('Fetching notes for user: ${userData.userId}');
       final notes = await supabaseApi.fetchNotes(userData.userId!);
+      LogWrapper.logger.i('Fetched ${notes.length} notes');
 
       state = state.copyWith(
         message: 'Updating local database...',
         progress: 0.8,
       );
 
-      // Update local database
       final diaryDayNotifier = ref.read(diaryDayLocalDbDataProvider.notifier);
       final notesNotifier = ref.read(notesLocalDataProvider.notifier);
 
+      LogWrapper.logger.d('Updating local database with fetched data');
       for (var diaryDay in diaryDays) {
         await diaryDayNotifier.addElement(diaryDay);
       }
@@ -227,13 +243,13 @@ class SupabaseSyncNotifier extends StateNotifier<SyncState> {
         await notesNotifier.addElement(note);
       }
 
+      LogWrapper.logger.i('Download completed successfully');
       state = state.copyWith(
         status: SyncStatus.success,
         message: 'Download completed successfully',
         progress: 1.0,
       );
 
-      // Reset to idle after 3 seconds
       Future.delayed(const Duration(seconds: 3), () {
         if (mounted) {
           state = state.copyWith(
@@ -250,7 +266,6 @@ class SupabaseSyncNotifier extends StateNotifier<SyncState> {
         message: 'Download failed: ${e.toString()}',
       );
 
-      // Reset to idle after 5 seconds
       Future.delayed(const Duration(seconds: 5), () {
         if (mounted) {
           state = state.copyWith(
@@ -266,5 +281,6 @@ class SupabaseSyncNotifier extends StateNotifier<SyncState> {
 
 // Supabase sync provider
 final supabaseSyncProvider = StateNotifierProvider<SupabaseSyncNotifier, SyncState>((ref) {
+  LogWrapper.logger.d('Creating new SupabaseSyncNotifier');
   return SupabaseSyncNotifier(ref);
 });

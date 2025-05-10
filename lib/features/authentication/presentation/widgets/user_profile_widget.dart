@@ -3,6 +3,7 @@ import 'package:day_tracker/features/authentication/domain/providers/user_data_p
 import 'package:day_tracker/features/authentication/presentation/widgets/simple_input_data_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:day_tracker/core/log/logger_instance.dart';
 
 class UserProfileWidget extends ConsumerStatefulWidget {
   UserProfileWidget({
@@ -20,8 +21,7 @@ class UserProfileWidget extends ConsumerStatefulWidget {
   final formKey = GlobalKey<FormState>();
 
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() =>
-      _UserProfileWidgetState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _UserProfileWidgetState();
 }
 
 class _UserProfileWidgetState extends ConsumerState<UserProfileWidget> {
@@ -35,8 +35,7 @@ class _UserProfileWidgetState extends ConsumerState<UserProfileWidget> {
     super.initState();
     var userDataMap = _userData.toMap();
     for (var entry in userDataMap.entries) {
-      simpleInputDataWidgets.add(SimpleInputDataWidget(
-          mapKey: entry.key, value: entry.value, extendedItem: false));
+      simpleInputDataWidgets.add(SimpleInputDataWidget(mapKey: entry.key, value: entry.value, extendedItem: false));
     }
   }
 
@@ -53,9 +52,7 @@ class _UserProfileWidgetState extends ConsumerState<UserProfileWidget> {
       backgroundColor: Theme.of(context).colorScheme.primary,
       appBar: AppBar(
         title: const Text('Simple Diary'),
-        leading: widget.enableReturn
-            ? const CloseButton()
-            : TextButton(onPressed: () {}, child: const Text('')),
+        leading: widget.enableReturn ? const CloseButton() : TextButton(onPressed: () {}, child: const Text('')),
       ),
       body: Center(
         child: SingleChildScrollView(
@@ -106,40 +103,46 @@ class _UserProfileWidgetState extends ConsumerState<UserProfileWidget> {
     );
   }
 
-  Widget _buildRemoteAccCheckbox() => Row(children: [
-        Text(
-          'Remote Account?',
-          style: Theme.of(context)
-              .textTheme
-              .titleLarge!
-              .copyWith(color: Theme.of(context).colorScheme.primary),
-        ),
-        Checkbox(
-          value: _isRemoteAccount,
-          checkColor: Colors.white,
-          fillColor: MaterialStateProperty.resolveWith((states) {
-            const Set<MaterialState> interactiveStates = <MaterialState>{
-              MaterialState.pressed,
-              MaterialState.hovered,
-              MaterialState.focused,
-            };
-            if (states.any(interactiveStates.contains)) {
-              return Colors.blue;
-            }
-            return Colors.red;
-          }),
-          onChanged: (bool? value) {
-            setState(() {
-              _isRemoteAccount = value!;
-            });
-          },
-        ),
-      ]);
+  Widget _buildRemoteAccCheckbox() {
+    LogWrapper.logger.d('Building remote account checkbox');
+    return CheckboxListTile(
+      title: const Text('Remote Account'),
+      value: _isRemoteAccount,
+      onChanged: (bool? value) {
+        LogWrapper.logger.d('Remote account checkbox changed: $value');
+        setState(() {
+          _isRemoteAccount = value ?? false;
+        });
+      },
+    );
+  }
 
   Widget _buildButtons(BuildContext context) {
-    return Row(
+    LogWrapper.logger.d('Building user profile buttons');
+    return Column(
       children: [
         ...widget.addButtons,
+        if (widget.enableEditing)
+          ElevatedButton(
+            onPressed: () {
+              LogWrapper.logger.d('Edit button clicked');
+              if (widget.formKey.currentState!.validate()) {
+                widget.formKey.currentState!.save();
+                LogWrapper.logger.d('Form validated and saved');
+                // Update user data
+                Map<String, dynamic> userDataMap = {};
+                for (var userDataInput in simpleInputDataWidgets) {
+                  userDataMap[userDataInput.mapKey] = userDataInput.value;
+                }
+                final userData = UserData.fromMap(userDataMap);
+                LogWrapper.logger.d('Updating user data');
+                ref.read(userDataProvider.notifier).updateUser(userData);
+              } else {
+                LogWrapper.logger.w('Form validation failed');
+              }
+            },
+            child: const Text('Edit'),
+          ),
       ],
     );
   }

@@ -11,13 +11,13 @@ import 'package:day_tracker/features/notes/domain/providers/note_local_db_provid
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
+import 'package:day_tracker/core/log/logger_instance.dart';
 
 class NotesCalendarWidget extends ConsumerStatefulWidget {
   const NotesCalendarWidget({super.key});
 
   @override
-  ConsumerState<NotesCalendarWidget> createState() =>
-      _NotesCalendarWidgetState();
+  ConsumerState<NotesCalendarWidget> createState() => _NotesCalendarWidgetState();
 }
 
 class _NotesCalendarWidgetState extends ConsumerState<NotesCalendarWidget> {
@@ -45,9 +45,7 @@ class _NotesCalendarWidgetState extends ConsumerState<NotesCalendarWidget> {
 
     // Update calendar date when provider changes
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (_calendarController.displayDate?.day != selectedDate.day ||
-          _calendarController.displayDate?.month != selectedDate.month ||
-          _calendarController.displayDate?.year != selectedDate.year) {
+      if (_calendarController.displayDate?.day != selectedDate.day || _calendarController.displayDate?.month != selectedDate.month || _calendarController.displayDate?.year != selectedDate.year) {
         _calendarController.displayDate = selectedDate;
       }
     });
@@ -155,8 +153,7 @@ class _NotesCalendarWidgetState extends ConsumerState<NotesCalendarWidget> {
                   fontSize: isSmallScreen ? 10 : 12,
                 ),
               ),
-              headerHeight:
-                  0, // Hide header since we have our own date selector
+              headerHeight: 0, // Hide header since we have our own date selector
               viewHeaderHeight: 0, // Hide view header for cleaner look
               todayHighlightColor: theme.colorScheme.primary,
               selectionDecoration: BoxDecoration(
@@ -184,9 +181,7 @@ class _NotesCalendarWidgetState extends ConsumerState<NotesCalendarWidget> {
             child: Wrap(
               spacing: 8,
               runSpacing: 8,
-              children: availableNoteCategories
-                  .map((category) => _buildCategoryChip(category, theme))
-                  .toList(),
+              children: availableNoteCategories.map((category) => _buildCategoryChip(category, theme)).toList(),
             ),
           ),
         ],
@@ -200,8 +195,7 @@ class _NotesCalendarWidgetState extends ConsumerState<NotesCalendarWidget> {
     final isSmallScreen = mediaQuery.size.width < 360;
 
     return Container(
-      padding: EdgeInsets.symmetric(
-          horizontal: isSmallScreen ? 4 : 8, vertical: isSmallScreen ? 2 : 4),
+      padding: EdgeInsets.symmetric(horizontal: isSmallScreen ? 4 : 8, vertical: isSmallScreen ? 2 : 4),
       decoration: BoxDecoration(
         color: category.color.withValues(alpha: 0.2),
         borderRadius: BorderRadius.circular(12),
@@ -234,8 +228,7 @@ class _NotesCalendarWidgetState extends ConsumerState<NotesCalendarWidget> {
     );
   }
 
-  Widget _customAppointmentBuilder(
-      BuildContext context, CalendarAppointmentDetails details) {
+  Widget _customAppointmentBuilder(BuildContext context, CalendarAppointmentDetails details) {
     final note = details.appointments.first as Note;
     final theme = ref.watch(themeProvider);
     final isSelected = ref.read(selectedWizardNoteProvider)?.id == note.id;
@@ -249,8 +242,7 @@ class _NotesCalendarWidgetState extends ConsumerState<NotesCalendarWidget> {
         color: note.noteCategory.color.withValues(alpha: isEmpty ? 0.3 : 0.7),
         borderRadius: BorderRadius.circular(4),
         border: Border.all(
-          color:
-              isSelected ? theme.colorScheme.primary : note.noteCategory.color,
+          color: isSelected ? theme.colorScheme.primary : note.noteCategory.color,
           width: isSelected ? 2 : 1,
         ),
       ),
@@ -303,9 +295,7 @@ class _NotesCalendarWidgetState extends ConsumerState<NotesCalendarWidget> {
 
   void _handleCalendarTap(CalendarTapDetails details) {
     // Handle appointment tap
-    if (details.targetElement == CalendarElement.appointment &&
-        details.appointments != null &&
-        details.appointments!.isNotEmpty) {
+    if (details.targetElement == CalendarElement.appointment && details.appointments != null && details.appointments!.isNotEmpty) {
       // Select existing note
       final note = details.appointments!.first as Note;
       ref.read(selectedWizardNoteProvider.notifier).selectNote(note);
@@ -314,6 +304,7 @@ class _NotesCalendarWidgetState extends ConsumerState<NotesCalendarWidget> {
 
   void _handleDragEnd(AppointmentDragEndDetails details) {
     try {
+      LogWrapper.logger.d('Note drag ended: ${details.appointment}');
       // The appointment is accessible directly
       final note = details.appointment as Note;
 
@@ -330,7 +321,7 @@ class _NotesCalendarWidgetState extends ConsumerState<NotesCalendarWidget> {
         newEndTime = newStartTime.add(duration);
       } else {
         // Fallback if dropping time is null
-        debugPrint('Warning: Dropping time was null in drag end event');
+        LogWrapper.logger.w('Dropping time was null in drag end event');
         return;
       }
 
@@ -345,24 +336,24 @@ class _NotesCalendarWidgetState extends ConsumerState<NotesCalendarWidget> {
         isAllDay: note.isAllDay,
       );
 
+      LogWrapper.logger.d('Updating note after drag: ${updatedNote.id}');
       // Update in database
       ref.read(notesLocalDataProvider.notifier).editElement(updatedNote, note);
 
       // Update selected note if it's the one being edited
       final selectedNote = ref.read(selectedWizardNoteProvider);
       if (selectedNote?.id == note.id) {
-        ref
-            .read(selectedWizardNoteProvider.notifier)
-            .updateNote(note, updatedNote);
+        ref.read(selectedWizardNoteProvider.notifier).updateNote(note, updatedNote);
       }
     } catch (e) {
       // Log error but don't crash the app
-      debugPrint('Error during drag end: $e');
+      LogWrapper.logger.e('Error during drag end: $e');
     }
   }
 
   void _handleResizeEnd(AppointmentResizeEndDetails details) {
     try {
+      LogWrapper.logger.d('Note resize ended: ${details.appointment}');
       // Get the appointment being resized
       final note = details.appointment as Note;
 
@@ -377,19 +368,18 @@ class _NotesCalendarWidgetState extends ConsumerState<NotesCalendarWidget> {
         isAllDay: note.isAllDay,
       );
 
+      LogWrapper.logger.d('Updating note after resize: ${updatedNote.id}');
       // Update in database
       ref.read(notesLocalDataProvider.notifier).editElement(updatedNote, note);
 
       // Update selected note if it's the one being edited
       final selectedNote = ref.read(selectedWizardNoteProvider);
       if (selectedNote?.id == note.id) {
-        ref
-            .read(selectedWizardNoteProvider.notifier)
-            .updateNote(note, updatedNote);
+        ref.read(selectedWizardNoteProvider.notifier).updateNote(note, updatedNote);
       }
     } catch (e) {
       // Log error but don't crash the app
-      debugPrint('Error during resize end: $e');
+      LogWrapper.logger.e('Error during resize end: $e');
     }
   }
 }
