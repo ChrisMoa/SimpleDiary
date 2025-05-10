@@ -1,10 +1,7 @@
-// ignore_for_file: unused_local_variable
-
 import 'package:day_tracker/core/provider/theme_provider.dart';
 import 'package:day_tracker/features/day_rating/data/models/day_rating.dart';
 import 'package:day_tracker/features/day_rating/data/models/diary_day.dart';
 import 'package:day_tracker/features/day_rating/domain/providers/diary_day_local_db_provider.dart';
-import 'package:day_tracker/features/day_rating/domain/providers/diary_wizard_page_state_provider.dart';
 import 'package:day_tracker/features/day_rating/domain/providers/diary_wizard_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
@@ -16,17 +13,14 @@ class DayRatingWidget extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final ratings = ref.watch(dayRatingsProvider);
-    final isFullyScheduled = ref.watch(isDayFullyScheduledProvider);
     final theme = ref.watch(themeProvider);
     final selectedDate = ref.watch(wizardSelectedDateProvider);
 
     // Get screen dimensions for responsive design
     final mediaQuery = MediaQuery.of(context);
     final screenWidth = mediaQuery.size.width;
-    final screenHeight = mediaQuery.size.height;
     final isSmallScreen = screenWidth < 600;
     final isLandscape = mediaQuery.orientation == Orientation.landscape;
-    final isKeyboardVisible = mediaQuery.viewInsets.bottom > 0;
 
     // Create a scrollable layout that adapts to different screen sizes
     return Container(
@@ -71,67 +65,6 @@ class DayRatingWidget extends ConsumerWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    // Information card if day is not fully scheduled
-                    if (!isFullyScheduled)
-                      Card(
-                        color: theme.colorScheme.errorContainer,
-                        margin: const EdgeInsets.only(bottom: 16),
-                        child: Padding(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  Icon(
-                                    Icons.warning_rounded,
-                                    color: theme.colorScheme.onErrorContainer,
-                                  ),
-                                  const SizedBox(width: 8),
-                                  Expanded(
-                                    child: Text(
-                                      'Day Schedule Incomplete',
-                                      style:
-                                          theme.textTheme.titleMedium?.copyWith(
-                                        color:
-                                            theme.colorScheme.onErrorContainer,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 8),
-                              Text(
-                                'Your day schedule has gaps. For a complete diary entry, '
-                                'schedule all your activities from morning to evening.',
-                                style: theme.textTheme.bodyMedium?.copyWith(
-                                  color: theme.colorScheme.onErrorContainer,
-                                ),
-                              ),
-                              const SizedBox(height: 12),
-                              ElevatedButton.icon(
-                                onPressed: () {
-                                  // Switch to notes page
-                                  ref
-                                      .read(
-                                          diaryWizardPageStateProvider.notifier)
-                                      .setNotesPage();
-                                },
-                                icon: const Icon(Icons.edit_calendar),
-                                label: const Text('Complete Schedule'),
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: theme.colorScheme.error
-                                      .withValues(alpha: 0.2),
-                                  foregroundColor:
-                                      theme.colorScheme.onErrorContainer,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-
                     // Use different layouts based on orientation and screen size
                     if (isLandscape && !isSmallScreen)
                       // For landscape larger screens, use a grid layout
@@ -166,9 +99,8 @@ class DayRatingWidget extends ConsumerWidget {
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 24.0),
                       child: ElevatedButton.icon(
-                        onPressed: isFullyScheduled
-                            ? () => _saveDiaryDay(context, ref, selectedDate)
-                            : null,
+                        onPressed: () =>
+                            _saveDiaryDay(context, ref, selectedDate),
                         icon: const Icon(Icons.save),
                         label: const Text('Save Day Rating'),
                         style: ElevatedButton.styleFrom(
@@ -179,12 +111,6 @@ class DayRatingWidget extends ConsumerWidget {
                           backgroundColor: theme.colorScheme.primaryContainer,
                           foregroundColor: theme.colorScheme.onPrimaryContainer,
                           minimumSize: const Size(double.infinity, 54),
-                          disabledBackgroundColor: theme
-                              .colorScheme.primaryContainer
-                              .withValues(alpha: 0.6),
-                          disabledForegroundColor: theme
-                              .colorScheme.onPrimaryContainer
-                              .withValues(alpha: 0.6),
                         ),
                       ),
                     ),
@@ -252,7 +178,7 @@ class DayRatingWidget extends ConsumerWidget {
       margin: EdgeInsets.only(bottom: isSmallScreen ? 12 : 16),
       color: theme.colorScheme.secondaryContainer,
       elevation: 4,
-      shadowColor: theme.colorScheme.shadow..withValues(alpha: 0.3),
+      shadowColor: theme.colorScheme.shadow.withValues(alpha: 0.3),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
         side: BorderSide(
@@ -447,11 +373,11 @@ class DayRatingWidget extends ConsumerWidget {
       case 1:
         return theme.colorScheme.error;
       case 2:
-        return theme.colorScheme.error..withValues(alpha: 0.7);
+        return theme.colorScheme.error.withValues(alpha: .7);
       case 3:
         return theme.colorScheme.tertiary;
       case 4:
-        return theme.colorScheme.tertiary..withValues(alpha: 0.7);
+        return theme.colorScheme.tertiary.withValues(alpha: .7);
       case 5:
         return theme.colorScheme.primary;
       default:
@@ -497,8 +423,5 @@ class DayRatingWidget extends ConsumerWidget {
 
     // Reset ratings for next day
     ref.read(dayRatingsProvider.notifier).resetRatings();
-
-    // Return to the notes page
-    ref.read(diaryWizardPageStateProvider.notifier).setNotesPage();
   }
 }

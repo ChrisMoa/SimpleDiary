@@ -353,6 +353,33 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
                           ),
                         ),
                       ),
+                      // Add button
+                      OutlinedButton.icon(
+                        onPressed: () => _addNextFreeNote(),
+                        icon: Icon(
+                          Icons.add,
+                          color: theme.colorScheme.error,
+                          size: isSmallScreen ? 16 : 20,
+                        ),
+                        label: Text(
+                          'Add',
+                          style: TextStyle(
+                            color: theme.colorScheme.error,
+                            fontSize: isSmallScreen ? 12 : 14,
+                          ),
+                        ),
+                        style: OutlinedButton.styleFrom(
+                          padding: isSmallScreen
+                              ? const EdgeInsets.symmetric(
+                                  horizontal: 8, vertical: 4)
+                              : const EdgeInsets.symmetric(
+                                  horizontal: 16, vertical: 8),
+                          side: BorderSide(
+                            color:
+                                theme.colorScheme.error.withValues(alpha: 0.5),
+                          ),
+                        ),
+                      ),
 
                       // Time editor buttons
                       Row(
