@@ -1,3 +1,4 @@
+// lib/features/synchronization/presentation/widgets/supabase_sync_widget.dart
 import 'package:day_tracker/core/provider/theme_provider.dart';
 import 'package:day_tracker/features/synchronization/data/models/supabase_settings.dart';
 import 'package:day_tracker/features/synchronization/domain/providers/supabase_provider.dart';
@@ -44,192 +45,177 @@ class _SupabaseSyncWidgetState extends ConsumerState<SupabaseSyncWidget> {
   @override
   Widget build(BuildContext context) {
     final theme = ref.watch(themeProvider);
-    final settings = ref.watch(supabaseSettingsProvider);
     final syncState = ref.watch(supabaseSyncProvider);
+    final settings = ref.watch(supabaseSettingsProvider);
 
     // Responsive design considerations
     final mediaQuery = MediaQuery.of(context);
     final screenWidth = mediaQuery.size.width;
     final isSmallScreen = screenWidth < 600;
-    final isTablet = screenWidth >= 600 && screenWidth < 900;
 
-    return Container(
-      color: theme.colorScheme.surface,
-      child: Column(
-        children: [
-          // Title Section
-          Container(
-            padding: EdgeInsets.all(isSmallScreen ? 12.0 : 16.0),
-            color: theme.colorScheme.primaryContainer,
-            child: Row(
-              children: [
-                Icon(
-                  Icons.cloud_sync,
-                  color: theme.colorScheme.onPrimaryContainer,
-                  size: isSmallScreen ? 20 : 24,
-                ),
-                SizedBox(width: isSmallScreen ? 8 : 12),
-                Text(
-                  'Supabase Synchronization',
-                  style: theme.textTheme.titleLarge?.copyWith(
-                    color: theme.colorScheme.onPrimaryContainer,
-                    fontWeight: FontWeight.bold,
-                    fontSize: isSmallScreen ? 18 : 20,
-                  ),
-                ),
-              ],
-            ),
+    return Card(
+      elevation: 4,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              theme.colorScheme.surfaceContainerHighest,
+              theme.colorScheme.surface,
+            ],
           ),
-
-          // Settings Form
-          Expanded(
-            child: SingleChildScrollView(
-              padding: EdgeInsets.all(isSmallScreen ? 12.0 : 16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Header
+              Row(
                 children: [
-                  // Supabase URL
-                  _buildTextField(
-                    controller: _urlController,
-                    label: 'Supabase URL',
-                    hint: 'https://your-project.supabase.co',
-                    icon: Icons.link,
-                    onChanged: (value) => ref
-                        .read(supabaseSettingsProvider.notifier)
-                        .updateUrl(value),
-                    theme: theme,
-                    isSmallScreen: isSmallScreen,
+                  Icon(
+                    Icons.cloud_sync,
+                    color: theme.colorScheme.primary,
+                    size: isSmallScreen ? 24 : 28,
                   ),
-                  SizedBox(height: isSmallScreen ? 12 : 16),
-
-                  // Anon Key
-                  _buildTextField(
-                    controller: _anonKeyController,
-                    label: 'Anon Key',
-                    hint: 'Your Supabase anon key',
-                    icon: Icons.key,
-                    isPassword: !_anonKeyVisible,
-                    toggleVisibility: () {
-                      setState(() {
-                        _anonKeyVisible = !_anonKeyVisible;
-                      });
-                    },
-                    onChanged: (value) => ref
-                        .read(supabaseSettingsProvider.notifier)
-                        .updateAnonKey(value),
-                    theme: theme,
-                    isSmallScreen: isSmallScreen,
-                  ),
-                  SizedBox(height: isSmallScreen ? 12 : 16),
-
-                  // Email
-                  _buildTextField(
-                    controller: _emailController,
-                    label: 'Email',
-                    hint: 'your.email@example.com',
-                    icon: Icons.email,
-                    keyboardType: TextInputType.emailAddress,
-                    onChanged: (value) => ref
-                        .read(supabaseSettingsProvider.notifier)
-                        .updateEmail(value),
-                    theme: theme,
-                    isSmallScreen: isSmallScreen,
-                  ),
-                  SizedBox(height: isSmallScreen ? 12 : 16),
-
-                  // Password
-                  _buildTextField(
-                    controller: _passwordController,
-                    label: 'Password',
-                    hint: 'Your Supabase password',
-                    icon: Icons.lock,
-                    isPassword: !_passwordVisible,
-                    toggleVisibility: () {
-                      setState(() {
-                        _passwordVisible = !_passwordVisible;
-                      });
-                    },
-                    onChanged: (value) => ref
-                        .read(supabaseSettingsProvider.notifier)
-                        .updatePassword(value),
-                    theme: theme,
-                    isSmallScreen: isSmallScreen,
-                  ),
-
-                  SizedBox(height: isSmallScreen ? 20 : 24),
-
-                  // Sync Status
-                  if (syncState.status != SyncStatus.idle)
-                    _buildSyncStatus(syncState, theme, isSmallScreen),
-
-                  SizedBox(height: isSmallScreen ? 16 : 20),
-
-                  // Action Buttons - Responsive layout
-                  if (isSmallScreen)
-                    Column(
-                      children: [
-                        _buildSyncButton(
-                          label: 'Upload to Supabase',
-                          icon: Icons.cloud_upload,
-                          onPressed: _canSync(settings)
-                              ? () => ref
-                                  .read(supabaseSyncProvider.notifier)
-                                  .syncToSupabase()
-                              : null,
-                          theme: theme,
-                          isSmallScreen: true,
-                        ),
-                        SizedBox(height: 12),
-                        _buildSyncButton(
-                          label: 'Download from Supabase',
-                          icon: Icons.cloud_download,
-                          onPressed: _canSync(settings)
-                              ? () => ref
-                                  .read(supabaseSyncProvider.notifier)
-                                  .syncFromSupabase()
-                              : null,
-                          theme: theme,
-                          isSmallScreen: true,
-                        ),
-                      ],
-                    )
-                  else
-                    Row(
-                      children: [
-                        Expanded(
-                          child: _buildSyncButton(
-                            label: 'Upload to Supabase',
-                            icon: Icons.cloud_upload,
-                            onPressed: _canSync(settings)
-                                ? () => ref
-                                    .read(supabaseSyncProvider.notifier)
-                                    .syncToSupabase()
-                                : null,
-                            theme: theme,
-                            isSmallScreen: false,
-                          ),
-                        ),
-                        SizedBox(width: 16),
-                        Expanded(
-                          child: _buildSyncButton(
-                            label: 'Download from Supabase',
-                            icon: Icons.cloud_download,
-                            onPressed: _canSync(settings)
-                                ? () => ref
-                                    .read(supabaseSyncProvider.notifier)
-                                    .syncFromSupabase()
-                                : null,
-                            theme: theme,
-                            isSmallScreen: false,
-                          ),
-                        ),
-                      ],
+                  const SizedBox(width: 8),
+                  Text(
+                    'Supabase Synchronization',
+                    style: theme.textTheme.titleLarge?.copyWith(
+                      color: theme.colorScheme.primary,
+                      fontWeight: FontWeight.bold,
+                      fontSize: isSmallScreen ? 18 : 22,
                     ),
+                  ),
                 ],
               ),
-            ),
+
+              const SizedBox(height: 16),
+
+              Text(
+                'Sync your diary data with Supabase cloud storage for backup and cross-device access.',
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: theme.colorScheme.onSurface,
+                ),
+              ),
+
+              const SizedBox(height: 24),
+
+              // Settings Form
+              _buildTextField(
+                controller: _urlController,
+                label: 'Supabase URL',
+                hint: 'https://your-project.supabase.co',
+                icon: Icons.link,
+                onChanged: (value) => ref
+                    .read(supabaseSettingsProvider.notifier)
+                    .updateUrl(value),
+                theme: theme,
+                isSmallScreen: isSmallScreen,
+              ),
+              SizedBox(height: isSmallScreen ? 12 : 16),
+
+              _buildTextField(
+                controller: _anonKeyController,
+                label: 'Anon Key',
+                hint: 'Your Supabase anon key',
+                icon: Icons.key,
+                isPassword: !_anonKeyVisible,
+                toggleVisibility: () {
+                  setState(() {
+                    _anonKeyVisible = !_anonKeyVisible;
+                  });
+                },
+                onChanged: (value) => ref
+                    .read(supabaseSettingsProvider.notifier)
+                    .updateAnonKey(value),
+                theme: theme,
+                isSmallScreen: isSmallScreen,
+              ),
+              SizedBox(height: isSmallScreen ? 12 : 16),
+
+              _buildTextField(
+                controller: _emailController,
+                label: 'Email',
+                hint: 'your.email@example.com',
+                icon: Icons.email,
+                keyboardType: TextInputType.emailAddress,
+                onChanged: (value) => ref
+                    .read(supabaseSettingsProvider.notifier)
+                    .updateEmail(value),
+                theme: theme,
+                isSmallScreen: isSmallScreen,
+              ),
+              SizedBox(height: isSmallScreen ? 12 : 16),
+
+              _buildTextField(
+                controller: _passwordController,
+                label: 'Password',
+                hint: 'Your Supabase password',
+                icon: Icons.lock,
+                isPassword: !_passwordVisible,
+                toggleVisibility: () {
+                  setState(() {
+                    _passwordVisible = !_passwordVisible;
+                  });
+                },
+                onChanged: (value) => ref
+                    .read(supabaseSettingsProvider.notifier)
+                    .updatePassword(value),
+                theme: theme,
+                isSmallScreen: isSmallScreen,
+              ),
+
+              SizedBox(height: isSmallScreen ? 20 : 24),
+
+              // Sync Status
+              if (syncState.status != SyncStatus.idle)
+                _buildSyncStatus(syncState, theme, isSmallScreen),
+
+              if (syncState.status != SyncStatus.idle)
+                SizedBox(height: isSmallScreen ? 16 : 20),
+
+              // Action Buttons
+              Column(
+                children: [
+                  _buildSyncButton(
+                    context: context,
+                    icon: Icons.cloud_upload,
+                    label: 'Upload to Supabase',
+                    description: 'Save your diary data to the cloud',
+                    onPressed: _canSync(settings)
+                        ? () => ref
+                            .read(supabaseSyncProvider.notifier)
+                            .syncToSupabase()
+                        : null,
+                    theme: theme,
+                    isSmallScreen: isSmallScreen,
+                  ),
+                  const SizedBox(height: 16),
+                  _buildSyncButton(
+                    context: context,
+                    icon: Icons.cloud_download,
+                    label: 'Download from Supabase',
+                    description: 'Load diary data from the cloud',
+                    onPressed: _canSync(settings)
+                        ? () => ref
+                            .read(supabaseSyncProvider.notifier)
+                            .syncFromSupabase()
+                        : null,
+                    theme: theme,
+                    isSmallScreen: isSmallScreen,
+                  ),
+                ],
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
@@ -294,30 +280,82 @@ class _SupabaseSyncWidgetState extends ConsumerState<SupabaseSyncWidget> {
   }
 
   Widget _buildSyncButton({
-    required String label,
+    required BuildContext context,
     required IconData icon,
+    required String label,
+    required String description,
     required VoidCallback? onPressed,
     required ThemeData theme,
     required bool isSmallScreen,
   }) {
-    return ElevatedButton.icon(
-      onPressed: onPressed,
-      icon: Icon(icon, size: isSmallScreen ? 18 : 20),
-      label: Text(
-        label,
-        style: TextStyle(fontSize: isSmallScreen ? 14 : 16),
-      ),
-      style: ElevatedButton.styleFrom(
-        backgroundColor: theme.colorScheme.primary,
-        foregroundColor: theme.colorScheme.onPrimary,
-        disabledBackgroundColor: theme.colorScheme.onSurface.withOpacity(0.12),
-        disabledForegroundColor: theme.colorScheme.onSurface.withOpacity(0.38),
-        padding: EdgeInsets.symmetric(
-          horizontal: isSmallScreen ? 16 : 24,
-          vertical: isSmallScreen ? 12 : 16,
-        ),
-        shape: RoundedRectangleBorder(
+    return InkWell(
+      onTap: onPressed,
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        padding: EdgeInsets.all(isSmallScreen ? 16 : 20),
+        decoration: BoxDecoration(
+          color: onPressed != null
+              ? theme.colorScheme.surfaceContainer
+              : theme.colorScheme.onSurface.withOpacity(0.12),
           borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: theme.colorScheme.outline.withOpacity(0.2),
+          ),
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: EdgeInsets.all(isSmallScreen ? 8 : 12),
+              decoration: BoxDecoration(
+                color: onPressed != null
+                    ? theme.colorScheme.primaryContainer
+                    : theme.colorScheme.onSurface.withOpacity(0.12),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Icon(
+                icon,
+                color: onPressed != null
+                    ? theme.colorScheme.onPrimaryContainer
+                    : theme.colorScheme.onSurface.withOpacity(0.38),
+                size: isSmallScreen ? 20 : 24,
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    label,
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: onPressed != null
+                          ? theme.colorScheme.onSurface
+                          : theme.colorScheme.onSurface.withOpacity(0.38),
+                      fontSize: isSmallScreen ? 14 : 16,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    description,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: onPressed != null
+                          ? theme.colorScheme.onSurface.withOpacity(0.7)
+                          : theme.colorScheme.onSurface.withOpacity(0.38),
+                      fontSize: isSmallScreen ? 12 : 14,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Icon(
+              Icons.arrow_forward_ios,
+              color: onPressed != null
+                  ? theme.colorScheme.onSurface.withOpacity(0.5)
+                  : theme.colorScheme.onSurface.withOpacity(0.38),
+              size: isSmallScreen ? 16 : 18,
+            ),
+          ],
         ),
       ),
     );
@@ -349,9 +387,9 @@ class _SupabaseSyncWidgetState extends ConsumerState<SupabaseSyncWidget> {
     return Container(
       padding: EdgeInsets.all(isSmallScreen ? 12 : 16),
       decoration: BoxDecoration(
-        color: statusColor.withValues(alpha: 0.1),
+        color: statusColor.withOpacity(0.1),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: statusColor.withValues(alpha: 0.3)),
+        border: Border.all(color: statusColor.withOpacity(0.3)),
       ),
       child: Column(
         children: [
@@ -359,7 +397,7 @@ class _SupabaseSyncWidgetState extends ConsumerState<SupabaseSyncWidget> {
             children: [
               Icon(statusIcon,
                   color: statusColor, size: isSmallScreen ? 18 : 20),
-              SizedBox(width: 8),
+              const SizedBox(width: 8),
               Expanded(
                 child: Text(
                   syncState.message,
@@ -375,7 +413,7 @@ class _SupabaseSyncWidgetState extends ConsumerState<SupabaseSyncWidget> {
             SizedBox(height: isSmallScreen ? 8 : 12),
             LinearProgressIndicator(
               value: syncState.progress,
-              backgroundColor: statusColor.withValues(alpha: 0.2),
+              backgroundColor: statusColor.withOpacity(0.2),
               valueColor: AlwaysStoppedAnimation<Color>(statusColor),
             ),
           ],
