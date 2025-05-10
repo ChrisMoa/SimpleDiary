@@ -1,4 +1,3 @@
-// lib/features/synchronization/presentation/pages/synchronize_page.dart
 // ignore_for_file: use_build_context_synchronously
 
 import 'dart:io';
@@ -11,6 +10,7 @@ import 'package:day_tracker/features/authentication/domain/providers/user_data_p
 import 'package:day_tracker/features/day_rating/domain/providers/diary_day_local_db_provider.dart';
 import 'package:day_tracker/features/notes/domain/providers/note_local_db_provider.dart';
 import 'package:day_tracker/features/synchronization/domain/providers/file_db_provider.dart';
+import 'package:day_tracker/features/synchronization/presentation/widgets/supabase_sync_widget.dart';
 import 'package:filesystem_picker/filesystem_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -23,16 +23,15 @@ class SynchronizePage extends ConsumerStatefulWidget {
 }
 
 class _SynchronizePageState extends ConsumerState<SynchronizePage> {
-  //* parameters -------------------------------------------------------------------------------------------------------------------------------------
-
-  //* builds -----------------------------------------------------------------------------------------------------------------------------------------
-
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.surface,
+      backgroundColor: theme.colorScheme.surface,
       body: Column(
         children: [
+          // File Import/Export Section
           Container(
             padding: const EdgeInsetsDirectional.symmetric(
                 vertical: 5, horizontal: 10),
@@ -58,6 +57,23 @@ class _SynchronizePageState extends ConsumerState<SynchronizePage> {
               subText: 'Files will be imported from a .json file',
             ),
           ),
+
+          // Divider between sections
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            child: Divider(
+              color: theme.colorScheme.outline.withOpacity(0.3),
+              thickness: 1,
+            ),
+          ),
+
+          // Supabase Synchronization Section - Fixed to avoid Expanded issue
+          Expanded(
+            child: Container(
+              color: theme.colorScheme.surface,
+              child: const SupabaseSyncWidget(),
+            ),
+          ),
         ],
       ),
     );
@@ -71,9 +87,10 @@ class _SynchronizePageState extends ConsumerState<SynchronizePage> {
     required String headerText,
     required String subText,
   }) {
+    final theme = Theme.of(context);
     return Container(
       padding: const EdgeInsets.all(15),
-      color: Theme.of(context).colorScheme.secondaryContainer,
+      color: theme.colorScheme.secondaryContainer,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -82,15 +99,15 @@ class _SynchronizePageState extends ConsumerState<SynchronizePage> {
             children: [
               Text(
                 headerText,
-                style: Theme.of(context).textTheme.titleLarge!.copyWith(
-                    color: Theme.of(context).colorScheme.onSecondaryContainer,
+                style: theme.textTheme.titleLarge!.copyWith(
+                    color: theme.colorScheme.onSecondaryContainer,
                     fontWeight: FontWeight.bold),
               ),
               Text(
                 subText,
-                style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                      color: Theme.of(context).colorScheme.onSecondaryContainer,
-                    ),
+                style: theme.textTheme.bodyMedium!.copyWith(
+                  color: theme.colorScheme.onSecondaryContainer,
+                ),
               ),
             ],
           ),
@@ -101,20 +118,18 @@ class _SynchronizePageState extends ConsumerState<SynchronizePage> {
               icon: icon,
               label: Text(
                 buttonText,
-                style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                    color: Theme.of(context).colorScheme.onTertiaryContainer,
+                style: theme.textTheme.bodyMedium!.copyWith(
+                    color: theme.colorScheme.onTertiaryContainer,
                     fontWeight: FontWeight.bold),
               ),
               style: ButtonStyle(
                 backgroundColor: WidgetStateProperty.resolveWith<Color>(
                   (Set<WidgetState> states) {
                     if (states.contains(WidgetState.pressed)) {
-                      return Theme.of(context)
-                          .colorScheme
-                          .tertiaryContainer
-                          .withValues(alpha: 0.6);
+                      return theme.colorScheme.tertiaryContainer
+                          .withOpacity(0.6);
                     }
-                    return Theme.of(context).colorScheme.tertiaryContainer;
+                    return theme.colorScheme.tertiaryContainer;
                   },
                 ),
               ),
