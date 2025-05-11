@@ -5,6 +5,9 @@ import 'package:day_tracker/features/day_rating/domain/providers/diary_wizard_pr
 import 'package:day_tracker/features/notes/data/models/note.dart';
 import 'package:day_tracker/features/notes/data/models/note_category.dart';
 import 'package:day_tracker/features/notes/domain/providers/note_local_db_provider.dart';
+import 'package:day_tracker/features/note_templates/data/models/note_template.dart';
+import 'package:day_tracker/features/note_templates/domain/providers/note_template_local_db_provider.dart';
+import 'package:day_tracker/features/note_templates/presentation/widgets/template_selector_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
@@ -48,10 +51,24 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
   Future<void> _initializeSpeechToText() async {
     LogWrapper.logger.d('Initializing speech to text');
     if (_supportsPlatformSpeechRecognition()) {
-      await _speechToText.initialize(
-        finalTimeout: const Duration(minutes: 1),
-      );
-      LogWrapper.logger.d('Speech to text initialized successfully');
+      try {
+        final initialized = await _speechToText.initialize(
+          finalTimeout: const Duration(minutes: 1),
+          onError: (error) {
+            LogWrapper.logger.w('Speech recognition error: $error');
+          },
+          onStatus: (status) {
+            LogWrapper.logger.d('Speech recognition status: $status');
+          },
+        );
+        if (!initialized) {
+          LogWrapper.logger.w('Speech recognition initialization failed');
+        } else {
+          LogWrapper.logger.d('Speech to text initialized successfully');
+        }
+      } catch (e) {
+        LogWrapper.logger.w('Speech recognition initialization error: $e');
+      }
     } else {
       LogWrapper.logger.w('Speech recognition not supported on this platform');
     }
@@ -336,25 +353,47 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
                           ),
                         ),
                       ),
-                      // Add button
+                      // Add from template button
                       OutlinedButton.icon(
-                        onPressed: () => _addNextFreeNote(),
+                        onPressed: () => _showTemplateSelector(),
                         icon: Icon(
-                          Icons.add,
-                          color: theme.colorScheme.error,
+                          Icons.note_alt_outlined,
+                          color: theme.colorScheme.primary,
                           size: isSmallScreen ? 16 : 20,
                         ),
                         label: Text(
-                          'Add',
+                          'Template',
                           style: TextStyle(
-                            color: theme.colorScheme.error,
+                            color: theme.colorScheme.primary,
                             fontSize: isSmallScreen ? 12 : 14,
                           ),
                         ),
                         style: OutlinedButton.styleFrom(
                           padding: isSmallScreen ? const EdgeInsets.symmetric(horizontal: 8, vertical: 4) : const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                           side: BorderSide(
-                            color: theme.colorScheme.error.withValues(alpha: 0.5),
+                            color: theme.colorScheme.primary.withValues(alpha: 0.5),
+                          ),
+                        ),
+                      ),
+                      // Add button
+                      OutlinedButton.icon(
+                        onPressed: () => _addNextFreeNote(),
+                        icon: Icon(
+                          Icons.add,
+                          color: theme.colorScheme.primary,
+                          size: isSmallScreen ? 16 : 20,
+                        ),
+                        label: Text(
+                          'Add',
+                          style: TextStyle(
+                            color: theme.colorScheme.primary,
+                            fontSize: isSmallScreen ? 12 : 14,
+                          ),
+                        ),
+                        style: OutlinedButton.styleFrom(
+                          padding: isSmallScreen ? const EdgeInsets.symmetric(horizontal: 8, vertical: 4) : const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                          side: BorderSide(
+                            color: theme.colorScheme.primary.withValues(alpha: 0.5),
                           ),
                         ),
                       ),
@@ -406,6 +445,44 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
         ),
       ),
     );
+  }
+
+  // Show template selector
+  void _showTemplateSelector() {
+    showDialog(
+      context: context,
+      builder: (context) => TemplateSelectorWidget(
+        onTemplateSelected: (template) {
+          _createNoteFromTemplate(template);
+        },
+      ),
+    );
+  }
+
+  // Create note from template
+  void _createNoteFromTemplate(NoteTemplate template) {
+    LogWrapper.logger.d('Creating note from template: ${template.title}');
+    try {
+      // Create a new note from template using the provider
+      final newNote = ref.read(createNoteFromTemplateProvider(template));
+
+      LogWrapper.logger.d('Creating new note with ID: ${newNote.id}');
+      // Add to database
+      ref.read(notesLocalDataProvider.notifier).addElement(newNote);
+
+      // Select the new note
+      ref.read(selectedWizardNoteProvider.notifier).selectNote(newNote);
+
+      // Show feedback to user
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Added "${template.title}" at ${Utils.toTime(newNote.from)}'),
+          duration: const Duration(seconds: 2),
+        ),
+      );
+    } catch (e) {
+      LogWrapper.logger.e('Error creating note from template: $e');
+    }
   }
 
   // Compact controls for small screens
@@ -658,18 +735,37 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
                 ),
               ),
               const SizedBox(height: 24),
-              ElevatedButton.icon(
-                onPressed: _addNextFreeNote,
-                icon: const Icon(Icons.add, size: 18),
-                label: const Text('Create New Note'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: theme.colorScheme.primaryContainer,
-                  foregroundColor: theme.colorScheme.onPrimaryContainer,
-                  padding: EdgeInsets.symmetric(
-                    horizontal: isSmallScreen ? 16 : 24,
-                    vertical: isSmallScreen ? 8 : 12,
+              Wrap(
+                spacing: 8,
+                alignment: WrapAlignment.center,
+                children: [
+                  ElevatedButton.icon(
+                    onPressed: _addNextFreeNote,
+                    icon: const Icon(Icons.add, size: 18),
+                    label: const Text('Create Note'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: theme.colorScheme.primaryContainer,
+                      foregroundColor: theme.colorScheme.onPrimaryContainer,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: isSmallScreen ? 16 : 24,
+                        vertical: isSmallScreen ? 8 : 12,
+                      ),
+                    ),
                   ),
-                ),
+                  ElevatedButton.icon(
+                    onPressed: _showTemplateSelector,
+                    icon: const Icon(Icons.note_alt_outlined, size: 18),
+                    label: const Text('From Template'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: theme.colorScheme.primaryContainer,
+                      foregroundColor: theme.colorScheme.onPrimaryContainer,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: isSmallScreen ? 16 : 24,
+                        vertical: isSmallScreen ? 8 : 12,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
@@ -787,18 +883,8 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
   void _addNextFreeNote() {
     LogWrapper.logger.d('Adding next free note');
     try {
-      // Get the next available time slot
-      final nextStartTime = ref.read(nextAvailableTimeSlotProvider);
-
-      // Create a new note with 30-minute duration
-      final newNote = Note(
-        id: const Uuid().v4(),
-        title: '',
-        description: '',
-        from: nextStartTime,
-        to: nextStartTime.add(const Duration(minutes: 30)),
-        noteCategory: availableNoteCategories.first,
-      );
+      // Get the next empty note from provider
+      final newNote = ref.read(createEmptyNoteProvider);
 
       LogWrapper.logger.d('Creating new note with ID: ${newNote.id}');
       // Add to database
@@ -810,7 +896,7 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
       // Show feedback to user
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Added new note at ${Utils.toTime(nextStartTime)}'),
+          content: Text('Added new note at ${Utils.toTime(newNote.from)}'),
           duration: const Duration(seconds: 2),
         ),
       );

@@ -2,6 +2,7 @@ import 'package:day_tracker/core/log/logger_instance.dart';
 import 'package:day_tracker/features/day_rating/data/models/day_rating.dart';
 import 'package:day_tracker/features/day_rating/data/models/diary_day.dart';
 import 'package:day_tracker/features/notes/data/models/note.dart';
+import 'package:day_tracker/features/note_templates/data/models/note_template.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class SupabaseApi {
@@ -147,6 +148,42 @@ class SupabaseApi {
     }
   }
 
+  // Sync templates to Supabase
+  Future<void> syncTemplates(List<NoteTemplate> templates, String localUserId) async {
+    try {
+      if (_client == null) {
+        LogWrapper.logger.e('Supabase client not initialized');
+        throw Exception('Supabase client not initialized');
+      }
+
+      // Get the authenticated user's ID from Supabase
+      final supabaseUserId = _client!.auth.currentUser?.id;
+      if (supabaseUserId == null) {
+        LogWrapper.logger.e('User not authenticated');
+        throw Exception('User not authenticated');
+      }
+
+      LogWrapper.logger.i('Syncing ${templates.length} templates for user: $supabaseUserId');
+      for (var template in templates) {
+        final data = <String, dynamic>{
+          'id': template.id,
+          'user_id': supabaseUserId,
+          'title': template.title,
+          'description': template.description,
+          'duration_minutes': template.durationMinutes,
+          'note_category': template.noteCategory.title,
+        };
+
+        LogWrapper.logger.d('Upserting template: ${data['id']}');
+        await _client!.from('note_templates').upsert(data);
+      }
+      LogWrapper.logger.i('Successfully synced ${templates.length} templates');
+    } catch (e) {
+      LogWrapper.logger.e('Failed to sync templates: $e');
+      rethrow;
+    }
+  }
+
   // Fetch diary days from Supabase
   Future<List<DiaryDay>> fetchDiaryDays(String localUserId) async {
     try {
@@ -235,6 +272,46 @@ class SupabaseApi {
     }
   }
 
+  // Fetch templates from Supabase
+  Future<List<NoteTemplate>> fetchTemplates(String localUserId) async {
+    try {
+      if (_client == null) {
+        LogWrapper.logger.e('Supabase client not initialized');
+        throw Exception('Supabase client not initialized');
+      }
+
+      // Get the authenticated user's ID from Supabase
+      final supabaseUserId = _client!.auth.currentUser?.id;
+      if (supabaseUserId == null) {
+        LogWrapper.logger.e('User not authenticated');
+        throw Exception('User not authenticated');
+      }
+
+      LogWrapper.logger.d('Fetching templates for user: $supabaseUserId');
+      final response = await _client!.from('note_templates').select().eq('user_id', supabaseUserId);
+
+      final templates = <NoteTemplate>[];
+      for (var data in response) {
+        // Convert from Supabase format to Template model format
+        final templateData = <String, dynamic>{
+          'id': data['id'],
+          'title': data['title'],
+          'description': data['description'],
+          'durationMinutes': data['duration_minutes'],
+          'noteCategory': data['note_category'],
+        };
+
+        templates.add(NoteTemplate.fromMap(templateData));
+      }
+
+      LogWrapper.logger.i('Successfully fetched ${templates.length} templates');
+      return templates;
+    } catch (e) {
+      LogWrapper.logger.e('Failed to fetch templates: $e');
+      rethrow;
+    }
+  }
+
   // Get current user
   User? get currentUser => _client?.auth.currentUser;
 
@@ -247,3 +324,4 @@ class SupabaseApi {
     _client = null;
   }
 }
+

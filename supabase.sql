@@ -82,6 +82,56 @@ CREATE TRIGGER update_notes_updated_at
     FOR EACH ROW
     EXECUTE FUNCTION update_updated_at_column();
 
+-- Note Templates Table
+CREATE TABLE IF NOT EXISTS public.note_templates (
+    id TEXT PRIMARY KEY,
+    user_id UUID NOT NULL REFERENCES auth.users(id),
+    title TEXT NOT NULL,
+    description TEXT NOT NULL,
+    duration_minutes INTEGER NOT NULL,
+    note_category TEXT NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL
+);
+
+-- Create index for faster queries by user_id
+CREATE INDEX IF NOT EXISTS idx_note_templates_user_id ON public.note_templates(user_id);
+
+-- Enable Row Level Security
+ALTER TABLE public.note_templates ENABLE ROW LEVEL SECURITY;
+
+-- Create policies for Row Level Security
+CREATE POLICY "Users can view their own templates" ON public.note_templates
+    FOR SELECT USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can insert their own templates" ON public.note_templates
+    FOR INSERT WITH CHECK (auth.uid() = user_id);
+
+CREATE POLICY "Users can update their own templates" ON public.note_templates
+    FOR UPDATE USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can delete their own templates" ON public.note_templates
+    FOR DELETE USING (auth.uid() = user_id);
+
+-- Create trigger for automatically updating updated_at timestamp
+CREATE OR REPLACE FUNCTION update_updated_at_column()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.updated_at = NOW();
+    RETURN NEW;
+END;
+$$ language 'plpgsql';
+
+CREATE TRIGGER update_note_templates_updated_at
+    BEFORE UPDATE ON public.note_templates
+    FOR EACH ROW
+    EXECUTE PROCEDURE update_updated_at_column();
+
+-- Grant permissions
+GRANT ALL ON public.note_templates TO authenticated;
+GRANT ALL ON public.note_templates TO service_role;
+
+
 -- Optional: Create a function to get user statistics
 CREATE OR REPLACE FUNCTION get_user_stats(input_user_id TEXT)
 RETURNS JSON AS $$

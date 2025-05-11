@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:day_tracker/core/database/local_db_element.dart';
 import 'package:day_tracker/core/utils/utils.dart';
 import 'package:day_tracker/features/notes/data/models/note_category.dart';
+import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 final emptyNote = Note(
   description: 'Only a test description',
@@ -123,5 +124,17 @@ class Note implements LocalDbElement {
   @override
   getId() {
     return id;
+  }
+
+  Appointment convertToCalendarAppointment() {
+    return Appointment(
+      startTime: from,
+      endTime: to,
+      subject: title,
+      notes: description,
+      isAllDay: isAllDay,
+      color: noteCategory.color,
+      id: id,
+    );
   }
 }

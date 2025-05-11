@@ -31,8 +31,7 @@ class DayRatingWidget extends ConsumerWidget {
           // Header with day info
           Container(
             color: theme.colorScheme.surface,
-            padding:
-                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -99,8 +98,7 @@ class DayRatingWidget extends ConsumerWidget {
                     Padding(
                       padding: const EdgeInsets.symmetric(vertical: 24.0),
                       child: ElevatedButton.icon(
-                        onPressed: () =>
-                            _saveDiaryDay(context, ref, selectedDate),
+                        onPressed: () => _saveDiaryDay(context, ref, selectedDate),
                         icon: const Icon(Icons.save),
                         label: const Text('Save Day Rating'),
                         style: ElevatedButton.styleFrom(
@@ -188,133 +186,140 @@ class DayRatingWidget extends ConsumerWidget {
       ),
       child: Padding(
         padding: EdgeInsets.all(cardPadding),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Header with icon
-            Row(
+        child: SingleChildScrollView(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              minHeight: isSmallScreen ? 120 : 150,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Icon(
-                  headerIcon,
-                  color: theme.colorScheme.primary,
-                  size: isSmallScreen ? 20 : 24,
-                ),
-                SizedBox(width: spacingSmall),
-                Expanded(
-                  child: Text(
-                    _capitalizeFirstLetter(ratingType.name),
-                    style: theme.textTheme.titleLarge?.copyWith(
-                      color: theme.colorScheme.onSecondaryContainer,
-                      fontWeight: FontWeight.bold,
-                      fontSize: titleFontSize,
+                // Header with icon
+                Row(
+                  children: [
+                    Icon(
+                      headerIcon,
+                      color: theme.colorScheme.primary,
+                      size: isSmallScreen ? 20 : 24,
                     ),
-                    maxLines: 1,
+                    SizedBox(width: spacingSmall),
+                    Expanded(
+                      child: Text(
+                        _capitalizeFirstLetter(ratingType.name),
+                        style: theme.textTheme.titleLarge?.copyWith(
+                          color: theme.colorScheme.onSecondaryContainer,
+                          fontWeight: FontWeight.bold,
+                          fontSize: titleFontSize,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
+
+                SizedBox(height: spacingSmall),
+
+                // Description - only show if there's enough space
+                if (!isSmallScreen || MediaQuery.of(context).size.height > 500)
+                  Text(
+                    description,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: theme.colorScheme.onSecondaryContainer.withValues(alpha: 0.8),
+                      fontSize: descriptionFontSize,
+                    ),
+                    maxLines: isSmallScreen ? 2 : 3,
                     overflow: TextOverflow.ellipsis,
+                  ),
+
+                SizedBox(height: spacingMedium),
+
+                // Rating bar - adapt size based on screen
+                Center(
+                  child: RatingBar.builder(
+                    initialRating: rating.score > 0 ? rating.score.toDouble() : 3,
+                    minRating: 1,
+                    direction: Axis.horizontal,
+                    allowHalfRating: false,
+                    itemCount: 5,
+                    itemSize: isSmallScreen ? 24 : 32,
+                    itemBuilder: (context, index) {
+                      // Use theme colors for rating icons
+                      Color iconColor;
+                      switch (index) {
+                        case 0:
+                          iconColor = Colors.red;
+                          break;
+                        case 1:
+                          iconColor = Colors.red.shade400;
+                          break;
+                        case 2:
+                          iconColor = Colors.yellow.shade700;
+                          break;
+                        case 3:
+                          iconColor = Colors.lightGreen;
+                          break;
+                        case 4:
+                          iconColor = Colors.green;
+                          break;
+                        default:
+                          iconColor = Colors.yellow.shade700;
+                      }
+
+                      switch (index) {
+                        case 0:
+                          return Icon(
+                            Icons.sentiment_very_dissatisfied,
+                            color: iconColor,
+                          );
+                        case 1:
+                          return Icon(
+                            Icons.sentiment_dissatisfied,
+                            color: iconColor,
+                          );
+                        case 2:
+                          return Icon(
+                            Icons.sentiment_neutral,
+                            color: iconColor,
+                          );
+                        case 3:
+                          return Icon(
+                            Icons.sentiment_satisfied,
+                            color: iconColor,
+                          );
+                        case 4:
+                          return Icon(
+                            Icons.sentiment_very_satisfied,
+                            color: iconColor,
+                          );
+                        default:
+                          return Icon(
+                            Icons.sentiment_neutral,
+                            color: iconColor,
+                          );
+                      }
+                    },
+                    onRatingUpdate: onRatingUpdate,
+                  ),
+                ),
+
+                SizedBox(height: spacingSmall),
+
+                // Rating label
+                Center(
+                  child: Text(
+                    _getRatingLabel(rating.score),
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      color: _getRatingColor(rating.score, theme),
+                      fontWeight: FontWeight.bold,
+                      fontSize: ratingLabelFontSize,
+                    ),
                   ),
                 ),
               ],
             ),
-
-            SizedBox(height: spacingSmall),
-
-            // Description - only show if there's enough space
-            if (!isSmallScreen || MediaQuery.of(context).size.height > 500)
-              Text(
-                description,
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: theme.colorScheme.onSecondaryContainer
-                      .withValues(alpha: 0.8),
-                  fontSize: descriptionFontSize,
-                ),
-                maxLines: isSmallScreen ? 2 : 3,
-                overflow: TextOverflow.ellipsis,
-              ),
-
-            SizedBox(height: spacingMedium),
-
-            // Rating bar - adapt size based on screen
-            Center(
-              child: RatingBar.builder(
-                initialRating: rating.score > 0 ? rating.score.toDouble() : 3,
-                minRating: 1,
-                direction: Axis.horizontal,
-                allowHalfRating: false,
-                itemCount: 5,
-                itemSize: isSmallScreen ? 24 : 32,
-                itemBuilder: (context, index) {
-                  // Use theme colors for rating icons
-                  Color iconColor;
-                  switch (index) {
-                    case 0:
-                      iconColor = Colors.red;
-                      break;
-                    case 1:
-                      iconColor = Colors.red.shade400;
-                      break;
-                    case 2:
-                      iconColor = Colors.yellow.shade700;
-                      break;
-                    case 3:
-                      iconColor = Colors.lightGreen;
-                      break;
-                    case 4:
-                      iconColor = Colors.green;
-                      break;
-                    default:
-                      iconColor = Colors.yellow.shade700;
-                  }
-
-                  switch (index) {
-                    case 0:
-                      return Icon(
-                        Icons.sentiment_very_dissatisfied,
-                        color: iconColor,
-                      );
-                    case 1:
-                      return Icon(
-                        Icons.sentiment_dissatisfied,
-                        color: iconColor,
-                      );
-                    case 2:
-                      return Icon(
-                        Icons.sentiment_neutral,
-                        color: iconColor,
-                      );
-                    case 3:
-                      return Icon(
-                        Icons.sentiment_satisfied,
-                        color: iconColor,
-                      );
-                    case 4:
-                      return Icon(
-                        Icons.sentiment_very_satisfied,
-                        color: iconColor,
-                      );
-                    default:
-                      return Icon(
-                        Icons.sentiment_neutral,
-                        color: iconColor,
-                      );
-                  }
-                },
-                onRatingUpdate: onRatingUpdate,
-              ),
-            ),
-
-            SizedBox(height: spacingSmall),
-
-            // Rating label
-            Center(
-              child: Text(
-                _getRatingLabel(rating.score),
-                style: theme.textTheme.titleMedium?.copyWith(
-                  color: _getRatingColor(rating.score, theme),
-                  fontWeight: FontWeight.bold,
-                  fontSize: ratingLabelFontSize,
-                ),
-              ),
-            ),
-          ],
+          ),
         ),
       ),
     );
@@ -385,16 +390,13 @@ class DayRatingWidget extends ConsumerWidget {
     }
   }
 
-  void _saveDiaryDay(
-      BuildContext context, WidgetRef ref, DateTime selectedDate) {
+  void _saveDiaryDay(BuildContext context, WidgetRef ref, DateTime selectedDate) {
     final ratings = ref.read(dayRatingsProvider);
     final allNotes = ref.read(wizardDayNotesProvider);
     final theme = ref.read(themeProvider);
 
     // Filter out dummy notes (empty title and description)
-    final validNotes = allNotes
-        .where((note) => note.title.isNotEmpty || note.description.isNotEmpty)
-        .toList();
+    final validNotes = allNotes.where((note) => note.title.isNotEmpty || note.description.isNotEmpty).toList();
 
     // Create DiaryDay
     final diaryDay = DiaryDay(

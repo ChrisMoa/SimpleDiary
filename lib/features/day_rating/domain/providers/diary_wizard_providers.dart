@@ -5,6 +5,7 @@ import 'package:day_tracker/features/notes/data/models/note.dart';
 import 'package:day_tracker/features/notes/data/models/note_category.dart';
 import 'package:day_tracker/features/notes/domain/providers/note_local_db_provider.dart';
 import 'package:day_tracker/features/notes/domain/providers/note_selected_date_provider.dart';
+import 'package:day_tracker/features/note_templates/data/models/note_template.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 // Selected date provider for the wizard
@@ -256,3 +257,19 @@ final createEmptyNoteProvider = Provider<Note>((ref) {
     noteCategory: availableNoteCategories.first,
   );
 });
+
+// Provider for creating a note from a template
+final createNoteFromTemplateProvider = Provider.family<Note, NoteTemplate>((ref, template) {
+  ref.watch(wizardSelectedDateProvider);
+  final nextAvailableTime = ref.watch(nextAvailableTimeSlotProvider);
+
+  // Create a new note from the template
+  return Note(
+    title: template.title,
+    description: template.description,
+    from: nextAvailableTime,
+    to: nextAvailableTime.add(Duration(minutes: template.durationMinutes)),
+    noteCategory: template.noteCategory,
+  );
+});
+

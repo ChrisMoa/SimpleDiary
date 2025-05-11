@@ -20,12 +20,10 @@ class DiaryDayEditingWizardWidget extends ConsumerStatefulWidget {
         editNote = editNote ?? false;
 
   @override
-  ConsumerState<DiaryDayEditingWizardWidget> createState() =>
-      _DiaryDayEditingWizardWidgetState();
+  ConsumerState<DiaryDayEditingWizardWidget> createState() => _DiaryDayEditingWizardWidgetState();
 }
 
-class _DiaryDayEditingWizardWidgetState
-    extends ConsumerState<DiaryDayEditingWizardWidget> {
+class _DiaryDayEditingWizardWidgetState extends ConsumerState<DiaryDayEditingWizardWidget> {
   @override
   Widget build(BuildContext context) {
     final theme = ref.watch(themeProvider);
@@ -46,8 +44,7 @@ class _DiaryDayEditingWizardWidgetState
             children: [
               // Main content area using tabbed navigation
               Expanded(
-                child:
-                    _buildTabLayout(isTabletOrLarger, isKeyboardVisible, theme),
+                child: _buildTabLayout(isTabletOrLarger, isKeyboardVisible, theme),
               ),
             ],
           ),
@@ -56,12 +53,9 @@ class _DiaryDayEditingWizardWidgetState
     );
   }
 
-  Widget _buildTabLayout(
-      bool isTabletOrLarger, bool isKeyboardVisible, ThemeData theme) {
+  Widget _buildTabLayout(bool isTabletOrLarger, bool isKeyboardVisible, ThemeData theme) {
     // For tablets and larger screens in landscape, use horizontal layout
-    if (isTabletOrLarger &&
-        !isKeyboardVisible &&
-        MediaQuery.of(context).orientation == Orientation.landscape) {
+    if (isTabletOrLarger && !isKeyboardVisible && MediaQuery.of(context).orientation == Orientation.landscape) {
       return Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -102,8 +96,7 @@ class _DiaryDayEditingWizardWidgetState
                 ),
               ],
               labelColor: theme.colorScheme.primary,
-              unselectedLabelColor:
-                  theme.colorScheme.onSurface.withOpacity(0.7),
+              unselectedLabelColor: theme.colorScheme.onSurface.withOpacity(0.7),
               indicatorColor: theme.colorScheme.primary,
             ),
 

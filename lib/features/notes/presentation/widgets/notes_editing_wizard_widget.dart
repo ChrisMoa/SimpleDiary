@@ -349,12 +349,24 @@ class _NoteEditingwizardWidgetState extends ConsumerState<NoteEditingWizardWidge
     return activePlatform.platform == (ActivePlatform.android) || activePlatform.platform == (ActivePlatform.ios);
   }
 
-  void _initializeSpeechToText() async {
+  Future<void> _initializeSpeechToText() async {
     if (_supportsPlatformSpeechRecognition()) {
-      await speechToTextInstance.initialize(
-        finalTimeout: const Duration(minutes: 1),
-      );
-      setState(() {});
+      try {
+        final initialized = await speechToTextInstance.initialize(
+          finalTimeout: const Duration(minutes: 1),
+          onError: (error) {
+            LogWrapper.logger.w('Speech recognition error: $error');
+          },
+          onStatus: (status) {
+            LogWrapper.logger.d('Speech recognition status: $status');
+          },
+        );
+        if (!initialized) {
+          LogWrapper.logger.w('Speech recognition initialization failed');
+        }
+      } catch (e) {
+        LogWrapper.logger.w('Speech recognition initialization error: $e');
+      }
     }
   }
 
