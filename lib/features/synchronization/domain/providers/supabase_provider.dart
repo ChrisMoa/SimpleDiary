@@ -3,6 +3,7 @@ import 'package:day_tracker/core/settings/settings_container.dart';
 import 'package:day_tracker/features/authentication/domain/providers/user_data_provider.dart';
 import 'package:day_tracker/features/day_rating/domain/providers/diary_day_local_db_provider.dart';
 import 'package:day_tracker/features/notes/domain/providers/note_local_db_provider.dart';
+import 'package:day_tracker/features/note_templates/domain/providers/note_template_local_db_provider.dart';
 import 'package:day_tracker/features/synchronization/data/models/supabase_settings.dart';
 import 'package:day_tracker/features/synchronization/data/repositories/supabase_api.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -122,7 +123,7 @@ class SupabaseSyncNotifier extends StateNotifier<SyncState> {
 
       state = state.copyWith(
         message: 'Syncing diary days...',
-        progress: 0.3,
+        progress: 0.2,
       );
 
       final diaryDays = ref.read(diaryDayLocalDbDataProvider);
@@ -131,12 +132,21 @@ class SupabaseSyncNotifier extends StateNotifier<SyncState> {
 
       state = state.copyWith(
         message: 'Syncing notes...',
-        progress: 0.6,
+        progress: 0.5,
       );
 
       final notes = ref.read(notesLocalDataProvider);
       LogWrapper.logger.i('Syncing ${notes.length} notes');
       await supabaseApi.syncNotes(notes, userData.userId!);
+
+      state = state.copyWith(
+        message: 'Syncing templates...',
+        progress: 0.8,
+      );
+
+      final templates = ref.read(noteTemplateLocalDataProvider);
+      LogWrapper.logger.i('Syncing ${templates.length} templates');
+      await supabaseApi.syncTemplates(templates, userData.userId!);
 
       LogWrapper.logger.i('Sync completed successfully');
       state = state.copyWith(
@@ -210,7 +220,7 @@ class SupabaseSyncNotifier extends StateNotifier<SyncState> {
 
       state = state.copyWith(
         message: 'Downloading diary days...',
-        progress: 0.3,
+        progress: 0.2,
       );
 
       LogWrapper.logger.d('Fetching diary days for user: ${userData.userId}');
@@ -219,12 +229,21 @@ class SupabaseSyncNotifier extends StateNotifier<SyncState> {
 
       state = state.copyWith(
         message: 'Downloading notes...',
-        progress: 0.6,
+        progress: 0.5,
       );
 
       LogWrapper.logger.d('Fetching notes for user: ${userData.userId}');
       final notes = await supabaseApi.fetchNotes(userData.userId!);
       LogWrapper.logger.i('Fetched ${notes.length} notes');
+
+      state = state.copyWith(
+        message: 'Downloading templates...',
+        progress: 0.7,
+      );
+
+      LogWrapper.logger.d('Fetching templates for user: ${userData.userId}');
+      final templates = await supabaseApi.fetchTemplates(userData.userId!);
+      LogWrapper.logger.i('Fetched ${templates.length} templates');
 
       state = state.copyWith(
         message: 'Updating local database...',
@@ -233,6 +252,7 @@ class SupabaseSyncNotifier extends StateNotifier<SyncState> {
 
       final diaryDayNotifier = ref.read(diaryDayLocalDbDataProvider.notifier);
       final notesNotifier = ref.read(notesLocalDataProvider.notifier);
+      final templatesNotifier = ref.read(noteTemplateLocalDataProvider.notifier);
 
       LogWrapper.logger.d('Updating local database with fetched data');
       for (var diaryDay in diaryDays) {
@@ -241,6 +261,10 @@ class SupabaseSyncNotifier extends StateNotifier<SyncState> {
 
       for (var note in notes) {
         await notesNotifier.addElement(note);
+      }
+
+      for (var template in templates) {
+        await templatesNotifier.addElement(template);
       }
 
       LogWrapper.logger.i('Download completed successfully');

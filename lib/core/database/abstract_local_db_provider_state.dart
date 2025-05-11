@@ -8,17 +8,14 @@ import 'package:day_tracker/features/authentication/data/models/user_data.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class AbstractLocalDbProviderState<T extends LocalDbElement>
-    extends StateNotifier<List<T>> {
+class AbstractLocalDbProviderState<T extends LocalDbElement> extends StateNotifier<List<T>> {
   late LocalDbHelper helper;
   bool _databaseRead = false;
   String tableName;
   final String primaryKey;
   var _dbFile = File('${settingsContainer.applicationDocumentsPath}/empty.db');
 
-  AbstractLocalDbProviderState(
-      {required this.tableName, required this.primaryKey})
-      : super([]) {
+  AbstractLocalDbProviderState({required this.tableName, required this.primaryKey}) : super([]) {
     helper = createLocalDbHelper(tableName, primaryKey);
     initDatabase();
   }
@@ -34,15 +31,13 @@ class AbstractLocalDbProviderState<T extends LocalDbElement>
     await helper.initDatabase();
   }
 
-  void changeDbFileToUser(UserData userData) {
-    LogWrapper.logger
-        .d('$tableName change db file to user "${userData.userId}"');
+  Future<void> changeDbFileToUser(UserData userData) async {
+    LogWrapper.logger.d('$tableName change db file to user "${userData.userId}"');
     if (userData.username.isEmpty) {
       return;
     }
 
-    _dbFile = File(
-        '${settingsContainer.applicationDocumentsPath}/${userData.userId}.db');
+    _dbFile = File('${settingsContainer.applicationDocumentsPath}/${userData.userId}.db');
     if (!_dbFile.existsSync()) {
       LogWrapper.logger.t('creates dbFile ${_dbFile.path}');
       _dbFile.createSync(recursive: true);
@@ -93,20 +88,13 @@ class AbstractLocalDbProviderState<T extends LocalDbElement>
 
   Future<void> deleteElement(LocalDbElement element) async {
     await helper.delete(element);
-    state = state
-        .where((curElement) => curElement.getId() != element.getId())
-        .toList();
+    state = state.where((curElement) => curElement.getId() != element.getId()).toList();
   }
 
-  Future<void> editElement(
-      LocalDbElement newElement, LocalDbElement oldElement) async {
+  Future<void> editElement(LocalDbElement newElement, LocalDbElement oldElement) async {
     assert(newElement is T && oldElement is T, 'conversion error at element');
     await helper.update(newElement);
-    state = state
-        .map((curElement) => curElement.getId() == oldElement.getId()
-            ? newElement as T
-            : curElement)
-        .toList();
+    state = state.map((curElement) => curElement.getId() == oldElement.getId() ? newElement as T : curElement).toList();
   }
 
   Future<void> clearTable() async {

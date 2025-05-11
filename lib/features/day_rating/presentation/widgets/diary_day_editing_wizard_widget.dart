@@ -2,6 +2,7 @@ import 'package:day_tracker/core/provider/theme_provider.dart';
 import 'package:day_tracker/features/day_rating/presentation/widgets/day_rating_widget.dart';
 import 'package:day_tracker/features/day_rating/presentation/widgets/note_detail_widget.dart';
 import 'package:day_tracker/features/day_rating/presentation/widgets/notes_calendar_widget.dart';
+import 'package:day_tracker/features/note_templates/presentation/widgets/floating_template_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -42,13 +43,20 @@ class _DiaryDayEditingWizardWidgetState
       child: Container(
         color: theme.colorScheme.surface,
         child: SafeArea(
-          child: Column(
+          child: Stack(
             children: [
-              // Main content area using tabbed navigation
-              Expanded(
-                child:
-                    _buildTabLayout(isTabletOrLarger, isKeyboardVisible, theme),
+              Column(
+                children: [
+                  // Main content area using tabbed navigation
+                  Expanded(
+                    child:
+                        _buildTabLayout(isTabletOrLarger, isKeyboardVisible, theme),
+                  ),
+                ],
               ),
+              
+              // Floating template button
+              if (!isKeyboardVisible) const FloatingTemplateButton(),
             ],
           ),
         ),
@@ -137,3 +145,4 @@ class _DiaryDayEditingWizardWidgetState
     }
   }
 }
+
