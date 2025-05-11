@@ -44,6 +44,7 @@ class _TemplateEditingWidgetState extends ConsumerState<TemplateEditingWidget> {
     final mediaQuery = MediaQuery.of(context);
     final screenWidth = mediaQuery.size.width;
     final isSmallScreen = screenWidth < 600;
+    final isKeyboardVisible = mediaQuery.viewInsets.bottom > 0;
 
     return Dialog(
       shape: RoundedRectangleBorder(
@@ -53,214 +54,219 @@ class _TemplateEditingWidgetState extends ConsumerState<TemplateEditingWidget> {
         padding: EdgeInsets.all(isSmallScreen ? 16 : 24),
         constraints: BoxConstraints(
           maxWidth: isSmallScreen ? double.infinity : 500,
+          maxHeight: MediaQuery.of(context).size.height * (isKeyboardVisible ? 0.9 : 0.8),
         ),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Header
-              Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      widget.template != null ? 'Edit Template' : 'Create Template',
-                      style: theme.textTheme.titleLarge?.copyWith(
-                        color: theme.colorScheme.primary,
-                        fontWeight: FontWeight.bold,
-                        fontSize: isSmallScreen ? 18 : 22,
+        child: SingleChildScrollView(
+          child: Form(
+            key: _formKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Header
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        widget.template != null ? 'Edit Template' : 'Create Template',
+                        style: theme.textTheme.titleLarge?.copyWith(
+                          color: theme.colorScheme.primary,
+                          fontWeight: FontWeight.bold,
+                          fontSize: isSmallScreen ? 18 : 22,
+                        ),
                       ),
                     ),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.close),
-                    onPressed: () => Navigator.of(context).pop(),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 24),
+                    IconButton(
+                      icon: const Icon(Icons.close),
+                      onPressed: () => Navigator.of(context).pop(),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 24),
 
-              // Title field
-              TextFormField(
-                controller: _titleController,
-                decoration: InputDecoration(
-                  labelText: 'Template Name',
-                  labelStyle: TextStyle(color: theme.colorScheme.primary),
-                  border: OutlineInputBorder(
-                    borderSide: BorderSide(color: theme.colorScheme.outline),
-                    borderRadius: BorderRadius.circular(8),
+                // Title field
+                TextFormField(
+                  controller: _titleController,
+                  decoration: InputDecoration(
+                    labelText: 'Template Name',
+                    labelStyle: TextStyle(color: theme.colorScheme.primary),
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide(color: theme.colorScheme.outline),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: theme.colorScheme.outline),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: theme.colorScheme.primary),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    filled: true,
+                    fillColor: theme.colorScheme.surface,
                   ),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: theme.colorScheme.outline),
-                    borderRadius: BorderRadius.circular(8),
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: theme.colorScheme.onSurface,
                   ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: theme.colorScheme.primary),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  filled: true,
-                  fillColor: theme.colorScheme.surface,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter a template name';
+                    }
+                    return null;
+                  },
+                  onSaved: (value) => _template.title = value!,
                 ),
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: theme.colorScheme.onSurface,
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter a template name';
-                  }
-                  return null;
-                },
-                onSaved: (value) => _template.title = value!,
-              ),
-              const SizedBox(height: 16),
+                const SizedBox(height: 16),
 
-              // Duration field
-              TextFormField(
-                initialValue: _template.durationMinutes.toString(),
-                decoration: InputDecoration(
-                  labelText: 'Duration (minutes)',
-                  labelStyle: TextStyle(color: theme.colorScheme.primary),
-                  border: OutlineInputBorder(
-                    borderSide: BorderSide(color: theme.colorScheme.outline),
-                    borderRadius: BorderRadius.circular(8),
+                // Duration field
+                TextFormField(
+                  initialValue: _template.durationMinutes.toString(),
+                  decoration: InputDecoration(
+                    labelText: 'Duration (minutes)',
+                    labelStyle: TextStyle(color: theme.colorScheme.primary),
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide(color: theme.colorScheme.outline),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: theme.colorScheme.outline),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: theme.colorScheme.primary),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    filled: true,
+                    fillColor: theme.colorScheme.surface,
                   ),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: theme.colorScheme.outline),
-                    borderRadius: BorderRadius.circular(8),
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: theme.colorScheme.onSurface,
                   ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: theme.colorScheme.primary),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  filled: true,
-                  fillColor: theme.colorScheme.surface,
+                  keyboardType: TextInputType.number,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter duration';
+                    }
+                    final minutes = int.tryParse(value);
+                    if (minutes == null || minutes <= 0) {
+                      return 'Please enter a valid duration';
+                    }
+                    return null;
+                  },
+                  onSaved: (value) => _template.durationMinutes = int.parse(value!),
                 ),
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: theme.colorScheme.onSurface,
-                ),
-                keyboardType: TextInputType.number,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter duration';
-                  }
-                  final minutes = int.tryParse(value);
-                  if (minutes == null || minutes <= 0) {
-                    return 'Please enter a valid duration';
-                  }
-                  return null;
-                },
-                onSaved: (value) => _template.durationMinutes = int.parse(value!),
-              ),
-              const SizedBox(height: 16),
+                const SizedBox(height: 16),
 
-              // Category dropdown
-              DropdownButtonFormField<NoteCategory>(
-                value: _template.noteCategory,
-                decoration: InputDecoration(
-                  labelText: 'Category',
-                  labelStyle: TextStyle(color: theme.colorScheme.primary),
-                  border: OutlineInputBorder(
-                    borderSide: BorderSide(color: theme.colorScheme.outline),
-                    borderRadius: BorderRadius.circular(8),
+                // Category dropdown
+                DropdownButtonFormField<NoteCategory>(
+                  value: _template.noteCategory,
+                  decoration: InputDecoration(
+                    labelText: 'Category',
+                    labelStyle: TextStyle(color: theme.colorScheme.primary),
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide(color: theme.colorScheme.outline),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: theme.colorScheme.outline),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: theme.colorScheme.primary),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    filled: true,
+                    fillColor: theme.colorScheme.surface,
                   ),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: theme.colorScheme.outline),
-                    borderRadius: BorderRadius.circular(8),
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: theme.colorScheme.onSurface,
                   ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: theme.colorScheme.primary),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  filled: true,
-                  fillColor: theme.colorScheme.surface,
-                ),
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: theme.colorScheme.onSurface,
-                ),
-                dropdownColor: theme.colorScheme.surface,
-                items: availableNoteCategories.map((category) {
-                  return DropdownMenuItem(
-                    value: category,
-                    child: Row(
-                      children: [
-                        Container(
-                          width: 16,
-                          height: 16,
-                          decoration: BoxDecoration(
-                            color: category.color,
-                            shape: BoxShape.circle,
+                  dropdownColor: theme.colorScheme.surface,
+                  items: availableNoteCategories.map((category) {
+                    return DropdownMenuItem(
+                      value: category,
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 16,
+                            height: 16,
+                            decoration: BoxDecoration(
+                              color: category.color,
+                              shape: BoxShape.circle,
+                            ),
                           ),
-                        ),
-                        const SizedBox(width: 8),
-                        Text(category.title),
-                      ],
-                    ),
-                  );
-                }).toList(),
-                onChanged: (value) {
-                  if (value != null) {
-                    setState(() {
-                      _template.noteCategory = value;
-                    });
-                  }
-                },
-                onSaved: (value) => _template.noteCategory = value!,
-              ),
-              const SizedBox(height: 16),
-
-              // Description field
-              TextFormField(
-                controller: _descriptionController,
-                decoration: InputDecoration(
-                  labelText: 'Description',
-                  labelStyle: TextStyle(color: theme.colorScheme.primary),
-                  border: OutlineInputBorder(
-                    borderSide: BorderSide(color: theme.colorScheme.outline),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: theme.colorScheme.outline),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: theme.colorScheme.primary),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  filled: true,
-                  fillColor: theme.colorScheme.surface,
+                          const SizedBox(width: 8),
+                          Text(category.title),
+                        ],
+                      ),
+                    );
+                  }).toList(),
+                  onChanged: (value) {
+                    if (value != null) {
+                      setState(() {
+                        _template.noteCategory = value;
+                      });
+                    }
+                  },
+                  onSaved: (value) => _template.noteCategory = value!,
                 ),
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: theme.colorScheme.onSurface,
-                ),
-                maxLines: 3,
-                onSaved: (value) => _template.description = value ?? '',
-              ),
-              const SizedBox(height: 24),
+                const SizedBox(height: 16),
 
-              // Action buttons
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  TextButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    child: Text(
-                      'Cancel',
-                      style: TextStyle(color: theme.colorScheme.primary),
+                // Description field
+                TextFormField(
+                  controller: _descriptionController,
+                  decoration: InputDecoration(
+                    labelText: 'Description',
+                    labelStyle: TextStyle(color: theme.colorScheme.primary),
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide(color: theme.colorScheme.outline),
+                      borderRadius: BorderRadius.circular(8),
                     ),
-                  ),
-                  const SizedBox(width: 16),
-                  ElevatedButton(
-                    onPressed: _saveTemplate,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: theme.colorScheme.primaryContainer,
-                      foregroundColor: theme.colorScheme.onPrimaryContainer,
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: theme.colorScheme.outline),
+                      borderRadius: BorderRadius.circular(8),
                     ),
-                    child: Text(widget.template != null ? 'Update' : 'Create'),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: theme.colorScheme.primary),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    filled: true,
+                    fillColor: theme.colorScheme.surface,
                   ),
-                ],
-              ),
-            ],
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: theme.colorScheme.onSurface,
+                  ),
+                  maxLines: 3,
+                  onSaved: (value) => _template.description = value ?? '',
+                ),
+                const SizedBox(height: 24),
+
+                // Action buttons
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    TextButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      child: Text(
+                        'Cancel',
+                        style: TextStyle(color: theme.colorScheme.primary),
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    ElevatedButton(
+                      onPressed: _saveTemplate,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: theme.colorScheme.primaryContainer,
+                        foregroundColor: theme.colorScheme.onPrimaryContainer,
+                      ),
+                      child: Text(widget.template != null ? 'Update' : 'Create'),
+                    ),
+                  ],
+                ),
+                // Add extra padding at the bottom when keyboard is visible
+                SizedBox(height: isKeyboardVisible ? 16 : 0),
+              ],
+            ),
           ),
         ),
       ),
@@ -287,9 +293,7 @@ class _TemplateEditingWidgetState extends ConsumerState<TemplateEditingWidget> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            widget.template != null
-                ? 'Template updated successfully'
-                : 'Template created successfully',
+            widget.template != null ? 'Template updated successfully' : 'Template created successfully',
           ),
           duration: const Duration(seconds: 2),
         ),
@@ -297,4 +301,3 @@ class _TemplateEditingWidgetState extends ConsumerState<TemplateEditingWidget> {
     }
   }
 }
-
