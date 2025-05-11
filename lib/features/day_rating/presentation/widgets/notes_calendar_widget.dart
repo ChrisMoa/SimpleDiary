@@ -4,6 +4,7 @@ import 'package:day_tracker/core/provider/theme_provider.dart';
 import 'package:day_tracker/core/utils/utils.dart';
 import 'package:day_tracker/features/day_rating/domain/providers/diary_wizard_providers.dart';
 import 'package:day_tracker/features/day_rating/presentation/widgets/date_selector_widget.dart';
+import 'package:day_tracker/features/note_templates/presentation/widgets/floating_template_button.dart';
 import 'package:day_tracker/features/notes/data/models/note.dart';
 import 'package:day_tracker/features/notes/data/models/note_category.dart';
 import 'package:day_tracker/features/notes/data/models/note_data_source.dart';
@@ -61,129 +62,135 @@ class _NotesCalendarWidgetState extends ConsumerState<NotesCalendarWidget> {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Stack(
         children: [
-          Container(
-            padding: const EdgeInsets.all(8.0),
-            child: const DateSelectorWidget(),
-          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8.0),
+                child: const DateSelectorWidget(),
+              ),
 
-          // Header with action buttons
-          Padding(
-            padding: const EdgeInsets.only(left: 16, top: 16, right: 16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              // Header with action buttons
+              Padding(
+                padding: const EdgeInsets.only(left: 16, top: 16, right: 16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      'Daily Schedule',
-                      style: theme.textTheme.titleLarge?.copyWith(
-                        color: theme.colorScheme.primary,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
-
-                // Status indicator
-                if (isFullyScheduled)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 4),
-                    child: Row(
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Icon(
-                          Icons.check_circle,
-                          color: theme.colorScheme.primary,
-                          size: 16,
-                        ),
-                        const SizedBox(width: 4),
                         Text(
-                          'Schedule complete',
-                          style: theme.textTheme.bodySmall?.copyWith(
+                          'Daily Schedule',
+                          style: theme.textTheme.titleLarge?.copyWith(
                             color: theme.colorScheme.primary,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                       ],
                     ),
-                  )
-                else
-                  Padding(
-                    padding: const EdgeInsets.only(top: 4),
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.info_outline,
-                          color: theme.colorScheme.error,
-                          size: 16,
+
+                    // Status indicator
+                    if (isFullyScheduled)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 4),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.check_circle,
+                              color: theme.colorScheme.primary,
+                              size: 16,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              'Schedule complete',
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                color: theme.colorScheme.primary,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
                         ),
-                        const SizedBox(width: 4),
-                        Text(
-                          'Fill in your complete day',
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            color: theme.colorScheme.error,
-                          ),
+                      )
+                    else
+                      Padding(
+                        padding: const EdgeInsets.only(top: 4),
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.info_outline,
+                              color: theme.colorScheme.error,
+                              size: 16,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              'Fill in your complete day',
+                              style: theme.textTheme.bodySmall?.copyWith(
+                                color: theme.colorScheme.error,
+                              ),
+                            ),
+                          ],
                         ),
-                      ],
+                      ),
+                  ],
+                ),
+              ),
+
+              // Calendar - Adapted to different screen sizes
+              Expanded(
+                child: SfCalendar(
+                  controller: _calendarController,
+                  view: CalendarView.day,
+                  dataSource: dataSource,
+                  timeSlotViewSettings: TimeSlotViewSettings(
+                    // Adjust time interval for better visibility on small screens
+                    timeInterval: Duration(minutes: isSmallScreen ? 60 : 30),
+                    // Adjust height based on screen size
+                    timeIntervalHeight: isSmallScreen ? 50 : 60,
+                    timeFormat: 'HH:mm',
+                    startHour: 7,
+                    endHour: 22,
+                    timeTextStyle: theme.textTheme.bodyMedium!.copyWith(
+                      color: theme.colorScheme.onSurface,
+                      fontSize: isSmallScreen ? 10 : 12,
                     ),
                   ),
-              ],
-            ),
-          ),
-
-          // Calendar - Adapted to different screen sizes
-          Expanded(
-            child: SfCalendar(
-              controller: _calendarController,
-              view: CalendarView.day,
-              dataSource: dataSource,
-              timeSlotViewSettings: TimeSlotViewSettings(
-                // Adjust time interval for better visibility on small screens
-                timeInterval: Duration(minutes: isSmallScreen ? 60 : 30),
-                // Adjust height based on screen size
-                timeIntervalHeight: isSmallScreen ? 50 : 60,
-                timeFormat: 'HH:mm',
-                startHour: 7,
-                endHour: 22,
-                timeTextStyle: theme.textTheme.bodyMedium!.copyWith(
-                  color: theme.colorScheme.onSurface,
-                  fontSize: isSmallScreen ? 10 : 12,
+                  headerHeight: 0, // Hide header since we have our own date selector
+                  viewHeaderHeight: 0, // Hide view header for cleaner look
+                  todayHighlightColor: theme.colorScheme.primary,
+                  selectionDecoration: BoxDecoration(
+                    color: theme.colorScheme.primary.withValues(alpha: 0.2),
+                    border: Border.all(
+                      color: theme.colorScheme.primary,
+                      width: 1,
+                    ),
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  cellBorderColor: theme.colorScheme.outline.withValues(alpha: 0.2),
+                  initialDisplayDate: selectedDate,
+                  onTap: _handleCalendarTap,
+                  appointmentBuilder: _customAppointmentBuilder,
+                  allowDragAndDrop: true,
+                  allowAppointmentResize: true,
+                  onDragEnd: _handleDragEnd,
+                  onAppointmentResizeEnd: _handleResizeEnd,
                 ),
               ),
-              headerHeight: 0, // Hide header since we have our own date selector
-              viewHeaderHeight: 0, // Hide view header for cleaner look
-              todayHighlightColor: theme.colorScheme.primary,
-              selectionDecoration: BoxDecoration(
-                color: theme.colorScheme.primary.withValues(alpha: 0.2),
-                border: Border.all(
-                  color: theme.colorScheme.primary,
-                  width: 1,
-                ),
-                borderRadius: BorderRadius.circular(4),
-              ),
-              cellBorderColor: theme.colorScheme.outline.withValues(alpha: 0.2),
-              initialDisplayDate: selectedDate,
-              onTap: _handleCalendarTap,
-              appointmentBuilder: _customAppointmentBuilder,
-              allowDragAndDrop: true,
-              allowAppointmentResize: true,
-              onDragEnd: _handleDragEnd,
-              onAppointmentResizeEnd: _handleResizeEnd,
-            ),
-          ),
 
-          // Legend for categories - Wrap it for small screens
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: availableNoteCategories.map((category) => _buildCategoryChip(category, theme)).toList(),
-            ),
+              // Legend for categories - Wrap it for small screens
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: availableNoteCategories.map((category) => _buildCategoryChip(category, theme)).toList(),
+                ),
+              ),
+            ],
           ),
+          // Add FloatingTemplateButton only when keyboard is not visible
+          if (!isKeyboardVisible) const FloatingTemplateButton(),
         ],
       ),
     );

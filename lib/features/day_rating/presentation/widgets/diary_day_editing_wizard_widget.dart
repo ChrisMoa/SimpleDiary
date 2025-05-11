@@ -2,7 +2,6 @@ import 'package:day_tracker/core/provider/theme_provider.dart';
 import 'package:day_tracker/features/day_rating/presentation/widgets/day_rating_widget.dart';
 import 'package:day_tracker/features/day_rating/presentation/widgets/note_detail_widget.dart';
 import 'package:day_tracker/features/day_rating/presentation/widgets/notes_calendar_widget.dart';
-import 'package:day_tracker/features/note_templates/presentation/widgets/floating_template_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -21,12 +20,10 @@ class DiaryDayEditingWizardWidget extends ConsumerStatefulWidget {
         editNote = editNote ?? false;
 
   @override
-  ConsumerState<DiaryDayEditingWizardWidget> createState() =>
-      _DiaryDayEditingWizardWidgetState();
+  ConsumerState<DiaryDayEditingWizardWidget> createState() => _DiaryDayEditingWizardWidgetState();
 }
 
-class _DiaryDayEditingWizardWidgetState
-    extends ConsumerState<DiaryDayEditingWizardWidget> {
+class _DiaryDayEditingWizardWidgetState extends ConsumerState<DiaryDayEditingWizardWidget> {
   @override
   Widget build(BuildContext context) {
     final theme = ref.watch(themeProvider);
@@ -43,20 +40,12 @@ class _DiaryDayEditingWizardWidgetState
       child: Container(
         color: theme.colorScheme.surface,
         child: SafeArea(
-          child: Stack(
+          child: Column(
             children: [
-              Column(
-                children: [
-                  // Main content area using tabbed navigation
-                  Expanded(
-                    child:
-                        _buildTabLayout(isTabletOrLarger, isKeyboardVisible, theme),
-                  ),
-                ],
+              // Main content area using tabbed navigation
+              Expanded(
+                child: _buildTabLayout(isTabletOrLarger, isKeyboardVisible, theme),
               ),
-              
-              // Floating template button
-              if (!isKeyboardVisible) const FloatingTemplateButton(),
             ],
           ),
         ),
@@ -64,12 +53,9 @@ class _DiaryDayEditingWizardWidgetState
     );
   }
 
-  Widget _buildTabLayout(
-      bool isTabletOrLarger, bool isKeyboardVisible, ThemeData theme) {
+  Widget _buildTabLayout(bool isTabletOrLarger, bool isKeyboardVisible, ThemeData theme) {
     // For tablets and larger screens in landscape, use horizontal layout
-    if (isTabletOrLarger &&
-        !isKeyboardVisible &&
-        MediaQuery.of(context).orientation == Orientation.landscape) {
+    if (isTabletOrLarger && !isKeyboardVisible && MediaQuery.of(context).orientation == Orientation.landscape) {
       return Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -110,8 +96,7 @@ class _DiaryDayEditingWizardWidgetState
                 ),
               ],
               labelColor: theme.colorScheme.primary,
-              unselectedLabelColor:
-                  theme.colorScheme.onSurface.withOpacity(0.7),
+              unselectedLabelColor: theme.colorScheme.onSurface.withOpacity(0.7),
               indicatorColor: theme.colorScheme.primary,
             ),
 
@@ -145,4 +130,3 @@ class _DiaryDayEditingWizardWidgetState
     }
   }
 }
-
