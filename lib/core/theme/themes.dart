@@ -13,8 +13,9 @@ var _lightColorScheme = ColorScheme.fromSeed(
 var lightTheme = ThemeData().copyWith(
   colorScheme: _lightColorScheme,
   textTheme: GoogleFonts.latoTextTheme(),
-  cardTheme: const CardTheme().copyWith(
-    color: _lightColorScheme.secondaryContainer,
+  cardTheme: CardThemeData(
+    color: _lightColorScheme.surface,
+    elevation: 1,
     margin: const EdgeInsets.symmetric(
       horizontal: 16,
       vertical: 8,
