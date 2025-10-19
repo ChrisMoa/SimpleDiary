@@ -7,14 +7,25 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class ThemeProvider extends StateNotifier<ThemeData> {
   ThemeProvider()
-      : super(lightTheme.copyWith(
-          colorScheme: ColorScheme.fromSeed(
+      : super(() {
+          final initialColorScheme = ColorScheme.fromSeed(
             brightness: settingsContainer.activeUserSettings.darkThemeMode
                 ? Brightness.dark
                 : Brightness.light,
             seedColor: settingsContainer.activeUserSettings.themeSeedColor,
-          ),
-        ));
+          );
+          return lightTheme.copyWith(
+            colorScheme: initialColorScheme,
+            cardTheme: CardThemeData(
+              color: initialColorScheme.surface,
+              elevation: 1,
+              margin: const EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 8,
+              ),
+            ),
+          );
+        }());
   bool darkMode = false;
   Color _seedColor = settingsContainer.activeUserSettings.themeSeedColor;
 
@@ -27,10 +38,21 @@ class ThemeProvider extends StateNotifier<ThemeData> {
   void updateThemeFromSeedColor(Color newThemeColor) {
     LogWrapper.logger
         .t('updates themeColor to ${Utils.colorToRGBInt(newThemeColor)}');
+    
+    final newColorScheme = ColorScheme.fromSeed(
+      brightness: darkMode ? Brightness.dark : Brightness.light,
+      seedColor: newThemeColor,
+    );
+    
     var newTheme = lightTheme.copyWith(
-      colorScheme: ColorScheme.fromSeed(
-        brightness: darkMode ? Brightness.dark : Brightness.light,
-        seedColor: newThemeColor,
+      colorScheme: newColorScheme,
+      cardTheme: CardThemeData(
+        color: newColorScheme.surface,
+        elevation: 1,
+        margin: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 8,
+        ),
       ),
     );
 
@@ -46,10 +68,21 @@ class ThemeProvider extends StateNotifier<ThemeData> {
   void toggleDarkMode(bool darkMode) {
     LogWrapper.logger.t('toggles between dark and light mode');
     this.darkMode = darkMode;
+    
+    final newColorScheme = ColorScheme.fromSeed(
+      brightness: darkMode ? Brightness.dark : Brightness.light,
+      seedColor: _seedColor,
+    );
+    
     var newTheme = lightTheme.copyWith(
-      colorScheme: ColorScheme.fromSeed(
-        brightness: darkMode ? Brightness.dark : Brightness.light,
-        seedColor: _seedColor,
+      colorScheme: newColorScheme,
+      cardTheme: CardThemeData(
+        color: newColorScheme.surface,
+        elevation: 1,
+        margin: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 8,
+        ),
       ),
     );
     state = newTheme;
