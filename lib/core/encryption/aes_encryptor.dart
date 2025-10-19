@@ -52,9 +52,17 @@ class AesEncryptor {
 
   /// encrypts the given plain text
   /// [plainText] the plainText that should be encrypted
-  /// [return] the encrypted cipherText as base64String
+  /// [return] the encrypted cipherText as base64String (includes IV)
   String encryptStringAsBase64(String plainText) {
-    return base64.encode(encryptString(plainText));
+    // Generate a random IV for each encryption
+    IV iv = IV.fromLength(16);
+    
+    // Encrypt the data
+    Encrypted encrypted = _encrypter.encrypt(plainText, iv: iv);
+    
+    // Combine IV and encrypted data, then encode as base64
+    Uint8List combined = Uint8List.fromList([...iv.bytes, ...encrypted.bytes]);
+    return base64.encode(combined);
   }
 
   /// decrypts the given plain ciptherText
@@ -64,12 +72,26 @@ class AesEncryptor {
     return _encrypter.decrypt(Encrypted(cipherText), iv: _stringDefaultIV);
   }
 
-  /// decrypts the given plain ciptherText
-  /// [cipherText] the cipherText that should be decrypted as byte array
+  /// decrypts the given plain ciptherText from base64 (expects IV prepended)
+  /// [cipherText] the cipherText as base64 string (IV + encrypted data)
   /// [return] the decrypted plainText as String
-  String decryptStringFromBase64(String cipherText) {
-    return _encrypter.decrypt(Encrypted(base64.decode(cipherText)),
-        iv: _stringDefaultIV);
+  String decryptStringFromBase64(String cipherTextBase64) {
+    // Decode from base64
+    Uint8List combined = base64.decode(cipherTextBase64);
+    
+    // Verify we have enough data (at least 16 bytes for IV)
+    if (combined.length <= 16) {
+      throw Exception('Invalid encrypted data: too short');
+    }
+    
+    // Extract IV (first 16 bytes)
+    IV iv = IV(Uint8List.fromList(combined.sublist(0, 16)));
+    
+    // Extract encrypted data (rest of the bytes)
+    Uint8List encryptedData = combined.sublist(16);
+    
+    // Decrypt
+    return _encrypter.decrypt(Encrypted(encryptedData), iv: iv);
   }
 
   /// encrypts the given file

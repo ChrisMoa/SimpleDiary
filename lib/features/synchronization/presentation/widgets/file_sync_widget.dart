@@ -1,15 +1,15 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'dart:convert';
 import 'dart:io';
 
-import 'package:day_tracker/core/authentication/password_auth_service.dart';
-import 'package:day_tracker/core/encryption/aes_encryptor.dart';
 import 'package:day_tracker/core/log/logger_instance.dart';
 import 'package:day_tracker/core/provider/theme_provider.dart';
 import 'package:day_tracker/core/settings/settings_container.dart';
 import 'package:day_tracker/features/authentication/domain/providers/user_data_provider.dart';
 import 'package:day_tracker/features/day_rating/domain/providers/diary_day_local_db_provider.dart';
 import 'package:day_tracker/features/notes/domain/providers/note_local_db_provider.dart';
+import 'package:day_tracker/features/synchronization/data/models/export_data.dart';
 import 'package:day_tracker/features/synchronization/domain/providers/file_db_provider.dart';
 import 'package:filesystem_picker/filesystem_picker.dart';
 import 'package:flutter/material.dart';
@@ -219,20 +219,17 @@ class FileSyncWidget extends ConsumerWidget {
 
         try {
           File file = File(fullPath);
-          await ref
-              .read(fileDbStateProvider.notifier)
-              .export(ref.read(diaryDayFullDataProvider), file);
+          final bool willEncrypt = password != null && password.isNotEmpty;
 
-          if (password != null && password.isNotEmpty) {
-            // Use password for encryption
-            String encryptionKey = PasswordAuthService.getDatabaseEncryptionKey(
-                password, userData.salt);
-            var encryptor = AesEncryptor(encryptionKey: encryptionKey);
-            encryptor.encryptFile(file);
-            LogWrapper.logger.i('File encrypted with provided password');
-          } else {
-            LogWrapper.logger.i('File exported without encryption');
-          }
+          // Use new export format with metadata
+          await ref.read(fileDbStateProvider.notifier).exportWithMetadata(
+                diaryDays: ref.read(diaryDayFullDataProvider),
+                file: file,
+                username: userData.username.isNotEmpty ? userData.username : null,
+                salt: willEncrypt ? userData.salt : null,
+                encrypted: willEncrypt,
+                password: willEncrypt ? password : null,
+              );
 
           LogWrapper.logger.i('Export finished successfully');
           _onImportExportSuccessfully(context);
@@ -270,54 +267,72 @@ class FileSyncWidget extends ConsumerWidget {
           File file = File(path);
           LogWrapper.logger.i('Import from file ${file.path}');
 
-          // Prompt for decryption password
+          // Read file to check metadata (metadata is always readable)
+          String fileContent;
+          try {
+            fileContent = file.readAsStringSync();
+          } catch (e) {
+            // File is not UTF-8 readable - this is the OLD format (completely encrypted)
+            LogWrapper.logger.e('File is not readable as UTF-8 - this is a legacy encrypted format');
+            _onError(context, 
+              'This file uses the old encryption format and cannot be imported.\n'
+              'Please export your data again with the new version.');
+            return;
+          }
+
+          bool isEncrypted = false;
+          
+          // Check if file has metadata
+          if (ExportData.isNewFormat(fileContent)) {
+            final Map<String, dynamic> map = json.decode(fileContent);
+            final metadataMap = map['metadata'] as Map<String, dynamic>;
+            isEncrypted = metadataMap['encrypted'] as bool;
+            LogWrapper.logger.i('Detected new format: encrypted=$isEncrypted');
+          } else {
+            LogWrapper.logger.i('Detected legacy format (unencrypted)');
+          }
+
+          // Prompt for password if encrypted
           final userData = ref.read(userDataProvider);
           final defaultPassword = userData.clearPassword;
+          String? password;
 
-          final password = await _promptForPassword(
-            context,
-            'Decrypt Import',
-            defaultValue: defaultPassword,
-          );
+          if (isEncrypted) {
+            password = await _promptForPassword(
+              context,
+              'Decrypt Import',
+              defaultValue: defaultPassword,
+            );
 
-          if (password != null && password.isNotEmpty) {
-            // Use password for decryption
-            String encryptionKey = PasswordAuthService.getDatabaseEncryptionKey(
-                password, userData.salt);
-            var decryptor = AesEncryptor(encryptionKey: encryptionKey);
-
-            try {
-              decryptor.decryptFile(file);
-              LogWrapper.logger.i('File decrypted with provided password');
-            } catch (e) {
-              LogWrapper.logger.e('Error decrypting file: $e');
-              _onError(context, 'Error decrypting file. Wrong password?');
+            if (password == null || password.isEmpty) {
+              _onError(context, 'Password required for encrypted file');
               return;
             }
           }
 
-          await ref.read(fileDbStateProvider.notifier).import(File(path));
+          // Import the data (decryption happens internally)
+          try {
+            await ref.read(fileDbStateProvider.notifier).import(
+              File(path),
+              password: password,
+            );
 
-          // Re-encrypt the file if needed
-          if (password != null && password.isNotEmpty) {
-            String encryptionKey = PasswordAuthService.getDatabaseEncryptionKey(
-                password, userData.salt);
-            var encryptor = AesEncryptor(encryptionKey: encryptionKey);
-            encryptor.encryptFile(file);
-          }
-
-          // Add diary entries to local DB
-          for (var diaryDay in ref.read(fileDbStateProvider)) {
-            await ref
-                .read(diaryDayLocalDbDataProvider.notifier)
-                .addElement(diaryDay);
-            for (var note in diaryDay.notes) {
-              await ref.read(notesLocalDataProvider.notifier).addElement(note);
+            // Add diary entries to local DB
+            for (var diaryDay in ref.read(fileDbStateProvider)) {
+              await ref
+                  .read(diaryDayLocalDbDataProvider.notifier)
+                  .addElement(diaryDay);
+              for (var note in diaryDay.notes) {
+                await ref.read(notesLocalDataProvider.notifier).addElement(note);
+              }
             }
-          }
 
-          LogWrapper.logger.i('Import finished successfully');
-          _onImportExportSuccessfully(context);
+            LogWrapper.logger.i('Import finished successfully');
+            _onImportExportSuccessfully(context);
+          } catch (e) {
+            LogWrapper.logger.e('Error during import: $e');
+            _onError(context, 'Error during import. Wrong password or corrupted file?');
+          }
         } catch (e) {
           LogWrapper.logger.e('Error importing from file "$path": "$e"');
           _onError(context, 'Error during import: $e');
