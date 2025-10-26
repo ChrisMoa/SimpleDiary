@@ -1,6 +1,7 @@
 import 'package:day_tracker/core/provider/theme_provider.dart';
 import 'package:day_tracker/core/settings/settings_container.dart';
 import 'package:day_tracker/features/synchronization/domain/providers/supabase_provider.dart';
+import 'package:day_tracker/features/synchronization/data/repositories/supabase_api.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -170,11 +171,122 @@ class _SupabaseSettingsWidgetState extends ConsumerState<SupabaseSettingsWidget>
                 theme: theme,
                 isSmallScreen: isSmallScreen,
               ),
+              
+              SizedBox(height: isSmallScreen ? 16 : 24),
+              
+              // Test Connection Button
+              _buildTestConnectionButton(theme, isSmallScreen),
             ],
           ),
         ),
       ),
     );
+  }
+  
+  Widget _buildTestConnectionButton(ThemeData theme, bool isSmallScreen) {
+    return Container(
+      width: double.infinity,
+      height: isSmallScreen ? 48 : 52,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(12),
+        gradient: LinearGradient(
+          colors: [
+            theme.colorScheme.primary,
+            theme.colorScheme.primary.withOpacity(0.8),
+          ],
+        ),
+      ),
+      child: ElevatedButton.icon(
+        onPressed: _testConnection,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.transparent,
+          shadowColor: Colors.transparent,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+        icon: Icon(
+          Icons.cloud_circle_outlined,
+          size: isSmallScreen ? 20 : 24,
+          color: Colors.white,
+        ),
+        label: Text(
+          'Test Connection',
+          style: TextStyle(
+            fontSize: isSmallScreen ? 14 : 16,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
+      ),
+    );
+  }
+  
+  Future<void> _testConnection() async {
+    final settings = ref.read(supabaseSettingsProvider);
+    
+    // Validate that all fields are filled
+    if (settings.supabaseUrl.isEmpty || 
+        settings.supabaseAnonKey.isEmpty || 
+        settings.email.isEmpty || 
+        settings.password.isEmpty) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Please fill in all fields'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+      return;
+    }
+    
+    try {
+      // Show loading indicator
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Testing connection...'),
+            duration: Duration(seconds: 1),
+          ),
+        );
+      }
+      
+      final supabaseApi = SupabaseApi();
+      
+      // Initialize
+      await supabaseApi.initialize(settings.supabaseUrl, settings.supabaseAnonKey);
+      
+      // Test authentication
+      final success = await supabaseApi.signInWithEmailPassword(settings.email, settings.password);
+      
+      if (mounted) {
+        if (success) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Connection successful!'),
+              backgroundColor: Colors.green,
+            ),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Connection failed: Authentication error'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Connection failed: ${e.toString()}'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
   }
 
   Widget _buildTextField({
