@@ -1,4 +1,5 @@
 import 'package:day_tracker/core/log/logger_instance.dart';
+import 'package:day_tracker/core/utils/utils.dart';
 import 'package:day_tracker/features/day_rating/data/models/day_rating.dart';
 import 'package:day_tracker/features/day_rating/data/models/diary_day.dart';
 import 'package:day_tracker/features/notes/data/models/note.dart';
@@ -200,26 +201,57 @@ class SupabaseApi {
       }
 
       LogWrapper.logger.d('Fetching diary days for user: $supabaseUserId');
-      final response = await _client!.from('diary_days').select().eq('user_id', supabaseUserId);
+      final List<Map<String, dynamic>> response = await _client!
+          .from('diary_days')
+          .select()
+          .eq('user_id', supabaseUserId);
+
+      LogWrapper.logger.d('Supabase response type: ${response.runtimeType}');
+      
+      if (response.isEmpty) {
+        LogWrapper.logger.w('No data received from Supabase');
+        return <DiaryDay>[];
+      }
+
+      LogWrapper.logger.i('Received ${response.length} diary days from Supabase');
 
       final diaryDays = <DiaryDay>[];
-      for (var data in response) {
-        // Parse the day string back to DateTime
-        final dayStr = data['day'] as String;
-        final day = DateTime.parse(dayStr);
+      for (var i = 0; i < response.length; i++) {
+        try {
+          final data = response[i] as Map<String, dynamic>;
+          LogWrapper.logger.d('Processing diary day ${i + 1}/${response.length}: ${data['id']}');
+          
+          // Parse the day string back to DateTime
+          final dayStr = data['day'] as String;
+          final day = DateTime.parse(dayStr);
 
-        // Parse ratings
-        final ratingsData = data['ratings'] as List;
-        final ratings = ratingsData.map((r) => DayRating.fromMap(r)).toList();
+          // Parse ratings
+          final ratingsData = data['ratings'] as List;
+          LogWrapper.logger.d('Diary day has ${ratingsData.length} ratings');
+          final ratings = ratingsData.map((r) => DayRating.fromMap(r as Map<String, dynamic>)).toList();
 
-        // Parse notes
-        final notesData = data['notes'] as List? ?? [];
-        final notes = notesData.map((n) => Note.fromMap(n)).toList();
+          // Parse notes
+          final notesData = data['notes'] as List? ?? [];
+          LogWrapper.logger.d('Diary day has ${notesData.length} notes');
+          final notes = notesData.map((n) {
+            try {
+              return Note.fromMap(n as Map<String, dynamic>);
+            } catch (e) {
+              LogWrapper.logger.e('Failed to parse note: $e, data: $n');
+              rethrow;
+            }
+          }).toList();
 
-        // Create diary day
-        final diaryDay = DiaryDay(day: day, ratings: ratings);
-        diaryDay.notes = notes;
-        diaryDays.add(diaryDay);
+          // Create diary day
+          final diaryDay = DiaryDay(day: day, ratings: ratings);
+          diaryDay.notes = notes;
+          diaryDays.add(diaryDay);
+          
+          LogWrapper.logger.d('Successfully processed diary day ${i + 1}/${response.length}');
+        } catch (e) {
+          LogWrapper.logger.e('Failed to process diary day ${i + 1}/${response.length}: $e');
+          rethrow;
+        }
       }
 
       LogWrapper.logger.i('Successfully fetched ${diaryDays.length} diary days');
@@ -246,22 +278,48 @@ class SupabaseApi {
       }
 
       LogWrapper.logger.d('Fetching notes for user: $supabaseUserId');
-      final response = await _client!.from('notes').select().eq('user_id', supabaseUserId);
+      final List<Map<String, dynamic>> response = await _client!
+          .from('notes')
+          .select()
+          .eq('user_id', supabaseUserId);
+
+      LogWrapper.logger.d('Supabase response type: ${response.runtimeType}');
+      
+      if (response.isEmpty) {
+        LogWrapper.logger.w('No data received from Supabase');
+        return <Note>[];
+      }
+
+      LogWrapper.logger.i('Received ${response.length} notes from Supabase');
 
       final notes = <Note>[];
-      for (var data in response) {
-        // Convert from Supabase format to Note model format
-        final noteData = <String, dynamic>{
-          'id': data['id'],
-          'title': data['title'],
-          'description': data['description'],
-          'from': data['from'],
-          'to': data['to'],
-          'isAllDay': data['is_all_day'] == 1,
-          'noteCategory': data['note_category'],
-        };
+      for (var i = 0; i < response.length; i++) {
+        try {
+          final data = response[i] as Map<String, dynamic>;
+          LogWrapper.logger.d('Processing note ${i + 1}/${response.length}: ${data['id']}');
+          
+          // Convert from Supabase format (ISO 8601) to Note model format
+          // Supabase returns ISO format: 2025-10-19T07:00:00.000
+          // Need to parse and convert to the app's format
+          final fromDateTime = DateTime.parse(data['from']);
+          final toDateTime = DateTime.parse(data['to']);
+          
+          final noteData = <String, dynamic>{
+            'id': data['id'],
+            'title': data['title'],
+            'description': data['description'],
+            'from': Utils.toDateTime(fromDateTime),  // Convert ISO to app format
+            'to': Utils.toDateTime(toDateTime),      // Convert ISO to app format
+            'isAllDay': data['is_all_day'] == 1,
+            'noteCategory': data['note_category'],
+          };
 
-        notes.add(Note.fromMap(noteData));
+          notes.add(Note.fromMap(noteData));
+          LogWrapper.logger.d('Successfully processed note ${i + 1}/${response.length}');
+        } catch (e) {
+          LogWrapper.logger.e('Failed to process note ${i + 1}/${response.length}: $e');
+          rethrow;
+        }
       }
 
       LogWrapper.logger.i('Successfully fetched ${notes.length} notes');
@@ -288,20 +346,41 @@ class SupabaseApi {
       }
 
       LogWrapper.logger.d('Fetching templates for user: $supabaseUserId');
-      final response = await _client!.from('note_templates').select().eq('user_id', supabaseUserId);
+      final List<Map<String, dynamic>> response = await _client!
+          .from('note_templates')
+          .select()
+          .eq('user_id', supabaseUserId);
+
+      LogWrapper.logger.d('Supabase response type: ${response.runtimeType}');
+      
+      if (response.isEmpty) {
+        LogWrapper.logger.w('No data received from Supabase');
+        return <NoteTemplate>[];
+      }
+
+      LogWrapper.logger.i('Received ${response.length} templates from Supabase');
 
       final templates = <NoteTemplate>[];
-      for (var data in response) {
-        // Convert from Supabase format to Template model format
-        final templateData = <String, dynamic>{
-          'id': data['id'],
-          'title': data['title'],
-          'description': data['description'],
-          'durationMinutes': data['duration_minutes'],
-          'noteCategory': data['note_category'],
-        };
+      for (var i = 0; i < response.length; i++) {
+        try {
+          final data = response[i] as Map<String, dynamic>;
+          LogWrapper.logger.d('Processing template ${i + 1}/${response.length}: ${data['id']}');
+          
+          // Convert from Supabase format to Template model format
+          final templateData = <String, dynamic>{
+            'id': data['id'],
+            'title': data['title'],
+            'description': data['description'],
+            'durationMinutes': data['duration_minutes'],
+            'noteCategory': data['note_category'],
+          };
 
-        templates.add(NoteTemplate.fromMap(templateData));
+          templates.add(NoteTemplate.fromMap(templateData));
+          LogWrapper.logger.d('Successfully processed template ${i + 1}/${response.length}');
+        } catch (e) {
+          LogWrapper.logger.e('Failed to process template ${i + 1}/${response.length}: $e');
+          rethrow;
+        }
       }
 
       LogWrapper.logger.i('Successfully fetched ${templates.length} templates');
