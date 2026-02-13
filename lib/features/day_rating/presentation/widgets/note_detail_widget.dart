@@ -102,80 +102,134 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
     }
 
     // Show the note details when a note is selected
-    return Card(
+    return Container(
       margin: const EdgeInsets.all(8),
-      color: theme.colorScheme.secondaryContainer,
-      elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surface,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: theme.colorScheme.shadow.withValues(alpha: 0.1),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
       ),
       child: SingleChildScrollView(
         controller: _scrollController,
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(20.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Header with time info - Responsive layout for small screens
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Expanded(
-                    child: Text(
-                      'Note Details',
-                      style: theme.textTheme.titleLarge!.copyWith(
-                        color: theme.colorScheme.primary,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 4,
+                          height: 28,
+                          decoration: BoxDecoration(
+                            color: selectedNote.noteCategory.color,
+                            borderRadius: BorderRadius.circular(2),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            'Note Details',
+                            style: theme.textTheme.titleLarge!.copyWith(
+                              color: theme.colorScheme.onSurface,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 20,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                     decoration: BoxDecoration(
-                      color: selectedNote.noteCategory.color.withValues(alpha: 0.2),
-                      borderRadius: BorderRadius.circular(4),
+                      gradient: LinearGradient(
+                        colors: [
+                          selectedNote.noteCategory.color.withValues(alpha: 0.15),
+                          selectedNote.noteCategory.color.withValues(alpha: 0.08),
+                        ],
+                      ),
+                      borderRadius: BorderRadius.circular(20),
                       border: Border.all(
-                        color: selectedNote.noteCategory.color,
-                        width: 1,
+                        color: selectedNote.noteCategory.color.withValues(alpha: 0.3),
+                        width: 1.5,
                       ),
                     ),
-                    child: Text(
-                      '${Utils.toTime(selectedNote.from)} - ${Utils.toTime(selectedNote.to)}',
-                      style: theme.textTheme.bodySmall!.copyWith(
-                        color: theme.colorScheme.onSecondaryContainer,
-                        fontWeight: FontWeight.bold,
-                      ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.schedule_rounded,
+                          size: 14,
+                          color: selectedNote.noteCategory.color,
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          '${Utils.toTime(selectedNote.from)} - ${Utils.toTime(selectedNote.to)}',
+                          style: theme.textTheme.bodySmall!.copyWith(
+                            color: theme.colorScheme.onSurface,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 20),
 
               // Title field
               TextFormField(
                 controller: _titleController,
                 decoration: InputDecoration(
                   labelText: 'Title',
-                  labelStyle: TextStyle(color: theme.colorScheme.primary),
+                  labelStyle: TextStyle(
+                    color: theme.colorScheme.primary.withValues(alpha: 0.8),
+                    fontWeight: FontWeight.w500,
+                  ),
                   border: OutlineInputBorder(
-                    borderSide: BorderSide(color: theme.colorScheme.outline),
-                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide(
+                      color: theme.colorScheme.outline.withValues(alpha: 0.2),
+                      width: 1.5,
+                    ),
+                    borderRadius: BorderRadius.circular(12),
                   ),
                   enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: theme.colorScheme.outline),
-                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide(
+                      color: theme.colorScheme.outline.withValues(alpha: 0.2),
+                      width: 1.5,
+                    ),
+                    borderRadius: BorderRadius.circular(12),
                   ),
                   focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: theme.colorScheme.primary),
-                    borderRadius: BorderRadius.circular(8),
+                    borderSide: BorderSide(
+                      color: theme.colorScheme.primary,
+                      width: 2,
+                    ),
+                    borderRadius: BorderRadius.circular(12),
                   ),
                   filled: true,
-                  fillColor: theme.colorScheme.surface,
+                  fillColor: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                 ),
                 style: theme.textTheme.titleMedium?.copyWith(
                   color: theme.colorScheme.onSurface,
+                  fontWeight: FontWeight.w500,
                 ),
                 onChanged: (value) {
                   if (value != selectedNote.title) {
@@ -209,22 +263,33 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
                   Text(
                     'Description',
                     style: theme.textTheme.titleMedium!.copyWith(
-                      color: theme.colorScheme.primary,
+                      color: theme.colorScheme.primary.withValues(alpha: 0.8),
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
                   // Speech-to-text button only on supported platforms
                   if (_supportsPlatformSpeechRecognition())
-                    IconButton(
-                      onPressed: _isListening ? _stopListening : _startListening,
-                      icon: Icon(
-                        _isListening ? Icons.mic : Icons.mic_none,
-                        color: _isListening ? theme.colorScheme.primary : theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: _isListening
+                            ? theme.colorScheme.primaryContainer
+                            : theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+                        borderRadius: BorderRadius.circular(12),
                       ),
-                      tooltip: _isListening ? 'Stop dictation' : 'Dictate description',
+                      child: IconButton(
+                        onPressed: _isListening ? _stopListening : _startListening,
+                        icon: Icon(
+                          _isListening ? Icons.mic_rounded : Icons.mic_none_rounded,
+                          color: _isListening
+                              ? theme.colorScheme.primary
+                              : theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                        ),
+                        tooltip: _isListening ? 'Stop dictation' : 'Dictate description',
+                      ),
                     ),
                 ],
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 12),
 
               // Description text field - Larger height for better visibility on small screens
               SizedBox(
@@ -237,22 +302,32 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
                       decoration: InputDecoration(
                         hintText: 'Add details about this note...',
                         hintStyle: TextStyle(
-                          color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
+                          color: theme.colorScheme.onSurface.withValues(alpha: 0.4),
+                          fontWeight: FontWeight.w400,
                         ),
                         border: OutlineInputBorder(
-                          borderSide: BorderSide(color: theme.colorScheme.outline),
-                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide(
+                            color: theme.colorScheme.outline.withValues(alpha: 0.2),
+                            width: 1.5,
+                          ),
+                          borderRadius: BorderRadius.circular(12),
                         ),
                         enabledBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: theme.colorScheme.outline),
-                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide(
+                            color: theme.colorScheme.outline.withValues(alpha: 0.2),
+                            width: 1.5,
+                          ),
+                          borderRadius: BorderRadius.circular(12),
                         ),
                         focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: theme.colorScheme.primary),
-                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide(
+                            color: theme.colorScheme.primary,
+                            width: 2,
+                          ),
+                          borderRadius: BorderRadius.circular(12),
                         ),
                         filled: true,
-                        fillColor: theme.colorScheme.surface,
+                        fillColor: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
                         contentPadding: const EdgeInsets.all(16),
                       ),
                       style: theme.textTheme.bodyMedium?.copyWith(
@@ -327,110 +402,58 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
               // Action buttons for notes - show only when keyboard is not visible on small screens
               if (!isKeyboardVisible || !isSmallScreen)
                 Padding(
-                  padding: const EdgeInsets.only(top: 16),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  padding: const EdgeInsets.only(top: 20),
+                  child: Wrap(
+                    spacing: 10,
+                    runSpacing: 10,
+                    alignment: WrapAlignment.spaceBetween,
                     children: [
                       // Delete button
-                      OutlinedButton.icon(
+                      _buildActionButton(
+                        icon: Icons.delete_outline_rounded,
+                        label: 'Delete',
                         onPressed: () => _deleteNote(selectedNote),
-                        icon: Icon(
-                          Icons.delete,
-                          color: theme.colorScheme.error,
-                          size: isSmallScreen ? 16 : 20,
-                        ),
-                        label: Text(
-                          'Delete',
-                          style: TextStyle(
-                            color: theme.colorScheme.error,
-                            fontSize: isSmallScreen ? 12 : 14,
-                          ),
-                        ),
-                        style: OutlinedButton.styleFrom(
-                          padding: isSmallScreen ? const EdgeInsets.symmetric(horizontal: 8, vertical: 4) : const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                          side: BorderSide(
-                            color: theme.colorScheme.error.withValues(alpha: 0.5),
-                          ),
-                        ),
+                        backgroundColor: theme.colorScheme.errorContainer.withValues(alpha: 0.3),
+                        foregroundColor: theme.colorScheme.error,
+                        isSmallScreen: isSmallScreen,
                       ),
                       // Add from template button
-                      OutlinedButton.icon(
-                        onPressed: () => _showTemplateSelector(),
-                        icon: Icon(
-                          Icons.note_alt_outlined,
-                          color: theme.colorScheme.primary,
-                          size: isSmallScreen ? 16 : 20,
-                        ),
-                        label: Text(
-                          'Template',
-                          style: TextStyle(
-                            color: theme.colorScheme.primary,
-                            fontSize: isSmallScreen ? 12 : 14,
-                          ),
-                        ),
-                        style: OutlinedButton.styleFrom(
-                          padding: isSmallScreen ? const EdgeInsets.symmetric(horizontal: 8, vertical: 4) : const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                          side: BorderSide(
-                            color: theme.colorScheme.primary.withValues(alpha: 0.5),
-                          ),
-                        ),
+                      _buildActionButton(
+                        icon: Icons.note_add_outlined,
+                        label: 'Template',
+                        onPressed: _showTemplateSelector,
+                        backgroundColor: theme.colorScheme.primaryContainer.withValues(alpha: 0.3),
+                        foregroundColor: theme.colorScheme.primary,
+                        isSmallScreen: isSmallScreen,
                       ),
                       // Add button
-                      OutlinedButton.icon(
-                        onPressed: () => _addNextFreeNote(),
-                        icon: Icon(
-                          Icons.add,
-                          color: theme.colorScheme.primary,
-                          size: isSmallScreen ? 16 : 20,
-                        ),
-                        label: Text(
-                          'Add',
-                          style: TextStyle(
-                            color: theme.colorScheme.primary,
-                            fontSize: isSmallScreen ? 12 : 14,
-                          ),
-                        ),
-                        style: OutlinedButton.styleFrom(
-                          padding: isSmallScreen ? const EdgeInsets.symmetric(horizontal: 8, vertical: 4) : const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                          side: BorderSide(
-                            color: theme.colorScheme.primary.withValues(alpha: 0.5),
-                          ),
-                        ),
+                      _buildActionButton(
+                        icon: Icons.add_circle_outline_rounded,
+                        label: 'Add',
+                        onPressed: _addNextFreeNote,
+                        backgroundColor: theme.colorScheme.primaryContainer.withValues(alpha: 0.3),
+                        foregroundColor: theme.colorScheme.primary,
+                        isSmallScreen: isSmallScreen,
                       ),
 
                       // Time editor buttons
                       Row(
+                        mainAxisSize: MainAxisSize.min,
                         children: [
-                          OutlinedButton.icon(
+                          _buildTimeButton(
+                            icon: Icons.remove_rounded,
+                            label: '-30m',
                             onPressed: () => _adjustTime(selectedNote, -30),
-                            icon: Icon(Icons.remove, size: isSmallScreen ? 16 : 20),
-                            label: Text(
-                              '30m',
-                              style: TextStyle(fontSize: isSmallScreen ? 12 : 14),
-                            ),
-                            style: OutlinedButton.styleFrom(
-                              padding: isSmallScreen ? const EdgeInsets.symmetric(horizontal: 8, vertical: 4) : const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                              foregroundColor: theme.colorScheme.primary,
-                              side: BorderSide(
-                                color: theme.colorScheme.primary.withValues(alpha: 0.5),
-                              ),
-                            ),
+                            theme: theme,
+                            isSmallScreen: isSmallScreen,
                           ),
-                          const SizedBox(width: 4),
-                          OutlinedButton.icon(
+                          const SizedBox(width: 8),
+                          _buildTimeButton(
+                            icon: Icons.add_rounded,
+                            label: '+30m',
                             onPressed: () => _adjustTime(selectedNote, 30),
-                            icon: Icon(Icons.add, size: isSmallScreen ? 16 : 20),
-                            label: Text(
-                              '30m',
-                              style: TextStyle(fontSize: isSmallScreen ? 12 : 14),
-                            ),
-                            style: OutlinedButton.styleFrom(
-                              padding: isSmallScreen ? const EdgeInsets.symmetric(horizontal: 8, vertical: 4) : const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                              foregroundColor: theme.colorScheme.primary,
-                              side: BorderSide(
-                                color: theme.colorScheme.primary.withValues(alpha: 0.5),
-                              ),
-                            ),
+                            theme: theme,
+                            isSmallScreen: isSmallScreen,
                           ),
                         ],
                       ),
@@ -1015,6 +1038,116 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
         to: note.to,
         noteCategory: note.noteCategory,
         isAllDay: note.isAllDay,
+      ),
+    );
+  }
+
+  // Modern action button builder
+  Widget _buildActionButton({
+    required IconData icon,
+    required String label,
+    required VoidCallback onPressed,
+    required Color backgroundColor,
+    required Color foregroundColor,
+    required bool isSmallScreen,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        color: backgroundColor,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: foregroundColor.withValues(alpha: 0.2),
+          width: 1,
+        ),
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onPressed,
+          borderRadius: BorderRadius.circular(12),
+          child: Padding(
+            padding: isSmallScreen
+                ? const EdgeInsets.symmetric(horizontal: 12, vertical: 8)
+                : const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  icon,
+                  size: isSmallScreen ? 18 : 20,
+                  color: foregroundColor,
+                ),
+                const SizedBox(width: 6),
+                Text(
+                  label,
+                  style: TextStyle(
+                    color: foregroundColor,
+                    fontSize: isSmallScreen ? 13 : 14,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  // Modern time adjustment button builder
+  Widget _buildTimeButton({
+    required IconData icon,
+    required String label,
+    required VoidCallback onPressed,
+    required ThemeData theme,
+    required bool isSmallScreen,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            theme.colorScheme.primaryContainer.withValues(alpha: 0.4),
+            theme.colorScheme.primaryContainer.withValues(alpha: 0.2),
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: theme.colorScheme.primary.withValues(alpha: 0.2),
+          width: 1,
+        ),
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onPressed,
+          borderRadius: BorderRadius.circular(12),
+          child: Padding(
+            padding: isSmallScreen
+                ? const EdgeInsets.symmetric(horizontal: 10, vertical: 8)
+                : const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  icon,
+                  size: isSmallScreen ? 16 : 18,
+                  color: theme.colorScheme.primary,
+                ),
+                const SizedBox(width: 4),
+                Text(
+                  label,
+                  style: TextStyle(
+                    color: theme.colorScheme.primary,
+                    fontSize: isSmallScreen ? 12 : 13,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }

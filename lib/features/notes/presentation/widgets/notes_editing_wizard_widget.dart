@@ -72,28 +72,30 @@ class _NoteEditingwizardWidgetState extends ConsumerState<NoteEditingWizardWidge
 
   Widget buildScaffoldBody() => Form(
         key: _formKey,
-        child: Column(
-          children: [
-            buildTitle(),
-            const SizedBox(
-              height: 20,
-            ),
-            buildDate(),
-            buildTimePickers(),
-            const SizedBox(
-              height: 20,
-            ),
-            buildDescription(),
-            buildMicrophone(),
-            const SizedBox(
-              height: 20,
-            ),
-            buildCategory(),
-            const SizedBox(
-              height: 20,
-            ),
-            buildButtons(),
-          ],
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              buildTitle(),
+              const SizedBox(
+                height: 20,
+              ),
+              buildDate(),
+              buildTimePickers(),
+              const SizedBox(
+                height: 20,
+              ),
+              buildDescription(),
+              buildMicrophone(),
+              const SizedBox(
+                height: 20,
+              ),
+              buildCategory(),
+              const SizedBox(
+                height: 20,
+              ),
+              buildButtons(),
+            ],
+          ),
         ),
       );
 
