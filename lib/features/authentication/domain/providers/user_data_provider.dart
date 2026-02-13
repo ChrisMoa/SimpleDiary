@@ -92,14 +92,13 @@ class UserDataProvider extends StateNotifier<UserData> {
 
   void updateUser(UserData userData) {
     LogWrapper.logger.i('update user ${userData.username}');
-    var username = userData.username;
-    assert(
-        username == settingsContainer.activeUserSettings.savedUserData.username,
-        '${userData.username} does not exist in the database');
+    var oldUsername =
+        settingsContainer.activeUserSettings.savedUserData.username;
 
     var savedUserData = settingsContainer.userSettings
         .firstWhere(
-            (userSetting) => userSetting.savedUserData.username == username)
+            (userSetting) =>
+                userSetting.savedUserData.username == oldUsername)
         .savedUserData;
 
     // Store original clear password if available
@@ -116,11 +115,15 @@ class UserDataProvider extends StateNotifier<UserData> {
       savedUserData.salt = passwordData['salt']!;
     }
 
+    // Update username
+    savedUserData.username = userData.username;
+
     // Update email
     savedUserData.email = userData.email;
 
     // update saved user
     settingsContainer.activeUserSettings.savedUserData = savedUserData;
+    settingsContainer.lastLoggedInUsername = userData.username;
     var existingUserIndex = settingsContainer.userSettings.indexWhere(
         (userSetting) => userSetting == settingsContainer.activeUserSettings);
     if (existingUserIndex != -1) {
