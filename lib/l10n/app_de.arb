@@ -318,5 +318,19 @@
   "scheduleComplete": "Tagesplan vollständig",
   "newNote": "Neue Notiz",
   "fromTime": "Von: {time}",
-  "toTime": "Bis: {time}"
+  "toTime": "Bis: {time}",
+
+  "searchNotes": "Notizen durchsuchen...",
+  "searchNotesPlaceholder": "Suche nach Titel oder Beschreibung",
+  "filterByCategory": "Nach Kategorie filtern",
+  "filterByDate": "Nach Datum filtern",
+  "clearFilters": "Filter löschen",
+  "clearAll": "Alles löschen",
+  "dateFrom": "Von Datum",
+  "dateTo": "Bis Datum",
+  "selectCategory": "Kategorie auswählen",
+  "allCategories": "Alle Kategorien",
+  "noNotesMatchSearch": "Keine Notizen entsprechen deiner Suche",
+  "tryDifferentSearch": "Versuche, deine Suchkriterien anzupassen",
+  "nResultsFound": "{count, plural, =0{Keine Ergebnisse} =1{1 Ergebnis} other{{count} Ergebnisse}}"
 }

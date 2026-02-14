@@ -979,4 +979,52 @@ class AppLocalizationsDe extends AppLocalizations {
   String toTime(String time) {
     return 'Bis: $time';
   }
+
+  @override
+  String get searchNotes => 'Notizen durchsuchen...';
+
+  @override
+  String get searchNotesPlaceholder => 'Suche nach Titel oder Beschreibung';
+
+  @override
+  String get filterByCategory => 'Nach Kategorie filtern';
+
+  @override
+  String get filterByDate => 'Nach Datum filtern';
+
+  @override
+  String get clearFilters => 'Filter löschen';
+
+  @override
+  String get clearAll => 'Alles löschen';
+
+  @override
+  String get dateFrom => 'Von Datum';
+
+  @override
+  String get dateTo => 'Bis Datum';
+
+  @override
+  String get selectCategory => 'Kategorie auswählen';
+
+  @override
+  String get allCategories => 'Alle Kategorien';
+
+  @override
+  String get noNotesMatchSearch => 'Keine Notizen entsprechen deiner Suche';
+
+  @override
+  String get tryDifferentSearch => 'Versuche, deine Suchkriterien anzupassen';
+
+  @override
+  String nResultsFound(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Ergebnisse',
+      one: '1 Ergebnis',
+      zero: 'Keine Ergebnisse',
+    );
+    return '$_temp0';
+  }
 }

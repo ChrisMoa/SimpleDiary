@@ -966,4 +966,52 @@ class AppLocalizationsEn extends AppLocalizations {
   String toTime(String time) {
     return 'To: $time';
   }
+
+  @override
+  String get searchNotes => 'Search notes...';
+
+  @override
+  String get searchNotesPlaceholder => 'Search by title or description';
+
+  @override
+  String get filterByCategory => 'Filter by category';
+
+  @override
+  String get filterByDate => 'Filter by date';
+
+  @override
+  String get clearFilters => 'Clear filters';
+
+  @override
+  String get clearAll => 'Clear all';
+
+  @override
+  String get dateFrom => 'From date';
+
+  @override
+  String get dateTo => 'To date';
+
+  @override
+  String get selectCategory => 'Select category';
+
+  @override
+  String get allCategories => 'All categories';
+
+  @override
+  String get noNotesMatchSearch => 'No notes match your search';
+
+  @override
+  String get tryDifferentSearch => 'Try adjusting your search criteria';
+
+  @override
+  String nResultsFound(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count results',
+      one: '1 result',
+      zero: 'No results',
+    );
+    return '$_temp0';
+  }
 }

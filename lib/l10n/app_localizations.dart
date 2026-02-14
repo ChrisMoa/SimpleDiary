@@ -1847,6 +1847,84 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'To: {time}'**
   String toTime(String time);
+
+  /// No description provided for @searchNotes.
+  ///
+  /// In en, this message translates to:
+  /// **'Search notes...'**
+  String get searchNotes;
+
+  /// No description provided for @searchNotesPlaceholder.
+  ///
+  /// In en, this message translates to:
+  /// **'Search by title or description'**
+  String get searchNotesPlaceholder;
+
+  /// No description provided for @filterByCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Filter by category'**
+  String get filterByCategory;
+
+  /// No description provided for @filterByDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Filter by date'**
+  String get filterByDate;
+
+  /// No description provided for @clearFilters.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear filters'**
+  String get clearFilters;
+
+  /// No description provided for @clearAll.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear all'**
+  String get clearAll;
+
+  /// No description provided for @dateFrom.
+  ///
+  /// In en, this message translates to:
+  /// **'From date'**
+  String get dateFrom;
+
+  /// No description provided for @dateTo.
+  ///
+  /// In en, this message translates to:
+  /// **'To date'**
+  String get dateTo;
+
+  /// No description provided for @selectCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Select category'**
+  String get selectCategory;
+
+  /// No description provided for @allCategories.
+  ///
+  /// In en, this message translates to:
+  /// **'All categories'**
+  String get allCategories;
+
+  /// No description provided for @noNotesMatchSearch.
+  ///
+  /// In en, this message translates to:
+  /// **'No notes match your search'**
+  String get noNotesMatchSearch;
+
+  /// No description provided for @tryDifferentSearch.
+  ///
+  /// In en, this message translates to:
+  /// **'Try adjusting your search criteria'**
+  String get tryDifferentSearch;
+
+  /// No description provided for @nResultsFound.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, =0{No results} =1{1 result} other{{count} results}}'**
+  String nResultsFound(int count);
 }
 
 class _AppLocalizationsDelegate

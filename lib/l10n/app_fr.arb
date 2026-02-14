@@ -318,5 +318,19 @@
   "scheduleComplete": "Emploi du temps complet",
   "newNote": "Nouvelle Note",
   "fromTime": "De : {time}",
-  "toTime": "À : {time}"
+  "toTime": "À : {time}",
+
+  "searchNotes": "Rechercher des notes...",
+  "searchNotesPlaceholder": "Rechercher par titre ou description",
+  "filterByCategory": "Filtrer par catégorie",
+  "filterByDate": "Filtrer par date",
+  "clearFilters": "Effacer les filtres",
+  "clearAll": "Tout effacer",
+  "dateFrom": "Depuis la date",
+  "dateTo": "Jusqu'à la date",
+  "selectCategory": "Sélectionner une catégorie",
+  "allCategories": "Toutes les catégories",
+  "noNotesMatchSearch": "Aucune note ne correspond à votre recherche",
+  "tryDifferentSearch": "Essayez d'ajuster vos critères de recherche",
+  "nResultsFound": "{count, plural, =0{Aucun résultat} =1{1 résultat} other{{count} résultats}}"
 }
