@@ -211,9 +211,7 @@ class DiaryDayDetailPage extends ConsumerWidget {
               const SizedBox(height: 4),
               LinearProgressIndicator(
                 value: percentage,
-                backgroundColor: theme.brightness == Brightness.dark
-                    ? theme.colorScheme.surfaceContainerHighest
-                    : Colors.grey.shade300,
+                backgroundColor: theme.colorScheme.surfaceContainerHighest,
                 valueColor: AlwaysStoppedAnimation<Color>(scoreColor),
                 minHeight: 8,
                 borderRadius: BorderRadius.circular(4),

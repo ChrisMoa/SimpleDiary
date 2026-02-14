@@ -31,61 +31,69 @@ class _NoteTemplatePageState extends ConsumerState<NoteTemplatePage> {
     final screenWidth = mediaQuery.size.width;
     final isSmallScreen = screenWidth < 600;
 
-    return Scaffold(
-      backgroundColor: theme.colorScheme.surface,
-      body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Header
-            Padding(
-              padding: EdgeInsets.all(isSmallScreen ? 16 : 24),
-              child: Row(
-                children: [
-                  Icon(
-                    Icons.note_alt_outlined,
-                    color: theme.colorScheme.primary,
-                    size: isSmallScreen ? 28 : 32,
-                  ),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      'Note Templates',
-                      style: theme.textTheme.headlineMedium?.copyWith(
+    return Container(
+      color: theme.colorScheme.surface,
+      child: Stack(
+        children: [
+          SafeArea(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Header
+                Padding(
+                  padding: EdgeInsets.all(isSmallScreen ? 16 : 24),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.note_alt_outlined,
                         color: theme.colorScheme.primary,
-                        fontWeight: FontWeight.bold,
+                        size: isSmallScreen ? 28 : 32,
                       ),
-                    ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          'Note Templates',
+                          style: theme.textTheme.headlineMedium?.copyWith(
+                            color: theme.colorScheme.primary,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            ),
+                ),
 
-            // Template list
-            Expanded(
-              child: templates.isEmpty
-                  ? _buildEmptyState(theme, isSmallScreen)
-                  : ListView.builder(
-                      itemCount: templates.length,
-                      itemBuilder: (context, index) {
-                        final template = templates[index];
-                        return TemplateListItem(
-                          template: template,
-                          onTap: (template) => _showTemplateInfo(template),
-                          onEdit: (template) => _editTemplate(template),
-                          onDelete: (template) => _confirmDeleteTemplate(template),
-                        );
-                      },
-                    ),
+                // Template list
+                Expanded(
+                  child: templates.isEmpty
+                      ? _buildEmptyState(theme, isSmallScreen)
+                      : ListView.builder(
+                          itemCount: templates.length,
+                          itemBuilder: (context, index) {
+                            final template = templates[index];
+                            return TemplateListItem(
+                              template: template,
+                              onTap: (template) => _showTemplateInfo(template),
+                              onEdit: (template) => _editTemplate(template),
+                              onDelete: (template) => _confirmDeleteTemplate(template),
+                            );
+                          },
+                        ),
+                ),
+              ],
             ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _createNewTemplate,
-        backgroundColor: theme.colorScheme.primaryContainer,
-        foregroundColor: theme.colorScheme.onPrimaryContainer,
-        child: const Icon(Icons.add),
+          ),
+          Positioned(
+            right: 16,
+            bottom: 16,
+            child: FloatingActionButton(
+              onPressed: _createNewTemplate,
+              backgroundColor: theme.colorScheme.primaryContainer,
+              foregroundColor: theme.colorScheme.onPrimaryContainer,
+              child: const Icon(Icons.add),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -203,7 +211,30 @@ class _NoteTemplatePageState extends ConsumerState<NoteTemplatePage> {
               ),
               const SizedBox(height: 8),
               Text('Duration: ${template.durationMinutes} minutes'),
-              if (template.description.isNotEmpty) ...[
+              if (template.hasDescriptionSections) ...[
+                const SizedBox(height: 16),
+                const Text('Description Sections:', style: TextStyle(fontWeight: FontWeight.bold)),
+                const SizedBox(height: 4),
+                ...template.descriptionSections.map((section) =>
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 4),
+                    child: Row(
+                      children: [
+                        Icon(Icons.label_outline, size: 16, color: Theme.of(context).colorScheme.primary),
+                        const SizedBox(width: 8),
+                        Text(section.title, style: const TextStyle(fontWeight: FontWeight.w500)),
+                        if (section.hint.isNotEmpty)
+                          Text(
+                            ' - ${section.hint}',
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+                ),
+              ] else if (template.description.isNotEmpty) ...[
                 const SizedBox(height: 16),
                 const Text('Description:', style: TextStyle(fontWeight: FontWeight.bold)),
                 const SizedBox(height: 4),

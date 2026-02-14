@@ -3,6 +3,7 @@ import 'package:day_tracker/core/utils/utils.dart';
 import 'package:day_tracker/features/day_rating/data/models/day_rating.dart';
 import 'package:day_tracker/features/day_rating/data/models/diary_day.dart';
 import 'package:day_tracker/features/notes/data/models/note.dart';
+import 'package:day_tracker/features/note_templates/data/models/description_section.dart';
 import 'package:day_tracker/features/note_templates/data/models/note_template.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -173,6 +174,7 @@ class SupabaseApi {
           'description': template.description,
           'duration_minutes': template.durationMinutes,
           'note_category': template.noteCategory.title,
+          'description_sections': DescriptionSection.encode(template.descriptionSections),
         };
 
         LogWrapper.logger.d('Upserting template: ${data['id']}');
@@ -373,6 +375,7 @@ class SupabaseApi {
             'description': data['description'],
             'durationMinutes': data['duration_minutes'],
             'noteCategory': data['note_category'],
+            'descriptionSections': data['description_sections'] ?? '',
           };
 
           templates.add(NoteTemplate.fromMap(templateData));

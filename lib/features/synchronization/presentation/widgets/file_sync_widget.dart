@@ -350,10 +350,10 @@ class FileSyncWidget extends ConsumerWidget {
       SnackBar(
         duration: const Duration(seconds: 3),
         content: const Text('Operation completed successfully'),
-        backgroundColor: Colors.green,
+        backgroundColor: Theme.of(context).colorScheme.primary,
         action: SnackBarAction(
           label: 'OK',
-          textColor: Colors.white,
+          textColor: Theme.of(context).colorScheme.onPrimary,
           onPressed: () {
             ScaffoldMessenger.of(context).clearSnackBars();
           },
@@ -369,10 +369,10 @@ class FileSyncWidget extends ConsumerWidget {
         SnackBar(
           duration: const Duration(seconds: 5),
           content: Text('Error: $errorMsg'),
-          backgroundColor: Colors.red,
+          backgroundColor: Theme.of(context).colorScheme.error,
           action: SnackBarAction(
             label: 'OK',
-            textColor: Colors.white,
+            textColor: Theme.of(context).colorScheme.onError,
             onPressed: () {
               ScaffoldMessenger.of(context).clearSnackBars();
             },
@@ -439,9 +439,9 @@ class FileSyncWidget extends ConsumerWidget {
               ),
             ),
             const SizedBox(height: 8),
-            const Text(
+            Text(
               'This will create a new file or overwrite an existing file with the same name.',
-              style: TextStyle(fontSize: 12, color: Colors.grey),
+              style: TextStyle(fontSize: 12, color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6)),
             ),
           ],
         ),

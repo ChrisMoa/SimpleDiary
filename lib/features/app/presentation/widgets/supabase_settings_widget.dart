@@ -208,14 +208,14 @@ class _SupabaseSettingsWidgetState extends ConsumerState<SupabaseSettingsWidget>
         icon: Icon(
           Icons.cloud_circle_outlined,
           size: isSmallScreen ? 20 : 24,
-          color: Colors.white,
+          color: theme.colorScheme.onPrimary,
         ),
         label: Text(
           'Test Connection',
           style: TextStyle(
             fontSize: isSmallScreen ? 14 : 16,
             fontWeight: FontWeight.bold,
-            color: Colors.white,
+            color: theme.colorScheme.onPrimary,
           ),
         ),
       ),
@@ -232,9 +232,9 @@ class _SupabaseSettingsWidgetState extends ConsumerState<SupabaseSettingsWidget>
         settings.password.isEmpty) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Please fill in all fields'),
-            backgroundColor: Colors.red,
+          SnackBar(
+            content: const Text('Please fill in all fields'),
+            backgroundColor: Theme.of(context).colorScheme.error,
           ),
         );
       }
@@ -263,16 +263,16 @@ class _SupabaseSettingsWidgetState extends ConsumerState<SupabaseSettingsWidget>
       if (mounted) {
         if (success) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Connection successful!'),
-              backgroundColor: Colors.green,
+            SnackBar(
+              content: const Text('Connection successful!'),
+              backgroundColor: Theme.of(context).colorScheme.primary,
             ),
           );
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Connection failed: Authentication error'),
-              backgroundColor: Colors.red,
+            SnackBar(
+              content: const Text('Connection failed: Authentication error'),
+              backgroundColor: Theme.of(context).colorScheme.error,
             ),
           );
         }
@@ -282,7 +282,7 @@ class _SupabaseSettingsWidgetState extends ConsumerState<SupabaseSettingsWidget>
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Connection failed: ${e.toString()}'),
-            backgroundColor: Colors.red,
+            backgroundColor: Theme.of(context).colorScheme.error,
           ),
         );
       }
@@ -308,6 +308,7 @@ class _SupabaseSettingsWidgetState extends ConsumerState<SupabaseSettingsWidget>
       onChanged: onChanged,
       style: theme.textTheme.bodyMedium?.copyWith(
         fontSize: isSmallScreen ? 14 : 16,
+        color: theme.colorScheme.onSurface,
       ),
       decoration: InputDecoration(
         labelText: label,

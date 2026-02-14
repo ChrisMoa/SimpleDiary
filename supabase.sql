@@ -90,9 +90,14 @@ CREATE TABLE IF NOT EXISTS public.note_templates (
     description TEXT NOT NULL,
     duration_minutes INTEGER NOT NULL,
     note_category TEXT NOT NULL,
+    description_sections TEXT NOT NULL DEFAULT '',
     created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL
 );
+
+-- Migration: Add description_sections column to existing note_templates
+ALTER TABLE public.note_templates
+  ADD COLUMN IF NOT EXISTS description_sections TEXT NOT NULL DEFAULT '';
 
 -- Create index for faster queries by user_id
 CREATE INDEX IF NOT EXISTS idx_note_templates_user_id ON public.note_templates(user_id);

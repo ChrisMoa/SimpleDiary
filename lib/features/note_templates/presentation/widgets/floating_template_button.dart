@@ -1,5 +1,6 @@
 import 'package:day_tracker/core/provider/theme_provider.dart';
 import 'package:day_tracker/features/day_rating/domain/providers/diary_wizard_providers.dart';
+import 'package:day_tracker/features/notes/data/models/note.dart';
 import 'package:day_tracker/features/notes/domain/providers/note_local_db_provider.dart';
 import 'package:day_tracker/features/note_templates/data/models/note_template.dart';
 import 'package:day_tracker/features/note_templates/domain/providers/note_template_local_db_provider.dart';
@@ -61,7 +62,7 @@ class FloatingTemplateButton extends ConsumerWidget {
       child: FloatingActionButton.small(
         onPressed: () => _createNoteFromTemplate(context, ref, template),
         backgroundColor: template.noteCategory.color,
-        foregroundColor: Colors.white,
+        foregroundColor: theme.colorScheme.onPrimary,
         heroTag: 'template_${template.id}',
         child: Text(
           template.title.substring(0, 1),
@@ -89,8 +90,15 @@ class FloatingTemplateButton extends ConsumerWidget {
     NoteTemplate template,
   ) {
     try {
-      // Create a new note from template using the provider
-      final newNote = ref.read(createNoteFromTemplateProvider(template));
+      // Create a new note directly to avoid Provider.family caching issues
+      final nextAvailableTime = ref.read(nextAvailableTimeSlotProvider);
+      final newNote = Note(
+        title: template.title,
+        description: template.generateDescription(),
+        from: nextAvailableTime,
+        to: nextAvailableTime.add(Duration(minutes: template.durationMinutes)),
+        noteCategory: template.noteCategory,
+      );
 
       // Add to database
       ref.read(notesLocalDataProvider.notifier).addElement(newNote);

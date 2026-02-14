@@ -24,6 +24,11 @@ class ThemeProvider extends StateNotifier<ThemeData> {
                 vertical: 8,
               ),
             ),
+            elevatedButtonTheme: ElevatedButtonThemeData(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: initialColorScheme.primaryContainer,
+              ),
+            ),
           );
         }());
   bool darkMode = false;
@@ -54,6 +59,11 @@ class ThemeProvider extends StateNotifier<ThemeData> {
           vertical: 8,
         ),
       ),
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: newColorScheme.primaryContainer,
+        ),
+      ),
     );
 
     _seedColor = newThemeColor;
@@ -82,6 +92,11 @@ class ThemeProvider extends StateNotifier<ThemeData> {
         margin: const EdgeInsets.symmetric(
           horizontal: 16,
           vertical: 8,
+        ),
+      ),
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: newColorScheme.primaryContainer,
         ),
       ),
     );
