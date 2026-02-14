@@ -8,11 +8,11 @@ void main() {
       test('contains all default categories', () {
         final titles =
             availableNoteCategories.map((c) => c.title).toList();
-        expect(titles, contains('Arbeit'));
-        expect(titles, contains('Freizeit'));
-        expect(titles, contains('Essen'));
+        expect(titles, contains('Work'));
+        expect(titles, contains('Leisure'));
+        expect(titles, contains('Food'));
         expect(titles, contains('Gym'));
-        expect(titles, contains('Schlafen'));
+        expect(titles, contains('Sleep'));
       });
 
       test('has exactly 5 defaults', () {
@@ -28,8 +28,8 @@ void main() {
 
     group('fromString', () {
       test('finds existing category by title', () {
-        final category = NoteCategory.fromString('Arbeit');
-        expect(category.title, 'Arbeit');
+        final category = NoteCategory.fromString('Work');
+        expect(category.title, 'Work');
         expect(category.color, Colors.purple);
       });
 
@@ -47,8 +47,8 @@ void main() {
       });
 
       test('is case-sensitive', () {
-        // 'arbeit' (lowercase) should not match 'Arbeit'
-        final category = NoteCategory.fromString('arbeit');
+        // 'work' (lowercase) should not match 'Work'
+        final category = NoteCategory.fromString('work');
         expect(category.color, Colors.blue); // fallback
       });
     });

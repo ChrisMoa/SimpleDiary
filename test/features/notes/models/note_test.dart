@@ -71,7 +71,7 @@ void main() {
 
       test('can update all fields', () {
         final original = createSampleNote();
-        final newCategory = availableNoteCategories[1]; // Freizeit
+        final newCategory = availableNoteCategories[1]; // Leisure
         final copy = original.copyWith(
           id: 'new-id',
           title: 'New Title',
@@ -128,7 +128,7 @@ void main() {
           from: DateTime(2024, 12, 25, 0, 0),
           to: DateTime(2024, 12, 25, 23, 59),
           isAllDay: true,
-          noteCategory: availableNoteCategories[1], // Freizeit
+          noteCategory: availableNoteCategories[1], // Leisure
         );
 
         final map = note.toMap();

@@ -116,7 +116,7 @@ void main() {
         expect(copy.title, 'New Template');
         expect(copy.description, 'New description');
         expect(copy.durationMinutes, 90);
-        expect(copy.noteCategory.title, 'Arbeit');
+        expect(copy.noteCategory.title, 'Work');
         expect(copy.descriptionSections, isEmpty);
       });
     });

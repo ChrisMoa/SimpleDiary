@@ -1,6 +1,7 @@
 import 'package:day_tracker/core/authentication/password_auth_service.dart';
 import 'package:day_tracker/core/log/logger_instance.dart';
 import 'package:day_tracker/core/settings/settings_container.dart';
+import 'package:day_tracker/core/utils/debug_auto_login.dart';
 import 'package:day_tracker/features/authentication/data/models/user_data.dart';
 import 'package:day_tracker/features/authentication/data/models/user_settings.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -163,6 +164,35 @@ class UserDataProvider extends StateNotifier<UserData> {
       settingsContainer.lastLoggedInUsername = '';
     }
     state = emptyUser;
+  }
+
+  void debugAutoLogin() {
+    if (!DebugAutoLogin.isEnabled || !DebugAutoLogin.hasValidCredentials) {
+      return;
+    }
+
+    final username = DebugAutoLogin.username;
+    final password = DebugAutoLogin.password;
+    final email = DebugAutoLogin.email;
+
+    LogWrapper.logger.i('Debug auto-login: attempting login as $username');
+
+    // Create user if doesn't exist yet
+    if (!settingsContainer.checkIfUserExists(username)) {
+      LogWrapper.logger.i('Debug auto-login: creating test user $username');
+      createUser(UserData(
+        username: username,
+        clearPassword: password,
+        email: email,
+      ));
+      return; // createUser already sets isLoggedIn=true
+    }
+
+    // User exists, log in
+    final success = login(username, password);
+    if (!success) {
+      LogWrapper.logger.e('Debug auto-login failed for $username');
+    }
   }
 
   // Helper method to get database encryption key for current user

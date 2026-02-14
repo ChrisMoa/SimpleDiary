@@ -1,6 +1,6 @@
-import 'dart:io';
 import 'package:day_tracker/core/provider/locale_provider.dart';
 import 'package:day_tracker/core/settings/settings_container.dart';
+import 'package:day_tracker/features/authentication/data/models/user_settings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -8,21 +8,17 @@ import 'package:flutter_test/flutter_test.dart';
 /// Tests for LocaleProvider state management
 void main() {
   group('LocaleProvider', () {
-    setUpAll(() async {
-      // Initialize dotenv for settingsContainer
-      // Create a minimal .env file if it doesn't exist
-      final envFile = File('.env');
-      if (!envFile.existsSync()) {
-        await envFile.writeAsString('# Test environment\n');
-      }
-      await dotenv.load(fileName: '.env');
-
-      // Initialize settings
-      await settingsContainer.readSettings();
+    setUpAll(() {
+      // Initialize dotenv so SettingsContainer constructor works
+      dotenv.testLoad(mergeWith: {
+        'PROJECT_NAME': 'test_project',
+      });
     });
 
     setUp(() {
-      // Reset to default language before each test
+      // Reset settingsContainer with a fresh UserSettings
+      settingsContainer = SettingsContainer();
+      settingsContainer.activeUserSettings = UserSettings.fromEmpty();
       settingsContainer.activeUserSettings.languageCode = 'en';
     });
 

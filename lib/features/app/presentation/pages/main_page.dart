@@ -6,6 +6,7 @@ import 'package:day_tracker/core/encryption/aes_encryptor.dart';
 import 'package:day_tracker/core/log/logger_instance.dart';
 import 'package:day_tracker/core/navigation/drawer_item_builder.dart';
 import 'package:day_tracker/core/settings/settings_container.dart';
+import 'package:day_tracker/core/utils/debug_auto_login.dart';
 import 'package:day_tracker/features/authentication/data/models/user_data.dart';
 import 'package:day_tracker/features/authentication/domain/providers/user_data_provider.dart';
 import 'package:day_tracker/features/authentication/presentation/pages/auth_user_data_page.dart';
@@ -49,6 +50,12 @@ class _MainPageState extends ConsumerState<MainPage> {
       onResume: _handleOnResume,
     );
     _onInitAsync();
+    // Auto-login in debug mode
+    if (DebugAutoLogin.isEnabled) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ref.read(userDataProvider.notifier).debugAutoLogin();
+      });
+    }
     super.initState();
   }
 

@@ -144,7 +144,7 @@ void _defineSyncTests({
         from: DateTime(2099, 7, 1),
         to: DateTime(2099, 7, 1),
         isAllDay: true,
-        noteCategory: availableNoteCategories[1], // Freizeit
+        noteCategory: availableNoteCategories[1], // Leisure
       );
 
       await api.syncNotes([allDayNote], 'integration-test-user');
@@ -155,7 +155,7 @@ void _defineSyncTests({
 
       final fetchedNote = match.first;
       expect(fetchedNote.isAllDay, true);
-      expect(fetchedNote.noteCategory.title, 'Freizeit');
+      expect(fetchedNote.noteCategory.title, 'Leisure');
     });
   });
 
@@ -170,7 +170,7 @@ void _defineSyncTests({
         title: 'Integration Test Template',
         description: 'Test template description',
         durationMinutes: 45,
-        noteCategory: availableNoteCategories[2], // Essen
+        noteCategory: availableNoteCategories[2], // Food
       );
 
       // Upload — may fail if the note_templates table schema is outdated.
@@ -198,7 +198,7 @@ void _defineSyncTests({
       expect(fetchedTemplate.title, 'Integration Test Template');
       expect(fetchedTemplate.description, 'Test template description');
       expect(fetchedTemplate.durationMinutes, 45);
-      expect(fetchedTemplate.noteCategory.title, 'Essen');
+      expect(fetchedTemplate.noteCategory.title, 'Food');
     });
   });
 
@@ -231,7 +231,7 @@ void _defineSyncTests({
         title: 'Full Round-Trip Template',
         description: 'Full sync template',
         durationMinutes: 60,
-        noteCategory: availableNoteCategories[4], // Schlafen
+        noteCategory: availableNoteCategories[4], // Sleep
       );
 
       // Upload all
@@ -276,7 +276,7 @@ void _defineSyncTests({
           fetchedTemplates.where((t) => t.id == '$templateId-full');
       expect(matchTemplate, isNotEmpty);
       expect(matchTemplate.first.title, 'Full Round-Trip Template');
-      expect(matchTemplate.first.noteCategory.title, 'Schlafen');
+      expect(matchTemplate.first.noteCategory.title, 'Sleep');
     });
   });
 }
