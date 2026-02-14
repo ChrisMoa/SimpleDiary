@@ -11,6 +11,7 @@ import 'package:day_tracker/features/authentication/domain/providers/user_data_p
 import 'package:day_tracker/features/day_rating/data/models/diary_day.dart';
 import 'package:day_tracker/features/day_rating/domain/providers/diary_day_local_db_provider.dart';
 import 'package:day_tracker/features/notes/data/models/note.dart';
+import 'package:day_tracker/features/notes/domain/providers/category_local_db_provider.dart';
 import 'package:day_tracker/features/notes/domain/providers/note_local_db_provider.dart';
 import 'package:day_tracker/features/synchronization/data/models/export_data.dart';
 import 'package:day_tracker/features/synchronization/domain/providers/file_db_provider.dart';
@@ -641,8 +642,10 @@ class FileSyncWidget extends ConsumerWidget {
 
           // Import the ICS data
           try {
+            final categories = ref.read(categoryLocalDataProvider);
             await ref.read(icsFileStateProvider.notifier).importFromIcs(
               File(path),
+              categories,
               password: password,
             );
 

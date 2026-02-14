@@ -3,6 +3,7 @@ import 'package:day_tracker/features/note_templates/data/models/description_sect
 import 'package:day_tracker/features/note_templates/data/models/note_template.dart';
 import 'package:day_tracker/features/note_templates/domain/providers/note_template_local_db_provider.dart';
 import 'package:day_tracker/features/notes/data/models/note_category.dart';
+import 'package:day_tracker/features/notes/domain/providers/category_local_db_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -139,7 +140,7 @@ class _TemplateEditingWidgetState extends ConsumerState<TemplateEditingWidget> {
                     color: theme.colorScheme.onSurface,
                   ),
                   dropdownColor: theme.colorScheme.surface,
-                  items: availableNoteCategories.map((category) {
+                  items: ref.watch(categoryLocalDataProvider).map((category) {
                     return DropdownMenuItem(
                       value: category,
                       child: Row(

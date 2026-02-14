@@ -2,6 +2,7 @@ import 'package:day_tracker/core/provider/theme_provider.dart';
 import 'package:day_tracker/core/settings/settings_container.dart';
 import 'package:day_tracker/features/synchronization/domain/providers/supabase_provider.dart';
 import 'package:day_tracker/features/synchronization/data/repositories/supabase_api.dart';
+import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -252,7 +253,7 @@ class _SupabaseSettingsWidgetState extends ConsumerState<SupabaseSettingsWidget>
         );
       }
       
-      final supabaseApi = SupabaseApi();
+      final supabaseApi = SupabaseApi(tablePrefix: kDebugMode ? 'test_' : '');
       
       // Initialize
       await supabaseApi.initialize(settings.supabaseUrl, settings.supabaseAnonKey);

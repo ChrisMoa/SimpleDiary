@@ -3,10 +3,10 @@ import 'package:day_tracker/core/utils/platform_utils.dart';
 import 'package:day_tracker/core/utils/utils.dart';
 import 'package:day_tracker/features/notes/data/models/note.dart';
 import 'package:day_tracker/features/notes/data/models/note_category.dart';
+import 'package:day_tracker/features/notes/domain/providers/category_local_db_provider.dart';
 import 'package:day_tracker/features/notes/domain/providers/note_editing_page_provider.dart';
 import 'package:day_tracker/features/notes/domain/providers/note_local_db_provider.dart';
 import 'package:day_tracker/features/notes/domain/providers/note_selected_date_provider.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
@@ -176,11 +176,19 @@ class _NoteEditingwizardWidgetState extends ConsumerState<NoteEditingWizardWidge
         ],
       );
 
-  Widget buildCategory() => DropdownButtonFormField(
-        value: note.noteCategory,
+  Widget buildCategory() {
+    final categories = ref.watch(categoryLocalDataProvider);
+
+    // Ensure the current category exists in the list (matched by title via ==)
+    if (categories.isNotEmpty && !categories.contains(note.noteCategory)) {
+      note.noteCategory = categories.first;
+    }
+
+    return DropdownButtonFormField(
+        value: categories.isEmpty ? null : note.noteCategory,
         items: [
           // entries is the iterable object in the map
-          for (final category in availableNoteCategories)
+          for (final category in categories)
             DropdownMenuItem(
               value: category,
               child: Row(
@@ -202,12 +210,15 @@ class _NoteEditingwizardWidgetState extends ConsumerState<NoteEditingWizardWidge
             ),
         ],
         onChanged: (value) {
-          setState(() {
-            note.noteCategory = value!;
-            _calculateNewNote = false;
-          });
+          if (value != null) {
+            setState(() {
+              note.noteCategory = value;
+              _calculateNewNote = false;
+            });
+          }
         },
       );
+  }
 
   Widget buildDescription() => buildHeader(
         header: 'Description',
@@ -428,6 +439,7 @@ class _NoteEditingwizardWidgetState extends ConsumerState<NoteEditingWizardWidge
   void calculateNextFreeNoteOfDay() {
     final selectedDate = ref.read(noteSelectedDateProvider);
     final notesOfDay = ref.read(notesOfSelecteDayProvider);
+    final defaultCategory = ref.read(defaultCategoryProvider);
     LogWrapper.logger.t('updates notes of day ${Utils.toDate(selectedDate)}');
 
     final dayBegin = selectedDate.copyWith(hour: 7, minute: 0, second: 0);
@@ -453,12 +465,19 @@ class _NoteEditingwizardWidgetState extends ConsumerState<NoteEditingWizardWidge
     if (curTime.isBefore(dayBegin)) {
       curTime = dayBegin;
     }
+
+    // Use default category if available, otherwise create a temporary one
+    final noteCategory = defaultCategory ?? NoteCategory(
+      title: 'Default',
+      color: Colors.blue,
+    );
+
     note = Note(
       title: '',
       description: '',
       from: curTime,
       to: curTime.add(const Duration(minutes: 30)),
-      noteCategory: availableNoteCategories.first,
+      noteCategory: noteCategory,
     );
   }
 }

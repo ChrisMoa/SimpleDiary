@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:day_tracker/core/log/logger_instance.dart';
 import 'package:day_tracker/core/settings/settings_container.dart';
 import 'package:day_tracker/features/authentication/domain/providers/user_data_provider.dart';
@@ -9,9 +10,10 @@ import 'package:day_tracker/features/synchronization/data/repositories/supabase_
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 // Supabase API instance provider
+// Debug builds use test_ prefixed tables to avoid polluting production data.
 final supabaseApiProvider = Provider<SupabaseApi>((ref) {
   LogWrapper.logger.d('Creating new SupabaseApi instance');
-  return SupabaseApi();
+  return SupabaseApi(tablePrefix: kDebugMode ? 'test_' : '');
 });
 
 // Supabase settings provider

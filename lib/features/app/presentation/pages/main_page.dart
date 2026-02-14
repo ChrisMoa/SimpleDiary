@@ -12,6 +12,7 @@ import 'package:day_tracker/features/authentication/presentation/pages/auth_user
 import 'package:day_tracker/features/authentication/presentation/pages/password_authentication_page.dart';
 import 'package:day_tracker/features/authentication/presentation/pages/show_user_data_page.dart';
 import 'package:day_tracker/features/day_rating/domain/providers/diary_day_local_db_provider.dart';
+import 'package:day_tracker/features/notes/domain/providers/category_local_db_provider.dart';
 import 'package:day_tracker/features/notes/domain/providers/note_local_db_provider.dart';
 import 'package:day_tracker/features/note_templates/domain/providers/note_template_local_db_provider.dart';
 import 'package:flutter/material.dart';
@@ -165,6 +166,11 @@ class _MainPageState extends ConsumerState<MainPage> {
       await ref.read(diaryDayLocalDbDataProvider.notifier).changeUser(userData);
       await ref.read(notesLocalDataProvider.notifier).changeUser(userData);
 
+      // Initialize category database for the user
+      LogWrapper.logger.d('Initializing categories for user ${userData.username}');
+      await ref.read(categoryLocalDataProvider.notifier).changeDbFileToUser(userData);
+      await ref.read(categoryLocalDataProvider.notifier).readObjectsFromDatabase();
+
       // Initialize template database for the user
       LogWrapper.logger.d('Initializing templates for user ${userData.username}');
       await ref.read(noteTemplateLocalDataProvider.notifier).changeDbFileToUser(userData);
@@ -205,6 +211,14 @@ class _MainPageState extends ConsumerState<MainPage> {
             LogWrapper.logger.d('Notes database encrypted successfully');
           }
 
+          // Encrypt categories database
+          File categoriesFile = ref.read(categoryLocalDataProvider.notifier).dbFile;
+          if (categoriesFile.existsSync() && categoriesFile.lengthSync() > 0) {
+            LogWrapper.logger.d('Encrypting categories database for user ${oldUserData.userId}');
+            aesEncryptor.encryptFile(categoriesFile);
+            LogWrapper.logger.d('Categories database encrypted successfully');
+          }
+
           // Encrypt templates database
           File templatesFile = ref.read(noteTemplateLocalDataProvider.notifier).dbFile;
           if (templatesFile.existsSync() && templatesFile.lengthSync() > 0) {
@@ -231,6 +245,7 @@ class _MainPageState extends ConsumerState<MainPage> {
         if (encryptionKey.isNotEmpty) {
           // Change database file to new user
           ref.read(notesLocalDataProvider.notifier).changeDbFileToUser(newUserData);
+          ref.read(categoryLocalDataProvider.notifier).changeDbFileToUser(newUserData);
           ref.read(noteTemplateLocalDataProvider.notifier).changeDbFileToUser(newUserData);
 
           // Decrypt notes database
@@ -240,6 +255,15 @@ class _MainPageState extends ConsumerState<MainPage> {
             var aesEncryptor = AesEncryptor(encryptionKey: encryptionKey);
             aesEncryptor.decryptFile(notesFile);
             LogWrapper.logger.d('Notes database decrypted successfully');
+          }
+
+          // Decrypt categories database
+          File categoriesFile = ref.read(categoryLocalDataProvider.notifier).dbFile;
+          if (categoriesFile.existsSync() && categoriesFile.lengthSync() > 0) {
+            LogWrapper.logger.d('Decrypting categories database for user ${newUserData.userId}');
+            var aesEncryptor = AesEncryptor(encryptionKey: encryptionKey);
+            aesEncryptor.decryptFile(categoriesFile);
+            LogWrapper.logger.d('Categories database decrypted successfully');
           }
 
           // Decrypt templates database
