@@ -159,6 +159,9 @@ class _NoteSearchBarState extends ConsumerState<NoteSearchBar> {
               spacing: 8.0,
               runSpacing: 8.0,
               children: [
+                // Favorites filter
+                _buildFavoritesToggle(l10n, searchState),
+
                 // Category filter
                 _buildCategoryFilter(l10n, searchState),
 
@@ -202,6 +205,14 @@ class _NoteSearchBarState extends ConsumerState<NoteSearchBar> {
                 spacing: 8.0,
                 runSpacing: 4.0,
                 children: [
+                  if (searchState.favoritesOnly)
+                    _buildFilterChip(
+                      label: l10n.favorites,
+                      onDeleted: () {
+                        ref.read(noteSearchProvider.notifier).toggleFavoritesOnly();
+                      },
+                      color: Colors.amber,
+                    ),
                   if (searchState.categoryFilter != null)
                     _buildFilterChip(
                       label: searchState.categoryFilter!.title,
@@ -222,6 +233,27 @@ class _NoteSearchBarState extends ConsumerState<NoteSearchBar> {
             ],
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildFavoritesToggle(AppLocalizations l10n, NoteSearchState searchState) {
+    final theme = Theme.of(context);
+
+    return OutlinedButton.icon(
+      onPressed: () {
+        ref.read(noteSearchProvider.notifier).toggleFavoritesOnly();
+      },
+      icon: Icon(
+        searchState.favoritesOnly ? Icons.star : Icons.star_outline,
+        size: 18,
+        color: searchState.favoritesOnly ? Colors.amber : null,
+      ),
+      label: Text(l10n.favorites),
+      style: OutlinedButton.styleFrom(
+        backgroundColor: searchState.favoritesOnly
+            ? theme.colorScheme.primaryContainer.withValues(alpha: 0.3)
+            : null,
       ),
     );
   }

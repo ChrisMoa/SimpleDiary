@@ -44,52 +44,30 @@ class FavoritesSectionWidget extends ConsumerWidget {
           ),
         ),
 
-        // Favorite days (show up to 5 in horizontal scroll)
-        if (favoriteDays.isNotEmpty) ...[
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-            child: Text(
-              'Favorite Days', // TODO: localize
-              style: theme.textTheme.titleSmall?.copyWith(
-                color: theme.colorScheme.onSurfaceVariant,
+        // Single horizontal scroll with all favorites
+        SizedBox(
+          height: 100,
+          child: ListView(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            children: [
+              // Favorite days
+              ...favoriteDays.map(
+                (day) => _buildFavoriteDayCard(context, ref, day),
               ),
-            ),
-          ),
-          SizedBox(
-            height: 100,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.symmetric(horizontal: 12),
-              itemCount: favoriteDays.take(5).length,
-              itemBuilder: (context, index) {
-                final day = favoriteDays[index];
-                return _buildFavoriteDayCard(context, ref, day);
-              },
-            ),
-          ),
-          const SizedBox(height: 8),
-        ],
-
-        // Favorite notes (show up to 5)
-        if (favoriteNotes.isNotEmpty) ...[
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-            child: Text(
-              'Favorite Notes', // TODO: localize
-              style: theme.textTheme.titleSmall?.copyWith(
-                color: theme.colorScheme.onSurfaceVariant,
+              // Favorite notes
+              ...favoriteNotes.map(
+                (note) => _buildFavoriteNoteCard(context, ref, note),
               ),
-            ),
+            ],
           ),
-          ...favoriteNotes
-              .take(5)
-              .map((note) => _buildFavoriteNoteCard(context, ref, note)),
-        ],
+        ),
       ],
     );
   }
 
-  Widget _buildFavoriteDayCard(BuildContext context, WidgetRef ref, DiaryDay day) {
+  Widget _buildFavoriteDayCard(
+      BuildContext context, WidgetRef ref, DiaryDay day) {
     final theme = Theme.of(context);
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
@@ -128,27 +106,63 @@ class FavoritesSectionWidget extends ConsumerWidget {
       BuildContext context, WidgetRef ref, Note note) {
     final theme = Theme.of(context);
     return Card(
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-      child: ListTile(
-        leading: CircleAvatar(
-          backgroundColor: note.noteCategory.color.withValues(alpha: 0.2),
-          child: Icon(
-            Icons.note,
-            color: note.noteCategory.color,
-            size: 20,
+      margin: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+      child: InkWell(
+        onTap: () => _navigateToNoteDetail(context, ref, note),
+        borderRadius: BorderRadius.circular(12),
+        child: Container(
+          width: 160,
+          padding: const EdgeInsets.all(12),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    width: 10,
+                    height: 10,
+                    decoration: BoxDecoration(
+                      color: note.noteCategory.color,
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                  const SizedBox(width: 6),
+                  Expanded(
+                    child: Text(
+                      note.title,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: theme.textTheme.titleSmall?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  const Icon(Icons.star, color: Colors.amber, size: 16),
+                ],
+              ),
+              const SizedBox(height: 4),
+              Text(
+                DateFormat('MMM d, yyyy').format(note.from),
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
+              ),
+              if (note.description.isNotEmpty) ...[
+                const SizedBox(height: 2),
+                Text(
+                  note.description,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: theme.colorScheme.onSurfaceVariant
+                        .withValues(alpha: 0.7),
+                  ),
+                ),
+              ],
+            ],
           ),
         ),
-        title: Text(
-          note.title,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-        ),
-        subtitle: Text(
-          DateFormat('MMM d, yyyy').format(note.from),
-          style: theme.textTheme.bodySmall,
-        ),
-        trailing: const Icon(Icons.star, color: Colors.amber, size: 20),
-        onTap: () => _navigateToNoteDetail(context, ref, note),
       ),
     );
   }
@@ -188,7 +202,8 @@ class FavoritesSectionWidget extends ConsumerWidget {
     );
   }
 
-  void _navigateToDayDetail(BuildContext context, WidgetRef ref, DiaryDay day) {
+  void _navigateToDayDetail(
+      BuildContext context, WidgetRef ref, DiaryDay day) {
     ref.read(noteSelectedDateProvider.notifier).updateSelectedDate(day.day);
     Navigator.push(
       context,
@@ -198,7 +213,8 @@ class FavoritesSectionWidget extends ConsumerWidget {
     );
   }
 
-  void _navigateToNoteDetail(BuildContext context, WidgetRef ref, Note note) {
+  void _navigateToNoteDetail(
+      BuildContext context, WidgetRef ref, Note note) {
     ref.read(noteEditingPageProvider.notifier).updateNote(note);
     ref.read(noteSelectedDateProvider.notifier).updateSelectedDate(note.from);
     Navigator.push(
