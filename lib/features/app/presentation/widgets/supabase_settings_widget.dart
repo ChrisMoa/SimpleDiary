@@ -4,6 +4,7 @@ import 'package:day_tracker/features/synchronization/domain/providers/supabase_p
 import 'package:day_tracker/features/synchronization/data/repositories/supabase_api.dart';
 import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart';
+import 'package:day_tracker/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class SupabaseSettingsWidget extends ConsumerStatefulWidget {
@@ -46,6 +47,7 @@ class _SupabaseSettingsWidgetState extends ConsumerState<SupabaseSettingsWidget>
   @override
   Widget build(BuildContext context) {
     final theme = ref.watch(themeProvider);
+    final l10n = AppLocalizations.of(context);
     final mediaQuery = MediaQuery.of(context);
     final screenWidth = mediaQuery.size.width;
     final isSmallScreen = screenWidth < 600;
@@ -83,7 +85,7 @@ class _SupabaseSettingsWidgetState extends ConsumerState<SupabaseSettingsWidget>
                   ),
                   const SizedBox(width: 8),
                   Text(
-                    'Supabase Settings',
+                    l10n.supabaseSettings,
                     style: theme.textTheme.titleLarge?.copyWith(
                       color: theme.colorScheme.primary,
                       fontWeight: FontWeight.bold,
@@ -96,7 +98,7 @@ class _SupabaseSettingsWidgetState extends ConsumerState<SupabaseSettingsWidget>
               const SizedBox(height: 16),
 
               Text(
-                'Configure your Supabase cloud storage settings for backup and cross-device access.',
+                l10n.supabaseDescription,
                 style: theme.textTheme.bodyMedium?.copyWith(
                   color: theme.colorScheme.onSurface,
                 ),
@@ -107,7 +109,7 @@ class _SupabaseSettingsWidgetState extends ConsumerState<SupabaseSettingsWidget>
               // Settings Form
               _buildTextField(
                 controller: _urlController,
-                label: 'Supabase URL',
+                label: l10n.supabaseUrl,
                 hint: 'https://your-project.supabase.co',
                 icon: Icons.link,
                 onChanged: (value) {
@@ -121,7 +123,7 @@ class _SupabaseSettingsWidgetState extends ConsumerState<SupabaseSettingsWidget>
 
               _buildTextField(
                 controller: _anonKeyController,
-                label: 'Anon Key',
+                label: l10n.anonKey,
                 hint: 'Your Supabase anon key',
                 icon: Icons.key,
                 isPassword: !_anonKeyVisible,
@@ -141,7 +143,7 @@ class _SupabaseSettingsWidgetState extends ConsumerState<SupabaseSettingsWidget>
 
               _buildTextField(
                 controller: _emailController,
-                label: 'Email',
+                label: l10n.email,
                 hint: 'your.email@example.com',
                 icon: Icons.email,
                 keyboardType: TextInputType.emailAddress,
@@ -156,7 +158,7 @@ class _SupabaseSettingsWidgetState extends ConsumerState<SupabaseSettingsWidget>
 
               _buildTextField(
                 controller: _passwordController,
-                label: 'Password',
+                label: l10n.password,
                 hint: 'Your Supabase password',
                 icon: Icons.lock,
                 isPassword: !_passwordVisible,
@@ -172,9 +174,9 @@ class _SupabaseSettingsWidgetState extends ConsumerState<SupabaseSettingsWidget>
                 theme: theme,
                 isSmallScreen: isSmallScreen,
               ),
-              
+
               SizedBox(height: isSmallScreen ? 16 : 24),
-              
+
               // Test Connection Button
               _buildTestConnectionButton(theme, isSmallScreen),
             ],
@@ -183,8 +185,9 @@ class _SupabaseSettingsWidgetState extends ConsumerState<SupabaseSettingsWidget>
       ),
     );
   }
-  
+
   Widget _buildTestConnectionButton(ThemeData theme, bool isSmallScreen) {
+    final l10n = AppLocalizations.of(context);
     return Container(
       width: double.infinity,
       height: isSmallScreen ? 48 : 52,
@@ -212,7 +215,7 @@ class _SupabaseSettingsWidgetState extends ConsumerState<SupabaseSettingsWidget>
           color: theme.colorScheme.onPrimary,
         ),
         label: Text(
-          'Test Connection',
+          l10n.testConnection,
           style: TextStyle(
             fontSize: isSmallScreen ? 14 : 16,
             fontWeight: FontWeight.bold,
@@ -222,57 +225,60 @@ class _SupabaseSettingsWidgetState extends ConsumerState<SupabaseSettingsWidget>
       ),
     );
   }
-  
+
   Future<void> _testConnection() async {
     final settings = ref.read(supabaseSettingsProvider);
-    
+
     // Validate that all fields are filled
-    if (settings.supabaseUrl.isEmpty || 
-        settings.supabaseAnonKey.isEmpty || 
-        settings.email.isEmpty || 
+    if (settings.supabaseUrl.isEmpty ||
+        settings.supabaseAnonKey.isEmpty ||
+        settings.email.isEmpty ||
         settings.password.isEmpty) {
       if (mounted) {
+        final l10n = AppLocalizations.of(context);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: const Text('Please fill in all fields'),
+            content: Text(l10n.pleaseEnterAllFields),
             backgroundColor: Theme.of(context).colorScheme.error,
           ),
         );
       }
       return;
     }
-    
+
     try {
       // Show loading indicator
       if (mounted) {
+        final l10n = AppLocalizations.of(context);
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Testing connection...'),
-            duration: Duration(seconds: 1),
+          SnackBar(
+            content: Text(l10n.testingConnection),
+            duration: const Duration(seconds: 1),
           ),
         );
       }
-      
+
       final supabaseApi = SupabaseApi(tablePrefix: kDebugMode ? 'test_' : '');
-      
+
       // Initialize
       await supabaseApi.initialize(settings.supabaseUrl, settings.supabaseAnonKey);
-      
+
       // Test authentication
       final success = await supabaseApi.signInWithEmailPassword(settings.email, settings.password);
-      
+
       if (mounted) {
+        final l10n = AppLocalizations.of(context);
         if (success) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: const Text('Connection successful!'),
+              content: Text(l10n.connectionSuccessful),
               backgroundColor: Theme.of(context).colorScheme.primary,
             ),
           );
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: const Text('Connection failed: Authentication error'),
+              content: Text(l10n.connectionFailedAuth),
               backgroundColor: Theme.of(context).colorScheme.error,
             ),
           );
@@ -280,9 +286,10 @@ class _SupabaseSettingsWidgetState extends ConsumerState<SupabaseSettingsWidget>
       }
     } catch (e) {
       if (mounted) {
+        final l10n = AppLocalizations.of(context);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Connection failed: ${e.toString()}'),
+            content: Text(l10n.connectionFailed(e.toString())),
             backgroundColor: Theme.of(context).colorScheme.error,
           ),
         );

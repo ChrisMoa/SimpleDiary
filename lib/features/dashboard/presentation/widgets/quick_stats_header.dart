@@ -2,6 +2,7 @@ import 'package:day_tracker/core/utils/responsive_breakpoints.dart';
 import 'package:day_tracker/features/dashboard/domain/providers/dashboard_stats_provider.dart';
 import 'package:day_tracker/features/day_rating/presentation/pages/diary_day_wizard_page.dart';
 import 'package:flutter/material.dart';
+import 'package:day_tracker/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// Quick stats header showing today's status, streak, and weekly average
@@ -26,15 +27,16 @@ class QuickStatsHeader extends ConsumerWidget {
         margin: const EdgeInsets.all(16),
         child: Padding(
           padding: const EdgeInsets.all(24),
-          child: Text('Fehler: $error'),
+          child: Text(AppLocalizations.of(context)!.errorWithMessage(error.toString())),
         ),
       ),
       data: (stats) {
+        final l10n = AppLocalizations.of(context)!;
         final colorScheme = theme.colorScheme;
         // Use theme colors: primary for done, error for pending
         final statusColor = stats.todayLogged ? colorScheme.primary : colorScheme.error;
         final statusIcon = stats.todayLogged ? Icons.check_circle : Icons.pending;
-        final statusText = stats.todayLogged ? 'Eingetragen' : 'Ausstehend';
+        final statusText = stats.todayLogged ? l10n.recorded : l10n.pending;
 
         return Card(
           margin: const EdgeInsets.all(16),
@@ -49,7 +51,7 @@ class QuickStatsHeader extends ConsumerWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      'Heute',
+                      l10n.today,
                       style: theme.textTheme.headlineSmall?.copyWith(
                         fontWeight: FontWeight.bold,
                         color: theme.colorScheme.onSurface,
@@ -64,20 +66,20 @@ class QuickStatsHeader extends ConsumerWidget {
                 isDesktop
                     ? Row(
                         children: [
-                          Expanded(child: _buildStreakStat(stats.currentStreak, theme)),
+                          Expanded(child: _buildStreakStat(stats.currentStreak, theme, l10n)),
                           const SizedBox(width: 16),
-                          Expanded(child: _buildAverageStat(stats.weekStats.averageScore, theme)),
+                          Expanded(child: _buildAverageStat(stats.weekStats.averageScore, theme, l10n)),
                           const SizedBox(width: 16),
-                          Expanded(child: _buildStatusStat(statusText, statusColor, theme)),
+                          Expanded(child: _buildStatusStat(statusText, statusColor, theme, l10n)),
                         ],
                       )
                     : Column(
                         children: [
-                          _buildStreakStat(stats.currentStreak, theme),
+                          _buildStreakStat(stats.currentStreak, theme, l10n),
                           const SizedBox(height: 12),
-                          _buildAverageStat(stats.weekStats.averageScore, theme),
+                          _buildAverageStat(stats.weekStats.averageScore, theme, l10n),
                           const SizedBox(height: 12),
-                          _buildStatusStat(statusText, statusColor, theme),
+                          _buildStatusStat(statusText, statusColor, theme, l10n),
                         ],
                       ),
 
@@ -95,7 +97,7 @@ class QuickStatsHeader extends ConsumerWidget {
                         );
                       },
                       icon: const Icon(Icons.add),
-                      label: const Text('Heute eintragen'),
+                      label: Text(l10n.recordToday),
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 16),
                       ),
@@ -110,7 +112,7 @@ class QuickStatsHeader extends ConsumerWidget {
     );
   }
 
-  Widget _buildStreakStat(int streak, ThemeData theme) {
+  Widget _buildStreakStat(int streak, ThemeData theme, AppLocalizations l10n) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -135,7 +137,7 @@ class QuickStatsHeader extends ConsumerWidget {
           ),
           const SizedBox(height: 4),
           Text(
-            'Tage Streak',
+            l10n.dayStreak,
             style: theme.textTheme.bodyMedium?.copyWith(
               color: theme.colorScheme.onSurfaceVariant,
             ),
@@ -145,7 +147,7 @@ class QuickStatsHeader extends ConsumerWidget {
     );
   }
 
-  Widget _buildAverageStat(double average, ThemeData theme) {
+  Widget _buildAverageStat(double average, ThemeData theme, AppLocalizations l10n) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -170,7 +172,7 @@ class QuickStatsHeader extends ConsumerWidget {
           ),
           const SizedBox(height: 4),
           Text(
-            'Wochendurchschnitt',
+            l10n.weeklyAverage,
             style: theme.textTheme.bodyMedium?.copyWith(
               color: theme.colorScheme.onSurfaceVariant,
             ),
@@ -180,7 +182,7 @@ class QuickStatsHeader extends ConsumerWidget {
     );
   }
 
-  Widget _buildStatusStat(String status, Color color, ThemeData theme) {
+  Widget _buildStatusStat(String status, Color color, ThemeData theme, AppLocalizations l10n) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -198,7 +200,7 @@ class QuickStatsHeader extends ConsumerWidget {
           ),
           const SizedBox(height: 4),
           Text(
-            'Status',
+            l10n.status,
             style: theme.textTheme.bodyMedium?.copyWith(
               color: theme.colorScheme.onSurfaceVariant,
             ),

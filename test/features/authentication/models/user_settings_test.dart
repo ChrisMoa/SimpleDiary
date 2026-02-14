@@ -25,6 +25,7 @@ void main() {
           email: 'supabase@test.com',
           password: 'supapass',
         ),
+        'en',
       );
     }
 
@@ -42,6 +43,7 @@ void main() {
         expect(settings.darkThemeMode, false);
         expect(settings.savedUserData.username, '');
         expect(settings.supabaseSettings.supabaseUrl, '');
+        expect(settings.languageCode, 'en');
       });
     });
 
@@ -78,6 +80,38 @@ void main() {
         };
         final settings = UserSettings.fromMap(map);
         expect(settings.supabaseSettings.supabaseUrl, '');
+      });
+
+      test('round-trip preserves languageCode', () {
+        final original = UserSettings(
+          true,
+          const Color(0xFF2196F3),
+          UserData.fromEmpty(),
+          SupabaseSettings.empty(),
+          'de',
+        );
+        final map = original.toMap();
+        final restored = UserSettings.fromMap(map);
+        expect(restored.languageCode, 'de');
+      });
+
+      test('fromMap defaults languageCode to en when missing (backward compat)', () {
+        final map = {
+          'darkThemeMode': false,
+          'themeSeedColor': 0xFF000000,
+          'userData': UserData.fromEmpty().toMap(),
+          'supabaseSettings': SupabaseSettings.empty().toMap(),
+          // no 'languageCode' key - simulates old settings file
+        };
+        final settings = UserSettings.fromMap(map);
+        expect(settings.languageCode, 'en');
+      });
+
+      test('map contains languageCode key', () {
+        final settings = createSampleSettings();
+        final map = settings.toMap();
+        expect(map, contains('languageCode'));
+        expect(map['languageCode'], 'en');
       });
     });
 

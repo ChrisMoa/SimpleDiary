@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:day_tracker/features/day_rating/domain/providers/diary_day_local_db_provider.dart';
-import 'package:day_tracker/core/provider/theme_provider.dart';
 
 class DiaryDayDetailPage extends ConsumerWidget {
   final DateTime selectedDate;

@@ -2,6 +2,7 @@ import 'package:day_tracker/core/settings/settings_container.dart';
 import 'package:day_tracker/features/authentication/data/models/user_data.dart';
 import 'package:day_tracker/features/authentication/domain/providers/user_data_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:day_tracker/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class AuthUserDataPage extends ConsumerStatefulWidget {
@@ -95,11 +96,12 @@ class _AuthUserDataPageState extends ConsumerState<AuthUserDataPage> {
 
   Widget _buildUsernameField() {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
     return TextFormField(
       controller: _usernameController,
       style: TextStyle(color: theme.colorScheme.onSurface),
       decoration: InputDecoration(
-        labelText: 'Username',
+        labelText: l10n.username,
         labelStyle: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.7)),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
@@ -119,7 +121,7 @@ class _AuthUserDataPageState extends ConsumerState<AuthUserDataPage> {
       ),
       validator: (value) {
         if (value == null || value.isEmpty) {
-          return 'Please enter a username';
+          return l10n.pleaseEnterUsername;
         }
         return null;
       },
@@ -128,12 +130,13 @@ class _AuthUserDataPageState extends ConsumerState<AuthUserDataPage> {
 
   Widget _buildPasswordField() {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
     return TextFormField(
       controller: _passwordController,
       obscureText: !_isPasswordVisible,
       style: TextStyle(color: theme.colorScheme.onSurface),
       decoration: InputDecoration(
-        labelText: 'Password',
+        labelText: l10n.password,
         labelStyle: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.7)),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
@@ -164,10 +167,10 @@ class _AuthUserDataPageState extends ConsumerState<AuthUserDataPage> {
       ),
       validator: (value) {
         if (value == null || value.isEmpty) {
-          return 'Please enter a password';
+          return l10n.pleaseEnterPassword;
         }
         if (!_isLogin && value.length < 8) {
-          return 'Password must be at least 8 characters';
+          return l10n.passwordMinLength;
         }
         return null;
       },
@@ -176,12 +179,13 @@ class _AuthUserDataPageState extends ConsumerState<AuthUserDataPage> {
 
   Widget _buildEmailField() {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
     return TextFormField(
       controller: _emailController,
       keyboardType: TextInputType.emailAddress,
       style: TextStyle(color: theme.colorScheme.onSurface),
       decoration: InputDecoration(
-        labelText: 'Email (optional)',
+        labelText: l10n.emailOptional,
         labelStyle: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.7)),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
@@ -203,7 +207,7 @@ class _AuthUserDataPageState extends ConsumerState<AuthUserDataPage> {
         if (value != null && value.isNotEmpty) {
           final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
           if (!emailRegex.hasMatch(value)) {
-            return 'Please enter a valid email address';
+            return l10n.pleaseEnterValidEmail;
           }
         }
         return null;
@@ -212,6 +216,7 @@ class _AuthUserDataPageState extends ConsumerState<AuthUserDataPage> {
   }
 
   Widget _buildLoginButton() {
+    final l10n = AppLocalizations.of(context);
     return ElevatedButton(
       onPressed: () {
         _onAuthClicked(_isLogin);
@@ -222,7 +227,7 @@ class _AuthUserDataPageState extends ConsumerState<AuthUserDataPage> {
         minimumSize: const Size(double.infinity, 48),
       ),
       child: Text(
-        _isLogin ? 'Login' : 'Sign Up',
+        _isLogin ? l10n.login : l10n.signUp,
         style: TextStyle(
           fontSize: 16,
           fontWeight: FontWeight.bold,
@@ -233,13 +238,14 @@ class _AuthUserDataPageState extends ConsumerState<AuthUserDataPage> {
   }
 
   Widget _buildRegisterButton() {
+    final l10n = AppLocalizations.of(context);
     return TextButton(
       onPressed: _onToggleRegisterClicked,
       style: TextButton.styleFrom(
         padding: const EdgeInsets.symmetric(vertical: 12),
       ),
       child: Text(
-        _isLogin ? 'Create an account' : 'I already have an account',
+        _isLogin ? l10n.createAccount : l10n.alreadyHaveAccount,
         style: TextStyle(
           color: Theme.of(context).colorScheme.primary,
         ),
@@ -247,9 +253,11 @@ class _AuthUserDataPageState extends ConsumerState<AuthUserDataPage> {
     );
   }
 
-  Widget _buildRemoteAccCheckbox() => Row(children: [
+  Widget _buildRemoteAccCheckbox() {
+    final l10n = AppLocalizations.of(context);
+    return Row(children: [
         Text(
-          'Remote Account?',
+          l10n.remoteAccount,
           style: Theme.of(context)
               .textTheme
               .titleLarge!
@@ -276,6 +284,7 @@ class _AuthUserDataPageState extends ConsumerState<AuthUserDataPage> {
           },
         ),
       ]);
+  }
 
   //? callbacks ----------------------------------------------------------------
 
@@ -286,6 +295,7 @@ class _AuthUserDataPageState extends ConsumerState<AuthUserDataPage> {
   }
 
   void _onAuthClicked(bool login) {
+    final l10n = AppLocalizations.of(context);
     final isValid = _formKey.currentState!.validate();
     if (!isValid) {
       return;
@@ -305,7 +315,7 @@ class _AuthUserDataPageState extends ConsumerState<AuthUserDataPage> {
             ref.read(userDataProvider.notifier).login(username, password);
 
         if (!success) {
-          _showErrorDialog('Invalid username or password. Please try again.');
+          _showErrorDialog(l10n.invalidUsernameOrPassword);
         }
       } else {
         // Create new user with password (instead of PIN)
@@ -320,7 +330,7 @@ class _AuthUserDataPageState extends ConsumerState<AuthUserDataPage> {
     } on AssertionError catch (e) {
       _showErrorDialog('${e.message}');
     } catch (e) {
-      _showErrorDialog('An unexpected error occurred: $e');
+      _showErrorDialog(l10n.unexpectedError(e.toString()));
     } finally {
       setState(() {
         _isAuthenticating = false;
@@ -329,15 +339,16 @@ class _AuthUserDataPageState extends ConsumerState<AuthUserDataPage> {
   }
 
   void _showErrorDialog(String message) {
+    final l10n = AppLocalizations.of(context);
     showDialog(
       context: context,
       builder: (BuildContext context) => AlertDialog(
-        title: const Text('Authentication Error'),
+        title: Text(l10n.authenticationError),
         content: Text(message),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('OK'),
+            child: Text(l10n.ok),
           ),
         ],
       ),

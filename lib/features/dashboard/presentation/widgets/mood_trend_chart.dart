@@ -1,6 +1,7 @@
 import 'package:day_tracker/features/dashboard/domain/providers/dashboard_stats_provider.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:day_tracker/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// Mood trend chart showing score trends over time
@@ -14,6 +15,8 @@ class MoodTrendChart extends ConsumerWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
+    final l10n = AppLocalizations.of(context)!;
+
     return statsAsync.when(
       loading: () => const Card(
         margin: EdgeInsets.all(16),
@@ -26,12 +29,12 @@ class MoodTrendChart extends ConsumerWidget {
         margin: const EdgeInsets.all(16),
         child: Padding(
           padding: const EdgeInsets.all(24),
-          child: Text('Fehler: $error'),
+          child: Text(l10n.errorWithMessage(error.toString())),
         ),
       ),
       data: (stats) {
         final dailyScores = stats.weekStats.dailyScores;
-        
+
         if (dailyScores.isEmpty) {
           return Card(
             margin: const EdgeInsets.all(16),
@@ -39,7 +42,7 @@ class MoodTrendChart extends ConsumerWidget {
               padding: const EdgeInsets.all(24),
               child: Center(
                 child: Text(
-                  'Keine Daten verfügbar',
+                  l10n.noDataAvailable,
                   style: theme.textTheme.bodyLarge,
                 ),
               ),
@@ -55,7 +58,7 @@ class MoodTrendChart extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Bewertungstrend',
+                  l10n.ratingTrend,
                   style: theme.textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: theme.colorScheme.onSurface,
@@ -157,7 +160,7 @@ class MoodTrendChart extends ConsumerWidget {
                             return touchedSpots.map((spot) {
                               final date = dailyScores[spot.x.toInt()].date;
                               return LineTooltipItem(
-                                '${date.day}.${date.month}\nScore: ${spot.y.toInt()}',
+                                '${date.day}.${date.month}\n${l10n.score(spot.y.toInt())}',
                                 TextStyle(
                                   color: colorScheme.onPrimary,
                                   fontWeight: FontWeight.bold,

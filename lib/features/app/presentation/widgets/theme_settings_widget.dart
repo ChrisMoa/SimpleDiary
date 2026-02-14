@@ -2,6 +2,7 @@ import 'package:day_tracker/core/provider/theme_provider.dart';
 import 'package:day_tracker/core/settings/settings_container.dart';
 import 'package:flex_color_picker/flex_color_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:day_tracker/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class ThemeSettingsWidget extends ConsumerStatefulWidget {
@@ -18,6 +19,7 @@ class _ThemeSettingsWidgetState extends ConsumerState<ThemeSettingsWidget> {
   @override
   Widget build(BuildContext context) {
     final theme = ref.watch(themeProvider);
+    final l10n = AppLocalizations.of(context);
     final mediaQuery = MediaQuery.of(context);
     final screenWidth = mediaQuery.size.width;
     final isSmallScreen = screenWidth < 600;
@@ -55,7 +57,7 @@ class _ThemeSettingsWidgetState extends ConsumerState<ThemeSettingsWidget> {
                   ),
                   const SizedBox(width: 8),
                   Text(
-                    'Theme Settings',
+                    l10n.themeSettings,
                     style: theme.textTheme.titleLarge?.copyWith(
                       color: theme.colorScheme.primary,
                       fontWeight: FontWeight.bold,
@@ -68,7 +70,7 @@ class _ThemeSettingsWidgetState extends ConsumerState<ThemeSettingsWidget> {
               const SizedBox(height: 16),
 
               Text(
-                'Customize the appearance of your diary application.',
+                l10n.customizeAppearance,
                 style: theme.textTheme.bodyMedium?.copyWith(
                   color: theme.colorScheme.onSurface,
                 ),
@@ -90,7 +92,7 @@ class _ThemeSettingsWidgetState extends ConsumerState<ThemeSettingsWidget> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Theme Color',
+                      l10n.themeColor,
                       style: theme.textTheme.titleMedium?.copyWith(
                         color: theme.colorScheme.onSurface,
                         fontWeight: FontWeight.bold,
@@ -98,7 +100,7 @@ class _ThemeSettingsWidgetState extends ConsumerState<ThemeSettingsWidget> {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      'Click this color to change it in a dialog',
+                      l10n.clickColorToChange,
                       style: theme.textTheme.bodyMedium?.copyWith(
                         color: theme.colorScheme.onSurface.withValues(alpha: .7),
                       ),
@@ -139,7 +141,7 @@ class _ThemeSettingsWidgetState extends ConsumerState<ThemeSettingsWidget> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Theme Mode',
+                      l10n.themeMode,
                       style: theme.textTheme.titleMedium?.copyWith(
                         color: theme.colorScheme.onSurface,
                         fontWeight: FontWeight.bold,
@@ -147,7 +149,7 @@ class _ThemeSettingsWidgetState extends ConsumerState<ThemeSettingsWidget> {
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      'Toggle this button to switch between dark and light theme',
+                      l10n.toggleDarkMode,
                       style: theme.textTheme.bodyMedium?.copyWith(
                         color: theme.colorScheme.onSurface.withValues(alpha: .7),
                       ),
@@ -168,6 +170,7 @@ class _ThemeSettingsWidgetState extends ConsumerState<ThemeSettingsWidget> {
   }
 
   Future<bool> colorPickerDialog() async {
+    final l10n = AppLocalizations.of(context);
     return ColorPicker(
       color: _dialogPickerColor,
       onColorChanged: _onColorPickerAcceptedClicked,
@@ -178,15 +181,15 @@ class _ThemeSettingsWidgetState extends ConsumerState<ThemeSettingsWidget> {
       runSpacing: 5,
       wheelDiameter: 155,
       heading: Text(
-        'Select color',
+        l10n.selectColor,
         style: Theme.of(context).textTheme.titleMedium,
       ),
       subheading: Text(
-        'Select color shade',
+        l10n.selectColorShade,
         style: Theme.of(context).textTheme.titleMedium,
       ),
       wheelSubheading: Text(
-        'Selected color and its shades',
+        l10n.selectedColorAndShades,
         style: Theme.of(context).textTheme.titleMedium,
       ),
       showMaterialName: true,

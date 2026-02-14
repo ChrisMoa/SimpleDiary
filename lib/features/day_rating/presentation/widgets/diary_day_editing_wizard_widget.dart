@@ -3,6 +3,7 @@ import 'package:day_tracker/features/day_rating/presentation/widgets/day_rating_
 import 'package:day_tracker/features/day_rating/presentation/widgets/note_detail_widget.dart';
 import 'package:day_tracker/features/day_rating/presentation/widgets/notes_calendar_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:day_tracker/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class DiaryDayEditingWizardWidget extends ConsumerStatefulWidget {
@@ -81,18 +82,18 @@ class _DiaryDayEditingWizardWidgetState extends ConsumerState<DiaryDayEditingWiz
           children: [
             // Tab bar for navigation
             TabBar(
-              tabs: const [
+              tabs: [
                 Tab(
-                  icon: Icon(Icons.calendar_today),
-                  text: 'Calendar',
+                  icon: const Icon(Icons.calendar_today),
+                  text: AppLocalizations.of(context)!.calendar,
                 ),
                 Tab(
-                  icon: Icon(Icons.edit_note),
-                  text: 'Note Details',
+                  icon: const Icon(Icons.edit_note),
+                  text: AppLocalizations.of(context)!.noteDetails,
                 ),
                 Tab(
-                  icon: Icon(Icons.rate_review_outlined),
-                  text: 'Day Rating',
+                  icon: const Icon(Icons.rate_review_outlined),
+                  text: AppLocalizations.of(context)!.dayRating,
                 ),
               ],
               labelColor: theme.colorScheme.primary,

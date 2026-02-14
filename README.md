@@ -29,6 +29,13 @@
 - **Material Design 3**: Modern, clean interface following latest design guidelines
 - **Responsive layout**: Optimized for desktop, tablet, and mobile devices
 
+### 🌍 Multi-Language Support
+- **4 Languages Available**: English, German (Deutsch), Spanish (Español), French (Français)
+- **Live Language Switching**: Change language instantly from Settings without restart
+- **Fully Localized**: ~120 UI strings translated in each language
+- **Localized Defaults**: Default categories and templates respect user's language preference
+- **Persistent Preference**: Language choice saved per user profile
+
 ### 🔐 Data Management
 - **Local-first approach**: Your data stays on your device
 - **SQLite database**: Fast and reliable local storage

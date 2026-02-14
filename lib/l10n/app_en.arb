@@ -1,0 +1,419 @@
+{
+  "@@locale": "en",
+
+  "appTitle": "Simple Diary",
+
+  "drawerHome": "Home",
+  "drawerSettings": "Settings",
+  "drawerCalendar": "Calendar",
+  "drawerDiaryWizard": "Diary Wizard",
+  "drawerNotesOverview": "Notes Overview",
+  "drawerTemplates": "Templates",
+  "drawerSync": "Datasynchronization",
+  "drawerAbout": "About",
+  "drawerErrorInvalidEntry": "Error: Invalid entry",
+
+  "settingsTitle": "Settings",
+  "saveSettings": "Save Settings",
+  "settingsSavedSuccessfully": "Settings saved successfully",
+  "errorSavingSettings": "Error saving settings: {error}",
+  "@errorSavingSettings": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "noteCategories": "Note Categories",
+  "manageCategoriesAndTags": "Manage your note categories and tags",
+  "manageCategories": "Manage Categories",
+
+  "themeSettings": "Theme Settings",
+  "customizeAppearance": "Customize the appearance of your diary application.",
+  "themeColor": "Theme Color",
+  "clickColorToChange": "Click this color to change it in a dialog",
+  "themeMode": "Theme Mode",
+  "toggleDarkMode": "Toggle this button to switch between dark and light theme",
+  "selectColor": "Select color",
+  "selectColorShade": "Select color shade",
+  "selectedColorAndShades": "Selected color and its shades",
+
+  "languageSettings": "Language Settings",
+  "languageDescription": "Choose the language for the application interface.",
+  "language": "Language",
+  "english": "English",
+  "german": "Deutsch",
+  "spanish": "Español",
+  "french": "Français",
+
+  "username": "Username",
+  "password": "Password",
+  "email": "Email",
+  "emailOptional": "Email (optional)",
+  "login": "Login",
+  "signUp": "Sign Up",
+  "signIn": "Sign In",
+  "createAccount": "Create an account",
+  "alreadyHaveAccount": "I already have an account",
+  "remoteAccount": "Remote Account?",
+  "pleaseEnterUsername": "Please enter a username",
+  "pleaseEnterPassword": "Please enter a password",
+  "pleaseEnterYourPassword": "Please enter your password",
+  "passwordMinLength": "Password must be at least 8 characters",
+  "pleaseEnterValidEmail": "Please enter a valid email address",
+  "authenticationError": "Authentication Error",
+  "invalidUsernameOrPassword": "Invalid username or password. Please try again.",
+  "unexpectedError": "An unexpected error occurred: {error}",
+  "@unexpectedError": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+
+  "welcomeBack": "Welcome back",
+  "enterPasswordToContinue": "Enter your password to continue",
+  "incorrectPassword": "Incorrect password",
+  "switchUser": "Switch User",
+
+  "accountSettings": "Account settings",
+  "save": "Save",
+  "logout": "Logout",
+  "doYouWantToLogout": "Do you want to logout?",
+  "doYouWantToOverwriteUserdata": "Do you want to overwrite your userdata?",
+  "logoutTitle": "Logout",
+  "logoutMessage": "Are you sure that you want to logout?",
+  "stayHere": "stay here",
+
+  "today": "Today",
+  "recorded": "Recorded",
+  "pending": "Pending",
+  "recordToday": "Record today",
+  "dayStreak": "Day Streak",
+  "weeklyAverage": "Weekly Average",
+  "status": "Status",
+  "newEntry": "New Entry",
+  "errorWithMessage": "Error: {error}",
+  "@errorWithMessage": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+
+  "sevenDayOverview": "7-Day Overview",
+  "ratingTrend": "Rating Trend",
+  "noDataAvailable": "No data available",
+
+  "insightsAndAchievements": "Insights & Achievements",
+  "errorLoadingInsights": "Error loading insights: {error}",
+  "@errorLoadingInsights": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+
+  "weekNumber": "Week {number}",
+  "@weekNumber": {
+    "placeholders": {
+      "number": { "type": "int" }
+    }
+  },
+  "milestoneReached": "You have reached an important milestone!",
+  "perfectWeek": "Perfect Week!",
+  "perfectWeekDescription": "You logged all days this week!",
+  "notRecordedToday": "Not recorded today",
+  "rememberToRate": "Don't forget to rate your day today!",
+  "bestCategory": "Best Category",
+  "bestCategoryDescription": "Your best category this week: {category}!",
+  "@bestCategoryDescription": {
+    "placeholders": {
+      "category": { "type": "String" }
+    }
+  },
+
+  "dayDetail": "Day Detail: {date}",
+  "@dayDetail": {
+    "placeholders": {
+      "date": { "type": "String" }
+    }
+  },
+  "noDiaryEntryForDay": "No diary entry for this day",
+  "errorLoadingNotes": "Error loading notes: {error}",
+  "@errorLoadingNotes": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "errorLoadingDiaryDay": "Error loading diary day: {error}",
+  "@errorLoadingDiaryDay": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "addANote": "Add a note",
+  "daySummary": "Day Summary",
+  "notesAndActivities": "Notes & Activities",
+  "nEntries": "{count} entries",
+  "@nEntries": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "noNotesForDay": "No notes for this day",
+  "addThoughtsActivitiesMemories": "Add your thoughts, activities or memories",
+  "editNote": "Edit note",
+  "allDay": "All day",
+  "overallMood": "Overall Mood: {mood}",
+  "@overallMood": {
+    "placeholders": {
+      "mood": { "type": "String" }
+    }
+  },
+  "deleteDiaryEntry": "Delete Diary Entry",
+  "confirmDeleteDiaryEntry": "Are you sure you want to delete this diary entry? This will remove both the day rating and all associated notes.",
+  "cancel": "Cancel",
+  "delete": "Delete",
+  "ok": "OK",
+  "close": "Close",
+  "edit": "Edit",
+  "create": "Create",
+  "update": "Update",
+
+  "ratingPoor": "Poor",
+  "ratingFair": "Fair",
+  "ratingGood": "Good",
+  "ratingGreat": "Great",
+  "ratingExcellent": "Excellent",
+  "moodToughDay": "Tough Day",
+  "moodCouldBeBetter": "Could Be Better",
+  "moodPrettyGood": "Pretty Good",
+  "moodGreatDay": "Great Day",
+  "moodPerfectDay": "Perfect Day",
+
+  "noDiaryEntriesYet": "No diary entries yet",
+  "startTrackingDescription": "Start tracking your day by adding notes\nand completing daily evaluations",
+  "startTodaysJournal": "Start Today's Journal",
+  "confirmDeletion": "Confirm Deletion",
+  "confirmDeleteDiaryEntryShort": "Are you sure you want to delete this diary entry?",
+  "diaryEntryDeleted": "Diary entry deleted",
+  "undo": "Undo",
+
+  "loadingDayData": "Loading your day data...",
+  "calendar": "Calendar",
+  "noteDetails": "Note Details",
+  "dayRating": "Day Rating",
+  "howWasYourDay": "How was your day? Rate the different aspects of your experience.",
+  "saveDayRating": "Save Day Rating",
+  "dayRatingSaved": "Day rating saved successfully!",
+  "notRated": "Not Rated",
+
+  "ratingSocialDescription": "How were your social interactions and relationships today?",
+  "ratingProductivityDescription": "How productive were you in your work or daily tasks?",
+  "ratingSportDescription": "How was your physical activity and exercise today?",
+  "ratingFoodDescription": "How healthy and satisfying was your diet today?",
+
+  "tapToChangeDate": "Tap to change date",
+  "previousDay": "Previous day",
+  "selectDate": "Select date",
+  "nextDay": "Next day",
+
+  "addTitle": "Add Title",
+  "addNote": "Add note",
+  "description": "Description",
+  "allDayQuestion": "AllDay?",
+  "from": "FROM",
+  "to": "To",
+  "saveUpperCase": "SAVE",
+  "saveWord": "save",
+  "reload": "reload",
+  "noteUpdateError": "Was not able to update note",
+  "dateLabel": "Date: {date}",
+  "@dateLabel": {
+    "placeholders": {
+      "date": { "type": "String" }
+    }
+  },
+
+  "organizeCategoriesDescription": "Organize your notes with custom categories",
+  "noCategoriesYet": "No categories yet",
+  "createCategoriesToOrganize": "Create categories to organize your notes",
+  "createCategory": "Create Category",
+  "editCategory": "Edit Category",
+  "categoryName": "Category Name",
+  "categoryColor": "Category Color",
+  "preview": "Preview",
+  "pleaseEnterCategoryName": "Please enter a category name",
+  "categoryAlreadyExists": "A category with this name already exists",
+  "categoryUpdated": "Category updated",
+  "categoryCreated": "Category created",
+  "categoryDeleted": "Category deleted",
+  "cannotDeleteCategory": "Cannot Delete Category",
+  "categoryInUse": "The category \"{title}\" is currently used by one or more notes. Please reassign or delete those notes first.",
+  "@categoryInUse": {
+    "placeholders": {
+      "title": { "type": "String" }
+    }
+  },
+  "deleteCategory": "Delete Category",
+  "confirmDeleteCategory": "Are you sure you want to delete \"{title}\"?",
+  "@confirmDeleteCategory": {
+    "placeholders": {
+      "title": { "type": "String" }
+    }
+  },
+  "editCategoryTooltip": "Edit category",
+  "deleteCategoryTooltip": "Delete category",
+
+  "defaultCategoryWork": "Work",
+  "defaultCategoryLeisure": "Leisure",
+  "defaultCategoryFood": "Food",
+  "defaultCategoryGym": "Gym",
+  "defaultCategorySleep": "Sleep",
+
+  "noteTemplates": "Note Templates",
+  "noTemplatesYet": "No templates yet",
+  "createTemplatesToQuicklyAdd": "Create templates to quickly add notes",
+  "createTemplate": "Create Template",
+  "editTemplate": "Edit Template",
+  "templateName": "Template Name",
+  "durationMinutes": "Duration (minutes)",
+  "category": "Category",
+  "pleaseEnterTemplateName": "Please enter a template name",
+  "pleaseEnterDuration": "Please enter duration",
+  "pleaseEnterValidDuration": "Please enter a valid duration",
+  "simple": "Simple",
+  "sections": "Sections",
+  "addSection": "Add Section",
+  "sectionTitle": "Section Title",
+  "hintOptional": "Hint (optional)",
+  "removeSection": "Remove section",
+  "templateUpdatedSuccessfully": "Template updated successfully",
+  "templateCreatedSuccessfully": "Template created successfully",
+  "deleteTemplate": "Delete Template",
+  "confirmDeleteTemplate": "Are you sure you want to delete \"{title}\"?",
+  "@confirmDeleteTemplate": {
+    "placeholders": {
+      "title": { "type": "String" }
+    }
+  },
+  "templateDeleted": "Template deleted",
+  "durationInMinutes": "{minutes} min",
+  "@durationInMinutes": {
+    "placeholders": {
+      "minutes": { "type": "int" }
+    }
+  },
+  "descriptionSections": "Description Sections:",
+  "descriptionLabel": "Description:",
+
+  "addedTemplateAtTime": "Added \"{title}\" at {time}",
+  "@addedTemplateAtTime": {
+    "placeholders": {
+      "title": { "type": "String" },
+      "time": { "type": "String" }
+    }
+  },
+  "errorCreatingNote": "Error creating note: {error}",
+  "@errorCreatingNote": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+
+  "fileSynchronization": "File Synchronization",
+  "fileSyncDescription": "Import and export your diary data to JSON or ICS calendar files with optional encryption.",
+  "exportToJson": "Export to JSON",
+  "saveYourDiaryData": "Save your diary data to a file",
+  "importFromJson": "Import from JSON",
+  "loadDiaryData": "Load diary data from a file",
+  "exportToIcsCalendar": "Export to ICS Calendar",
+  "saveNotesAsCalendarEvents": "Save notes as calendar events (.ics)",
+  "importFromIcsCalendar": "Import from ICS Calendar",
+  "loadCalendarEvents": "Load calendar events from .ics file",
+  "exportRange": "Export Range",
+  "whichEntriesToExport": "Which entries do you want to export?",
+  "customRange": "Custom Range",
+  "all": "All",
+  "encryptJsonExport": "Encrypt JSON Export (Optional)",
+  "decryptJsonImport": "Decrypt JSON Import",
+  "encryptIcsExport": "Encrypt ICS Export (Optional)",
+  "decryptIcsImport": "Decrypt ICS Import",
+  "passwordOptional": "Password (Optional)",
+  "leaveEmptyForNoEncryption": "Leave empty for no encryption",
+  "saveJsonExportFile": "Save JSON Export File",
+  "selectJsonFileToImport": "Select JSON File to Import",
+  "saveIcsCalendarFile": "Save ICS Calendar File",
+  "selectIcsFileToImport": "Select ICS Calendar File to Import",
+  "operationCompletedSuccessfully": "Operation completed successfully",
+  "importedDaysWithNotes": "Imported {days} days with {notes} notes",
+  "@importedDaysWithNotes": {
+    "placeholders": {
+      "days": { "type": "int" },
+      "notes": { "type": "int" }
+    }
+  },
+  "importedNotesFromIcs": "Imported {count} notes from ICS calendar",
+  "@importedNotesFromIcs": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "errorPrefix": "Error: {error}",
+  "@errorPrefix": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "oldEncryptionFormatError": "This file uses the old encryption format and cannot be imported.\nPlease export your data again with the new version.",
+  "passwordRequiredForEncryptedFile": "Password required for encrypted file",
+  "passwordRequiredForEncryptedIcsFile": "Password required for encrypted ICS file",
+  "cannotReadIcsFile": "Cannot read ICS file. File may be corrupted.",
+  "pleaseEnterAllFields": "Please fill in all fields",
+  "testingConnection": "Testing connection...",
+  "connectionSuccessful": "Connection successful!",
+  "connectionFailedAuth": "Connection failed: Authentication error",
+  "connectionFailed": "Connection failed: {error}",
+  "@connectionFailed": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+
+  "synchronization": "Synchronization",
+  "supabaseSettings": "Supabase Settings",
+  "supabaseDescription": "Configure your Supabase cloud storage settings for backup and cross-device access.",
+  "supabaseUrl": "Supabase URL",
+  "anonKey": "Anon Key",
+  "testConnection": "Test Connection",
+
+  "about": "About",
+  "dayTracker": "Day Tracker",
+  "version": "Version: {version}",
+  "@version": {
+    "placeholders": {
+      "version": { "type": "String" }
+    }
+  },
+  "developer": "Developer",
+  "contact": "Contact",
+  "features": "Features",
+  "licenses": "Licenses",
+  "viewLicenses": "View Licenses",
+  "appDescription": "Day Tracker is a personal diary and productivity app that helps you track your daily activities and rate different aspects of your day.",
+  "featureTrackActivities": "Track daily activities and appointments",
+  "featureRateDay": "Rate different aspects of your day",
+  "featureCalendar": "View your schedule in a calendar",
+  "featureEncryption": "Secure data with encryption",
+  "featureSync": "Sync data across devices with Supabase",
+  "featureExportImport": "Export and import data",
+  "copyright": "\u00a9 {year} Your Company",
+  "@copyright": {
+    "placeholders": {
+      "year": { "type": "int" }
+    }
+  },
+
+  "score": "Score: {score}",
+  "@score": {
+    "placeholders": {
+      "score": { "type": "int" }
+    }
+  }
+}

@@ -3,6 +3,7 @@ import 'package:day_tracker/features/day_rating/presentation/widgets/diary_day_e
 import 'package:day_tracker/features/notes/domain/providers/note_local_db_provider.dart';
 import 'package:day_tracker/features/notes/domain/providers/note_selected_date_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:day_tracker/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class DiaryDayWizardPage extends ConsumerStatefulWidget {
@@ -38,13 +39,14 @@ class _DiaryDayWizardPageState extends ConsumerState<DiaryDayWizardPage> {
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
-      return const Center(
+      final l10n = AppLocalizations.of(context)!;
+      return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            CircularProgressIndicator(),
-            SizedBox(height: 16),
-            Text('Loading your day data...'),
+            const CircularProgressIndicator(),
+            const SizedBox(height: 16),
+            Text(l10n.loadingDayData),
           ],
         ),
       );

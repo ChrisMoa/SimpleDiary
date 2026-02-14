@@ -7,6 +7,7 @@ import 'package:day_tracker/features/authentication/presentation/widgets/yes_no_
 import 'package:day_tracker/features/day_rating/domain/providers/diary_day_local_db_provider.dart';
 import 'package:day_tracker/features/notes/domain/providers/note_local_db_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:day_tracker/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class ShowUserDataPage extends ConsumerStatefulWidget {
@@ -43,6 +44,7 @@ class _ShowUserDataPageState extends ConsumerState<ShowUserDataPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     var userData = ref.watch(userDataProvider);
     var userDataMap = userData.toMap();
     simpleInputDataWidgets.forEach((element) {
@@ -56,7 +58,7 @@ class _ShowUserDataPageState extends ConsumerState<ShowUserDataPage> {
         titleTextStyle: Theme.of(context).textTheme.titleLarge!.copyWith(
             color: Theme.of(context).colorScheme.primary,
             fontWeight: FontWeight.bold),
-        title: const Text('Account settings'),
+        title: Text(l10n.accountSettings),
       ),
       backgroundColor: Theme.of(context).colorScheme.background,
       body: SizedBox(
@@ -115,17 +117,19 @@ class _ShowUserDataPageState extends ConsumerState<ShowUserDataPage> {
   //? builds -------------------------------------------------------------------
 
   Widget _buildSaveButton() {
+    final l10n = AppLocalizations.of(context);
     return ElevatedButton(
       onPressed: () {
         _onSaveClicked();
       },
       style: ElevatedButton.styleFrom(
           backgroundColor: Theme.of(context).colorScheme.primaryContainer),
-      child: const Text('Save'),
+      child: Text(l10n.save),
     );
   }
 
   Widget _buildLogoutButton() {
+    final l10n = AppLocalizations.of(context);
     return ElevatedButton(
       onPressed: () {
         setState(() {
@@ -146,7 +150,7 @@ class _ShowUserDataPageState extends ConsumerState<ShowUserDataPage> {
               onNoPressed: () {
                 Navigator.of(context).pop();
               },
-              question: 'Do you want to logout?',
+              question: l10n.doYouWantToLogout,
               context: context,
             ),
           );
@@ -154,13 +158,14 @@ class _ShowUserDataPageState extends ConsumerState<ShowUserDataPage> {
       },
       style: ElevatedButton.styleFrom(
           backgroundColor: Theme.of(context).colorScheme.primaryContainer),
-      child: const Text('Logout'),
+      child: Text(l10n.logout),
     );
   }
 
   //? callbacks ----------------------------------------------------------------
 
   void _onSaveClicked() async {
+    final l10n = AppLocalizations.of(context);
     setState(() {
       showDialog<String>(
           context: context,
@@ -204,7 +209,7 @@ class _ShowUserDataPageState extends ConsumerState<ShowUserDataPage> {
                 Navigator.of(context).pop();
               },
               context: context,
-              question: 'Do you want to overwrite your userdata?'));
+              question: l10n.doYouWantToOverwriteUserdata));
     });
   }
 }
