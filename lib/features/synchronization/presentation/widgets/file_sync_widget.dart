@@ -2,6 +2,7 @@
 
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:day_tracker/core/log/logger_instance.dart';
 import 'package:day_tracker/core/provider/theme_provider.dart';
@@ -253,55 +254,52 @@ class FileSyncWidget extends ConsumerWidget {
         defaultValue: defaultPassword,
       );
 
-      // Use native file picker to save file
       final defaultFileName = 'data_export_${Utils.toFileDateTime(DateTime.now())}.json';
+      final bool willEncrypt = password != null && password.isNotEmpty;
 
-      // Get last used directory
-      final lastDir = await _getLastUsedDirectory();
+      // Generate export content before showing file picker
+      final content = ref.read(fileDbStateProvider.notifier).exportToString(
+            diaryDays: ref.read(diaryDayFullDataProvider),
+            username: userData.username.isNotEmpty ? userData.username : null,
+            salt: willEncrypt ? userData.salt : null,
+            encrypted: willEncrypt,
+            password: willEncrypt ? password : null,
+          );
+      final contentBytes = Uint8List.fromList(utf8.encode(content));
 
+      // Get last used directory (not supported on Android)
+      final lastDir = Platform.isAndroid ? null : await _getLastUsedDirectory();
+
+      // On Android/iOS, bytes must be passed to saveFile directly
       String? outputPath = await FilePicker.platform.saveFile(
         dialogTitle: 'Save JSON Export File',
         fileName: defaultFileName,
         type: FileType.custom,
         allowedExtensions: ['json'],
         initialDirectory: lastDir,
+        bytes: contentBytes,
       );
 
       if (outputPath != null) {
-        try {
-          // Ensure .json extension
+        LogWrapper.logger.d('Export path selected: $outputPath');
+
+        if (!Platform.isAndroid) {
+          // On desktop, file picker only returns a path — we need to write manually
           if (!outputPath.endsWith('.json')) {
             outputPath = '$outputPath.json';
           }
-
-          // Save this directory for next time
+          await File(outputPath).writeAsString(content);
           await _saveLastUsedDirectory(outputPath);
-
-          File file = File(outputPath);
-          final bool willEncrypt = password != null && password.isNotEmpty;
-
-          // Use new export format with metadata
-          await ref.read(fileDbStateProvider.notifier).exportWithMetadata(
-                diaryDays: ref.read(diaryDayFullDataProvider),
-                file: file,
-                username: userData.username.isNotEmpty ? userData.username : null,
-                salt: willEncrypt ? userData.salt : null,
-                encrypted: willEncrypt,
-                password: willEncrypt ? password : null,
-              );
-
-          LogWrapper.logger.i('JSON export finished successfully to $outputPath');
-          _onImportExportSuccessfully(context);
-        } catch (e) {
-          LogWrapper.logger.e('Error exporting JSON "$outputPath": "$e"');
-          _onError(context, 'Error during JSON export: $e');
         }
+
+        LogWrapper.logger.i('JSON export finished successfully to $outputPath');
+        _onImportExportSuccessfully(context);
       } else {
         LogWrapper.logger.i('JSON export cancelled by user');
       }
     } catch (e) {
       LogWrapper.logger.e('Error during JSON exporting: ${e.toString()}');
-      _onError(context, 'Error during JSON exporting');
+      _onError(context, 'Error during JSON export: $e');
     }
   }
 
@@ -442,58 +440,55 @@ class FileSyncWidget extends ConsumerWidget {
         defaultValue: defaultPassword,
       );
 
-      // Use native file picker to save file
       final defaultFileName = 'diary_export_${Utils.toFileDateTime(DateTime.now())}.ics';
+      final bool willEncrypt = password != null && password.isNotEmpty;
 
-      // Get last used directory
-      final lastDir = await _getLastUsedDirectory();
+      // Get all notes from local data provider
+      final notes = ref.read(notesLocalDataProvider);
 
+      // Generate export content before showing file picker
+      final content = ref.read(icsFileStateProvider.notifier).exportToString(
+            notes: notes,
+            username: userData.username.isNotEmpty ? userData.username : null,
+            salt: willEncrypt ? userData.salt : null,
+            encrypted: willEncrypt,
+            password: willEncrypt ? password : null,
+          );
+      final contentBytes = Uint8List.fromList(utf8.encode(content));
+
+      // Get last used directory (not supported on Android)
+      final lastDir = Platform.isAndroid ? null : await _getLastUsedDirectory();
+
+      // On Android/iOS, bytes must be passed to saveFile directly
       String? outputPath = await FilePicker.platform.saveFile(
         dialogTitle: 'Save ICS Calendar File',
         fileName: defaultFileName,
         type: FileType.custom,
         allowedExtensions: ['ics'],
         initialDirectory: lastDir,
+        bytes: contentBytes,
       );
 
       if (outputPath != null) {
-        try {
-          // Ensure .ics extension
+        LogWrapper.logger.d('Export path selected: $outputPath');
+
+        if (!Platform.isAndroid) {
+          // On desktop, file picker only returns a path — we need to write manually
           if (!outputPath.endsWith('.ics')) {
             outputPath = '$outputPath.ics';
           }
-
-          // Save this directory for next time
+          await File(outputPath).writeAsString(content);
           await _saveLastUsedDirectory(outputPath);
-
-          File file = File(outputPath);
-          final bool willEncrypt = password != null && password.isNotEmpty;
-
-          // Get all notes from local data provider
-          final notes = ref.read(notesLocalDataProvider);
-
-          // Use ICS export with metadata
-          await ref.read(icsFileStateProvider.notifier).exportWithMetadata(
-                notes: notes,
-                file: file,
-                username: userData.username.isNotEmpty ? userData.username : null,
-                salt: willEncrypt ? userData.salt : null,
-                encrypted: willEncrypt,
-                password: willEncrypt ? password : null,
-              );
-
-          LogWrapper.logger.i('ICS export finished successfully to $outputPath');
-          _onImportExportSuccessfully(context);
-        } catch (e) {
-          LogWrapper.logger.e('Error exporting ICS "$outputPath": "$e"');
-          _onError(context, 'Error during ICS export: $e');
         }
+
+        LogWrapper.logger.i('ICS export finished successfully to $outputPath');
+        _onImportExportSuccessfully(context);
       } else {
         LogWrapper.logger.i('ICS export cancelled by user');
       }
     } catch (e) {
       LogWrapper.logger.e('Error during ICS exporting: ${e.toString()}');
-      _onError(context, 'Error during ICS exporting');
+      _onError(context, 'Error during ICS export: $e');
     }
   }
 

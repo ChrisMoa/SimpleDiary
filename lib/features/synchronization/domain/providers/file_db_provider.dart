@@ -46,6 +46,29 @@ class FileDbProvider extends StateNotifier<List<DiaryDay>> {
   }) async {
     LogWrapper.logger.i('export started (new format with metadata)');
 
+    final content = exportToString(
+      diaryDays: diaryDays,
+      username: username,
+      salt: salt,
+      encrypted: encrypted,
+      password: password,
+    );
+
+    // Write to file
+    await file.writeAsString(content);
+
+    LogWrapper.logger.i('JSON file with metadata written successfully.');
+  }
+
+  /// Generate export JSON string with metadata
+  /// Returns the JSON string to be saved
+  String exportToString({
+    required List<DiaryDay> diaryDays,
+    String? username,
+    String? salt,
+    required bool encrypted,
+    String? password,
+  }) {
     // Encrypt data if password is provided
     String dataJson;
     if (encrypted && password != null && salt != null) {
@@ -72,11 +95,7 @@ class FileDbProvider extends StateNotifier<List<DiaryDay>> {
       'data': dataJson, // This is either encrypted string or plain JSON
     };
 
-    // Write to file
-    String jsonString = jsonEncode(exportMap);
-    file.writeAsStringSync(jsonString);
-
-    LogWrapper.logger.i('JSON file with metadata written successfully.');
+    return jsonEncode(exportMap);
   }
 
   /// Import diary days from file with automatic format detection

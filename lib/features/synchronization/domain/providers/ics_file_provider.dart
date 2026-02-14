@@ -69,46 +69,65 @@ class IcsFileProvider extends StateNotifier<List<Note>> {
     LogWrapper.logger.i('ICS export started with metadata');
 
     try {
-      // Convert notes to ICS calendar
-      final calendar = _converter.createCalendar(notes);
-      final icsString = _converter.calendarToString(calendar);
-
-      // Prepare data (encrypted or plain)
-      String dataContent;
-      if (encrypted && password != null && salt != null) {
-        // Encrypt the ICS string
-        String encryptionKey = PasswordAuthService.getDatabaseEncryptionKey(password, salt);
-        var encryptor = AesEncryptor(encryptionKey: encryptionKey);
-        dataContent = encryptor.encryptStringAsBase64(icsString);
-        LogWrapper.logger.i('ICS data encrypted (${icsString.length} -> ${dataContent.length} chars)');
-      } else {
-        // Store as plain ICS string
-        dataContent = icsString;
-      }
-
-      // Create export structure with metadata
-      final exportMap = {
-        'version': '1.0',
-        'format': 'ics',
-        'metadata': {
-          'username': username,
-          'salt': salt,
-          'exportDate': DateTime.now().toIso8601String(),
-          'encrypted': encrypted,
-          'noteCount': notes.length,
-        },
-        'data': dataContent,
-      };
+      final content = exportToString(
+        notes: notes,
+        username: username,
+        salt: salt,
+        encrypted: encrypted,
+        password: password,
+      );
 
       // Write to file
-      String jsonString = jsonEncode(exportMap);
-      file.writeAsStringSync(jsonString);
+      await file.writeAsString(content);
 
       LogWrapper.logger.i('ICS file with metadata written successfully (${notes.length} notes)');
     } catch (e) {
       LogWrapper.logger.e('Error during ICS export: $e');
       rethrow;
     }
+  }
+
+  /// Generate export ICS string with metadata
+  /// Returns the JSON string to be saved
+  String exportToString({
+    required List<Note> notes,
+    String? username,
+    String? salt,
+    required bool encrypted,
+    String? password,
+  }) {
+    // Convert notes to ICS calendar
+    final calendar = _converter.createCalendar(notes);
+    final icsString = _converter.calendarToString(calendar);
+
+    // Prepare data (encrypted or plain)
+    String dataContent;
+    if (encrypted && password != null && salt != null) {
+      // Encrypt the ICS string
+      String encryptionKey = PasswordAuthService.getDatabaseEncryptionKey(password, salt);
+      var encryptor = AesEncryptor(encryptionKey: encryptionKey);
+      dataContent = encryptor.encryptStringAsBase64(icsString);
+      LogWrapper.logger.i('ICS data encrypted (${icsString.length} -> ${dataContent.length} chars)');
+    } else {
+      // Store as plain ICS string
+      dataContent = icsString;
+    }
+
+    // Create export structure with metadata
+    final exportMap = {
+      'version': '1.0',
+      'format': 'ics',
+      'metadata': {
+        'username': username,
+        'salt': salt,
+        'exportDate': DateTime.now().toIso8601String(),
+        'encrypted': encrypted,
+        'noteCount': notes.length,
+      },
+      'data': dataContent,
+    };
+
+    return jsonEncode(exportMap);
   }
 
   /// Export notes to plain ICS file without encryption or metadata wrapper
