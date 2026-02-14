@@ -9,21 +9,37 @@ on:
 
 jobs:
 
-  build-windows:
-    runs-on: windows-latest
+  test:
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.29.3'
           channel: 'stable'
-      - uses : SpicyPizza/create-envfile@v2.0
+      - uses: SpicyPizza/create-envfile@v2.0
+        with:
+          envkey_PROJECT_NAME: ${{ secrets.PROJECT_NAME }}
+      - run: flutter pub get
+      - name: Run tests
+        run: flutter test test/core/ test/features/
+
+  build-windows:
+    needs: test
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.29.3'
+          channel: 'stable'
+      - uses: SpicyPizza/create-envfile@v2.0
         with:
           envkey_PROJECT_NAME: ${{ secrets.PROJECT_NAME }}
       - name: Ensure platform directories exist
         run: flutter create --platforms=windows --org com.example . || true
       - run: flutter clean || true
-      - run: flutter pub get || true
+      - run: flutter pub get
       - run: flutter pub outdated || true
       - run: flutter build windows --release
       - name: Upload Windows build
@@ -33,14 +49,15 @@ jobs:
           path: build/windows/runner/Release/
 
   build-linux:
+    needs: test
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.29.3'
           channel: 'stable'
-      - uses : SpicyPizza/create-envfile@v2.0
+      - uses: SpicyPizza/create-envfile@v2.0
         with:
           envkey_PROJECT_NAME: ${{ secrets.PROJECT_NAME }}
       - name: Install dependencies
@@ -50,7 +67,7 @@ jobs:
       - name: Ensure platform directories exist
         run: flutter create --platforms=linux --org com.example . || true
       - run: flutter clean || true
-      - run: flutter pub get || true
+      - run: flutter pub get
       - run: flutter pub outdated || true
       - run: flutter build linux --release
       - name: Upload Linux build
@@ -58,12 +75,13 @@ jobs:
         with:
           name: release-linux
           path: build/linux/x64/release/bundle/
-          
+
   build-android:
+    needs: test
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-java@v3
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
           java-version: '17'
@@ -71,13 +89,13 @@ jobs:
         with:
           flutter-version: '3.29.3'
           channel: 'stable'
-      - uses : SpicyPizza/create-envfile@v2.0
+      - uses: SpicyPizza/create-envfile@v2.0
         with:
           envkey_PROJECT_NAME: ${{ secrets.PROJECT_NAME }}
       - name: Ensure platform directories exist
         run: flutter create --platforms=android --org com.example . || true
       - run: flutter clean || true
-      - run: flutter pub get || true
+      - run: flutter pub get
       - run: flutter pub outdated || true
       - name: Build APK
         run: flutter build apk --release
