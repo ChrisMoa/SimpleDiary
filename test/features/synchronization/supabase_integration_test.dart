@@ -97,7 +97,7 @@ void main() {
       // because supabase_flutter stores the auth session there.
       SharedPreferences.setMockInitialValues({});
 
-      api = SupabaseApi();
+      api = SupabaseApi(tablePrefix: 'test_');
       await api.initialize(supabaseUrl, supabaseAnonKey);
     });
 
@@ -356,7 +356,7 @@ void main() {
       test('sign in on uninitialized api returns false', () async {
         // Create a fresh wrapper with _client = null.
         SupabaseApi.resetInitialization();
-        final uninitApi = SupabaseApi();
+        final uninitApi = SupabaseApi(tablePrefix: 'test_');
 
         // signInWithEmailPassword catches the internal exception
         // and returns false when the client is not initialized.

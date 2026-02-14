@@ -11,6 +11,14 @@ class SupabaseApi {
   static SupabaseClient? _client;
   static bool _initialized = false;
 
+  final String _tablePrefix;
+
+  SupabaseApi({String tablePrefix = ''}) : _tablePrefix = tablePrefix;
+
+  String get _diaryDaysTable => '${_tablePrefix}diary_days';
+  String get _notesTable => '${_tablePrefix}notes';
+  String get _noteTemplatesTable => '${_tablePrefix}note_templates';
+
   // Initialize Supabase client
   Future<void> initialize(String url, String anonKey) async {
     try {
@@ -103,7 +111,7 @@ class SupabaseApi {
         };
 
         LogWrapper.logger.d('Upserting diary day: ${data['id']}');
-        await _client!.from('diary_days').upsert(data);
+        await _client!.from(_diaryDaysTable).upsert(data);
       }
       LogWrapper.logger.i('Successfully synced ${diaryDays.length} diary days');
     } catch (e) {
@@ -141,7 +149,7 @@ class SupabaseApi {
         };
 
         LogWrapper.logger.d('Upserting note: ${data['id']}');
-        await _client!.from('notes').upsert(data);
+        await _client!.from(_notesTable).upsert(data);
       }
       LogWrapper.logger.i('Successfully synced ${notes.length} notes');
     } catch (e) {
@@ -178,7 +186,7 @@ class SupabaseApi {
         };
 
         LogWrapper.logger.d('Upserting template: ${data['id']}');
-        await _client!.from('note_templates').upsert(data);
+        await _client!.from(_noteTemplatesTable).upsert(data);
       }
       LogWrapper.logger.i('Successfully synced ${templates.length} templates');
     } catch (e) {
@@ -204,7 +212,7 @@ class SupabaseApi {
 
       LogWrapper.logger.d('Fetching diary days for user: $supabaseUserId');
       final List<Map<String, dynamic>> response = await _client!
-          .from('diary_days')
+          .from(_diaryDaysTable)
           .select()
           .eq('user_id', supabaseUserId);
 
@@ -281,7 +289,7 @@ class SupabaseApi {
 
       LogWrapper.logger.d('Fetching notes for user: $supabaseUserId');
       final List<Map<String, dynamic>> response = await _client!
-          .from('notes')
+          .from(_notesTable)
           .select()
           .eq('user_id', supabaseUserId);
 
@@ -349,7 +357,7 @@ class SupabaseApi {
 
       LogWrapper.logger.d('Fetching templates for user: $supabaseUserId');
       final List<Map<String, dynamic>> response = await _client!
-          .from('note_templates')
+          .from(_noteTemplatesTable)
           .select()
           .eq('user_id', supabaseUserId);
 
