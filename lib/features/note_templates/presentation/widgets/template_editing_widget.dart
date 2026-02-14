@@ -375,7 +375,7 @@ class _TemplateEditingWidgetState extends ConsumerState<TemplateEditingWidget> {
                       fontWeight: FontWeight.w500,
                     ),
                     onChanged: (value) {
-                      _sections[index] = section.copyWith(title: value);
+                      _sections[index] = _sections[index].copyWith(title: value);
                     },
                   ),
                   const SizedBox(height: 8),
@@ -408,7 +408,7 @@ class _TemplateEditingWidgetState extends ConsumerState<TemplateEditingWidget> {
                       color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
                     ),
                     onChanged: (value) {
-                      _sections[index] = section.copyWith(hint: value);
+                      _sections[index] = _sections[index].copyWith(hint: value);
                     },
                   ),
                 ],
