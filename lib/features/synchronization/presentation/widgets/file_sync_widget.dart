@@ -5,21 +5,49 @@ import 'dart:io';
 
 import 'package:day_tracker/core/log/logger_instance.dart';
 import 'package:day_tracker/core/provider/theme_provider.dart';
-import 'package:day_tracker/core/settings/settings_container.dart';
+import 'package:day_tracker/core/utils/utils.dart';
 import 'package:day_tracker/features/authentication/domain/providers/user_data_provider.dart';
 import 'package:day_tracker/features/day_rating/domain/providers/diary_day_local_db_provider.dart';
 import 'package:day_tracker/features/notes/domain/providers/note_local_db_provider.dart';
 import 'package:day_tracker/features/synchronization/data/models/export_data.dart';
 import 'package:day_tracker/features/synchronization/domain/providers/file_db_provider.dart';
 import 'package:day_tracker/features/synchronization/domain/providers/ics_file_provider.dart';
-import 'package:day_tracker/core/utils/utils.dart';
-import 'package:filesystem_picker/filesystem_picker.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:path/path.dart' as path;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class FileSyncWidget extends ConsumerWidget {
   const FileSyncWidget({super.key});
+
+  // SharedPreferences keys
+  static const String _kLastUsedDirectoryKey = 'last_used_export_directory';
+
+  /// Save the last used directory to preferences
+  Future<void> _saveLastUsedDirectory(String filePath) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final directory = path.dirname(filePath);
+      await prefs.setString(_kLastUsedDirectoryKey, directory);
+      LogWrapper.logger.d('Saved last used directory: $directory');
+    } catch (e) {
+      LogWrapper.logger.w('Could not save last used directory: $e');
+    }
+  }
+
+  /// Get the last used directory from preferences
+  Future<String?> _getLastUsedDirectory() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final directory = prefs.getString(_kLastUsedDirectoryKey);
+      LogWrapper.logger.d('Retrieved last used directory: $directory');
+      return directory;
+    } catch (e) {
+      LogWrapper.logger.w('Could not retrieve last used directory: $e');
+      return null;
+    }
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -213,43 +241,43 @@ class FileSyncWidget extends ConsumerWidget {
 
   Future<void> _onExportToFile(BuildContext context, WidgetRef ref) async {
     try {
-      LogWrapper.logger.i('Export started');
-      var rootDirectory =
-          Directory(settingsContainer.applicationExternalDocumentsPath);
+      LogWrapper.logger.i('JSON export started');
 
-      // Show dialog to enter filename first
-      final fileName = await _promptForFileName(
+      // Prompt for encryption password first
+      final userData = ref.read(userDataProvider);
+      final defaultPassword = userData.clearPassword;
+
+      final password = await _promptForPassword(
         context,
-        'Export Data',
-        'data_export.json',
-      );
-      if (fileName == null) return;
-
-      // Pick directory
-      String? dirPath = await FilesystemPicker.open(
-        title: 'Select directory to save export file',
-        context: context,
-        fsType: FilesystemType.folder,
-        rootDirectory: rootDirectory,
-        pickText: 'Save file here',
-        folderIconColor: Theme.of(context).colorScheme.primary,
+        'Encrypt JSON Export (Optional)',
+        defaultValue: defaultPassword,
       );
 
-      if (dirPath != null) {
-        final fullPath = '$dirPath/$fileName';
+      // Use native file picker to save file
+      final defaultFileName = 'data_export_${Utils.toFileDateTime(DateTime.now())}.json';
 
-        // Prompt for encryption password, default to user's password
-        final userData = ref.read(userDataProvider);
-        final defaultPassword = userData.clearPassword;
+      // Get last used directory
+      final lastDir = await _getLastUsedDirectory();
 
-        final password = await _promptForPassword(
-          context,
-          'Encrypt Export',
-          defaultValue: defaultPassword,
-        );
+      String? outputPath = await FilePicker.platform.saveFile(
+        dialogTitle: 'Save JSON Export File',
+        fileName: defaultFileName,
+        type: FileType.custom,
+        allowedExtensions: ['json'],
+        initialDirectory: lastDir,
+      );
 
+      if (outputPath != null) {
         try {
-          File file = File(fullPath);
+          // Ensure .json extension
+          if (!outputPath.endsWith('.json')) {
+            outputPath = '$outputPath.json';
+          }
+
+          // Save this directory for next time
+          await _saveLastUsedDirectory(outputPath);
+
+          File file = File(outputPath);
           final bool willEncrypt = password != null && password.isNotEmpty;
 
           // Use new export format with metadata
@@ -262,38 +290,43 @@ class FileSyncWidget extends ConsumerWidget {
                 password: willEncrypt ? password : null,
               );
 
-          LogWrapper.logger.i('Export finished successfully');
+          LogWrapper.logger.i('JSON export finished successfully to $outputPath');
           _onImportExportSuccessfully(context);
         } catch (e) {
-          LogWrapper.logger.e('Error exporting "$fullPath": "$e"');
-          _onError(context, 'Error during export: $e');
+          LogWrapper.logger.e('Error exporting JSON "$outputPath": "$e"');
+          _onError(context, 'Error during JSON export: $e');
         }
+      } else {
+        LogWrapper.logger.i('JSON export cancelled by user');
       }
     } catch (e) {
-      LogWrapper.logger.e('Error during exporting: ${e.toString()}');
-      _onError(context, 'Error during exporting');
+      LogWrapper.logger.e('Error during JSON exporting: ${e.toString()}');
+      _onError(context, 'Error during JSON exporting');
     }
   }
 
   Future<void> _onImportFromFile(BuildContext context, WidgetRef ref) async {
     try {
-      LogWrapper.logger.i('Import database started');
-      var rootDirectory =
-          Directory(settingsContainer.applicationExternalDocumentsPath);
+      LogWrapper.logger.i('JSON import started');
 
-      // Use open instead of openDialog to properly select files
-      String? path = await FilesystemPicker.open(
-        title: 'Select file to import',
-        context: context,
-        fsType: FilesystemType.file,
-        allowedExtensions: ['.json'],
-        rootDirectory: rootDirectory,
-        pickText: 'Select this file',
-        fileTileSelectMode: FileTileSelectMode.wholeTile,
-        requestPermission: () async => true,
+      // Get last used directory
+      final lastDir = await _getLastUsedDirectory();
+
+      // Use native file picker to select JSON file
+      FilePickerResult? result = await FilePicker.platform.pickFiles(
+        dialogTitle: 'Select JSON File to Import',
+        type: FileType.custom,
+        allowedExtensions: ['json'],
+        allowMultiple: false,
+        initialDirectory: lastDir,
       );
 
-      if (path != null) {
+      if (result != null && result.files.single.path != null) {
+        final path = result.files.single.path!;
+
+        // Save this directory for next time
+        await _saveLastUsedDirectory(path);
+
         try {
           File file = File(path);
           LogWrapper.logger.i('Import from file ${file.path}');
@@ -305,14 +338,14 @@ class FileSyncWidget extends ConsumerWidget {
           } catch (e) {
             // File is not UTF-8 readable - this is the OLD format (completely encrypted)
             LogWrapper.logger.e('File is not readable as UTF-8 - this is a legacy encrypted format');
-            _onError(context, 
+            _onError(context,
               'This file uses the old encryption format and cannot be imported.\n'
               'Please export your data again with the new version.');
             return;
           }
 
           bool isEncrypted = false;
-          
+
           // Check if file has metadata
           if (ExportData.isNewFormat(fileContent)) {
             final Map<String, dynamic> map = json.decode(fileContent);
@@ -331,7 +364,7 @@ class FileSyncWidget extends ConsumerWidget {
           if (isEncrypted) {
             password = await _promptForPassword(
               context,
-              'Decrypt Import',
+              'Decrypt JSON Import',
               defaultValue: defaultPassword,
             );
 
@@ -358,20 +391,22 @@ class FileSyncWidget extends ConsumerWidget {
               }
             }
 
-            LogWrapper.logger.i('Import finished successfully');
+            LogWrapper.logger.i('JSON import finished successfully');
             _onImportExportSuccessfully(context);
           } catch (e) {
-            LogWrapper.logger.e('Error during import: $e');
-            _onError(context, 'Error during import. Wrong password or corrupted file?');
+            LogWrapper.logger.e('Error during JSON import: $e');
+            _onError(context, 'Error during JSON import. Wrong password or corrupted file?');
           }
         } catch (e) {
           LogWrapper.logger.e('Error importing from file "$path": "$e"');
-          _onError(context, 'Error during import: $e');
+          _onError(context, 'Error during JSON import: $e');
         }
+      } else {
+        LogWrapper.logger.i('JSON import cancelled by user');
       }
     } catch (e) {
-      LogWrapper.logger.e('Error during importing: ${e.toString()}');
-      _onError(context, 'Error during importing');
+      LogWrapper.logger.e('Error during JSON importing: ${e.toString()}');
+      _onError(context, 'Error during JSON importing');
     }
   }
 
@@ -410,11 +445,15 @@ class FileSyncWidget extends ConsumerWidget {
       // Use native file picker to save file
       final defaultFileName = 'diary_export_${Utils.toFileDateTime(DateTime.now())}.ics';
 
+      // Get last used directory
+      final lastDir = await _getLastUsedDirectory();
+
       String? outputPath = await FilePicker.platform.saveFile(
         dialogTitle: 'Save ICS Calendar File',
         fileName: defaultFileName,
         type: FileType.custom,
         allowedExtensions: ['ics'],
+        initialDirectory: lastDir,
       );
 
       if (outputPath != null) {
@@ -423,6 +462,9 @@ class FileSyncWidget extends ConsumerWidget {
           if (!outputPath.endsWith('.ics')) {
             outputPath = '$outputPath.ics';
           }
+
+          // Save this directory for next time
+          await _saveLastUsedDirectory(outputPath);
 
           File file = File(outputPath);
           final bool willEncrypt = password != null && password.isNotEmpty;
@@ -459,16 +501,23 @@ class FileSyncWidget extends ConsumerWidget {
     try {
       LogWrapper.logger.i('ICS import started');
 
+      // Get last used directory
+      final lastDir = await _getLastUsedDirectory();
+
       // Use native file picker to select ICS file
       FilePickerResult? result = await FilePicker.platform.pickFiles(
         dialogTitle: 'Select ICS Calendar File to Import',
         type: FileType.custom,
         allowedExtensions: ['ics', 'ical'],
         allowMultiple: false,
+        initialDirectory: lastDir,
       );
 
       if (result != null && result.files.single.path != null) {
         final path = result.files.single.path!;
+
+        // Save this directory for next time
+        await _saveLastUsedDirectory(path);
 
         try {
           File file = File(path);
@@ -622,64 +671,4 @@ class FileSyncWidget extends ConsumerWidget {
     return password != null && password.isNotEmpty ? password : null;
   }
 
-  Future<String?> _promptForFileName(
-    BuildContext context,
-    String title,
-    String defaultName,
-  ) async {
-    final TextEditingController controller = TextEditingController(
-      text: defaultName,
-    );
-
-    // Detect if it's an ICS or JSON file
-    final isIcsFile = defaultName.endsWith('.ics') || title.contains('ICS');
-    final extension = isIcsFile ? '.ics' : '.json';
-    final hintText = isIcsFile
-        ? 'Enter file name with .ics extension'
-        : 'Enter file name with .json extension';
-
-    final fileName = await showDialog<String>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(title),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              controller: controller,
-              autofocus: true,
-              decoration: InputDecoration(
-                labelText: 'File Name',
-                hintText: hintText,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'This will create a new file or overwrite an existing file with the same name.',
-              style: TextStyle(fontSize: 12, color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6)),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, null),
-            child: const Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () {
-              String name = controller.text.trim();
-              // Ensure the file has the correct extension
-              if (!name.endsWith(extension)) {
-                name += extension;
-              }
-              Navigator.pop(context, name);
-            },
-            child: const Text('OK'),
-          ),
-        ],
-      ),
-    );
-
-    return fileName;
-  }
 }
