@@ -266,7 +266,7 @@ final createNoteFromTemplateProvider = Provider.family<Note, NoteTemplate>((ref,
   // Create a new note from the template
   return Note(
     title: template.title,
-    description: template.description,
+    description: template.generateDescription(),
     from: nextAvailableTime,
     to: nextAvailableTime.add(Duration(minutes: template.durationMinutes)),
     noteCategory: template.noteCategory,

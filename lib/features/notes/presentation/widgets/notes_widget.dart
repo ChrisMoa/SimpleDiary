@@ -20,17 +20,17 @@ class _NotesWidgetState extends ConsumerState<NotesWidget> {
   Widget build(BuildContext context) {
     final selectedNotes = ref.watch(notesOfSelecteDayProvider);
     if (selectedNotes.isEmpty) {
-      return const Center(
+      return Center(
         child: Text(
           'No Events found!',
-          style: TextStyle(color: Colors.black, fontSize: 24),
+          style: TextStyle(color: Theme.of(context).colorScheme.onSurface, fontSize: 24),
         ),
       );
     }
 
     return SfCalendarTheme(
       data: SfCalendarThemeData(
-        timeTextStyle: const TextStyle(fontSize: 16, color: Colors.black),
+        timeTextStyle: TextStyle(fontSize: 16, color: Theme.of(context).colorScheme.onSurface),
       ),
       child: SfCalendar(
         view: CalendarView.timelineDay,
@@ -38,7 +38,7 @@ class _NotesWidgetState extends ConsumerState<NotesWidget> {
         initialDisplayDate: ref.read(noteSelectedDateProvider),
         appointmentBuilder: appointmentBuilder,
         headerHeight: 0,
-        todayHighlightColor: Colors.black,
+        todayHighlightColor: Theme.of(context).colorScheme.primary,
         selectionDecoration:
             BoxDecoration(color: Colors.red.withValues(alpha: 0.2)),
         onTap: (details) {
@@ -71,8 +71,8 @@ class _NotesWidgetState extends ConsumerState<NotesWidget> {
           note.title,
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
-          style: const TextStyle(
-            color: Colors.black,
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.onSurface,
             fontSize: 16,
             fontWeight: FontWeight.bold,
           ),

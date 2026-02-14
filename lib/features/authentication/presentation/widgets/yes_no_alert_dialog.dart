@@ -16,8 +16,8 @@ class YesNoAlertDialog extends AlertDialog {
       super.key})
       : super(
           title: Text(question),
-          titleTextStyle: const TextStyle(
-              fontWeight: FontWeight.bold, color: Colors.black, fontSize: 20),
+          titleTextStyle: TextStyle(
+              fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurface, fontSize: 20),
           actionsOverflowButtonSpacing: 20,
           actions: [
             ElevatedButton(

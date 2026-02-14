@@ -122,7 +122,26 @@ class TemplateListItem extends ConsumerWidget {
                 ],
               ),
               const SizedBox(height: 8),
-              if (template.description.isNotEmpty)
+              if (template.hasDescriptionSections)
+                Wrap(
+                  spacing: 6,
+                  runSpacing: 4,
+                  children: template.descriptionSections.map((section) =>
+                    Chip(
+                      label: Text(
+                        section.title,
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          fontSize: isSmallScreen ? 11 : 12,
+                        ),
+                      ),
+                      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      visualDensity: VisualDensity.compact,
+                      backgroundColor: theme.colorScheme.primaryContainer.withValues(alpha: 0.5),
+                      padding: EdgeInsets.zero,
+                    ),
+                  ).toList(),
+                )
+              else if (template.description.isNotEmpty)
                 Text(
                   template.description,
                   style: theme.textTheme.bodyMedium?.copyWith(

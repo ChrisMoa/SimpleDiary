@@ -26,7 +26,7 @@ class _NotesViewDayWidgetState extends ConsumerState<NotesViewDayWidget> {
 
     return SfCalendarTheme(
       data: SfCalendarThemeData(
-        timeTextStyle: const TextStyle(fontSize: 16, color: Colors.black),
+        timeTextStyle: TextStyle(fontSize: 16, color: Theme.of(context).colorScheme.onSurface),
       ),
       child: SfCalendar(
         view: CalendarView.timelineDay,
@@ -45,7 +45,7 @@ class _NotesViewDayWidgetState extends ConsumerState<NotesViewDayWidget> {
         minDate: selectedDate.copyWith(hour: 7),
         maxDate: selectedDate.copyWith(hour: 22),
         headerHeight: 0,
-        todayHighlightColor: Colors.black,
+        todayHighlightColor: Theme.of(context).colorScheme.primary,
         selectionDecoration:
             BoxDecoration(color: Colors.red.withValues(alpha: 0.2)),
         onTap: (details) {

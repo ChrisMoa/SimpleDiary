@@ -208,14 +208,14 @@ class _SupabaseSettingsWidgetState extends ConsumerState<SupabaseSettingsWidget>
         icon: Icon(
           Icons.cloud_circle_outlined,
           size: isSmallScreen ? 20 : 24,
-          color: Colors.white,
+          color: theme.colorScheme.onPrimary,
         ),
         label: Text(
           'Test Connection',
           style: TextStyle(
             fontSize: isSmallScreen ? 14 : 16,
             fontWeight: FontWeight.bold,
-            color: Colors.white,
+            color: theme.colorScheme.onPrimary,
           ),
         ),
       ),

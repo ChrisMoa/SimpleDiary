@@ -102,18 +102,13 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
     }
 
     // Show the note details when a note is selected
-    return Container(
+    return Card(
       margin: const EdgeInsets.all(8),
-      decoration: BoxDecoration(
-        color: theme.colorScheme.surface,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: theme.colorScheme.shadow.withValues(alpha: 0.1),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
+      color: theme.colorScheme.secondaryContainer,
+      elevation: 2,
+      shadowColor: theme.colorScheme.shadow.withValues(alpha: 0.3),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
       ),
       child: SingleChildScrollView(
         controller: _scrollController,
@@ -224,7 +219,7 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
                     borderRadius: BorderRadius.circular(12),
                   ),
                   filled: true,
-                  fillColor: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+                  fillColor: theme.colorScheme.surface,
                   contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                 ),
                 style: theme.textTheme.titleMedium?.copyWith(
@@ -327,7 +322,7 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
                           borderRadius: BorderRadius.circular(12),
                         ),
                         filled: true,
-                        fillColor: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+                        fillColor: theme.colorScheme.surface,
                         contentPadding: const EdgeInsets.all(16),
                       ),
                       style: theme.textTheme.bodyMedium?.copyWith(
@@ -486,8 +481,15 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
   void _createNoteFromTemplate(NoteTemplate template) {
     LogWrapper.logger.d('Creating note from template: ${template.title}');
     try {
-      // Create a new note from template using the provider
-      final newNote = ref.read(createNoteFromTemplateProvider(template));
+      // Create a new note directly to avoid Provider.family caching issues
+      final nextAvailableTime = ref.read(nextAvailableTimeSlotProvider);
+      final newNote = Note(
+        title: template.title,
+        description: template.generateDescription(),
+        from: nextAvailableTime,
+        to: nextAvailableTime.add(Duration(minutes: template.durationMinutes)),
+        noteCategory: template.noteCategory,
+      );
 
       LogWrapper.logger.d('Creating new note with ID: ${newNote.id}');
       // Add to database

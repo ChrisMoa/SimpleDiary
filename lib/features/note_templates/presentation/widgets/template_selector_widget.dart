@@ -109,7 +109,16 @@ class TemplateSelectorWidget extends ConsumerWidget {
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
-                                  if (template.description.isNotEmpty)
+                                  if (template.hasDescriptionSections)
+                                    Text(
+                                      template.descriptionSections.map((s) => s.title).join(' / '),
+                                      style: theme.textTheme.bodySmall?.copyWith(
+                                        color: theme.colorScheme.onSecondaryContainer.withValues(alpha: 0.8),
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    )
+                                  else if (template.description.isNotEmpty)
                                     Text(
                                       template.description,
                                       style: theme.textTheme.bodySmall?.copyWith(

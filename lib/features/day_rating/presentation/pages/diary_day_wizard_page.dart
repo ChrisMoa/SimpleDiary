@@ -37,29 +37,25 @@ class _DiaryDayWizardPageState extends ConsumerState<DiaryDayWizardPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      // Removed the AppBar to save vertical space
-      body: _isLoading
-          ? const Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  CircularProgressIndicator(),
-                  SizedBox(height: 16),
-                  Text('Loading your day data...'),
-                ],
-              ),
-            )
-          : const SafeArea(
-              child: DiaryDayEditingWizardWidget(
-                navigateBack: false,
-                addAdditionalSaveButton: true,
-                editNote: false,
-              ),
-            ),
-      // Using resizeToAvoidBottomInset: false to prevent the keyboard
-      // from automatically pushing up the content
-      resizeToAvoidBottomInset: false,
+    if (_isLoading) {
+      return const Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CircularProgressIndicator(),
+            SizedBox(height: 16),
+            Text('Loading your day data...'),
+          ],
+        ),
+      );
+    }
+
+    return const SafeArea(
+      child: DiaryDayEditingWizardWidget(
+        navigateBack: false,
+        addAdditionalSaveButton: true,
+        editNote: false,
+      ),
     );
   }
 }

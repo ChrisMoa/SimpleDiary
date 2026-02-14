@@ -23,30 +23,34 @@ class DayRatingWidget extends ConsumerWidget {
     final isLandscape = mediaQuery.orientation == Orientation.landscape;
 
     // Create a scrollable layout that adapts to different screen sizes
-    return Container(
-      color: theme.colorScheme.surface,
+    return Card(
+      margin: const EdgeInsets.all(8),
+      color: theme.colorScheme.secondaryContainer,
+      elevation: 2,
+      shadowColor: theme.colorScheme.shadow.withValues(alpha: 0.3),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Header with day info
-          Container(
-            color: theme.colorScheme.surface,
+          Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   'Day Rating',
-                  style: theme.textTheme.headlineMedium?.copyWith(
+                  style: theme.textTheme.titleLarge?.copyWith(
                     color: theme.colorScheme.primary,
                     fontWeight: FontWeight.bold,
-                    fontSize: isSmallScreen ? 20 : 24,
                   ),
                 ),
                 Text(
                   'How was your day? Rate the different aspects of your experience.',
                   style: theme.textTheme.bodyMedium?.copyWith(
-                    color: theme.colorScheme.onSurface,
+                    color: theme.colorScheme.onSecondaryContainer,
                   ),
                 ),
               ],
@@ -57,9 +61,7 @@ class DayRatingWidget extends ConsumerWidget {
 
           // Rating cards - scrollable area
           Expanded(
-            child: Container(
-              color: theme.colorScheme.surface,
-              child: SingleChildScrollView(
+            child: SingleChildScrollView(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -116,7 +118,6 @@ class DayRatingWidget extends ConsumerWidget {
                 ),
               ),
             ),
-          ),
         ],
       ),
     );

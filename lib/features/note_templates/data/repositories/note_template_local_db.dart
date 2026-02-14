@@ -7,15 +7,30 @@ class NoteTemplateLocalDb extends LocalDbHelper {
       : super(tableName: tableName, primaryKey: primaryKey, dbFile: dbFile);
 
   @override
+  Future<void> createSqlTable() async {
+    await super.createSqlTable();
+
+    // Migration: add column for existing databases (runs after table exists)
+    try {
+      await database!.execute(
+        "ALTER TABLE $tableName ADD COLUMN descriptionSections TEXT NOT NULL DEFAULT ''",
+      );
+    } catch (_) {
+      // Column already exists - expected for already-migrated databases
+    }
+  }
+
+  @override
   Future<void> onCreateSqlTable() async {
-    //* create table
+    //* create table (fresh installs only)
     await database!.execute('''
           CREATE TABLE IF NOT EXISTS $tableName (
-            $primaryKey TEXT PRIMARY KEY, 
-            title TEXT NOT NULL, 
+            $primaryKey TEXT PRIMARY KEY,
+            title TEXT NOT NULL,
             description TEXT NOT NULL,
             durationMinutes INTEGER NOT NULL,
-            noteCategory TEXT NOT NULL
+            noteCategory TEXT NOT NULL,
+            descriptionSections TEXT NOT NULL DEFAULT ''
           )
           ''');
   }
@@ -25,4 +40,3 @@ class NoteTemplateLocalDb extends LocalDbHelper {
     return NoteTemplate.fromEmpty().fromLocalDbMap(elementMap);
   }
 }
-
