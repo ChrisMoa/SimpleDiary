@@ -1,6 +1,6 @@
 # Test Coverage
 
-**Total: 299 passing tests** across 21 test files
+**Total: 308 passing tests** across 23 test files (+ 11 optional Supabase integration tests)
 
 Run all tests with:
 ```bash
@@ -96,8 +96,10 @@ flutter test test/core/ test/features/
 | `ics_file_provider_test.dart` | 15 | **IcsExportMetadata:** `toMap`/`fromMap`, null handling, missing noteCount. **IcsFileProvider:** `exportToString` (unencrypted with ICS metadata, encrypted), `exportPlainIcs` (raw ICS without JSON wrapper), `importFromIcs` (wrapped unencrypted/encrypted, plain ICS, missing password error). **Round-trips:** unencrypted, encrypted. Empty data export |
 | `json_serialization_test.dart` | 8 | DiaryDay list JSON round-trip (with ratings, empty, with notes), Note list JSON round-trip (timed, all-day), NoteTemplate list JSON round-trip (with sections), mixed data combined export, encryption readiness (UTF-8 encode/decode) |
 | `models/supabase_settings_test.dart` | 8 | SupabaseSettings construction (all fields, empty defaults), `toMap`/`fromMap` (round-trip, snake_case keys, missing keys), `copyWith` (partial/full) |
+| `models/sync_state_test.dart` | 9 | `SyncStatus` enum values (idle/syncing/success/error), `SyncState` construction (required fields, all fields), `copyWith` (preserves unchanged, updates all, no mutation), progress default, typical sync lifecycle, error state preserves progress |
+| `supabase_integration_test.dart` | 11 (optional) | **Skipped when `test/.env` is missing.** Connection (initialize + sign in, wrong password, sign out), diary day sync round-trip, note sync round-trip (timed + all-day), template sync round-trip, full upload + download round-trip, error handling (uninitialized, unauthenticated sync/fetch) |
 
-**Sources:** `lib/features/synchronization/data/models/export_data.dart`, `lib/features/synchronization/domain/providers/file_db_provider.dart`, `ics_file_provider.dart`, `lib/features/synchronization/data/repositories/ics_converter.dart`
+**Sources:** `lib/features/synchronization/data/models/export_data.dart`, `lib/features/synchronization/domain/providers/file_db_provider.dart`, `ics_file_provider.dart`, `lib/features/synchronization/data/repositories/ics_converter.dart`, `supabase_api.dart`, `supabase_provider.dart`
 
 ---
 
@@ -115,6 +117,8 @@ flutter test test/core/ test/features/
 | Wizard scheduling logic | Covered | Time slots, gaps, 15-min chunks, day coverage |
 | Category management | Covered | Name validation, lookup, defaults |
 | Supabase settings | Covered | Model serialization |
+| Supabase sync state | Covered | SyncStatus enum, SyncState construction/copyWith |
+| Supabase API (optional) | Covered | Requires `test/.env` with credentials; skipped otherwise |
 
 ### Not covered (requires integration/widget tests)
 
@@ -123,7 +127,6 @@ flutter test test/core/ test/features/
 | Riverpod provider state (with ProviderContainer) | Requires mocking database layer |
 | SQLite database operations (LocalDbHelper) | Requires real/mock SQLite database |
 | Widget/UI tests (pages, forms, navigation) | Requires `WidgetTester` with full app setup |
-| Supabase API calls | Requires network mocking or test server |
 | File picker / permission handler | Platform-specific, requires integration tests |
 
 ---
