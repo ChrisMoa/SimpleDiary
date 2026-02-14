@@ -10,6 +10,7 @@ import 'package:day_tracker/features/notes/data/models/note_category.dart';
 import 'package:day_tracker/features/notes/data/models/note_data_source.dart';
 import 'package:day_tracker/features/notes/domain/providers/category_local_db_provider.dart';
 import 'package:day_tracker/features/notes/domain/providers/note_local_db_provider.dart';
+import 'package:day_tracker/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
@@ -35,6 +36,7 @@ class _NotesCalendarWidgetState extends ConsumerState<NotesCalendarWidget> {
   Widget build(BuildContext context) {
     final notes = ref.watch(wizardDayNotesProvider);
     final theme = ref.watch(themeProvider);
+    final l10n = AppLocalizations.of(context);
     final selectedDate = ref.watch(wizardSelectedDateProvider);
     final isFullyScheduled = ref.watch(isDayFullyScheduledProvider);
 
@@ -83,7 +85,7 @@ class _NotesCalendarWidgetState extends ConsumerState<NotesCalendarWidget> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          'Daily Schedule',
+                          l10n.dailySchedule,
                           style: theme.textTheme.titleLarge?.copyWith(
                             color: theme.colorScheme.primary,
                             fontWeight: FontWeight.bold,
@@ -105,7 +107,7 @@ class _NotesCalendarWidgetState extends ConsumerState<NotesCalendarWidget> {
                             ),
                             const SizedBox(width: 4),
                             Text(
-                              'Schedule complete',
+                              l10n.scheduleComplete,
                               style: theme.textTheme.bodySmall?.copyWith(
                                 color: theme.colorScheme.primary,
                                 fontWeight: FontWeight.bold,
@@ -126,7 +128,7 @@ class _NotesCalendarWidgetState extends ConsumerState<NotesCalendarWidget> {
                             ),
                             const SizedBox(width: 4),
                             Text(
-                              'Fill in your complete day',
+                              l10n.fillInYourCompleteDay,
                               style: theme.textTheme.bodySmall?.copyWith(
                                 color: theme.colorScheme.error,
                               ),
@@ -263,7 +265,7 @@ class _NotesCalendarWidgetState extends ConsumerState<NotesCalendarWidget> {
               children: [
                 Expanded(
                   child: Text(
-                    note.title.isEmpty ? 'New Note' : note.title,
+                    note.title.isEmpty ? AppLocalizations.of(context).newNote : note.title,
                     style: TextStyle(
                       color: theme.colorScheme.surface,
                       fontWeight: FontWeight.bold,

@@ -188,7 +188,7 @@ class DashboardRepository {
         for (var day in weekDays) {
           weekTotal += day.overallScore;
         }
-        trend['Woche ${week + 1}'] = weekTotal / weekDays.length;
+        trend['week_${week + 1}'] = weekTotal / weekDays.length;
       }
     }
 
@@ -237,6 +237,9 @@ class DashboardRepository {
   }
 
   /// Generate insights based on data
+  /// Titles and descriptions use English keys/fallbacks.
+  /// The presentation layer should resolve localized strings
+  /// based on InsightType and dynamicData.
   List<Insight> _generateInsights(
     StreakData streak,
     WeekStats weekStats,
@@ -247,18 +250,19 @@ class DashboardRepository {
     // Streak milestone
     if (streak.isMilestone) {
       insights.add(Insight(
-        title: streak.milestoneText,
-        description: 'Du hast einen wichtigen Meilenstein erreicht!',
+        title: 'Streak Milestone',
+        description: 'You reached an important milestone!',
         type: InsightType.milestone,
         icon: '🎉',
+        dynamicData: streak.currentStreak.toString(),
       ));
     }
 
     // Perfect week
     if (weekStats.completedDays == 7) {
       insights.add(Insight(
-        title: 'Perfekte Woche!',
-        description: 'Du hast alle Tage diese Woche eingetragen! 🎉',
+        title: 'Perfect Week',
+        description: 'You logged every day this week!',
         type: InsightType.achievement,
         icon: '⭐',
       ));
@@ -267,8 +271,8 @@ class DashboardRepository {
     // Today not logged reminder
     if (!todayLogged) {
       insights.add(Insight(
-        title: 'Heute noch nicht eingetragen',
-        description: 'Vergiss nicht, deinen heutigen Tag zu bewerten!',
+        title: 'Not Recorded Today',
+        description: 'Don\'t forget to rate your day!',
         type: InsightType.suggestion,
         icon: '⏰',
       ));
@@ -279,10 +283,11 @@ class DashboardRepository {
       final bestCategory = weekStats.categoryAverages.entries
           .reduce((a, b) => a.value > b.value ? a : b);
       insights.add(Insight(
-        title: 'Beste Kategorie',
-        description: 'Deine beste Kategorie diese Woche: ${bestCategory.key}! 📈',
+        title: 'Best Category',
+        description: 'Your best category this week: ${bestCategory.key}',
         type: InsightType.improvement,
         icon: '📊',
+        dynamicData: bestCategory.key,
       ));
     }
 

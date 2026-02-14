@@ -6,6 +6,7 @@ import 'package:day_tracker/features/dashboard/presentation/widgets/quick_stats_
 import 'package:day_tracker/features/dashboard/presentation/widgets/week_overview_widget.dart';
 import 'package:day_tracker/features/day_rating/presentation/pages/diary_day_wizard_page.dart';
 import 'package:flutter/material.dart';
+import 'package:day_tracker/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// New dashboard page with modern UI and statistics
@@ -59,7 +60,7 @@ class _NewDashboardPageState extends ConsumerState<NewDashboardPage> {
           );
         },
         icon: const Icon(Icons.add),
-        label: const Text('Neuer Eintrag'),
+        label: Text(AppLocalizations.of(context)!.newEntry),
       ),
     );
   }

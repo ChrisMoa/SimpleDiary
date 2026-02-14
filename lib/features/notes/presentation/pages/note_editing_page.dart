@@ -6,6 +6,7 @@ import 'package:day_tracker/features/notes/domain/providers/note_editing_page_pr
 import 'package:day_tracker/features/notes/domain/providers/note_local_db_provider.dart';
 import 'package:day_tracker/features/notes/domain/providers/note_selected_date_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:day_tracker/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class NoteEditingPage extends ConsumerStatefulWidget {
@@ -68,82 +69,88 @@ class _NoteEditingPageState extends ConsumerState<NoteEditingPage> {
     );
   }
 
-  Widget buildScaffoldBody(BuildContext context) => Form(
-        key: _formKey,
-        child: Container(
-          color: Theme.of(context).colorScheme.background,
-          child: Column(
-            children: [
-              buildTitle(),
-              const SizedBox(
-                height: 20,
-              ),
-              buildDateTimePickers(),
-              const SizedBox(
-                height: 20,
-              ),
-              buildAllDayCheckbox(),
-              const SizedBox(
-                height: 20,
-              ),
-              buildDescription(),
-              const SizedBox(
-                height: 20,
-              ),
-              buildCategory(),
-              const SizedBox(
-                height: 20,
-              ),
-              if (widget.addAdditionalSaveButton)
-                Row(
-                  children: [
-                    TextButton(
-                      onPressed: saveForm,
-                      child: const Text('save'),
-                    ),
-                    TextButton(
-                      onPressed: reloadForm,
-                      child: const Text('reload'),
-                    ),
-                  ],
-                )
-            ],
-          ),
-        ),
-      );
-
-  List<Widget> buildEditingActions() => [
-        ElevatedButton.icon(
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.transparent,
-            shadowColor: Colors.transparent,
-          ),
-          onPressed: saveForm,
-          icon: const Icon(Icons.done),
-          label: const Text('SAVE'),
-        ),
-      ];
-
-  buildTitle() => TextFormField(
-        style: Theme.of(context).textTheme.titleLarge!.copyWith(
-              color: Theme.of(context).colorScheme.primary,
+  Widget buildScaffoldBody(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    return Form(
+      key: _formKey,
+      child: Container(
+        color: Theme.of(context).colorScheme.background,
+        child: Column(
+          children: [
+            buildTitle(),
+            const SizedBox(
+              height: 20,
             ),
-        decoration: const InputDecoration(
-          border: UnderlineInputBorder(),
-          hintText: 'Add Title',
+            buildDateTimePickers(),
+            const SizedBox(
+              height: 20,
+            ),
+            buildAllDayCheckbox(),
+            const SizedBox(
+              height: 20,
+            ),
+            buildDescription(),
+            const SizedBox(
+              height: 20,
+            ),
+            buildCategory(),
+            const SizedBox(
+              height: 20,
+            ),
+            if (widget.addAdditionalSaveButton)
+              Row(
+                children: [
+                  TextButton(
+                    onPressed: saveForm,
+                    child: Text(l10n.saveWord),
+                  ),
+                  TextButton(
+                    onPressed: reloadForm,
+                    child: Text(l10n.reload),
+                  ),
+                ],
+              )
+          ],
         ),
-        onSaved: (newValue) {
-          if (newValue == null || newValue == '') {
-            throw ('title is empty');
-          }
-          note.title = newValue;
-          ref.read(noteEditingPageProvider.notifier).updateNote(note);
-        },
-        initialValue: note.title,
-        // validator: (title) =>
-        //     title != null && title.isEmpty ? 'Title cannot be empty' : null,
-        // controller: titleController,
-      );
+      ),
+    );
+  }
+
+  List<Widget> buildEditingActions() {
+    final l10n = AppLocalizations.of(context)!;
+    return [
+      ElevatedButton.icon(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.transparent,
+          shadowColor: Colors.transparent,
+        ),
+        onPressed: saveForm,
+        icon: const Icon(Icons.done),
+        label: Text(l10n.saveUpperCase),
+      ),
+    ];
+  }
+
+  buildTitle() {
+    final l10n = AppLocalizations.of(context)!;
+    return TextFormField(
+      style: Theme.of(context).textTheme.titleLarge!.copyWith(
+            color: Theme.of(context).colorScheme.primary,
+          ),
+      decoration: InputDecoration(
+        border: const UnderlineInputBorder(),
+        hintText: l10n.addTitle,
+      ),
+      onSaved: (newValue) {
+        if (newValue == null || newValue == '') {
+          throw ('title is empty');
+        }
+        note.title = newValue;
+        ref.read(noteEditingPageProvider.notifier).updateNote(note);
+      },
+      initialValue: note.title,
+    );
+  }
 
   Widget buildDateTimePickers() => Column(
         children: [
@@ -196,33 +203,34 @@ class _NoteEditingPageState extends ConsumerState<NoteEditingPage> {
       );
   }
 
-  Widget buildDescription() => buildHeader(
-        header: 'Description',
-        child: SizedBox(
-          height: 240,
-          child: TextFormField(
-            maxLines: 10,
-            style: Theme.of(context)
-                .textTheme
-                .titleMedium!
-                .copyWith(color: Theme.of(context).colorScheme.secondary),
-            decoration: const InputDecoration(
-              border: UnderlineInputBorder(),
-              hintText: 'Add note',
-            ),
-            initialValue: note.description,
-            onSaved: (newValue) {
-              if (newValue == null || newValue == '') {
-                throw ('description is empty');
-              }
-              note.description = newValue;
-              ref.read(noteEditingPageProvider.notifier).updateNote(note);
-            },
-            // controller: descriptionController,
-            // validator: (value) => null, // always true
+  Widget buildDescription() {
+    final l10n = AppLocalizations.of(context)!;
+    return buildHeader(
+      header: l10n.description,
+      child: SizedBox(
+        height: 240,
+        child: TextFormField(
+          maxLines: 10,
+          style: Theme.of(context)
+              .textTheme
+              .titleMedium!
+              .copyWith(color: Theme.of(context).colorScheme.secondary),
+          decoration: InputDecoration(
+            border: const UnderlineInputBorder(),
+            hintText: l10n.addNote,
           ),
+          initialValue: note.description,
+          onSaved: (newValue) {
+            if (newValue == null || newValue == '') {
+              throw ('description is empty');
+            }
+            note.description = newValue;
+            ref.read(noteEditingPageProvider.notifier).updateNote(note);
+          },
         ),
-      );
+      ),
+    );
+  }
 
   Color getColor(Set<MaterialState> states) {
     const Set<MaterialState> interactiveStates = <MaterialState>{
@@ -236,68 +244,77 @@ class _NoteEditingPageState extends ConsumerState<NoteEditingPage> {
     return Theme.of(context).colorScheme.primaryContainer;
   }
 
-  Widget buildAllDayCheckbox() => Row(children: [
-        Text(
-          'AllDay?',
-          style: Theme.of(context)
-              .textTheme
-              .titleLarge!
-              .copyWith(color: Theme.of(context).colorScheme.primary),
-        ),
-        Checkbox(
-          value: note.isAllDay,
-          checkColor: Theme.of(context).colorScheme.onPrimary,
-          fillColor: MaterialStateProperty.resolveWith(getColor),
-          onChanged: (bool? value) {
-            setState(() {
-              note.isAllDay = value!;
-              ref.read(noteEditingPageProvider.notifier).updateNote(note);
-            });
-          },
-        ),
-      ]);
+  Widget buildAllDayCheckbox() {
+    final l10n = AppLocalizations.of(context)!;
+    return Row(children: [
+      Text(
+        l10n.allDayQuestion,
+        style: Theme.of(context)
+            .textTheme
+            .titleLarge!
+            .copyWith(color: Theme.of(context).colorScheme.primary),
+      ),
+      Checkbox(
+        value: note.isAllDay,
+        checkColor: Theme.of(context).colorScheme.onPrimary,
+        fillColor: MaterialStateProperty.resolveWith(getColor),
+        onChanged: (bool? value) {
+          setState(() {
+            note.isAllDay = value!;
+            ref.read(noteEditingPageProvider.notifier).updateNote(note);
+          });
+        },
+      ),
+    ]);
+  }
 
-  Widget buildFrom() => buildHeader(
-        header: 'FROM',
-        child: Row(
-          children: [
-            Expanded(
-              flex: 2, // gets 2/3 of width as space
-              child: buildDropdownField(
-                text: Utils.toDate(note.from),
-                onClicked: () => pickFromDateTime(pickDate: true),
-              ),
+  Widget buildFrom() {
+    final l10n = AppLocalizations.of(context)!;
+    return buildHeader(
+      header: l10n.from,
+      child: Row(
+        children: [
+          Expanded(
+            flex: 2, // gets 2/3 of width as space
+            child: buildDropdownField(
+              text: Utils.toDate(note.from),
+              onClicked: () => pickFromDateTime(pickDate: true),
             ),
-            Expanded(
-              child: buildDropdownField(
-                text: Utils.toTime(note.from),
-                onClicked: () => pickFromDateTime(pickDate: false),
-              ),
+          ),
+          Expanded(
+            child: buildDropdownField(
+              text: Utils.toTime(note.from),
+              onClicked: () => pickFromDateTime(pickDate: false),
             ),
-          ],
-        ),
-      );
+          ),
+        ],
+      ),
+    );
+  }
 
-  Widget buildTo() => buildHeader(
-        header: 'To',
-        child: Row(
-          children: [
-            Expanded(
-              flex: 2, // gets 2/3 of width as space
-              child: buildDropdownField(
-                text: Utils.toDate(note.to),
-                onClicked: () => pickToDateTime(pickDate: true),
-              ),
+  Widget buildTo() {
+    final l10n = AppLocalizations.of(context)!;
+    return buildHeader(
+      header: l10n.to,
+      child: Row(
+        children: [
+          Expanded(
+            flex: 2, // gets 2/3 of width as space
+            child: buildDropdownField(
+              text: Utils.toDate(note.to),
+              onClicked: () => pickToDateTime(pickDate: true),
             ),
-            Expanded(
-              child: buildDropdownField(
-                text: Utils.toTime(note.to),
-                onClicked: () => pickToDateTime(pickDate: false),
-              ),
+          ),
+          Expanded(
+            child: buildDropdownField(
+              text: Utils.toTime(note.to),
+              onClicked: () => pickToDateTime(pickDate: false),
             ),
-          ],
-        ),
-      );
+          ),
+        ],
+      ),
+    );
+  }
 
   Widget buildDropdownField({
     required String text,

@@ -1,5 +1,6 @@
 import 'package:day_tracker/features/authentication/domain/providers/user_data_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:day_tracker/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class PasswordAuthenticationPage extends ConsumerStatefulWidget {
@@ -32,6 +33,7 @@ class _PasswordAuthenticationPageState
   Widget build(BuildContext context) {
     final userData = ref.watch(userDataProvider);
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
 
     return Scaffold(
       backgroundColor: theme.colorScheme.surface,
@@ -62,7 +64,7 @@ class _PasswordAuthenticationPageState
 
                   // Welcome text
                   Text(
-                    'Welcome back',
+                    l10n.welcomeBack,
                     style: theme.textTheme.headlineMedium?.copyWith(
                       color: theme.colorScheme.onSurface,
                       fontWeight: FontWeight.bold,
@@ -78,7 +80,7 @@ class _PasswordAuthenticationPageState
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Enter your password to continue',
+                    l10n.enterPasswordToContinue,
                     style: theme.textTheme.bodyMedium?.copyWith(
                       color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                     ),
@@ -105,7 +107,7 @@ class _PasswordAuthenticationPageState
                             obscureText: !_isPasswordVisible,
                             style: TextStyle(color: theme.colorScheme.onSurface),
                             decoration: InputDecoration(
-                              labelText: 'Password',
+                              labelText: l10n.password,
                               labelStyle: TextStyle(
                                 color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                               ),
@@ -143,7 +145,7 @@ class _PasswordAuthenticationPageState
                             ),
                             validator: (value) {
                               if (value == null || value.isEmpty) {
-                                return 'Please enter your password';
+                                return l10n.pleaseEnterYourPassword;
                               }
                               return null;
                             },
@@ -164,9 +166,9 @@ class _PasswordAuthenticationPageState
                                 ),
                                 elevation: 0,
                               ),
-                              child: const Text(
-                                'Sign In',
-                                style: TextStyle(
+                              child: Text(
+                                l10n.signIn,
+                                style: const TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -190,7 +192,7 @@ class _PasswordAuthenticationPageState
                       color: theme.colorScheme.primary,
                     ),
                     label: Text(
-                      'Switch User',
+                      l10n.switchUser,
                       style: TextStyle(color: theme.colorScheme.primary),
                     ),
                   ),
@@ -204,6 +206,7 @@ class _PasswordAuthenticationPageState
   }
 
   void _attemptLogin() {
+    final l10n = AppLocalizations.of(context);
     if (_formKey.currentState!.validate()) {
       final userData = ref.read(userDataProvider);
       bool success = ref
@@ -213,7 +216,7 @@ class _PasswordAuthenticationPageState
       if (!success) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Incorrect password',
+            content: Text(l10n.incorrectPassword,
                 style: TextStyle(color: Theme.of(context).colorScheme.onError)),
             backgroundColor: Theme.of(context).colorScheme.error,
           ),

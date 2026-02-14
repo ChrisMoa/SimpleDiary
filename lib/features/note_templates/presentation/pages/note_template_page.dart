@@ -3,6 +3,7 @@ import 'package:day_tracker/features/note_templates/data/models/note_template.da
 import 'package:day_tracker/features/note_templates/domain/providers/note_template_local_db_provider.dart';
 import 'package:day_tracker/features/note_templates/presentation/widgets/template_editing_widget.dart';
 import 'package:day_tracker/features/note_templates/presentation/widgets/template_list_item.dart';
+import 'package:day_tracker/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -27,6 +28,7 @@ class _NoteTemplatePageState extends ConsumerState<NoteTemplatePage> {
   Widget build(BuildContext context) {
     final theme = ref.watch(themeProvider);
     final templates = ref.watch(noteTemplateLocalDataProvider);
+    final l10n = AppLocalizations.of(context);
     final mediaQuery = MediaQuery.of(context);
     final screenWidth = mediaQuery.size.width;
     final isSmallScreen = screenWidth < 600;
@@ -52,7 +54,7 @@ class _NoteTemplatePageState extends ConsumerState<NoteTemplatePage> {
                       const SizedBox(width: 8),
                       Expanded(
                         child: Text(
-                          'Note Templates',
+                          l10n.noteTemplates,
                           style: theme.textTheme.headlineMedium?.copyWith(
                             color: theme.colorScheme.primary,
                             fontWeight: FontWeight.bold,
@@ -66,7 +68,7 @@ class _NoteTemplatePageState extends ConsumerState<NoteTemplatePage> {
                 // Template list
                 Expanded(
                   child: templates.isEmpty
-                      ? _buildEmptyState(theme, isSmallScreen)
+                      ? _buildEmptyState(theme, l10n, isSmallScreen)
                       : ListView.builder(
                           itemCount: templates.length,
                           itemBuilder: (context, index) {
@@ -98,7 +100,7 @@ class _NoteTemplatePageState extends ConsumerState<NoteTemplatePage> {
     );
   }
 
-  Widget _buildEmptyState(ThemeData theme, bool isSmallScreen) {
+  Widget _buildEmptyState(ThemeData theme, AppLocalizations l10n, bool isSmallScreen) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -110,14 +112,14 @@ class _NoteTemplatePageState extends ConsumerState<NoteTemplatePage> {
           ),
           const SizedBox(height: 16),
           Text(
-            'No templates yet',
+            l10n.noTemplatesYet,
             style: theme.textTheme.titleLarge?.copyWith(
               color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
             ),
           ),
           const SizedBox(height: 8),
           Text(
-            'Create templates to quickly add notes',
+            l10n.createTemplatesToQuicklyAdd,
             style: theme.textTheme.bodyMedium?.copyWith(
               color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
             ),
@@ -127,7 +129,7 @@ class _NoteTemplatePageState extends ConsumerState<NoteTemplatePage> {
           ElevatedButton.icon(
             onPressed: _createNewTemplate,
             icon: const Icon(Icons.add),
-            label: const Text('Create Template'),
+            label: Text(l10n.createTemplate),
             style: ElevatedButton.styleFrom(
               backgroundColor: theme.colorScheme.primaryContainer,
               foregroundColor: theme.colorScheme.onPrimaryContainer,
@@ -153,24 +155,25 @@ class _NoteTemplatePageState extends ConsumerState<NoteTemplatePage> {
   }
 
   void _confirmDeleteTemplate(NoteTemplate template) {
+    final l10n = AppLocalizations.of(context);
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Delete Template'),
-        content: Text('Are you sure you want to delete "${template.title}"?'),
+        title: Text(l10n.deleteTemplate),
+        content: Text(l10n.confirmDeleteTemplate(template.title)),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cancel'),
+            child: Text(l10n.cancel),
           ),
           ElevatedButton(
             onPressed: () {
               ref.read(noteTemplateLocalDataProvider.notifier).deleteElement(template);
               Navigator.of(context).pop();
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Template deleted'),
-                  duration: Duration(seconds: 2),
+                SnackBar(
+                  content: Text(l10n.templateDeleted),
+                  duration: const Duration(seconds: 2),
                 ),
               );
             },
@@ -178,7 +181,7 @@ class _NoteTemplatePageState extends ConsumerState<NoteTemplatePage> {
               backgroundColor: Theme.of(context).colorScheme.error,
               foregroundColor: Theme.of(context).colorScheme.onError,
             ),
-            child: const Text('Delete'),
+            child: Text(l10n.delete),
           ),
         ],
       ),
@@ -186,6 +189,7 @@ class _NoteTemplatePageState extends ConsumerState<NoteTemplatePage> {
   }
 
   void _showTemplateInfo(NoteTemplate template) {
+    final l10n = AppLocalizations.of(context);
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -210,10 +214,10 @@ class _NoteTemplatePageState extends ConsumerState<NoteTemplatePage> {
                 ],
               ),
               const SizedBox(height: 8),
-              Text('Duration: ${template.durationMinutes} minutes'),
+              Text(l10n.durationInMinutes(template.durationMinutes)),
               if (template.hasDescriptionSections) ...[
                 const SizedBox(height: 16),
-                const Text('Description Sections:', style: TextStyle(fontWeight: FontWeight.bold)),
+                Text(l10n.descriptionSections, style: const TextStyle(fontWeight: FontWeight.bold)),
                 const SizedBox(height: 4),
                 ...template.descriptionSections.map((section) =>
                   Padding(
@@ -236,7 +240,7 @@ class _NoteTemplatePageState extends ConsumerState<NoteTemplatePage> {
                 ),
               ] else if (template.description.isNotEmpty) ...[
                 const SizedBox(height: 16),
-                const Text('Description:', style: TextStyle(fontWeight: FontWeight.bold)),
+                Text(l10n.descriptionLabel, style: const TextStyle(fontWeight: FontWeight.bold)),
                 const SizedBox(height: 4),
                 Text(template.description),
               ],
@@ -246,18 +250,17 @@ class _NoteTemplatePageState extends ConsumerState<NoteTemplatePage> {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Close'),
+            child: Text(l10n.close),
           ),
           ElevatedButton(
             onPressed: () {
               Navigator.of(context).pop();
               _editTemplate(template);
             },
-            child: const Text('Edit'),
+            child: Text(l10n.edit),
           ),
         ],
       ),
     );
   }
 }
-

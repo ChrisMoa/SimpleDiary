@@ -1,5 +1,6 @@
 import 'package:day_tracker/core/log/logger_instance.dart';
 import 'package:flutter/material.dart';
+import 'package:day_tracker/l10n/app_localizations.dart';
 
 class LogoutAlertDialog extends AlertDialog {
   final void Function() onLogoutPressed;
@@ -13,7 +14,7 @@ class LogoutAlertDialog extends AlertDialog {
       required this.context,
       super.key})
       : super(
-          title: const Text("Logout"),
+          title: Text(AppLocalizations.of(context).logout),
           titleTextStyle: TextStyle(
               fontWeight: FontWeight.bold, color: Theme.of(context).colorScheme.onSurface, fontSize: 20),
           actionsOverflowButtonSpacing: 20,
@@ -23,14 +24,14 @@ class LogoutAlertDialog extends AlertDialog {
                   LogWrapper.logger.t('stay here pressed');
                   onStayInPressed();
                 },
-                child: const Text("stay here")),
+                child: Text(AppLocalizations.of(context).stayHere)),
             ElevatedButton(
                 onPressed: () {
                   LogWrapper.logger.t('logout pressed');
                   onLogoutPressed();
                 },
-                child: const Text("logout")),
+                child: Text(AppLocalizations.of(context).logout)),
           ],
-          content: const Text("Are you sure that you want to logout?"),
+          content: Text(AppLocalizations.of(context).logoutMessage),
         );
 }

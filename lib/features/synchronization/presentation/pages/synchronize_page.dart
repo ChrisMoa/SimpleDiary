@@ -1,6 +1,7 @@
 import 'package:day_tracker/features/synchronization/presentation/widgets/file_sync_widget.dart';
 import 'package:day_tracker/features/synchronization/presentation/widgets/supabase_sync_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:day_tracker/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class SynchronizePage extends ConsumerWidget {
@@ -13,6 +14,7 @@ class SynchronizePage extends ConsumerWidget {
     final isLandscape = mediaQuery.orientation == Orientation.landscape;
     final screenWidth = mediaQuery.size.width;
     final isTablet = screenWidth >= 600;
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       backgroundColor: theme.colorScheme.surface,
@@ -23,15 +25,15 @@ class SynchronizePage extends ConsumerWidget {
               maxWidth: isTablet ? 1200 : double.infinity,
             ),
             child: isLandscape && isTablet
-                ? _buildLandscapeLayout(theme)
-                : _buildPortraitLayout(theme),
+                ? _buildLandscapeLayout(theme, l10n)
+                : _buildPortraitLayout(theme, l10n),
           ),
         ),
       ),
     );
   }
 
-  Widget _buildPortraitLayout(ThemeData theme) {
+  Widget _buildPortraitLayout(ThemeData theme, AppLocalizations l10n) {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16.0),
       child: Column(
@@ -41,7 +43,7 @@ class SynchronizePage extends ConsumerWidget {
           Padding(
             padding: const EdgeInsets.only(bottom: 24.0),
             child: Text(
-              'Synchronization',
+              l10n.synchronization,
               style: theme.textTheme.headlineMedium?.copyWith(
                 color: theme.colorScheme.primary,
                 fontWeight: FontWeight.bold,
@@ -62,14 +64,14 @@ class SynchronizePage extends ConsumerWidget {
     );
   }
 
-  Widget _buildLandscapeLayout(ThemeData theme) {
+  Widget _buildLandscapeLayout(ThemeData theme, AppLocalizations l10n) {
     return Column(
       children: [
         // Page Title
         Padding(
           padding: const EdgeInsets.all(16.0),
           child: Text(
-            'Synchronization',
+            l10n.synchronization,
             style: theme.textTheme.headlineMedium?.copyWith(
               color: theme.colorScheme.primary,
               fontWeight: FontWeight.bold,

@@ -252,7 +252,7 @@ void main() {
           categoryAverages: {},
           dailyScores: [],
         ),
-        monthlyTrend: {'Woche 1': 14.0},
+        monthlyTrend: {'week_1': 14.0},
         topActivities: ['Arbeit', 'Gym'],
         insights: [],
       );

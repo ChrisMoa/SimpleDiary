@@ -4,6 +4,7 @@ import 'package:day_tracker/features/day_rating/data/models/diary_day.dart';
 import 'package:day_tracker/features/day_rating/domain/providers/diary_day_local_db_provider.dart';
 import 'package:day_tracker/features/day_rating/domain/providers/diary_wizard_providers.dart';
 import 'package:flutter/material.dart';
+import 'package:day_tracker/l10n/app_localizations.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -41,14 +42,14 @@ class DayRatingWidget extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Day Rating',
+                  AppLocalizations.of(context)!.dayRating,
                   style: theme.textTheme.titleLarge?.copyWith(
                     color: theme.colorScheme.primary,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 Text(
-                  'How was your day? Rate the different aspects of your experience.',
+                  AppLocalizations.of(context)!.howWasYourDay,
                   style: theme.textTheme.bodyMedium?.copyWith(
                     color: theme.colorScheme.onSecondaryContainer,
                   ),
@@ -102,7 +103,7 @@ class DayRatingWidget extends ConsumerWidget {
                       child: ElevatedButton.icon(
                         onPressed: () => _saveDiaryDay(context, ref, selectedDate),
                         icon: const Icon(Icons.save),
-                        label: const Text('Save Day Rating'),
+                        label: Text(AppLocalizations.of(context)!.saveDayRating),
                         style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(
                             horizontal: 32,
@@ -161,7 +162,7 @@ class DayRatingWidget extends ConsumerWidget {
     required bool isSmallScreen,
   }) {
     final IconData headerIcon = _getRatingTypeIcon(ratingType);
-    final String description = _getRatingTypeDescription(ratingType);
+    final String description = _getRatingTypeDescription(context, ratingType);
 
     // Adaptive padding and spacing based on screen size
     final double cardPadding = isSmallScreen ? 12.0 : 16.0;
@@ -344,16 +345,17 @@ class DayRatingWidget extends ConsumerWidget {
     }
   }
 
-  String _getRatingTypeDescription(DayRatings ratingType) {
+  String _getRatingTypeDescription(BuildContext context, DayRatings ratingType) {
+    final l10n = AppLocalizations.of(context)!;
     switch (ratingType) {
       case DayRatings.social:
-        return 'How were your social interactions and relationships today?';
+        return l10n.ratingSocialDescription;
       case DayRatings.productivity:
-        return 'How productive were you in your work or daily tasks?';
+        return l10n.ratingProductivityDescription;
       case DayRatings.sport:
-        return 'How was your physical activity and exercise today?';
+        return l10n.ratingSportDescription;
       case DayRatings.food:
-        return 'How healthy and satisfying was your diet today?';
+        return l10n.ratingFoodDescription;
     }
   }
 

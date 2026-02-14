@@ -18,6 +18,7 @@ import 'package:day_tracker/features/synchronization/domain/providers/file_db_pr
 import 'package:day_tracker/features/synchronization/domain/providers/ics_file_provider.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:day_tracker/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path/path.dart' as path;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -58,6 +59,7 @@ class FileSyncWidget extends ConsumerWidget {
     final theme = ref.watch(themeProvider);
     final mediaQuery = MediaQuery.of(context);
     final isSmallScreen = mediaQuery.size.width < 600;
+    final l10n = AppLocalizations.of(context)!;
 
     return Card(
       elevation: 4,
@@ -91,7 +93,7 @@ class FileSyncWidget extends ConsumerWidget {
                   ),
                   SizedBox(width: 8),
                   Text(
-                    'File Synchronization',
+                    l10n.fileSynchronization,
                     style: theme.textTheme.titleLarge?.copyWith(
                       color: theme.colorScheme.primary,
                       fontWeight: FontWeight.bold,
@@ -104,7 +106,7 @@ class FileSyncWidget extends ConsumerWidget {
               SizedBox(height: 16),
 
               Text(
-                'Import and export your diary data to JSON or ICS calendar files with optional encryption.',
+                l10n.fileSyncDescription,
                 style: theme.textTheme.bodyMedium?.copyWith(
                   color: theme.colorScheme.onSurface,
                 ),
@@ -117,8 +119,8 @@ class FileSyncWidget extends ConsumerWidget {
                 context: context,
                 ref: ref,
                 icon: Icons.upload_file,
-                label: 'Export to JSON',
-                description: 'Save your diary data to a file',
+                label: l10n.exportToJson,
+                description: l10n.saveYourDiaryData,
                 onPressed: () => _onExportToFile(context, ref),
                 theme: theme,
                 isSmallScreen: isSmallScreen,
@@ -131,8 +133,8 @@ class FileSyncWidget extends ConsumerWidget {
                 context: context,
                 ref: ref,
                 icon: Icons.download_for_offline,
-                label: 'Import from JSON',
-                description: 'Load diary data from a file',
+                label: l10n.importFromJson,
+                description: l10n.loadDiaryData,
                 onPressed: () => _onImportFromFile(context, ref),
                 theme: theme,
                 isSmallScreen: isSmallScreen,
@@ -145,8 +147,8 @@ class FileSyncWidget extends ConsumerWidget {
                 context: context,
                 ref: ref,
                 icon: Icons.calendar_today,
-                label: 'Export to ICS Calendar',
-                description: 'Save notes as calendar events (.ics)',
+                label: l10n.exportToIcsCalendar,
+                description: l10n.saveNotesAsCalendarEvents,
                 onPressed: () => _onExportToIcs(context, ref),
                 theme: theme,
                 isSmallScreen: isSmallScreen,
@@ -159,8 +161,8 @@ class FileSyncWidget extends ConsumerWidget {
                 context: context,
                 ref: ref,
                 icon: Icons.calendar_month,
-                label: 'Import from ICS Calendar',
-                description: 'Load calendar events from .ics file',
+                label: l10n.importFromIcsCalendar,
+                description: l10n.loadCalendarEvents,
                 onPressed: () => _onImportFromIcs(context, ref),
                 theme: theme,
                 isSmallScreen: isSmallScreen,
@@ -244,6 +246,7 @@ class FileSyncWidget extends ConsumerWidget {
   }
 
   Future<void> _onExportToFile(BuildContext context, WidgetRef ref) async {
+    final l10n = AppLocalizations.of(context)!;
     try {
       LogWrapper.logger.i('JSON export started');
 
@@ -260,7 +263,7 @@ class FileSyncWidget extends ConsumerWidget {
 
       final password = await _promptForPassword(
         context,
-        'Encrypt JSON Export (Optional)',
+        l10n.encryptJsonExport,
         defaultValue: defaultPassword,
       );
 
@@ -316,7 +319,7 @@ class FileSyncWidget extends ConsumerWidget {
 
       // On Android/iOS, bytes must be passed to saveFile directly
       String? outputPath = await FilePicker.platform.saveFile(
-        dialogTitle: 'Save JSON Export File',
+        dialogTitle: l10n.saveJsonExportFile,
         fileName: defaultFileName,
         type: FileType.custom,
         allowedExtensions: ['json'],
@@ -348,6 +351,7 @@ class FileSyncWidget extends ConsumerWidget {
   }
 
   Future<void> _onImportFromFile(BuildContext context, WidgetRef ref) async {
+    final l10n = AppLocalizations.of(context)!;
     try {
       LogWrapper.logger.i('JSON import started');
 
@@ -356,7 +360,7 @@ class FileSyncWidget extends ConsumerWidget {
 
       // Use native file picker to select JSON file
       FilePickerResult? result = await FilePicker.platform.pickFiles(
-        dialogTitle: 'Select JSON File to Import',
+        dialogTitle: l10n.selectJsonFileToImport,
         type: FileType.custom,
         allowedExtensions: ['json'],
         allowMultiple: false,
@@ -380,9 +384,7 @@ class FileSyncWidget extends ConsumerWidget {
           } catch (e) {
             // File is not UTF-8 readable - this is the OLD format (completely encrypted)
             LogWrapper.logger.e('File is not readable as UTF-8 - this is a legacy encrypted format');
-            _onError(context,
-              'This file uses the old encryption format and cannot be imported.\n'
-              'Please export your data again with the new version.');
+            _onError(context, l10n.oldEncryptionFormatError);
             return;
           }
 
@@ -406,12 +408,12 @@ class FileSyncWidget extends ConsumerWidget {
           if (isEncrypted) {
             password = await _promptForPassword(
               context,
-              'Decrypt JSON Import',
+              l10n.decryptJsonImport,
               defaultValue: defaultPassword,
             );
 
             if (password == null || password.isEmpty) {
-              _onError(context, 'Password required for encrypted file');
+              _onError(context, l10n.passwordRequiredForEncryptedFile);
               return;
             }
           }
@@ -451,36 +453,37 @@ class FileSyncWidget extends ConsumerWidget {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 duration: const Duration(seconds: 3),
-                content: Text('Imported ${importedDays.length} days with $noteCount notes'),
+                content: Text(l10n.importedDaysWithNotes(importedDays.length, noteCount)),
                 backgroundColor: Theme.of(context).colorScheme.primary,
               ),
             );
           } catch (e) {
             LogWrapper.logger.e('Error during JSON import: $e');
-            _onError(context, 'Error during JSON import: $e');
+            _onError(context, l10n.errorPrefix('$e'));
           }
         } catch (e) {
           LogWrapper.logger.e('Error importing from file "$path": "$e"');
-          _onError(context, 'Error during JSON import: $e');
+          _onError(context, l10n.errorPrefix('$e'));
         }
       } else {
         LogWrapper.logger.i('JSON import cancelled by user');
       }
     } catch (e) {
       LogWrapper.logger.e('Error during JSON importing: ${e.toString()}');
-      _onError(context, 'Error during JSON importing');
+      _onError(context, l10n.errorPrefix('$e'));
     }
   }
 
   void _onImportExportSuccessfully(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     ScaffoldMessenger.of(context).clearSnackBars();
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         duration: const Duration(seconds: 3),
-        content: const Text('Operation completed successfully'),
+        content: Text(l10n.operationCompletedSuccessfully),
         backgroundColor: Theme.of(context).colorScheme.primary,
         action: SnackBarAction(
-          label: 'OK',
+          label: l10n.ok,
           textColor: Theme.of(context).colorScheme.onPrimary,
           onPressed: () {
             ScaffoldMessenger.of(context).clearSnackBars();
@@ -491,6 +494,7 @@ class FileSyncWidget extends ConsumerWidget {
   }
 
   Future<void> _onExportToIcs(BuildContext context, WidgetRef ref) async {
+    final l10n = AppLocalizations.of(context)!;
     try {
       LogWrapper.logger.i('ICS export started');
 
@@ -507,7 +511,7 @@ class FileSyncWidget extends ConsumerWidget {
 
       final password = await _promptForPassword(
         context,
-        'Encrypt ICS Export (Optional)',
+        l10n.encryptIcsExport,
         defaultValue: defaultPassword,
       );
 
@@ -538,7 +542,7 @@ class FileSyncWidget extends ConsumerWidget {
 
       // On Android/iOS, bytes must be passed to saveFile directly
       String? outputPath = await FilePicker.platform.saveFile(
-        dialogTitle: 'Save ICS Calendar File',
+        dialogTitle: l10n.saveIcsCalendarFile,
         fileName: defaultFileName,
         type: FileType.custom,
         allowedExtensions: ['ics'],
@@ -565,11 +569,12 @@ class FileSyncWidget extends ConsumerWidget {
       }
     } catch (e) {
       LogWrapper.logger.e('Error during ICS exporting: ${e.toString()}');
-      _onError(context, 'Error during ICS export: $e');
+      _onError(context, l10n.errorPrefix('$e'));
     }
   }
 
   Future<void> _onImportFromIcs(BuildContext context, WidgetRef ref) async {
+    final l10n = AppLocalizations.of(context)!;
     try {
       LogWrapper.logger.i('ICS import started');
 
@@ -578,7 +583,7 @@ class FileSyncWidget extends ConsumerWidget {
 
       // Use native file picker to select ICS file
       FilePickerResult? result = await FilePicker.platform.pickFiles(
-        dialogTitle: 'Select ICS Calendar File to Import',
+        dialogTitle: l10n.selectIcsFileToImport,
         type: FileType.custom,
         allowedExtensions: ['ics', 'ical'],
         allowMultiple: false,
@@ -601,7 +606,7 @@ class FileSyncWidget extends ConsumerWidget {
             fileContent = file.readAsStringSync();
           } catch (e) {
             LogWrapper.logger.e('File is not readable: $e');
-            _onError(context, 'Cannot read ICS file. File may be corrupted.');
+            _onError(context, l10n.cannotReadIcsFile);
             return;
           }
 
@@ -630,12 +635,12 @@ class FileSyncWidget extends ConsumerWidget {
           if (isEncrypted) {
             password = await _promptForPassword(
               context,
-              'Decrypt ICS Import',
+              l10n.decryptIcsImport,
               defaultValue: defaultPassword,
             );
 
             if (password == null || password.isEmpty) {
-              _onError(context, 'Password required for encrypted ICS file');
+              _onError(context, l10n.passwordRequiredForEncryptedIcsFile);
               return;
             }
           }
@@ -667,37 +672,38 @@ class FileSyncWidget extends ConsumerWidget {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 duration: const Duration(seconds: 3),
-                content: Text('Imported ${importedNotes.length} notes from ICS calendar'),
+                content: Text(l10n.importedNotesFromIcs(importedNotes.length)),
                 backgroundColor: Theme.of(context).colorScheme.primary,
               ),
             );
           } catch (e) {
             LogWrapper.logger.e('Error during ICS import: $e');
-            _onError(context, 'Error during ICS import: $e');
+            _onError(context, l10n.errorPrefix('$e'));
           }
         } catch (e) {
           LogWrapper.logger.e('Error importing ICS from file "$path": "$e"');
-          _onError(context, 'Error during ICS import: $e');
+          _onError(context, l10n.errorPrefix('$e'));
         }
       } else {
         LogWrapper.logger.i('ICS import cancelled by user');
       }
     } catch (e) {
       LogWrapper.logger.e('Error during ICS importing: ${e.toString()}');
-      _onError(context, 'Error during ICS importing');
+      _onError(context, l10n.errorPrefix('$e'));
     }
   }
 
   void _onError(BuildContext context, String errorMsg) {
+    final l10n = AppLocalizations.of(context)!;
     if (errorMsg.isNotEmpty) {
       ScaffoldMessenger.of(context).clearSnackBars();
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           duration: const Duration(seconds: 5),
-          content: Text('Error: $errorMsg'),
+          content: Text(errorMsg),
           backgroundColor: Theme.of(context).colorScheme.error,
           action: SnackBarAction(
-            label: 'OK',
+            label: l10n.ok,
             textColor: Theme.of(context).colorScheme.onError,
             onPressed: () {
               ScaffoldMessenger.of(context).clearSnackBars();
@@ -712,6 +718,7 @@ class FileSyncWidget extends ConsumerWidget {
   /// Returns null if the user cancels, or a DateTimeRange if they select a range.
   /// Returns a range from year 2000 to tomorrow if "All" is selected (sentinel value).
   Future<DateTimeRange?> _promptForDateRange(BuildContext context) async {
+    final l10n = AppLocalizations.of(context)!;
     final allRange = DateTimeRange(
       start: DateTime(2000),
       end: DateTime.now().add(const Duration(days: 1)),
@@ -719,21 +726,21 @@ class FileSyncWidget extends ConsumerWidget {
 
     final choice = await showDialog<bool>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Export Range'),
-        content: const Text('Which entries do you want to export?'),
+      builder: (dialogContext) => AlertDialog(
+        title: Text(l10n.exportRange),
+        content: Text(l10n.whichEntriesToExport),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context, null),
-            child: const Text('Cancel'),
+            onPressed: () => Navigator.pop(dialogContext, null),
+            child: Text(l10n.cancel),
           ),
           TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text('Custom Range'),
+            onPressed: () => Navigator.pop(dialogContext, false),
+            child: Text(l10n.customRange),
           ),
           FilledButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: const Text('All'),
+            onPressed: () => Navigator.pop(dialogContext, true),
+            child: Text(l10n.all),
           ),
         ],
       ),
@@ -759,29 +766,30 @@ class FileSyncWidget extends ConsumerWidget {
 
   Future<String?> _promptForPassword(BuildContext context, String title,
       {String? defaultValue}) async {
+    final l10n = AppLocalizations.of(context)!;
     final TextEditingController controller = TextEditingController(
       text: defaultValue ?? '',
     );
     final password = await showDialog<String>(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (dialogContext) => AlertDialog(
         title: Text(title),
         content: TextField(
           controller: controller,
           obscureText: true,
-          decoration: const InputDecoration(
-            labelText: 'Password (Optional)',
-            hintText: 'Leave empty for no encryption',
+          decoration: InputDecoration(
+            labelText: l10n.passwordOptional,
+            hintText: l10n.leaveEmptyForNoEncryption,
           ),
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context, null),
-            child: const Text('Cancel'),
+            onPressed: () => Navigator.pop(dialogContext, null),
+            child: Text(l10n.cancel),
           ),
           TextButton(
-            onPressed: () => Navigator.pop(context, controller.text),
-            child: const Text('OK'),
+            onPressed: () => Navigator.pop(dialogContext, controller.text),
+            child: Text(l10n.ok),
           ),
         ],
       ),

@@ -2,6 +2,7 @@ import 'package:day_tracker/core/utils/utils.dart';
 import 'package:day_tracker/features/dashboard/domain/providers/week_overview_provider.dart';
 import 'package:day_tracker/features/dashboard/presentation/pages/diary_day_detail_page.dart';
 import 'package:flutter/material.dart';
+import 'package:day_tracker/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
@@ -26,7 +27,7 @@ class WeekOverviewWidget extends ConsumerWidget {
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         child: Padding(
           padding: const EdgeInsets.all(24),
-          child: Text('Fehler: $error'),
+          child: Text(AppLocalizations.of(context)!.errorWithMessage(error.toString())),
         ),
       ),
       data: (weekStats) {
@@ -38,7 +39,7 @@ class WeekOverviewWidget extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '7-Tage-Übersicht',
+                  AppLocalizations.of(context)!.sevenDayOverview,
                   style: theme.textTheme.titleLarge?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: theme.colorScheme.onSurface,

@@ -80,15 +80,15 @@ class NoteCategory implements LocalDbElement {
 
 final availableNoteCategories = [
   NoteCategory(
-    title: 'Arbeit',
+    title: 'Work',
     color: Colors.purple,
   ),
   NoteCategory(
-    title: 'Freizeit',
+    title: 'Leisure',
     color: Colors.lightBlue,
   ),
   NoteCategory(
-    title: 'Essen',
+    title: 'Food',
     color: Colors.amber,
   ),
   NoteCategory(
@@ -96,7 +96,7 @@ final availableNoteCategories = [
     color: Colors.green,
   ),
   NoteCategory(
-    title: 'Schlafen',
+    title: 'Sleep',
     color: Colors.grey,
   ),
 ];

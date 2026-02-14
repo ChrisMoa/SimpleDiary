@@ -1,12 +1,13 @@
 import 'package:day_tracker/core/log/custom_log_printer.dart';
 import 'package:day_tracker/core/log/logger_instance.dart';
+import 'package:day_tracker/core/provider/locale_provider.dart';
 import 'package:day_tracker/core/provider/theme_provider.dart';
 import 'package:day_tracker/core/settings/settings_container.dart';
 import 'package:day_tracker/core/utils/platform_utils.dart';
 import 'package:day_tracker/features/app/presentation/pages/main_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:day_tracker/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logger/logger.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -80,12 +81,9 @@ class _MyAppState extends ConsumerState<MyApp> {
       home: const MainPage(
         title: 'Simple Diary',
       ),
-      localizationsDelegates: const [
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-      ],
-      supportedLocales: const [Locale('de'), Locale('en')],
+      locale: ref.watch(localeProvider),
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
     );
   }
 }

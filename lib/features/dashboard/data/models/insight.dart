@@ -15,6 +15,7 @@ class Insight {
   final String icon;
   final DateTime createdAt;
   final Map<String, dynamic>? metadata;
+  final String? dynamicData;
 
   Insight({
     required this.title,
@@ -23,6 +24,7 @@ class Insight {
     required this.icon,
     DateTime? createdAt,
     this.metadata,
+    this.dynamicData,
   }) : createdAt = createdAt ?? DateTime.now();
 
   Insight copyWith({
@@ -32,6 +34,7 @@ class Insight {
     String? icon,
     DateTime? createdAt,
     Map<String, dynamic>? metadata,
+    String? dynamicData,
   }) {
     return Insight(
       title: title ?? this.title,
@@ -40,6 +43,7 @@ class Insight {
       icon: icon ?? this.icon,
       createdAt: createdAt ?? this.createdAt,
       metadata: metadata ?? this.metadata,
+      dynamicData: dynamicData ?? this.dynamicData,
     );
   }
 }

@@ -1,9 +1,11 @@
 import 'package:day_tracker/core/log/logger_instance.dart';
 import 'package:day_tracker/core/settings/settings_container.dart';
+import 'package:day_tracker/features/app/presentation/widgets/language_settings_widget.dart';
 import 'package:day_tracker/features/app/presentation/widgets/supabase_settings_widget.dart';
 import 'package:day_tracker/features/app/presentation/widgets/theme_settings_widget.dart';
 import 'package:day_tracker/features/notes/presentation/pages/category_management_page.dart';
 import 'package:flutter/material.dart';
+import 'package:day_tracker/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class SettingsPage extends ConsumerStatefulWidget {
@@ -20,6 +22,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
     final mediaQuery = MediaQuery.of(context);
     final screenWidth = mediaQuery.size.width;
     final isSmallScreen = screenWidth < 600;
+    final l10n = AppLocalizations.of(context);
 
     return Container(
       color: theme.colorScheme.surface,
@@ -30,7 +33,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
           children: [
             // Page Title
             Text(
-              'Settings',
+              l10n.settingsTitle,
               style: theme.textTheme.headlineMedium?.copyWith(
                 color: theme.colorScheme.primary,
                 fontWeight: FontWeight.bold,
@@ -42,12 +45,16 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
             const ThemeSettingsWidget(),
             const SizedBox(height: 24),
 
+            // Language Settings
+            const LanguageSettingsWidget(),
+            const SizedBox(height: 24),
+
             // Supabase Settings
             const SupabaseSettingsWidget(),
             const SizedBox(height: 24),
 
             // Category Management
-            _buildCategoryManagementSection(theme, isSmallScreen),
+            _buildCategoryManagementSection(theme, isSmallScreen, l10n),
             const SizedBox(height: 32),
 
             // Save Settings Button
@@ -56,7 +63,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                 onPressed: _saveSettings,
                 icon: const Icon(Icons.save),
                 label: Text(
-                  'Save Settings',
+                  l10n.saveSettings,
                   style: theme.textTheme.titleMedium?.copyWith(
                     color: theme.colorScheme.onPrimary,
                     fontWeight: FontWeight.bold,
@@ -87,9 +94,10 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
       await settingsContainer.saveSettings();
 
       if (mounted) {
+        final l10n = AppLocalizations.of(context);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: const Text('Settings saved successfully'),
+            content: Text(l10n.settingsSavedSuccessfully),
             backgroundColor: Theme.of(context).colorScheme.primary,
             duration: const Duration(seconds: 2),
             behavior: SnackBarBehavior.floating,
@@ -102,9 +110,10 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
     } catch (e) {
       LogWrapper.logger.e('Error saving settings: $e');
       if (mounted) {
+        final l10n = AppLocalizations.of(context);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error saving settings: $e'),
+            content: Text(l10n.errorSavingSettings(e.toString())),
             backgroundColor: Theme.of(context).colorScheme.error,
             duration: const Duration(seconds: 3),
             behavior: SnackBarBehavior.floating,
@@ -119,7 +128,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
 
   //* build helper -----------------------------------------------------------------------------------------------------------------------------------
 
-  Widget _buildCategoryManagementSection(ThemeData theme, bool isSmallScreen) {
+  Widget _buildCategoryManagementSection(ThemeData theme, bool isSmallScreen, AppLocalizations l10n) {
     return Card(
       elevation: 2,
       shape: RoundedRectangleBorder(
@@ -143,7 +152,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Note Categories',
+                        l10n.noteCategories,
                         style: theme.textTheme.titleLarge?.copyWith(
                           color: theme.colorScheme.onSurface,
                           fontWeight: FontWeight.bold,
@@ -151,7 +160,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        'Manage your note categories and tags',
+                        l10n.manageCategoriesAndTags,
                         style: theme.textTheme.bodyMedium?.copyWith(
                           color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                         ),
@@ -173,7 +182,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                   );
                 },
                 icon: const Icon(Icons.settings),
-                label: const Text('Manage Categories'),
+                label: Text(l10n.manageCategories),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: theme.colorScheme.primaryContainer,
                   foregroundColor: theme.colorScheme.onPrimaryContainer,

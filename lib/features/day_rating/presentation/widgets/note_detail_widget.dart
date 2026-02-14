@@ -16,6 +16,7 @@ import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 import 'package:uuid/uuid.dart';
 import 'package:day_tracker/core/log/logger_instance.dart';
+import 'package:day_tracker/l10n/app_localizations.dart';
 
 class NoteDetailWidget extends ConsumerStatefulWidget {
   const NoteDetailWidget({super.key});
@@ -83,6 +84,7 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
   Widget build(BuildContext context) {
     final selectedNote = ref.watch(selectedWizardNoteProvider);
     final theme = ref.watch(themeProvider);
+    final l10n = AppLocalizations.of(context);
 
     // Get screen dimensions for responsive design
     final mediaQuery = MediaQuery.of(context);
@@ -137,7 +139,7 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
                         const SizedBox(width: 12),
                         Expanded(
                           child: Text(
-                            'Note Details',
+                            l10n.noteDetails,
                             style: theme.textTheme.titleLarge!.copyWith(
                               color: theme.colorScheme.onSurface,
                               fontWeight: FontWeight.w600,
@@ -193,7 +195,7 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
               TextFormField(
                 controller: _titleController,
                 decoration: InputDecoration(
-                  labelText: 'Title',
+                  labelText: l10n.title,
                   labelStyle: TextStyle(
                     color: theme.colorScheme.primary.withValues(alpha: 0.8),
                     fontWeight: FontWeight.w500,
@@ -257,7 +259,7 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    'Description',
+                    l10n.description,
                     style: theme.textTheme.titleMedium!.copyWith(
                       color: theme.colorScheme.primary.withValues(alpha: 0.8),
                       fontWeight: FontWeight.w500,
@@ -280,7 +282,7 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
                               ? theme.colorScheme.primary
                               : theme.colorScheme.onSurface.withValues(alpha: 0.6),
                         ),
-                        tooltip: _isListening ? 'Stop dictation' : 'Dictate description',
+                        tooltip: _isListening ? l10n.stopDictation : l10n.dictateDescription,
                       ),
                     ),
                 ],
@@ -296,7 +298,7 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
                     TextField(
                       controller: _descriptionController,
                       decoration: InputDecoration(
-                        hintText: 'Add details about this note...',
+                        hintText: l10n.addDetailsAboutNote,
                         hintStyle: TextStyle(
                           color: theme.colorScheme.onSurface.withValues(alpha: 0.4),
                           fontWeight: FontWeight.w400,
@@ -379,7 +381,7 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
                               ),
                               const SizedBox(width: 8),
                               Text(
-                                'Listening...',
+                                l10n.listening,
                                 style: theme.textTheme.bodySmall!.copyWith(
                                   color: theme.colorScheme.onPrimaryContainer,
                                 ),
@@ -407,7 +409,7 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
                       // Delete button
                       _buildActionButton(
                         icon: Icons.delete_outline_rounded,
-                        label: 'Delete',
+                        label: l10n.delete,
                         onPressed: () => _deleteNote(selectedNote),
                         backgroundColor: theme.colorScheme.errorContainer.withValues(alpha: 0.3),
                         foregroundColor: theme.colorScheme.error,
@@ -416,7 +418,7 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
                       // Add from template button
                       _buildActionButton(
                         icon: Icons.note_add_outlined,
-                        label: 'Template',
+                        label: l10n.template,
                         onPressed: _showTemplateSelector,
                         backgroundColor: theme.colorScheme.primaryContainer.withValues(alpha: 0.3),
                         foregroundColor: theme.colorScheme.primary,
@@ -425,7 +427,7 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
                       // Add button
                       _buildActionButton(
                         icon: Icons.add_circle_outline_rounded,
-                        label: 'Add',
+                        label: l10n.add,
                         onPressed: _addNextFreeNote,
                         backgroundColor: theme.colorScheme.primaryContainer.withValues(alpha: 0.3),
                         foregroundColor: theme.colorScheme.primary,
@@ -480,6 +482,7 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
 
   // Create note from template
   void _createNoteFromTemplate(NoteTemplate template) {
+    final l10n = AppLocalizations.of(context);
     LogWrapper.logger.d('Creating note from template: ${template.title}');
     try {
       // Create a new note directly to avoid Provider.family caching issues
@@ -502,7 +505,7 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
       // Show feedback to user
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Added "${template.title}" at ${Utils.toTime(newNote.from)}'),
+          content: Text(l10n.addedTemplateAtTime(template.title, Utils.toTime(newNote.from))),
           duration: const Duration(seconds: 2),
         ),
       );
@@ -513,6 +516,7 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
 
   // Compact controls for small screens
   Widget _buildCompactControls(Note note, ThemeData theme) {
+    final l10n = AppLocalizations.of(context);
     final categories = ref.watch(categoryLocalDataProvider);
     // Ensure the note's category exists in the dropdown items
     final effectiveCategory = categories.contains(note.noteCategory)
@@ -527,7 +531,7 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
           value: effectiveCategory,
           isExpanded: true,
           decoration: InputDecoration(
-            labelText: 'Category',
+            labelText: l10n.category,
             labelStyle: TextStyle(color: theme.colorScheme.primary),
             border: OutlineInputBorder(
               borderSide: BorderSide(color: theme.colorScheme.outline),
@@ -594,7 +598,7 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
                 onPressed: () => _selectTime(context, note, true),
                 icon: const Icon(Icons.access_time, size: 16),
                 label: Text(
-                  'From: ${Utils.toTime(note.from)}',
+                  l10n.fromTime(Utils.toTime(note.from)),
                   style: const TextStyle(fontSize: 12),
                 ),
                 style: OutlinedButton.styleFrom(
@@ -609,7 +613,7 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
                 onPressed: () => _selectTime(context, note, false),
                 icon: const Icon(Icons.access_time, size: 16),
                 label: Text(
-                  'To: ${Utils.toTime(note.to)}',
+                  l10n.toTime(Utils.toTime(note.to)),
                   style: const TextStyle(fontSize: 12),
                 ),
                 style: OutlinedButton.styleFrom(
@@ -627,6 +631,7 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
 
   // Full controls for larger screens
   Widget _buildFullControls(Note note, ThemeData theme) {
+    final l10n = AppLocalizations.of(context);
     final categories = ref.watch(categoryLocalDataProvider);
     // Ensure the note's category exists in the dropdown items
     final effectiveCategory = categories.contains(note.noteCategory)
@@ -640,7 +645,7 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
         DropdownButtonFormField<NoteCategory>(
           value: effectiveCategory,
           decoration: InputDecoration(
-            labelText: 'Category',
+            labelText: l10n.category,
             labelStyle: TextStyle(color: theme.colorScheme.primary),
             border: OutlineInputBorder(
               borderSide: BorderSide(color: theme.colorScheme.outline),
@@ -705,7 +710,7 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
               child: OutlinedButton.icon(
                 onPressed: () => _selectTime(context, note, true),
                 icon: const Icon(Icons.access_time, size: 16),
-                label: Text('From: ${Utils.toTime(note.from)}'),
+                label: Text(l10n.fromTime(Utils.toTime(note.from))),
                 style: OutlinedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 12),
                   side: BorderSide(color: theme.colorScheme.outline),
@@ -717,7 +722,7 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
               child: OutlinedButton.icon(
                 onPressed: () => _selectTime(context, note, false),
                 icon: const Icon(Icons.access_time, size: 16),
-                label: Text('To: ${Utils.toTime(note.to)}'),
+                label: Text(l10n.toTime(Utils.toTime(note.to))),
                 style: OutlinedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 12),
                   side: BorderSide(color: theme.colorScheme.outline),
@@ -732,6 +737,7 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
   }
 
   Widget _buildEmptyNoteView(ThemeData theme) {
+    final l10n = AppLocalizations.of(context);
     // Check if we're on a small screen to adapt layout
     final mediaQuery = MediaQuery.of(context);
     final screenWidth = mediaQuery.size.width;
@@ -757,7 +763,7 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
               ),
               const SizedBox(height: 16),
               Text(
-                'No note selected',
+                l10n.noNoteSelected,
                 style: theme.textTheme.titleLarge!.copyWith(
                   color: theme.colorScheme.primary,
                   fontWeight: FontWeight.bold,
@@ -766,7 +772,7 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
               ),
               const SizedBox(height: 8),
               Text(
-                'Click on an existing note or create a new one',
+                l10n.clickExistingOrCreateNew,
                 textAlign: TextAlign.center,
                 style: theme.textTheme.bodyMedium!.copyWith(
                   color: theme.colorScheme.onSecondaryContainer,
@@ -780,7 +786,7 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
                   ElevatedButton.icon(
                     onPressed: _addNextFreeNote,
                     icon: const Icon(Icons.add, size: 18),
-                    label: const Text('Create Note'),
+                    label: Text(l10n.createNote),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: theme.colorScheme.primaryContainer,
                       foregroundColor: theme.colorScheme.onPrimaryContainer,
@@ -793,7 +799,7 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
                   ElevatedButton.icon(
                     onPressed: _showTemplateSelector,
                     icon: const Icon(Icons.note_alt_outlined, size: 18),
-                    label: const Text('From Template'),
+                    label: Text(l10n.fromTemplate),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: theme.colorScheme.primaryContainer,
                       foregroundColor: theme.colorScheme.onPrimaryContainer,
@@ -867,9 +873,9 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
           );
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('End time must be after start time'),
-              duration: Duration(seconds: 2),
+            SnackBar(
+              content: Text(AppLocalizations.of(context).endTimeAfterStartTime),
+              duration: const Duration(seconds: 2),
             ),
           );
         }
@@ -892,16 +898,17 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
   }
 
   void _deleteNote(Note note) {
+    final l10n = AppLocalizations.of(context);
     // Show confirmation dialog
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text('Delete Note'),
-        content: const Text('Are you sure you want to delete this note?'),
+        title: Text(l10n.deleteNote),
+        content: Text(l10n.confirmDeleteNote),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(),
-            child: const Text('Cancel'),
+            child: Text(l10n.cancel),
           ),
           TextButton(
             onPressed: () {
@@ -911,7 +918,7 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
               // Clear selection
               ref.read(selectedWizardNoteProvider.notifier).clearSelection();
             },
-            child: const Text('Delete'),
+            child: Text(l10n.delete),
           ),
         ],
       ),
@@ -934,7 +941,7 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
       // Show feedback to user
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Added new note at ${Utils.toTime(newNote.from)}'),
+          content: Text(AppLocalizations.of(context).addedNoteAtTime(Utils.toTime(newNote.from))),
           duration: const Duration(seconds: 2),
         ),
       );
@@ -1036,9 +1043,9 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
 
     if (newDateTime.isAfter(note.to) || newDateTime.isAtSameMomentAs(note.to)) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('End time must be after start time'),
-          duration: Duration(seconds: 2),
+        SnackBar(
+          content: Text(AppLocalizations.of(context).endTimeAfterStartTime),
+          duration: const Duration(seconds: 2),
         ),
       );
       return;

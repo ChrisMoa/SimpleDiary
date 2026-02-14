@@ -11,12 +11,14 @@ class UserSettings {
   Color themeSeedColor;
   UserData savedUserData;
   SupabaseSettings supabaseSettings;
+  String languageCode;
 
   UserSettings(
     this.darkThemeMode,
     this.themeSeedColor,
     this.savedUserData,
     this.supabaseSettings,
+    this.languageCode,
   );
 
   Map<String, dynamic> toMap() {
@@ -25,6 +27,7 @@ class UserSettings {
       'themeSeedColor': themeSeedColor.value,
       'userData': savedUserData.toMap(),
       'supabaseSettings': supabaseSettings.toMap(),
+      'languageCode': languageCode,
     };
   }
 
@@ -34,6 +37,7 @@ class UserSettings {
       Color(map['themeSeedColor'] as int),
       UserData.fromMap(map['userData']),
       SupabaseSettings.fromMap(map['supabaseSettings'] ?? {}),
+      (map['languageCode'] as String?) ?? 'en',
     );
   }
 
@@ -42,6 +46,7 @@ class UserSettings {
         lightBaseColor,
         UserData.fromEmpty(),
         SupabaseSettings.empty(),
+        'en',
       );
 
   String get name => 'UserSettings';

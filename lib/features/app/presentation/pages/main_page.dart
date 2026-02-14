@@ -97,7 +97,7 @@ class _MainPageState extends ConsumerState<MainPage> {
             title: Text(widget.title),
           ),
           drawer: _buildDrawer(context),
-          body: _drawerItemProvider.getDrawerItemWidget(_selectedDrawerIndex),
+          body: _drawerItemProvider.getDrawerItemWidget(_selectedDrawerIndex, context),
         );
       },
     );
@@ -136,11 +136,11 @@ class _MainPageState extends ConsumerState<MainPage> {
               ),
             ),
           ),
-          for (var index = 0; index < _drawerItemProvider.getDrawerItems.length; index++)
+          for (var index = 0; index < _drawerItemProvider.getDrawerItems(context).length; index++)
             ListTile(
-              leading: Icon(_drawerItemProvider.getDrawerItems[index].icon),
+              leading: Icon(_drawerItemProvider.getDrawerItems(context)[index].icon),
               title: Text(
-                _drawerItemProvider.getDrawerItems[index].title,
+                _drawerItemProvider.getDrawerItems(context)[index].title,
                 style: Theme.of(context).textTheme.titleLarge!.copyWith(color: Theme.of(context).colorScheme.onSecondaryContainer),
               ),
               selected: index == _selectedDrawerIndex,

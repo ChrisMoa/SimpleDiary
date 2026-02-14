@@ -283,8 +283,8 @@ void main() {
         if (validDays.isNotEmpty) {
           final trend = repository.calculateMonthlyTrend(validDays);
           expect(trend, isNotEmpty);
-          // Should contain 'Woche X' keys
-          expect(trend.keys.first, startsWith('Woche'));
+          // Should contain 'week_X' keys
+          expect(trend.keys.first, startsWith('week_'));
         }
       });
 
@@ -370,7 +370,7 @@ void main() {
         final perfectWeek = stats.insights
             .where((i) =>
                 i.type == InsightType.achievement &&
-                i.title.contains('Perfekte'))
+                i.title.contains('Perfect'))
             .toList();
         expect(perfectWeek, isNotEmpty);
       });

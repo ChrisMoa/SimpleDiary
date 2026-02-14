@@ -4,6 +4,7 @@ import 'package:day_tracker/features/notes/domain/providers/note_editing_page_pr
 import 'package:day_tracker/features/notes/domain/providers/note_local_db_provider.dart';
 import 'package:day_tracker/features/notes/presentation/pages/note_viewing_page.dart';
 import 'package:flutter/material.dart';
+import 'package:day_tracker/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class NotesOverviewList extends ConsumerStatefulWidget {
@@ -21,7 +22,8 @@ class _NotesOverviewListState extends ConsumerState<NotesOverviewList> {
   }
 
   Widget _buildEmptyList() {
-    return const Text("UUh, nothing here");
+    final l10n = AppLocalizations.of(context)!;
+    return Text(l10n.noDiaryEntriesYet);
   }
 
   Widget _buildFilledList() {

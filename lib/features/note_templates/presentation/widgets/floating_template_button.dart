@@ -5,6 +5,7 @@ import 'package:day_tracker/features/notes/domain/providers/note_local_db_provid
 import 'package:day_tracker/features/note_templates/data/models/note_template.dart';
 import 'package:day_tracker/features/note_templates/domain/providers/note_template_local_db_provider.dart';
 import 'package:day_tracker/features/note_templates/presentation/widgets/template_selector_widget.dart';
+import 'package:day_tracker/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -107,19 +108,20 @@ class FloatingTemplateButton extends ConsumerWidget {
       ref.read(selectedWizardNoteProvider.notifier).selectNote(newNote);
 
       // Show feedback to user
+      final l10n = AppLocalizations.of(context);
+      final timeStr = '${newNote.from.hour.toString().padLeft(2, '0')}:${newNote.from.minute.toString().padLeft(2, '0')}';
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(
-            'Added "${template.title}" at ${newNote.from.hour.toString().padLeft(2, '0')}:${newNote.from.minute.toString().padLeft(2, '0')}',
-          ),
+          content: Text(l10n.addedTemplateAtTime(template.title, timeStr)),
           duration: const Duration(seconds: 2),
           backgroundColor: Theme.of(context).colorScheme.primary,
         ),
       );
     } catch (e) {
+      final l10n = AppLocalizations.of(context);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Error creating note: $e'),
+          content: Text(l10n.errorCreatingNote('$e')),
           duration: const Duration(seconds: 2),
           backgroundColor: Theme.of(context).colorScheme.error,
         ),

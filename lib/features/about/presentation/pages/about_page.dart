@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:day_tracker/l10n/app_localizations.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 class AboutPage extends StatefulWidget {
@@ -28,10 +29,11 @@ class _AboutPageState extends State<AboutPage> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('About'),
+        title: Text(l10n.about),
         backgroundColor: colorScheme.primary,
         foregroundColor: colorScheme.onPrimary,
       ),
@@ -78,7 +80,7 @@ class _AboutPageState extends State<AboutPage> {
                   const SizedBox(height: 16),
                   Center(
                     child: Text(
-                      'Day Tracker',
+                      l10n.dayTracker,
                       style: theme.textTheme.headlineMedium?.copyWith(
                         color: colorScheme.onSecondaryContainer,
                         fontWeight: FontWeight.bold,
@@ -87,7 +89,7 @@ class _AboutPageState extends State<AboutPage> {
                   ),
                   Center(
                     child: Text(
-                      'Version: $_version',
+                      l10n.version(_version),
                       style: theme.textTheme.bodyLarge?.copyWith(
                         color: colorScheme.onSecondaryContainer
                             .withValues(alpha: 0.8),
@@ -95,12 +97,12 @@ class _AboutPageState extends State<AboutPage> {
                     ),
                   ),
                   const SizedBox(height: 24),
-                  _buildInfoRow(context, 'Developer', 'Your Name'),
-                  _buildInfoRow(context, 'Contact', 'your.email@example.com'),
+                  _buildInfoRow(context, l10n.developer, 'Your Name'),
+                  _buildInfoRow(context, l10n.contact, 'your.email@example.com'),
                   Divider(color: colorScheme.outline.withValues(alpha: 0.2)),
                   const SizedBox(height: 8),
                   Text(
-                    'Description',
+                    l10n.description,
                     style: theme.textTheme.titleMedium?.copyWith(
                       color: colorScheme.primary,
                       fontWeight: FontWeight.bold,
@@ -108,14 +110,14 @@ class _AboutPageState extends State<AboutPage> {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Day Tracker is a personal diary and productivity app that helps you track your daily activities and rate different aspects of your day.',
+                    l10n.appDescription,
                     style: theme.textTheme.bodyMedium?.copyWith(
                       color: colorScheme.onSecondaryContainer,
                     ),
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    'Features',
+                    l10n.features,
                     style: theme.textTheme.titleMedium?.copyWith(
                       color: colorScheme.primary,
                       fontWeight: FontWeight.bold,
@@ -124,25 +126,25 @@ class _AboutPageState extends State<AboutPage> {
                   const SizedBox(height: 8),
                   _buildFeatureItem(
                     context,
-                    'Track daily activities and appointments',
+                    l10n.featureTrackActivities,
                   ),
                   _buildFeatureItem(
                     context,
-                    'Rate different aspects of your day',
+                    l10n.featureRateDay,
                   ),
                   _buildFeatureItem(
                     context,
-                    'View your schedule in a calendar',
+                    l10n.featureCalendar,
                   ),
-                  _buildFeatureItem(context, 'Secure data with encryption'),
+                  _buildFeatureItem(context, l10n.featureEncryption),
                   _buildFeatureItem(
                     context,
-                    'Sync data across devices with Supabase',
+                    l10n.featureSync,
                   ),
-                  _buildFeatureItem(context, 'Export and import data'),
+                  _buildFeatureItem(context, l10n.featureExportImport),
                   const SizedBox(height: 16),
                   Text(
-                    'Licenses',
+                    l10n.licenses,
                     style: theme.textTheme.titleMedium?.copyWith(
                       color: colorScheme.primary,
                       fontWeight: FontWeight.bold,
@@ -153,7 +155,7 @@ class _AboutPageState extends State<AboutPage> {
                     onPressed: () {
                       showLicensePage(
                         context: context,
-                        applicationName: 'Day Tracker',
+                        applicationName: l10n.dayTracker,
                         applicationVersion: _version,
                         applicationIcon: Padding(
                           padding: const EdgeInsets.all(8.0),
@@ -169,7 +171,7 @@ class _AboutPageState extends State<AboutPage> {
                       foregroundColor: colorScheme.primary,
                     ),
                     child: Text(
-                      'View Licenses',
+                      l10n.viewLicenses,
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
                   ),
@@ -181,7 +183,7 @@ class _AboutPageState extends State<AboutPage> {
             padding: const EdgeInsets.symmetric(vertical: 16),
             child: Center(
               child: Text(
-                '© ${DateTime.now().year} Your Company',
+                l10n.copyright(DateTime.now().year),
                 style: theme.textTheme.bodySmall?.copyWith(
                   color: colorScheme.onSurface.withValues(alpha: 0.6),
                 ),

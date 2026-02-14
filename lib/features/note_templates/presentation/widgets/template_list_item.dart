@@ -1,5 +1,6 @@
 import 'package:day_tracker/core/provider/theme_provider.dart';
 import 'package:day_tracker/features/note_templates/data/models/note_template.dart';
+import 'package:day_tracker/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -20,6 +21,7 @@ class TemplateListItem extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = ref.watch(themeProvider);
+    final l10n = AppLocalizations.of(context);
     final mediaQuery = MediaQuery.of(context);
     final screenWidth = mediaQuery.size.width;
     final isSmallScreen = screenWidth < 600;
@@ -98,7 +100,7 @@ class TemplateListItem extends ConsumerWidget {
                           children: [
                             Icon(Icons.edit, size: 18, color: theme.colorScheme.primary),
                             const SizedBox(width: 8),
-                            const Text('Edit'),
+                            Text(l10n.edit),
                           ],
                         ),
                       ),
@@ -108,7 +110,7 @@ class TemplateListItem extends ConsumerWidget {
                           children: [
                             Icon(Icons.delete, size: 18, color: theme.colorScheme.error),
                             const SizedBox(width: 8),
-                            const Text('Delete'),
+                            Text(l10n.delete),
                           ],
                         ),
                       ),

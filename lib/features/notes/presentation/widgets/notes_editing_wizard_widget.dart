@@ -8,6 +8,7 @@ import 'package:day_tracker/features/notes/domain/providers/note_editing_page_pr
 import 'package:day_tracker/features/notes/domain/providers/note_local_db_provider.dart';
 import 'package:day_tracker/features/notes/domain/providers/note_selected_date_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:day_tracker/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
@@ -99,82 +100,94 @@ class _NoteEditingwizardWidgetState extends ConsumerState<NoteEditingWizardWidge
         ),
       );
 
-  buildTitle() => TextFormField(
-        style: Theme.of(context).textTheme.titleLarge!.copyWith(
-              color: Theme.of(context).colorScheme.primary,
-            ),
-        decoration: const InputDecoration(
-          border: UnderlineInputBorder(),
-          hintText: 'Add Title',
-        ),
-        onSaved: (newValue) {
-          if (newValue == null || newValue == '') {
-            throw ('title is empty');
-          }
-          note.title = newValue;
-        },
-        initialValue: note.title,
-      );
+  buildTitle() {
+    final l10n = AppLocalizations.of(context)!;
+    return TextFormField(
+      style: Theme.of(context).textTheme.titleLarge!.copyWith(
+            color: Theme.of(context).colorScheme.primary,
+          ),
+      decoration: InputDecoration(
+        border: const UnderlineInputBorder(),
+        hintText: l10n.addTitle,
+      ),
+      onSaved: (newValue) {
+        if (newValue == null || newValue == '') {
+          throw ('title is empty');
+        }
+        note.title = newValue;
+      },
+      initialValue: note.title,
+    );
+  }
 
-  buildDate() => Container(
-        alignment: Alignment.centerLeft,
-        child: Text(
-          'Date: ${Utils.toDate(note.from)}',
+  buildDate() {
+    final l10n = AppLocalizations.of(context)!;
+    return Container(
+      alignment: Alignment.centerLeft,
+      child: Text(
+        l10n.dateLabel(Utils.toDate(note.from)),
+        style: Theme.of(context).textTheme.titleMedium!.copyWith(color: Theme.of(context).colorScheme.primary),
+      ),
+    );
+  }
+
+  Widget buildTimePickers() {
+    final l10n = AppLocalizations.of(context)!;
+    return Row(
+      children: [
+        Text(
+          l10n.from,
           style: Theme.of(context).textTheme.titleMedium!.copyWith(color: Theme.of(context).colorScheme.primary),
         ),
-      );
+        Expanded(
+          flex: 2,
+          child: buildDropdownField(
+            text: Utils.toTime(note.from),
+            onClicked: () => pickTime(selectToTime: false),
+          ),
+        ),
+        const SizedBox(
+          width: 40,
+        ),
+        Text(
+          l10n.to,
+          style: Theme.of(context).textTheme.titleMedium!.copyWith(color: Theme.of(context).colorScheme.primary),
+        ),
+        Expanded(
+          flex: 2,
+          child: buildDropdownField(
+            text: Utils.toTime(note.to),
+            onClicked: () => pickTime(selectToTime: true),
+          ),
+        ),
+      ],
+    );
+  }
 
-  Widget buildTimePickers() => Row(
-        children: [
-          Text(
-            'from',
-            style: Theme.of(context).textTheme.titleMedium!.copyWith(color: Theme.of(context).colorScheme.primary),
+  Widget buildButtons() {
+    final l10n = AppLocalizations.of(context)!;
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        TextButton.icon(
+          onPressed: reloadForm,
+          style: TextButton.styleFrom(
+            textStyle: Theme.of(context).textTheme.titleLarge!.copyWith(color: Theme.of(context).colorScheme.secondary),
           ),
-          Expanded(
-            flex: 2,
-            child: buildDropdownField(
-              text: Utils.toTime(note.from),
-              onClicked: () => pickTime(selectToTime: false),
-            ),
+          label: Text(l10n.reload),
+          icon: const Icon(Icons.sync),
+        ),
+        TextButton.icon(
+          onPressed: saveForm,
+          style: TextButton.styleFrom(
+            textStyle: Theme.of(context).textTheme.titleLarge!.copyWith(color: Theme.of(context).colorScheme.secondary),
           ),
-          const SizedBox(
-            width: 40,
-          ),
-          Text(
-            'To',
-            style: Theme.of(context).textTheme.titleMedium!.copyWith(color: Theme.of(context).colorScheme.primary),
-          ),
-          Expanded(
-            flex: 2,
-            child: buildDropdownField(
-              text: Utils.toTime(note.to),
-              onClicked: () => pickTime(selectToTime: true),
-            ),
-          ),
-        ],
-      );
-
-  Widget buildButtons() => Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          TextButton.icon(
-            onPressed: reloadForm,
-            style: TextButton.styleFrom(
-              textStyle: Theme.of(context).textTheme.titleLarge!.copyWith(color: Theme.of(context).colorScheme.secondary),
-            ),
-            label: const Text('reload'),
-            icon: const Icon(Icons.sync),
-          ),
-          TextButton.icon(
-            onPressed: saveForm,
-            style: TextButton.styleFrom(
-              textStyle: Theme.of(context).textTheme.titleLarge!.copyWith(color: Theme.of(context).colorScheme.secondary),
-            ),
-            label: const Text('save'),
-            icon: const Icon(Icons.save),
-          ),
-        ],
-      );
+          label: Text(l10n.saveWord),
+          icon: const Icon(Icons.save),
+        ),
+      ],
+    );
+  }
 
   Widget buildCategory() {
     final categories = ref.watch(categoryLocalDataProvider);
@@ -220,21 +233,24 @@ class _NoteEditingwizardWidgetState extends ConsumerState<NoteEditingWizardWidge
       );
   }
 
-  Widget buildDescription() => buildHeader(
-        header: 'Description',
-        child: SizedBox(
-          height: 240,
-          child: TextField(
-            maxLines: 10,
-            style: Theme.of(context).textTheme.titleMedium!.copyWith(color: Theme.of(context).colorScheme.secondary),
-            decoration: const InputDecoration(
-              border: UnderlineInputBorder(),
-              hintText: 'Add note',
-            ),
-            controller: _descriptionController,
+  Widget buildDescription() {
+    final l10n = AppLocalizations.of(context)!;
+    return buildHeader(
+      header: l10n.description,
+      child: SizedBox(
+        height: 240,
+        child: TextField(
+          maxLines: 10,
+          style: Theme.of(context).textTheme.titleMedium!.copyWith(color: Theme.of(context).colorScheme.secondary),
+          decoration: InputDecoration(
+            border: const UnderlineInputBorder(),
+            hintText: l10n.addNote,
           ),
+          controller: _descriptionController,
         ),
-      );
+      ),
+    );
+  }
 
   Widget buildDropdownField({
     required String text,
@@ -331,10 +347,11 @@ class _NoteEditingwizardWidgetState extends ConsumerState<NoteEditingWizardWidge
         ref.read(notesLocalDataProvider.notifier).addElement(note);
       }
     } catch (e) {
+      final l10n = AppLocalizations.of(context)!;
       ScaffoldMessenger.of(context).clearSnackBars();
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('was not be able to update note'),
+        SnackBar(
+          content: Text(l10n.noteUpdateError),
         ),
       );
     }

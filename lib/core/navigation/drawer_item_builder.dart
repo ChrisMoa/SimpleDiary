@@ -8,23 +8,27 @@ import 'package:day_tracker/features/notes/presentation/pages/notes_overview_pag
 import 'package:day_tracker/features/note_templates/presentation/pages/note_template_page.dart';
 import 'package:day_tracker/features/synchronization/presentation/pages/synchronize_page.dart';
 import 'package:flutter/material.dart';
+import 'package:day_tracker/l10n/app_localizations.dart';
 
 class DrawerItemProvider {
-  // Liste der Drawer-Einträge
-  final List<DrawerItem> _drawerItems = [
-    DrawerItem("Home", Icons.home),
-    DrawerItem("Settings", Icons.settings),
-    DrawerItem("Calendar", Icons.calendar_month),
-    DrawerItem("Diary Wizard", Icons.add_to_photos_rounded),
-    DrawerItem("Notes Overview", Icons.account_balance_wallet_sharp),
-    DrawerItem("Templates", Icons.note_alt_outlined), // New template item
-    DrawerItem("Datasynchronization", Icons.cloud_upload),
-    DrawerItem("About", Icons.info_outline),
-  ];
-  List<DrawerItem> get getDrawerItems => _drawerItems;
+  // Build drawer items with localized titles from BuildContext
+  List<DrawerItem> getDrawerItems(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    return [
+      DrawerItem(l10n.drawerHome, Icons.home),
+      DrawerItem(l10n.drawerSettings, Icons.settings),
+      DrawerItem(l10n.drawerCalendar, Icons.calendar_month),
+      DrawerItem(l10n.drawerDiaryWizard, Icons.add_to_photos_rounded),
+      DrawerItem(l10n.drawerNotesOverview, Icons.account_balance_wallet_sharp),
+      DrawerItem(l10n.drawerTemplates, Icons.note_alt_outlined),
+      DrawerItem(l10n.drawerSync, Icons.cloud_upload),
+      DrawerItem(l10n.drawerAbout, Icons.info_outline),
+    ];
+  }
 
   // Funktion, um die Haupt-Inhaltsseite basierend auf dem ausgewählten Eintrag anzuzeigen
-  getDrawerItemWidget(int index) {
+  Widget getDrawerItemWidget(int index, BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     switch (index) {
       case 0:
         return const NewDashboardPage();
@@ -37,15 +41,14 @@ class DrawerItemProvider {
       case 4:
         return const NotesOverViewPage();
       case 5:
-        return const NoteTemplatePage(); // New template page
+        return const NoteTemplatePage();
       case 6:
         return const SynchronizePage();
       case 7:
         return const AboutPage();
 
       default:
-        return const Text("Fehler: Ungültiger Eintrag");
+        return Text(l10n.drawerErrorInvalidEntry);
     }
   }
 }
-
