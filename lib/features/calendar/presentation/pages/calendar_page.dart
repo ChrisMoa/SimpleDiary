@@ -21,7 +21,7 @@ class _CalendarPageState extends ConsumerState<CalendarPage> {
           const CalendarWidget(), // This trailing comma makes auto-formatting nicer for build methods.
       backgroundColor: Theme.of(context).colorScheme.background,
       floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.red,
+        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
         onPressed: () {
           var note = Note.fromEmpty();
           var date = ref.read(noteSelectedDateProvider);
@@ -35,7 +35,7 @@ class _CalendarPageState extends ConsumerState<CalendarPage> {
             ),
           );
         },
-        child: const Icon(Icons.add, color: Colors.white),
+        child: Icon(Icons.add, color: Theme.of(context).colorScheme.onPrimaryContainer),
       ),
     );
   }

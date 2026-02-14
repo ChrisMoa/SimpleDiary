@@ -62,7 +62,7 @@ class FloatingTemplateButton extends ConsumerWidget {
       child: FloatingActionButton.small(
         onPressed: () => _createNoteFromTemplate(context, ref, template),
         backgroundColor: template.noteCategory.color,
-        foregroundColor: Colors.white,
+        foregroundColor: theme.colorScheme.onPrimary,
         heroTag: 'template_${template.id}',
         child: Text(
           template.title.substring(0, 1),

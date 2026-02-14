@@ -221,9 +221,9 @@ class _NoteEditingPageState extends ConsumerState<NoteEditingPage> {
       MaterialState.focused,
     };
     if (states.any(interactiveStates.contains)) {
-      return Colors.blue;
+      return Theme.of(context).colorScheme.primary;
     }
-    return Colors.red;
+    return Theme.of(context).colorScheme.primaryContainer;
   }
 
   Widget buildAllDayCheckbox() => Row(children: [
@@ -236,7 +236,7 @@ class _NoteEditingPageState extends ConsumerState<NoteEditingPage> {
         ),
         Checkbox(
           value: note.isAllDay,
-          checkColor: Colors.white,
+          checkColor: Theme.of(context).colorScheme.onPrimary,
           fillColor: MaterialStateProperty.resolveWith(getColor),
           onChanged: (bool? value) {
             setState(() {

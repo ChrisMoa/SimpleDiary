@@ -97,8 +97,7 @@ class DiaryDayOverviewListItem extends StatelessWidget {
           child: Text(
             'Score: ${diaryDay.overallScore}',
             style: theme.textTheme.bodyMedium?.copyWith(
-              // Make sure text is always visible on the score background
-              color: Colors.white,
+              color: theme.colorScheme.onPrimary,
               fontWeight: FontWeight.bold,
             ),
           ),
@@ -147,7 +146,7 @@ class DiaryDayOverviewListItem extends StatelessWidget {
             child: Text(
               '$score',
               style: theme.textTheme.bodyLarge?.copyWith(
-                color: Colors.white,
+                color: theme.colorScheme.onPrimary,
                 fontWeight: FontWeight.bold,
               ),
             ),

@@ -94,12 +94,28 @@ class _AuthUserDataPageState extends ConsumerState<AuthUserDataPage> {
   //? builds -------------------------------------------------------------------
 
   Widget _buildUsernameField() {
+    final theme = Theme.of(context);
     return TextFormField(
       controller: _usernameController,
-      decoration: const InputDecoration(
+      style: TextStyle(color: theme.colorScheme.onSurface),
+      decoration: InputDecoration(
         labelText: 'Username',
-        border: OutlineInputBorder(),
-        prefixIcon: Icon(Icons.person),
+        labelStyle: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.7)),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: theme.colorScheme.outline),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: theme.colorScheme.outline),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: theme.colorScheme.primary),
+        ),
+        filled: true,
+        fillColor: theme.colorScheme.surface,
+        prefixIcon: Icon(Icons.person, color: theme.colorScheme.onSurface.withValues(alpha: 0.7)),
       ),
       validator: (value) {
         if (value == null || value.isEmpty) {
@@ -111,16 +127,33 @@ class _AuthUserDataPageState extends ConsumerState<AuthUserDataPage> {
   }
 
   Widget _buildPasswordField() {
+    final theme = Theme.of(context);
     return TextFormField(
       controller: _passwordController,
       obscureText: !_isPasswordVisible,
+      style: TextStyle(color: theme.colorScheme.onSurface),
       decoration: InputDecoration(
         labelText: 'Password',
-        border: const OutlineInputBorder(),
-        prefixIcon: const Icon(Icons.lock),
+        labelStyle: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.7)),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: theme.colorScheme.outline),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: theme.colorScheme.outline),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: theme.colorScheme.primary),
+        ),
+        filled: true,
+        fillColor: theme.colorScheme.surface,
+        prefixIcon: Icon(Icons.lock, color: theme.colorScheme.onSurface.withValues(alpha: 0.7)),
         suffixIcon: IconButton(
           icon: Icon(
             _isPasswordVisible ? Icons.visibility_off : Icons.visibility,
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
           ),
           onPressed: () {
             setState(() {
@@ -142,13 +175,29 @@ class _AuthUserDataPageState extends ConsumerState<AuthUserDataPage> {
   }
 
   Widget _buildEmailField() {
+    final theme = Theme.of(context);
     return TextFormField(
       controller: _emailController,
       keyboardType: TextInputType.emailAddress,
-      decoration: const InputDecoration(
+      style: TextStyle(color: theme.colorScheme.onSurface),
+      decoration: InputDecoration(
         labelText: 'Email (optional)',
-        border: OutlineInputBorder(),
-        prefixIcon: Icon(Icons.email),
+        labelStyle: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.7)),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: theme.colorScheme.outline),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: theme.colorScheme.outline),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: theme.colorScheme.primary),
+        ),
+        filled: true,
+        fillColor: theme.colorScheme.surface,
+        prefixIcon: Icon(Icons.email, color: theme.colorScheme.onSurface.withValues(alpha: 0.7)),
       ),
       validator: (value) {
         if (value != null && value.isNotEmpty) {
@@ -208,7 +257,7 @@ class _AuthUserDataPageState extends ConsumerState<AuthUserDataPage> {
         ),
         Checkbox(
           value: _isRemoteAccount,
-          checkColor: Colors.white,
+          checkColor: Theme.of(context).colorScheme.onPrimary,
           fillColor: WidgetStateProperty.resolveWith((states) {
             const Set<WidgetState> interactiveStates = <WidgetState>{
               WidgetState.pressed,
@@ -216,9 +265,9 @@ class _AuthUserDataPageState extends ConsumerState<AuthUserDataPage> {
               WidgetState.focused,
             };
             if (states.any(interactiveStates.contains)) {
-              return Colors.blue;
+              return Theme.of(context).colorScheme.primary;
             }
-            return Colors.red;
+            return Theme.of(context).colorScheme.primaryContainer;
           }),
           onChanged: (bool? value) {
             setState(() {
