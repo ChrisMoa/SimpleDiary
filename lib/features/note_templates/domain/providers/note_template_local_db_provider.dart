@@ -3,7 +3,6 @@ import 'package:day_tracker/core/database/local_db_helper.dart';
 import 'package:day_tracker/core/log/logger_instance.dart';
 import 'package:day_tracker/features/note_templates/data/models/note_template.dart';
 import 'package:day_tracker/features/note_templates/data/repositories/note_template_local_db.dart';
-import 'package:day_tracker/features/note_templates/domain/providers/default_templates_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class NoteTemplateLocalDataProvider extends AbstractLocalDbProviderState<NoteTemplate> {
@@ -14,23 +13,22 @@ class NoteTemplateLocalDataProvider extends AbstractLocalDbProviderState<NoteTem
     return NoteTemplateLocalDb(tableName: tableName, primaryKey: primaryKey, dbFile: dbFile);
   }
 
-  @override
-  Future<void> readObjectsFromDatabase() async {
-    await super.readObjectsFromDatabase();
+  Future<void> initializeWithDefaults(List<NoteTemplate> defaultTemplates) async {
+    await readObjectsFromDatabase();
 
     // Check if templates are empty and add defaults if needed
     if (state.isEmpty) {
       LogWrapper.logger.d('No templates found, adding default templates');
-      await addDefaultTemplates();
+      await addDefaultTemplates(defaultTemplates);
     }
   }
 
-  Future<void> addDefaultTemplates() async {
+  Future<void> addDefaultTemplates(List<NoteTemplate> templates) async {
     try {
-      for (final template in defaultTemplates) {
+      for (final template in templates) {
         await addElement(template);
       }
-      LogWrapper.logger.i('Successfully added ${defaultTemplates.length} default templates');
+      LogWrapper.logger.i('Successfully added ${templates.length} default templates');
     } catch (e) {
       LogWrapper.logger.e('Error adding default templates: $e');
     }

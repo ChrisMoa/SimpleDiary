@@ -3,6 +3,7 @@ import 'package:day_tracker/core/utils/utils.dart';
 import 'package:day_tracker/features/notes/data/models/note.dart';
 import 'package:day_tracker/features/notes/data/models/note_category.dart';
 import 'package:enough_icalendar/enough_icalendar.dart';
+import 'package:flutter/material.dart';
 
 /// Converts between SimpleDiary Note objects and iCalendar VEvent objects
 class IcsConverter {
@@ -74,7 +75,7 @@ class IcsConverter {
   }
 
   /// Parse ICS VEvents to Note objects
-  List<Note> icsEventsToNotes(VCalendar calendar) {
+  List<Note> icsEventsToNotes(VCalendar calendar, List<NoteCategory> categories) {
     final notes = <Note>[];
 
     // Get all VEvent children
@@ -87,7 +88,7 @@ class IcsConverter {
 
     for (final event in events) {
       try {
-        final note = _eventToNote(event);
+        final note = _eventToNote(event, categories);
         notes.add(note);
       } catch (e) {
         LogWrapper.logger.e('Error converting ICS event ${event.uid} to Note: $e');
@@ -99,7 +100,7 @@ class IcsConverter {
   }
 
   /// Convert a single VEvent to a Note
-  Note _eventToNote(VEvent event) {
+  Note _eventToNote(VEvent event, List<NoteCategory> categories) {
     // Extract basic properties
     final uid = event.uid;
     final title = event.summary ?? 'Untitled';
@@ -152,19 +153,24 @@ class IcsConverter {
     }
 
     // Map category
-    NoteCategory noteCategory = availableNoteCategories.first;
+    NoteCategory noteCategory = categories.isNotEmpty
+        ? categories.first
+        : NoteCategory(title: 'Default', color: const Color(0xFF2196F3));
+
     if (event.categories != null && event.categories!.isNotEmpty) {
       final categoryName = event.categories!.first;
 
       // Try to find matching category
       try {
-        noteCategory = availableNoteCategories.firstWhere(
+        noteCategory = categories.firstWhere(
           (cat) => cat.title.toLowerCase() == categoryName.toLowerCase(),
           orElse: () {
             LogWrapper.logger.w(
-              'Category "$categoryName" not found in availableNoteCategories, using default'
+              'Category "$categoryName" not found in categories, using default'
             );
-            return availableNoteCategories.first;
+            return categories.isNotEmpty
+                ? categories.first
+                : NoteCategory(title: 'Default', color: const Color(0xFF2196F3));
           },
         );
       } catch (e) {

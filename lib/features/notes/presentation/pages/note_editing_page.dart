@@ -1,7 +1,7 @@
 import 'package:day_tracker/core/log/logger_instance.dart';
 import 'package:day_tracker/core/utils/utils.dart';
 import 'package:day_tracker/features/notes/data/models/note.dart';
-import 'package:day_tracker/features/notes/data/models/note_category.dart';
+import 'package:day_tracker/features/notes/domain/providers/category_local_db_provider.dart';
 import 'package:day_tracker/features/notes/domain/providers/note_editing_page_provider.dart';
 import 'package:day_tracker/features/notes/domain/providers/note_local_db_provider.dart';
 import 'package:day_tracker/features/notes/domain/providers/note_selected_date_provider.dart';
@@ -152,11 +152,18 @@ class _NoteEditingPageState extends ConsumerState<NoteEditingPage> {
         ],
       );
 
-  Widget buildCategory() => DropdownButtonFormField(
-        value: note.noteCategory,
+  Widget buildCategory() {
+    final categories = ref.watch(categoryLocalDataProvider);
+
+    // Ensure the note's category exists in the dropdown items
+    if (categories.isNotEmpty && !categories.contains(note.noteCategory)) {
+      note.noteCategory = categories.first;
+    }
+
+    return DropdownButtonFormField(
+        value: categories.isEmpty ? null : note.noteCategory,
         items: [
-          // entries is the iterable object in the map
-          for (final category in availableNoteCategories)
+          for (final category in categories)
             DropdownMenuItem(
               value: category,
               child: Row(
@@ -179,12 +186,15 @@ class _NoteEditingPageState extends ConsumerState<NoteEditingPage> {
             ),
         ],
         onChanged: (value) {
-          setState(() {
-            note.noteCategory = value!;
-            ref.read(noteEditingPageProvider.notifier).updateNote(note);
-          });
+          if (value != null) {
+            setState(() {
+              note.noteCategory = value;
+              ref.read(noteEditingPageProvider.notifier).updateNote(note);
+            });
+          }
         },
       );
+  }
 
   Widget buildDescription() => buildHeader(
         header: 'Description',

@@ -8,6 +8,7 @@ import 'package:day_tracker/features/note_templates/presentation/widgets/floatin
 import 'package:day_tracker/features/notes/data/models/note.dart';
 import 'package:day_tracker/features/notes/data/models/note_category.dart';
 import 'package:day_tracker/features/notes/data/models/note_data_source.dart';
+import 'package:day_tracker/features/notes/domain/providers/category_local_db_provider.dart';
 import 'package:day_tracker/features/notes/domain/providers/note_local_db_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -184,7 +185,7 @@ class _NotesCalendarWidgetState extends ConsumerState<NotesCalendarWidget> {
                 child: Wrap(
                   spacing: 8,
                   runSpacing: 8,
-                  children: availableNoteCategories.map((category) => _buildCategoryChip(category, theme)).toList(),
+                  children: ref.watch(categoryLocalDataProvider).map((category) => _buildCategoryChip(category, theme)).toList(),
                 ),
               ),
             ],

@@ -4,6 +4,7 @@ import 'package:day_tracker/core/utils/utils.dart';
 import 'package:day_tracker/features/day_rating/domain/providers/diary_wizard_providers.dart';
 import 'package:day_tracker/features/notes/data/models/note.dart';
 import 'package:day_tracker/features/notes/data/models/note_category.dart';
+import 'package:day_tracker/features/notes/domain/providers/category_local_db_provider.dart';
 import 'package:day_tracker/features/notes/domain/providers/note_local_db_provider.dart';
 import 'package:day_tracker/features/note_templates/data/models/note_template.dart';
 import 'package:day_tracker/features/note_templates/domain/providers/note_template_local_db_provider.dart';
@@ -512,12 +513,18 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
 
   // Compact controls for small screens
   Widget _buildCompactControls(Note note, ThemeData theme) {
+    final categories = ref.watch(categoryLocalDataProvider);
+    // Ensure the note's category exists in the dropdown items
+    final effectiveCategory = categories.contains(note.noteCategory)
+        ? note.noteCategory
+        : (categories.isNotEmpty ? categories.first : null);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // Category dropdown
         DropdownButtonFormField<NoteCategory>(
-          value: note.noteCategory,
+          value: effectiveCategory,
           isExpanded: true,
           decoration: InputDecoration(
             labelText: 'Category',
@@ -542,7 +549,7 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
             color: theme.colorScheme.onSurface,
           ),
           dropdownColor: theme.colorScheme.surface,
-          items: availableNoteCategories.map((category) {
+          items: ref.watch(categoryLocalDataProvider).map((category) {
             return DropdownMenuItem(
               value: category,
               child: Row(
@@ -620,12 +627,18 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
 
   // Full controls for larger screens
   Widget _buildFullControls(Note note, ThemeData theme) {
+    final categories = ref.watch(categoryLocalDataProvider);
+    // Ensure the note's category exists in the dropdown items
+    final effectiveCategory = categories.contains(note.noteCategory)
+        ? note.noteCategory
+        : (categories.isNotEmpty ? categories.first : null);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // Category dropdown
         DropdownButtonFormField<NoteCategory>(
-          value: note.noteCategory,
+          value: effectiveCategory,
           decoration: InputDecoration(
             labelText: 'Category',
             labelStyle: TextStyle(color: theme.colorScheme.primary),
@@ -648,7 +661,7 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
             color: theme.colorScheme.onSurface,
           ),
           dropdownColor: theme.colorScheme.surface,
-          items: availableNoteCategories.map((category) {
+          items: ref.watch(categoryLocalDataProvider).map((category) {
             return DropdownMenuItem(
               value: category,
               child: Row(

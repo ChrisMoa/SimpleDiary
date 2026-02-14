@@ -5,7 +5,9 @@ import 'package:day_tracker/core/utils/utils.dart';
 import 'package:day_tracker/features/notes/data/models/note.dart';
 import 'package:day_tracker/features/notes/data/models/note_category.dart';
 import 'package:day_tracker/features/notes/data/repositories/notes_local_db.dart';
+import 'package:day_tracker/features/notes/domain/providers/category_local_db_provider.dart';
 import 'package:day_tracker/features/notes/domain/providers/note_selected_date_provider.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class NotesLocalDataProvider extends AbstractLocalDbProviderState<Note> {
@@ -46,6 +48,7 @@ final notesOfSelecteDayProvider = Provider((ref) {
 final nextFreeNoteOfSelectedDateProvider = Provider((ref) {
   final selectedDate = ref.watch(noteSelectedDateProvider);
   final notesOfDay = ref.watch(notesOfSelecteDayProvider);
+  final defaultCategory = ref.watch(defaultCategoryProvider);
   LogWrapper.logger.t('updates notes of day ${Utils.toDateTime(selectedDate)}');
 
   final dayBegin = selectedDate.copyWith(hour: 7, minute: 0, second: 0);
@@ -73,12 +76,19 @@ final nextFreeNoteOfSelectedDateProvider = Provider((ref) {
   if (curTime.isBefore(dayBegin)) {
     curTime = dayBegin;
   }
+
+  // Use default category if available, otherwise create a temporary one
+  final noteCategory = defaultCategory ?? NoteCategory(
+    title: 'Default',
+    color: Colors.blue,
+  );
+
   var note = Note(
     title: '',
     description: '',
     from: curTime,
     to: curTime.add(const Duration(minutes: 30)),
-    noteCategory: availableNoteCategories.first,
+    noteCategory: noteCategory,
   );
   return note;
 });

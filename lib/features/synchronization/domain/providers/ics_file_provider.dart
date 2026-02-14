@@ -5,6 +5,7 @@ import 'package:day_tracker/core/authentication/password_auth_service.dart';
 import 'package:day_tracker/core/encryption/aes_encryptor.dart';
 import 'package:day_tracker/core/log/logger_instance.dart';
 import 'package:day_tracker/features/notes/data/models/note.dart';
+import 'package:day_tracker/features/notes/data/models/note_category.dart';
 import 'package:day_tracker/features/synchronization/data/repositories/ics_converter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -159,7 +160,11 @@ class IcsFileProvider extends StateNotifier<List<Note>> {
   /// [file] - Source file to import from
   /// [password] - Password for decryption (required if file is encrypted)
   /// Returns the metadata if available, null for plain ICS files
-  Future<IcsExportMetadata?> importFromIcs(File file, {String? password}) async {
+  Future<IcsExportMetadata?> importFromIcs(
+    File file,
+    List<NoteCategory> categories,
+    {String? password}
+  ) async {
     LogWrapper.logger.t('ICS import started');
     state = [];
 
@@ -206,7 +211,7 @@ class IcsFileProvider extends StateNotifier<List<Note>> {
 
       // Parse ICS string to notes
       final calendar = _converter.stringToCalendar(icsString);
-      final notes = _converter.icsEventsToNotes(calendar);
+      final notes = _converter.icsEventsToNotes(calendar, categories);
 
       state = [...notes];
       LogWrapper.logger.t('ICS import finished (${notes.length} notes)');

@@ -3,9 +3,11 @@ import 'package:day_tracker/core/utils/utils.dart';
 import 'package:day_tracker/features/day_rating/data/models/day_rating.dart';
 import 'package:day_tracker/features/notes/data/models/note.dart';
 import 'package:day_tracker/features/notes/data/models/note_category.dart';
+import 'package:day_tracker/features/notes/domain/providers/category_local_db_provider.dart';
 import 'package:day_tracker/features/notes/domain/providers/note_local_db_provider.dart';
 import 'package:day_tracker/features/notes/domain/providers/note_selected_date_provider.dart';
 import 'package:day_tracker/features/note_templates/data/models/note_template.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 // Selected date provider for the wizard
@@ -247,6 +249,12 @@ final nextAvailableTimeSlotProvider = Provider<DateTime>((ref) {
 final createEmptyNoteProvider = Provider<Note>((ref) {
   ref.watch(wizardSelectedDateProvider);
   final nextAvailableTime = ref.watch(nextAvailableTimeSlotProvider);
+  final defaultCategory = ref.watch(defaultCategoryProvider);
+
+  final noteCategory = defaultCategory ?? NoteCategory(
+    title: 'Default',
+    color: Colors.blue,
+  );
 
   // Create a new note with default values
   return Note(
@@ -254,7 +262,7 @@ final createEmptyNoteProvider = Provider<Note>((ref) {
     description: '',
     from: nextAvailableTime,
     to: nextAvailableTime.add(const Duration(minutes: 30)),
-    noteCategory: availableNoteCategories.first,
+    noteCategory: noteCategory,
   );
 });
 
