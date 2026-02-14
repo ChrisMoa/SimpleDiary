@@ -140,6 +140,7 @@ class _CategoryManagementPageState
           category.title,
           style: theme.textTheme.titleMedium?.copyWith(
             fontWeight: FontWeight.w600,
+            color: theme.colorScheme.onSurface,
           ),
         ),
         trailing: Row(
