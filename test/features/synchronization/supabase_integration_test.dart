@@ -144,7 +144,7 @@ void _defineSyncTests({
         from: DateTime(2099, 7, 1),
         to: DateTime(2099, 7, 1),
         isAllDay: true,
-        noteCategory: availableNoteCategories[1], // Freizeit
+        noteCategory: availableNoteCategories[1], // Leisure
       );
 
       await api.syncNotes([allDayNote], 'integration-test-user');
@@ -155,7 +155,7 @@ void _defineSyncTests({
 
       final fetchedNote = match.first;
       expect(fetchedNote.isAllDay, true);
-      expect(fetchedNote.noteCategory.title, 'Freizeit');
+      expect(fetchedNote.noteCategory.title, 'Leisure');
     });
   });
 

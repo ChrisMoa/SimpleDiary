@@ -90,7 +90,7 @@ void main() {
             from: DateTime(2024, 3, 15, 9, 0),
             to: DateTime(2024, 3, 15, 17, 0),
             isAllDay: false,
-            noteCategory: availableNoteCategories[0], // Arbeit
+            noteCategory: availableNoteCategories[0], // Work
           ),
           Note(
             id: 'note-2',
@@ -99,7 +99,7 @@ void main() {
             from: DateTime(2024, 3, 15, 12, 0),
             to: DateTime(2024, 3, 15, 13, 0),
             isAllDay: false,
-            noteCategory: availableNoteCategories[2], // Essen
+            noteCategory: availableNoteCategories[2], // Food
           ),
         ];
 
@@ -115,7 +115,7 @@ void main() {
         expect(restored[0].id, 'note-1');
         expect(restored[0].title, 'Work Task');
         expect(restored[1].id, 'note-2');
-        expect(restored[1].noteCategory.title, 'Essen');
+        expect(restored[1].noteCategory.title, 'Food');
       });
 
       test('all-day note serialization', () {
@@ -126,7 +126,7 @@ void main() {
           from: DateTime(2024, 7, 1),
           to: DateTime(2024, 7, 8),
           isAllDay: true,
-          noteCategory: availableNoteCategories[1], // Freizeit
+          noteCategory: availableNoteCategories[1], // Leisure
         );
 
         final jsonString = json.encode(note.toMap());
@@ -157,7 +157,7 @@ void main() {
             title: 'Quick Meeting',
             description: 'Short standup',
             durationMinutes: 15,
-            noteCategory: availableNoteCategories[0], // Arbeit
+            noteCategory: availableNoteCategories[0], // Work
           ),
         ];
 

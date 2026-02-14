@@ -306,25 +306,25 @@ void main() {
         final notes = [
           Note(title: 'A', description: '', from: DateTime.now(),
               to: DateTime.now().add(const Duration(hours: 1)),
-              noteCategory: availableNoteCategories[0]), // Arbeit
+              noteCategory: availableNoteCategories[0]), // Work
           Note(title: 'B', description: '', from: DateTime.now(),
               to: DateTime.now().add(const Duration(hours: 1)),
-              noteCategory: availableNoteCategories[0]), // Arbeit
+              noteCategory: availableNoteCategories[0]), // Work
           Note(title: 'C', description: '', from: DateTime.now(),
               to: DateTime.now().add(const Duration(hours: 1)),
-              noteCategory: availableNoteCategories[0]), // Arbeit
+              noteCategory: availableNoteCategories[0]), // Work
           Note(title: 'D', description: '', from: DateTime.now(),
               to: DateTime.now().add(const Duration(hours: 1)),
-              noteCategory: availableNoteCategories[1]), // Freizeit
+              noteCategory: availableNoteCategories[1]), // Leisure
           Note(title: 'E', description: '', from: DateTime.now(),
               to: DateTime.now().add(const Duration(hours: 1)),
-              noteCategory: availableNoteCategories[2]), // Essen
+              noteCategory: availableNoteCategories[2]), // Food
         ];
 
         final top = repository.extractTopActivities(notes);
-        expect(top.first, 'Arbeit'); // most frequent
-        expect(top, contains('Freizeit'));
-        expect(top, contains('Essen'));
+        expect(top.first, 'Work'); // most frequent
+        expect(top, contains('Leisure'));
+        expect(top, contains('Food'));
       });
 
       test('returns at most 5 activities', () {

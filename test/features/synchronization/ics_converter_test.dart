@@ -22,7 +22,7 @@ void main() {
         from: DateTime(2024, 3, 15, 10, 0),
         to: DateTime(2024, 3, 15, 11, 0),
         isAllDay: false,
-        noteCategory: availableNoteCategories[0], // Arbeit
+        noteCategory: availableNoteCategories[0], // Work
       );
     }
 
@@ -34,7 +34,7 @@ void main() {
         from: DateTime(2024, 12, 25),
         to: DateTime(2024, 12, 26),
         isAllDay: true,
-        noteCategory: availableNoteCategories[1], // Freizeit
+        noteCategory: availableNoteCategories[1], // Leisure
       );
     }
 
@@ -46,7 +46,7 @@ void main() {
         expect(event.uid, 'note-timed-1');
         expect(event.summary, 'Team Meeting');
         expect(event.description, 'Weekly standup');
-        expect(event.categories, contains('Arbeit'));
+        expect(event.categories, contains('Work'));
       });
 
       test('converts all-day note to VEvent', () {
@@ -61,7 +61,7 @@ void main() {
         final note = createTimedNote();
         final event = converter.noteToIcsEvent(note);
         expect(event.categories, isNotNull);
-        expect(event.categories!.first, 'Arbeit');
+        expect(event.categories!.first, 'Work');
       });
     });
 
@@ -91,7 +91,7 @@ void main() {
         expect(restoredNotes.length, 1);
         expect(restoredNotes[0].title, 'Team Meeting');
         expect(restoredNotes[0].description, 'Weekly standup');
-        expect(restoredNotes[0].noteCategory.title, 'Arbeit');
+        expect(restoredNotes[0].noteCategory.title, 'Work');
       });
 
       test('handles unknown category with fallback', () {
