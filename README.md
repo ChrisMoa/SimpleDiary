@@ -18,6 +18,7 @@
 
 - **Step-by-step guided entry**: Structured approach to daily journaling
 - **Category-based tracking**: Rate different aspects of your day (Work, Leisure, Sleep, Gym, etc.)
+- **Configurable categories**: Create, edit, and delete your own categories with custom colors
 - **Custom templates**: Create and use personalized note templates
 - **Rich text notes**: Add detailed descriptions for each category
 - **Score calculation**: Automatic overall score based on your ratings
@@ -37,7 +38,9 @@
 ### 🎯 Additional Features
 ![App Drawer](docs/app_drawer.png)
 
-- **Multi-user support**: Separate diaries for different users
+- **Multi-user support**: Separate diaries for different users with per-user encrypted databases
+- **Category management**: Full CRUD for note categories via Settings, with per-user persistence
+- **ICS import/export**: Sync diary entries with calendar apps
 - **Search & filter**: Quickly find past entries
 - **Export functionality**: Backup your diary data
 - **Cross-platform**: Works on Windows, Linux, Android, and Web
@@ -93,19 +96,25 @@ It is also a good step to download the package "Flutter" within VS-Code
 ```
 lib/
 ├── core/                    # Core functionality
+│   ├── authentication/     # Authentication logic
+│   ├── database/           # Database abstractions & helpers
+│   ├── encryption/         # AES encryption for user databases
+│   ├── log/                # Logging
 │   ├── navigation/         # App navigation & routing
 │   ├── provider/           # Riverpod providers
 │   ├── settings/           # App settings management
 │   ├── theme/              # Theme configuration
-│   └── utils/              # Utility functions
-├── features/               # Feature modules
-│   ├── app/               # Main app & settings
+│   ├── utils/              # Utility functions
+│   └── widgets/            # Shared widgets
+├── features/               # Feature modules (each with domain/data/presentation layers)
+│   ├── app/               # Main app shell & settings
+│   ├── authentication/    # User login & multi-user management
+│   ├── calendar/          # Calendar views
 │   ├── dashboard/         # Dashboard & statistics
-│   │   ├── domain/        # Business logic
-│   │   ├── data/          # Data layer
-│   │   └── presentation/  # UI components
-│   ├── diary/             # Diary entries
-│   └── notes/             # Note templates
+│   ├── day_rating/        # Daily rating & diary wizard
+│   ├── note_templates/    # Reusable note templates
+│   ├── notes/             # Notes & configurable categories
+│   └── synchronization/   # Supabase sync & ICS import/export
 └── main.dart              # App entry point
 ```
 
