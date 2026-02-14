@@ -318,5 +318,19 @@
   "scheduleComplete": "Horario completo",
   "newNote": "Nueva Nota",
   "fromTime": "Desde: {time}",
-  "toTime": "Hasta: {time}"
+  "toTime": "Hasta: {time}",
+
+  "searchNotes": "Buscar notas...",
+  "searchNotesPlaceholder": "Buscar por título o descripción",
+  "filterByCategory": "Filtrar por categoría",
+  "filterByDate": "Filtrar por fecha",
+  "clearFilters": "Limpiar filtros",
+  "clearAll": "Limpiar todo",
+  "dateFrom": "Desde fecha",
+  "dateTo": "Hasta fecha",
+  "selectCategory": "Seleccionar categoría",
+  "allCategories": "Todas las categorías",
+  "noNotesMatchSearch": "No hay notas que coincidan con tu búsqueda",
+  "tryDifferentSearch": "Intenta ajustar tus criterios de búsqueda",
+  "nResultsFound": "{count, plural, =0{Sin resultados} =1{1 resultado} other{{count} resultados}}"
 }

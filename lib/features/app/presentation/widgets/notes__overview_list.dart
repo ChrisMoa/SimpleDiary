@@ -1,8 +1,8 @@
-import 'package:day_tracker/features/app/presentation/widgets/notes_overview_list_item.dart';
 import 'package:day_tracker/features/notes/data/models/note.dart';
 import 'package:day_tracker/features/notes/domain/providers/note_editing_page_provider.dart';
-import 'package:day_tracker/features/notes/domain/providers/note_local_db_provider.dart';
+import 'package:day_tracker/features/notes/domain/providers/note_search_provider.dart';
 import 'package:day_tracker/features/notes/presentation/pages/note_viewing_page.dart';
+import 'package:day_tracker/features/notes/presentation/widgets/note_search_result_item.dart';
 import 'package:flutter/material.dart';
 import 'package:day_tracker/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -17,25 +17,72 @@ class NotesOverviewList extends ConsumerStatefulWidget {
 class _NotesOverviewListState extends ConsumerState<NotesOverviewList> {
   @override
   Widget build(BuildContext context) {
-    final notes = ref.watch(notesLocalDataProvider);
-    return notes.isEmpty ? _buildEmptyList() : _buildFilledList();
+    final notes = ref.watch(filteredNotesProvider);
+    final searchState = ref.watch(noteSearchProvider);
+
+    return notes.isEmpty
+        ? _buildEmptyList(searchState.isActive)
+        : _buildFilledList(notes, searchState.query);
   }
 
-  Widget _buildEmptyList() {
-    final l10n = AppLocalizations.of(context)!;
-    return Text(l10n.noDiaryEntriesYet);
-  }
+  Widget _buildEmptyList(bool isSearchActive) {
+    final l10n = AppLocalizations.of(context);
 
-  Widget _buildFilledList() {
-    final notes = ref.read(notesLocalDataProvider);
-    notes.sort((a, b) => b.from.compareTo(a.from));
-
-    return ListView.builder(
-      itemBuilder: (ctx, index) => NotesOverviewListItem(
-        note: notes[index],
-        onSelectNote: onSelectNote,
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            isSearchActive ? Icons.search_off : Icons.note_outlined,
+            size: 64,
+            color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.5),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            isSearchActive ? l10n.noNotesMatchSearch : l10n.noDiaryEntriesYet,
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
+          if (isSearchActive) ...[
+            const SizedBox(height: 8),
+            Text(
+              l10n.tryDifferentSearch,
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+              ),
+            ),
+          ],
+        ],
       ),
-      itemCount: notes.length,
+    );
+  }
+
+  Widget _buildFilledList(List<Note> notes, String searchQuery) {
+    return Column(
+      children: [
+        // Result count indicator
+        if (searchQuery.isNotEmpty)
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+            child: Text(
+              '${notes.length} ${notes.length == 1 ? 'result' : 'results'}',
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+              ),
+            ),
+          ),
+
+        // Notes list
+        Expanded(
+          child: ListView.builder(
+            itemBuilder: (ctx, index) => NoteSearchResultItem(
+              note: notes[index],
+              onSelectNote: onSelectNote,
+              searchQuery: searchQuery,
+            ),
+            itemCount: notes.length,
+          ),
+        ),
+      ],
     );
   }
 

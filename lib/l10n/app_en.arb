@@ -460,5 +460,24 @@
     "placeholders": {
       "time": { "type": "String" }
     }
+  },
+
+  "searchNotes": "Search notes...",
+  "searchNotesPlaceholder": "Search by title or description",
+  "filterByCategory": "Filter by category",
+  "filterByDate": "Filter by date",
+  "clearFilters": "Clear filters",
+  "clearAll": "Clear all",
+  "dateFrom": "From date",
+  "dateTo": "To date",
+  "selectCategory": "Select category",
+  "allCategories": "All categories",
+  "noNotesMatchSearch": "No notes match your search",
+  "tryDifferentSearch": "Try adjusting your search criteria",
+  "nResultsFound": "{count, plural, =0{No results} =1{1 result} other{{count} results}}",
+  "@nResultsFound": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
   }
 }

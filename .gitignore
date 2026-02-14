@@ -37,3 +37,6 @@ macos/**
 
 */flutter
 windows/runner
+
+# issue files
+*issue_*.md
