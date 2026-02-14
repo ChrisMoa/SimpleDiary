@@ -6,6 +6,7 @@ void main() {
   group('buildHighlightSpans', () {
     final baseStyle = const TextStyle(fontSize: 14);
     final highlightColor = Colors.yellow;
+    final highlightTextColor = Colors.black;
 
     test('empty query returns single span with full text', () {
       final spans = buildHighlightSpans(
@@ -13,7 +14,7 @@ void main() {
         '',
         baseStyle,
         highlightColor,
-      );
+        highlightTextColor,      );
 
       expect(spans.length, 1);
       expect(spans[0].text, 'Hello World');
@@ -26,7 +27,7 @@ void main() {
         'World',
         baseStyle,
         highlightColor,
-      );
+        highlightTextColor,      );
 
       expect(spans.length, 2);
       // First span: non-matching part
@@ -44,7 +45,7 @@ void main() {
         'Hello',
         baseStyle,
         highlightColor,
-      );
+        highlightTextColor,      );
 
       expect(spans.length, 2);
       expect(spans[0].text, 'Hello');
@@ -59,7 +60,7 @@ void main() {
         'World',
         baseStyle,
         highlightColor,
-      );
+        highlightTextColor,      );
 
       expect(spans.length, 2);
       expect(spans[0].text, 'Hello ');
@@ -73,7 +74,7 @@ void main() {
         'test',
         baseStyle,
         highlightColor,
-      );
+        highlightTextColor,      );
 
       expect(spans.length, 4);
       // "test" + " and " + "test" + " again"
@@ -93,7 +94,7 @@ void main() {
         'a',
         baseStyle,
         highlightColor,
-      );
+        highlightTextColor,      );
 
       expect(spans.length, 3);
       expect(spans.every((s) => s.text == 'a'), true);
@@ -106,7 +107,7 @@ void main() {
         'world',
         baseStyle,
         highlightColor,
-      );
+        highlightTextColor,      );
 
       expect(spans.length, 2);
       expect(spans[0].text, 'Hello ');
@@ -120,7 +121,7 @@ void main() {
         'MEETING',
         baseStyle,
         highlightColor,
-      );
+        highlightTextColor,      );
 
       expect(spans.length, 5);
       expect(spans[0].text, 'The ');
@@ -138,7 +139,7 @@ void main() {
         'xyz',
         baseStyle,
         highlightColor,
-      );
+        highlightTextColor,      );
 
       expect(spans.length, 1);
       expect(spans[0].text, 'Hello World');
@@ -151,7 +152,7 @@ void main() {
         'plan',
         baseStyle,
         highlightColor,
-      );
+        highlightTextColor,      );
 
       expect(spans.length, 2);
       expect(spans[0].text, 'Plan'); // Matches beginning of "Planning"
@@ -165,7 +166,7 @@ void main() {
         'Hello',
         baseStyle,
         highlightColor,
-      );
+        highlightTextColor,      );
 
       expect(spans.length, 1);
       expect(spans[0].text, 'Hi');
@@ -178,7 +179,7 @@ void main() {
         'test',
         baseStyle,
         highlightColor,
-      );
+        highlightTextColor,      );
 
       expect(spans, isEmpty);
     });
@@ -189,7 +190,7 @@ void main() {
         '',
         baseStyle,
         highlightColor,
-      );
+        highlightTextColor,      );
 
       expect(spans.length, 1);
       expect(spans[0].text, '');
@@ -201,7 +202,7 @@ void main() {
         '\$',
         baseStyle,
         highlightColor,
-      );
+        highlightTextColor,      );
 
       expect(spans.length, 3);
       expect(spans[0].text, 'Price: ');
@@ -216,7 +217,7 @@ void main() {
         '   ',
         baseStyle,
         highlightColor,
-      );
+        highlightTextColor,      );
 
       expect(spans.length, 3);
       expect(spans[0].text, 'Hello');
@@ -232,7 +233,7 @@ void main() {
         'aa',
         baseStyle,
         highlightColor,
-      );
+        highlightTextColor,      );
 
       expect(spans.length, 2);
       expect(spans[0].text, 'aa');
@@ -247,7 +248,7 @@ void main() {
         'b',
         baseStyle,
         highlightColor,
-      );
+        highlightTextColor,      );
 
       expect(spans.length, 3);
       expect(spans[0].text, 'a ');
@@ -267,7 +268,7 @@ void main() {
         'World',
         customStyle,
         highlightColor,
-      );
+        highlightTextColor,      );
 
       final highlightedSpan = spans[1];
       expect(highlightedSpan.style!.fontSize, 20);

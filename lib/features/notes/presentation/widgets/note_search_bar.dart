@@ -106,12 +106,24 @@ class _NoteSearchBarState extends ConsumerState<NoteSearchBar> {
             TextField(
               controller: _searchController,
               onChanged: _onSearchChanged,
+              style: TextStyle(
+                color: theme.colorScheme.onSurface,
+              ),
               decoration: InputDecoration(
                 hintText: l10n.searchNotesPlaceholder,
-                prefixIcon: const Icon(Icons.search),
+                hintStyle: TextStyle(
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                ),
+                prefixIcon: Icon(
+                  Icons.search,
+                  color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                ),
                 suffixIcon: searchState.query.isNotEmpty
                     ? IconButton(
-                        icon: const Icon(Icons.clear),
+                        icon: Icon(
+                          Icons.clear,
+                          color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                        ),
                         onPressed: () {
                           _searchController.clear();
                           ref.read(noteSearchProvider.notifier).setQuery('');
@@ -120,6 +132,19 @@ class _NoteSearchBarState extends ConsumerState<NoteSearchBar> {
                     : null,
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(8.0),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                  borderSide: BorderSide(
+                    color: theme.colorScheme.outline.withValues(alpha: 0.5),
+                  ),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                  borderSide: BorderSide(
+                    color: theme.colorScheme.primary,
+                    width: 2.0,
+                  ),
                 ),
                 contentPadding: const EdgeInsets.symmetric(
                   horizontal: 16.0,

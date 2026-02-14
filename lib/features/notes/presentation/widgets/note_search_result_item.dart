@@ -9,6 +9,7 @@ List<TextSpan> buildHighlightSpans(
   String query,
   TextStyle baseStyle,
   Color highlightColor,
+  Color highlightTextColor,
 ) {
   if (query.isEmpty) {
     return [TextSpan(text: text, style: baseStyle)];
@@ -35,6 +36,7 @@ List<TextSpan> buildHighlightSpans(
       text: text.substring(index, index + query.length),
       style: baseStyle.copyWith(
         backgroundColor: highlightColor,
+        color: highlightTextColor,
         fontWeight: FontWeight.bold,
       ),
     ));
@@ -70,6 +72,7 @@ class NoteSearchResultItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final highlightColor = theme.colorScheme.primaryContainer;
+    final highlightTextColor = theme.colorScheme.onPrimaryContainer;
 
     return Card(
       margin: const EdgeInsets.all(8),
@@ -124,6 +127,7 @@ class NoteSearchResultItem extends StatelessWidget {
                         fontWeight: FontWeight.bold,
                       ),
                       highlightColor,
+                      highlightTextColor,
                     ),
                   ),
                 ],
@@ -137,6 +141,7 @@ class NoteSearchResultItem extends StatelessWidget {
                   fontWeight: FontWeight.bold,
                 ),
                 highlightColor,
+                highlightTextColor,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -150,7 +155,8 @@ class NoteSearchResultItem extends StatelessWidget {
   Widget _buildHighlightedText(
     String text,
     TextStyle style,
-    Color highlightColor, {
+    Color highlightColor,
+    Color highlightTextColor, {
     int? maxLines,
     TextOverflow? overflow,
   }) {
@@ -163,7 +169,13 @@ class NoteSearchResultItem extends StatelessWidget {
       );
     }
 
-    final spans = buildHighlightSpans(text, searchQuery, style, highlightColor);
+    final spans = buildHighlightSpans(
+      text,
+      searchQuery,
+      style,
+      highlightColor,
+      highlightTextColor,
+    );
 
     return RichText(
       text: TextSpan(children: spans),
