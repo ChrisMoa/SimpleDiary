@@ -28,7 +28,7 @@ void main() {
         description: 'Weekly standup',
         from: DateTime(2024, 3, 15, 10, 0),
         to: DateTime(2024, 3, 15, 11, 0),
-        noteCategory: availableNoteCategories[0], // Arbeit
+        noteCategory: availableNoteCategories[0], // Work
       ),
       Note(
         id: 'note-2',
@@ -36,7 +36,7 @@ void main() {
         description: 'At the cafeteria',
         from: DateTime(2024, 3, 15, 12, 0),
         to: DateTime(2024, 3, 15, 13, 0),
-        noteCategory: availableNoteCategories[2], // Essen
+        noteCategory: availableNoteCategories[2], // Food
       ),
     ];
   }
