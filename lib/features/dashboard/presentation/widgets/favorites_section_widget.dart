@@ -181,7 +181,7 @@ class FavoritesSectionWidget extends ConsumerWidget {
       child: Text(
         '$score',
         style: theme.textTheme.bodySmall?.copyWith(
-          color: Colors.white,
+          color: theme.colorScheme.onPrimary,
           fontWeight: FontWeight.bold,
         ),
       ),

@@ -546,8 +546,9 @@ flutter clean
 7. Add navigation entry in `DrawerItemBuilder` if top-level
 8. Add tests in `test/features/<feature_name>/`
 9. Update this document if significant architectural additions
-10. Add translation for ui strings (use @check_translation.py for finding strings)
-11. Update the build nr if manual and automatic tests are valid
+10. Ensure theming works correct in dark and lightmode
+11. Add translation for ui strings (use @check_translation.py for finding strings)
+12. Update the build nr if manual and automatic tests are valid
 
 ---
 
