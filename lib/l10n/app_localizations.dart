@@ -1158,6 +1158,18 @@ abstract class AppLocalizations {
   /// **'Note Templates'**
   String get noteTemplates;
 
+  /// No description provided for @selectTemplate.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Template'**
+  String get selectTemplate;
+
+  /// No description provided for @noTemplatesAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'No templates available'**
+  String get noTemplatesAvailable;
+
   /// No description provided for @noTemplatesYet.
   ///
   /// In en, this message translates to:
@@ -1512,6 +1524,12 @@ abstract class AppLocalizations {
   /// **'Please fill in all fields'**
   String get pleaseEnterAllFields;
 
+  /// No description provided for @fillInYourCompleteDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Fill in your complete day'**
+  String get fillInYourCompleteDay;
+
   /// No description provided for @testingConnection.
   ///
   /// In en, this message translates to:
@@ -1541,6 +1559,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Synchronization'**
   String get synchronization;
+
+  /// No description provided for @supabaseSynchronization.
+  ///
+  /// In en, this message translates to:
+  /// **'Supabase Synchronization'**
+  String get supabaseSynchronization;
+
+  /// No description provided for @supabaseSyncDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync your diary data with Supabase cloud storage for backup and cross-device access.'**
+  String get supabaseSyncDescription;
+
+  /// No description provided for @uploadToSupabase.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload to Supabase'**
+  String get uploadToSupabase;
+
+  /// No description provided for @saveYourDiaryDataToCloud.
+  ///
+  /// In en, this message translates to:
+  /// **'Save your diary data to the cloud'**
+  String get saveYourDiaryDataToCloud;
+
+  /// No description provided for @downloadFromSupabase.
+  ///
+  /// In en, this message translates to:
+  /// **'Download from Supabase'**
+  String get downloadFromSupabase;
+
+  /// No description provided for @loadDiaryDataFromCloud.
+  ///
+  /// In en, this message translates to:
+  /// **'Load diary data from the cloud'**
+  String get loadDiaryDataFromCloud;
 
   /// No description provided for @supabaseSettings.
   ///

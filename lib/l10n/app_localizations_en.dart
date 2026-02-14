@@ -582,6 +582,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noteTemplates => 'Note Templates';
 
   @override
+  String get selectTemplate => 'Select Template';
+
+  @override
+  String get noTemplatesAvailable => 'No templates available';
+
+  @override
   String get noTemplatesYet => 'No templates yet';
 
   @override
@@ -781,6 +787,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pleaseEnterAllFields => 'Please fill in all fields';
 
   @override
+  String get fillInYourCompleteDay => 'Fill in your complete day';
+
+  @override
   String get testingConnection => 'Testing connection...';
 
   @override
@@ -796,6 +805,25 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get synchronization => 'Synchronization';
+
+  @override
+  String get supabaseSynchronization => 'Supabase Synchronization';
+
+  @override
+  String get supabaseSyncDescription =>
+      'Sync your diary data with Supabase cloud storage for backup and cross-device access.';
+
+  @override
+  String get uploadToSupabase => 'Upload to Supabase';
+
+  @override
+  String get saveYourDiaryDataToCloud => 'Save your diary data to the cloud';
+
+  @override
+  String get downloadFromSupabase => 'Download from Supabase';
+
+  @override
+  String get loadDiaryDataFromCloud => 'Load diary data from the cloud';
 
   @override
   String get supabaseSettings => 'Supabase Settings';

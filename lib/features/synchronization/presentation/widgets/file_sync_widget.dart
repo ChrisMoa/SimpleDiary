@@ -319,7 +319,7 @@ class FileSyncWidget extends ConsumerWidget {
 
       // On Android/iOS, bytes must be passed to saveFile directly
       String? outputPath = await FilePicker.platform.saveFile(
-        dialogTitle: 'Save JSON Export File',
+        dialogTitle: l10n.saveJsonExportFile,
         fileName: defaultFileName,
         type: FileType.custom,
         allowedExtensions: ['json'],
@@ -360,7 +360,7 @@ class FileSyncWidget extends ConsumerWidget {
 
       // Use native file picker to select JSON file
       FilePickerResult? result = await FilePicker.platform.pickFiles(
-        dialogTitle: 'Select JSON File to Import',
+        dialogTitle: l10n.selectJsonFileToImport,
         type: FileType.custom,
         allowedExtensions: ['json'],
         allowMultiple: false,
@@ -542,7 +542,7 @@ class FileSyncWidget extends ConsumerWidget {
 
       // On Android/iOS, bytes must be passed to saveFile directly
       String? outputPath = await FilePicker.platform.saveFile(
-        dialogTitle: 'Save ICS Calendar File',
+        dialogTitle: l10n.saveIcsCalendarFile,
         fileName: defaultFileName,
         type: FileType.custom,
         allowedExtensions: ['ics'],
@@ -583,7 +583,7 @@ class FileSyncWidget extends ConsumerWidget {
 
       // Use native file picker to select ICS file
       FilePickerResult? result = await FilePicker.platform.pickFiles(
-        dialogTitle: 'Select ICS Calendar File to Import',
+        dialogTitle: l10n.selectIcsFileToImport,
         type: FileType.custom,
         allowedExtensions: ['ics', 'ical'],
         allowMultiple: false,

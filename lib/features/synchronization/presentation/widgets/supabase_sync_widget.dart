@@ -3,6 +3,7 @@ import 'package:day_tracker/core/provider/theme_provider.dart';
 import 'package:day_tracker/core/log/logger_instance.dart';
 import 'package:day_tracker/features/synchronization/data/models/supabase_settings.dart';
 import 'package:day_tracker/features/synchronization/domain/providers/supabase_provider.dart';
+import 'package:day_tracker/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -17,6 +18,7 @@ class _SupabaseSyncWidgetState extends ConsumerState<SupabaseSyncWidget> {
   @override
   Widget build(BuildContext context) {
     final theme = ref.watch(themeProvider);
+    final l10n = AppLocalizations.of(context);
     final syncState = ref.watch(supabaseSyncProvider);
     final settings = ref.watch(supabaseSettingsProvider);
 
@@ -58,7 +60,7 @@ class _SupabaseSyncWidgetState extends ConsumerState<SupabaseSyncWidget> {
                   ),
                   const SizedBox(width: 8),
                   Text(
-                    'Supabase Synchronization',
+                    l10n.supabaseSynchronization,
                     style: theme.textTheme.titleLarge?.copyWith(
                       color: theme.colorScheme.primary,
                       fontWeight: FontWeight.bold,
@@ -71,7 +73,7 @@ class _SupabaseSyncWidgetState extends ConsumerState<SupabaseSyncWidget> {
               const SizedBox(height: 16),
 
               Text(
-                'Sync your diary data with Supabase cloud storage for backup and cross-device access.',
+                l10n.supabaseSyncDescription,
                 style: theme.textTheme.bodyMedium?.copyWith(
                   color: theme.colorScheme.onSurface,
                 ),
@@ -90,8 +92,8 @@ class _SupabaseSyncWidgetState extends ConsumerState<SupabaseSyncWidget> {
                   _buildSyncButton(
                     context: context,
                     icon: Icons.cloud_upload,
-                    label: 'Upload to Supabase',
-                    description: 'Save your diary data to the cloud',
+                    label: l10n.uploadToSupabase,
+                    description: l10n.saveYourDiaryDataToCloud,
                     onPressed: _canSync(settings) ? _onSyncToSupabase : null,
                     theme: theme,
                     isSmallScreen: isSmallScreen,
@@ -100,8 +102,8 @@ class _SupabaseSyncWidgetState extends ConsumerState<SupabaseSyncWidget> {
                   _buildSyncButton(
                     context: context,
                     icon: Icons.cloud_download,
-                    label: 'Download from Supabase',
-                    description: 'Load diary data from the cloud',
+                    label: l10n.downloadFromSupabase,
+                    description: l10n.loadDiaryDataFromCloud,
                     onPressed: _canSync(settings) ? _onSyncFromSupabase : null,
                     theme: theme,
                     isSmallScreen: isSmallScreen,

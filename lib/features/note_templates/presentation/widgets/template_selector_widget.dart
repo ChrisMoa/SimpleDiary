@@ -1,6 +1,7 @@
 import 'package:day_tracker/core/provider/theme_provider.dart';
 import 'package:day_tracker/features/note_templates/data/models/note_template.dart';
 import 'package:day_tracker/features/note_templates/domain/providers/note_template_local_db_provider.dart';
+import 'package:day_tracker/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -15,6 +16,7 @@ class TemplateSelectorWidget extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = ref.watch(themeProvider);
+    final l10n = AppLocalizations.of(context);
     final templates = ref.watch(noteTemplateLocalDataProvider);
     final mediaQuery = MediaQuery.of(context);
     final screenWidth = mediaQuery.size.width;
@@ -23,7 +25,7 @@ class TemplateSelectorWidget extends ConsumerWidget {
     if (templates.isEmpty) {
       return Center(
         child: Text(
-          'No templates available',
+          l10n.noTemplatesAvailable,
           style: theme.textTheme.bodyMedium?.copyWith(
             color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
           ),
@@ -50,7 +52,7 @@ class TemplateSelectorWidget extends ConsumerWidget {
               children: [
                 Expanded(
                   child: Text(
-                    'Select Template',
+                    l10n.selectTemplate,
                     style: theme.textTheme.titleLarge?.copyWith(
                       color: theme.colorScheme.primary,
                       fontWeight: FontWeight.bold,

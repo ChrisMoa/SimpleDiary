@@ -4,6 +4,7 @@ import 'package:day_tracker/features/note_templates/data/models/note_template.da
 import 'package:day_tracker/features/note_templates/domain/providers/note_template_local_db_provider.dart';
 import 'package:day_tracker/features/notes/data/models/note_category.dart';
 import 'package:day_tracker/features/notes/domain/providers/category_local_db_provider.dart';
+import 'package:day_tracker/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -50,6 +51,7 @@ class _TemplateEditingWidgetState extends ConsumerState<TemplateEditingWidget> {
   @override
   Widget build(BuildContext context) {
     final theme = ref.watch(themeProvider);
+    final l10n = AppLocalizations.of(context);
     final mediaQuery = MediaQuery.of(context);
     final screenWidth = mediaQuery.size.width;
     final isSmallScreen = screenWidth < 600;
@@ -77,7 +79,7 @@ class _TemplateEditingWidgetState extends ConsumerState<TemplateEditingWidget> {
                   children: [
                     Expanded(
                       child: Text(
-                        widget.template != null ? 'Edit Template' : 'Create Template',
+                        widget.template != null ? l10n.editTemplate : l10n.createTemplate,
                         style: theme.textTheme.titleLarge?.copyWith(
                           color: theme.colorScheme.primary,
                           fontWeight: FontWeight.bold,
@@ -96,13 +98,13 @@ class _TemplateEditingWidgetState extends ConsumerState<TemplateEditingWidget> {
                 // Title field
                 TextFormField(
                   controller: _titleController,
-                  decoration: _buildInputDecoration(theme, 'Template Name'),
+                  decoration: _buildInputDecoration(theme, l10n.templateName),
                   style: theme.textTheme.bodyMedium?.copyWith(
                     color: theme.colorScheme.onSurface,
                   ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter a template name';
+                      return l10n.pleaseEnterTemplateName;
                     }
                     return null;
                   },
@@ -113,18 +115,18 @@ class _TemplateEditingWidgetState extends ConsumerState<TemplateEditingWidget> {
                 // Duration field
                 TextFormField(
                   initialValue: _template.durationMinutes.toString(),
-                  decoration: _buildInputDecoration(theme, 'Duration (minutes)'),
+                  decoration: _buildInputDecoration(theme, l10n.durationMinutes),
                   style: theme.textTheme.bodyMedium?.copyWith(
                     color: theme.colorScheme.onSurface,
                   ),
                   keyboardType: TextInputType.number,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter duration';
+                      return l10n.pleaseEnterDuration;
                     }
                     final minutes = int.tryParse(value);
                     if (minutes == null || minutes <= 0) {
-                      return 'Please enter a valid duration';
+                      return l10n.pleaseEnterValidDuration;
                     }
                     return null;
                   },
@@ -133,41 +135,7 @@ class _TemplateEditingWidgetState extends ConsumerState<TemplateEditingWidget> {
                 const SizedBox(height: 16),
 
                 // Category dropdown
-                DropdownButtonFormField<NoteCategory>(
-                  value: _template.noteCategory,
-                  decoration: _buildInputDecoration(theme, 'Category'),
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    color: theme.colorScheme.onSurface,
-                  ),
-                  dropdownColor: theme.colorScheme.surface,
-                  items: ref.watch(categoryLocalDataProvider).map((category) {
-                    return DropdownMenuItem(
-                      value: category,
-                      child: Row(
-                        children: [
-                          Container(
-                            width: 16,
-                            height: 16,
-                            decoration: BoxDecoration(
-                              color: category.color,
-                              shape: BoxShape.circle,
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          Text(category.title),
-                        ],
-                      ),
-                    );
-                  }).toList(),
-                  onChanged: (value) {
-                    if (value != null) {
-                      setState(() {
-                        _template.noteCategory = value;
-                      });
-                    }
-                  },
-                  onSaved: (value) => _template.noteCategory = value!,
-                ),
+                _buildCategoryDropdown(theme, l10n),
                 const SizedBox(height: 20),
 
                 // Description mode toggle
@@ -180,7 +148,7 @@ class _TemplateEditingWidgetState extends ConsumerState<TemplateEditingWidget> {
                 else
                   TextFormField(
                     controller: _descriptionController,
-                    decoration: _buildInputDecoration(theme, 'Description'),
+                    decoration: _buildInputDecoration(theme, l10n.description),
                     style: theme.textTheme.bodyMedium?.copyWith(
                       color: theme.colorScheme.onSurface,
                     ),
@@ -196,7 +164,7 @@ class _TemplateEditingWidgetState extends ConsumerState<TemplateEditingWidget> {
                     TextButton(
                       onPressed: () => Navigator.of(context).pop(),
                       child: Text(
-                        'Cancel',
+                        l10n.cancel,
                         style: TextStyle(color: theme.colorScheme.primary),
                       ),
                     ),
@@ -207,7 +175,7 @@ class _TemplateEditingWidgetState extends ConsumerState<TemplateEditingWidget> {
                         backgroundColor: theme.colorScheme.primaryContainer,
                         foregroundColor: theme.colorScheme.onPrimaryContainer,
                       ),
-                      child: Text(widget.template != null ? 'Update' : 'Create'),
+                      child: Text(widget.template != null ? l10n.update : l10n.createTemplate),
                     ),
                   ],
                 ),
@@ -242,18 +210,68 @@ class _TemplateEditingWidgetState extends ConsumerState<TemplateEditingWidget> {
     );
   }
 
+  Widget _buildCategoryDropdown(ThemeData theme, AppLocalizations l10n) {
+    final categories = ref.watch(categoryLocalDataProvider);
+    // Value must be an item in the list; match by title, fallback to first
+    NoteCategory? selectedCategory;
+    if (categories.isNotEmpty) {
+      selectedCategory = categories.cast<NoteCategory?>().firstWhere(
+        (cat) => cat!.title == _template.noteCategory.title,
+        orElse: () => null,
+      ) ?? categories.first;
+    }
+    return DropdownButtonFormField<NoteCategory>(
+      value: selectedCategory,
+      decoration: _buildInputDecoration(theme, l10n.category),
+      style: theme.textTheme.bodyMedium?.copyWith(
+        color: theme.colorScheme.onSurface,
+      ),
+      dropdownColor: theme.colorScheme.surface,
+      items: categories.map((category) {
+        return DropdownMenuItem(
+          value: category,
+          child: Row(
+            children: [
+              Container(
+                width: 16,
+                height: 16,
+                decoration: BoxDecoration(
+                  color: category.color,
+                  shape: BoxShape.circle,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Text(category.title),
+            ],
+          ),
+        );
+      }).toList(),
+      onChanged: (value) {
+        if (value != null) {
+          setState(() {
+            _template.noteCategory = value;
+          });
+        }
+      },
+      onSaved: (value) {
+        if (value != null) _template.noteCategory = value;
+      },
+    );
+  }
+
   Widget _buildDescriptionModeToggle(ThemeData theme) {
+    final l10n = AppLocalizations.of(context);
     return SegmentedButton<bool>(
-      segments: const [
+      segments: [
         ButtonSegment(
           value: false,
-          label: Text('Simple'),
-          icon: Icon(Icons.notes, size: 18),
+          label: Text(l10n.simple),
+          icon: const Icon(Icons.notes, size: 18),
         ),
         ButtonSegment(
           value: true,
-          label: Text('Sections'),
-          icon: Icon(Icons.list_alt, size: 18),
+          label: Text(l10n.sections),
+          icon: const Icon(Icons.list_alt, size: 18),
         ),
       ],
       selected: {_useDescriptionSections},
@@ -275,6 +293,7 @@ class _TemplateEditingWidgetState extends ConsumerState<TemplateEditingWidget> {
   }
 
   Widget _buildSectionsEditor(ThemeData theme, bool isSmallScreen) {
+    final l10n = AppLocalizations.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -292,7 +311,7 @@ class _TemplateEditingWidgetState extends ConsumerState<TemplateEditingWidget> {
               });
             },
             icon: const Icon(Icons.add, size: 18),
-            label: const Text('Add Section'),
+            label: Text(l10n.addSection),
             style: OutlinedButton.styleFrom(
               foregroundColor: theme.colorScheme.primary,
               side: BorderSide(color: theme.colorScheme.primary.withValues(alpha: 0.5)),
@@ -305,6 +324,7 @@ class _TemplateEditingWidgetState extends ConsumerState<TemplateEditingWidget> {
   }
 
   Widget _buildSectionCard(int index, DescriptionSection section, ThemeData theme, bool isSmallScreen) {
+    final l10n = AppLocalizations.of(context);
     return Card(
       margin: const EdgeInsets.only(bottom: 8),
       color: theme.colorScheme.secondaryContainer,
@@ -349,7 +369,7 @@ class _TemplateEditingWidgetState extends ConsumerState<TemplateEditingWidget> {
                   TextFormField(
                     initialValue: section.title,
                     decoration: InputDecoration(
-                      labelText: 'Section Title',
+                      labelText: l10n.sectionTitle,
                       labelStyle: TextStyle(
                         color: theme.colorScheme.primary,
                         fontSize: 13,
@@ -383,7 +403,7 @@ class _TemplateEditingWidgetState extends ConsumerState<TemplateEditingWidget> {
                   TextFormField(
                     initialValue: section.hint,
                     decoration: InputDecoration(
-                      labelText: 'Hint (optional)',
+                      labelText: l10n.hintOptional,
                       labelStyle: TextStyle(
                         color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
                         fontSize: 13,
@@ -429,7 +449,7 @@ class _TemplateEditingWidgetState extends ConsumerState<TemplateEditingWidget> {
                 size: 20,
               ),
               visualDensity: VisualDensity.compact,
-              tooltip: 'Remove section',
+              tooltip: l10n.removeSection,
             ),
           ],
         ),
@@ -462,10 +482,11 @@ class _TemplateEditingWidgetState extends ConsumerState<TemplateEditingWidget> {
 
       Navigator.of(context).pop();
 
+      final l10n = AppLocalizations.of(context);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            widget.template != null ? 'Template updated successfully' : 'Template created successfully',
+            widget.template != null ? l10n.templateUpdatedSuccessfully : l10n.templateCreatedSuccessfully,
           ),
           duration: const Duration(seconds: 2),
         ),

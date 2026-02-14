@@ -546,8 +546,26 @@ flutter clean
 7. Add navigation entry in `DrawerItemBuilder` if top-level
 8. Add tests in `test/features/<feature_name>/`
 9. Update this document if significant architectural additions
-10. Update the build nr if manual and automatic tests are valid
+10. Add translation for ui strings
+11. Update the build nr if manual and automatic tests are valid
 
 ---
 
 *Last updated: 2026-02-14*
+
+can you write a python tool that checks each string and widget if its already a translationstring or not and if its really needed. This can then once runned and analyzed. Think about an approach to dont forget user interactions with translations. 
+the tool should detect at least one not translated user interaction string which i know and saw previously
+
+Update Todos
+
+Explore codebase for all hardcoded string patterns
+
+Analyze LogWrapper usage and other false positive patterns
+
+Analyze all UI string patterns (Text, InputDecoration, tooltips, dialogs, snackbars)
+
+Study files with mixed localized and hardcoded strings
+
+Design complete Python tool structure and output format
+
+Only the last todo is left. The tool was not finalized

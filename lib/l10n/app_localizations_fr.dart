@@ -588,6 +588,12 @@ class AppLocalizationsFr extends AppLocalizations {
   String get noteTemplates => 'Modèles de Notes';
 
   @override
+  String get selectTemplate => 'Sélectionner un Modèle';
+
+  @override
+  String get noTemplatesAvailable => 'Aucun modèle disponible';
+
+  @override
   String get noTemplatesYet => 'Aucun modèle pour le moment';
 
   @override
@@ -790,6 +796,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get pleaseEnterAllFields => 'Veuillez remplir tous les champs';
 
   @override
+  String get fillInYourCompleteDay => 'Remplissez votre journée complète';
+
+  @override
   String get testingConnection => 'Test de connexion...';
 
   @override
@@ -806,6 +815,27 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get synchronization => 'Synchronisation';
+
+  @override
+  String get supabaseSynchronization => 'Synchronisation Supabase';
+
+  @override
+  String get supabaseSyncDescription =>
+      'Synchronisez vos données de journal avec le stockage cloud Supabase pour la sauvegarde et l\'accès multi-appareils.';
+
+  @override
+  String get uploadToSupabase => 'Envoyer vers Supabase';
+
+  @override
+  String get saveYourDiaryDataToCloud =>
+      'Sauvegardez vos données de journal dans le cloud';
+
+  @override
+  String get downloadFromSupabase => 'Télécharger depuis Supabase';
+
+  @override
+  String get loadDiaryDataFromCloud =>
+      'Charger les données du journal depuis le cloud';
 
   @override
   String get supabaseSettings => 'Paramètres Supabase';
