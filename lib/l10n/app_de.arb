@@ -297,5 +297,26 @@
   "featureExportImport": "Exportiere und importiere Daten",
   "copyright": "\u00a9 {year} Your Company",
 
-  "score": "Punkte: {score}"
+  "score": "Punkte: {score}",
+
+  "createNote": "Notiz erstellen",
+  "fromTemplate": "Aus Vorlage",
+  "noNoteSelected": "Keine Notiz ausgewählt",
+  "clickExistingOrCreateNew": "Klicke auf eine bestehende Notiz oder erstelle eine neue",
+  "title": "Titel",
+  "stopDictation": "Diktat stoppen",
+  "dictateDescription": "Beschreibung diktieren",
+  "addDetailsAboutNote": "Füge Details zu dieser Notiz hinzu...",
+  "listening": "Hört zu...",
+  "template": "Vorlage",
+  "add": "Hinzufügen",
+  "deleteNote": "Notiz löschen",
+  "confirmDeleteNote": "Bist du sicher, dass du diese Notiz löschen möchtest?",
+  "endTimeAfterStartTime": "Endzeit muss nach der Startzeit liegen",
+  "addedNoteAtTime": "Neue Notiz um {time} hinzugefügt",
+  "dailySchedule": "Tagesplan",
+  "scheduleComplete": "Tagesplan vollständig",
+  "newNote": "Neue Notiz",
+  "fromTime": "Von: {time}",
+  "toTime": "Bis: {time}"
 }

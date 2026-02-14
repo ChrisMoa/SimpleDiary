@@ -899,4 +899,71 @@ class AppLocalizationsEn extends AppLocalizations {
   String score(int score) {
     return 'Score: $score';
   }
+
+  @override
+  String get createNote => 'Create Note';
+
+  @override
+  String get fromTemplate => 'From Template';
+
+  @override
+  String get noNoteSelected => 'No note selected';
+
+  @override
+  String get clickExistingOrCreateNew =>
+      'Click on an existing note or create a new one';
+
+  @override
+  String get title => 'Title';
+
+  @override
+  String get stopDictation => 'Stop dictation';
+
+  @override
+  String get dictateDescription => 'Dictate description';
+
+  @override
+  String get addDetailsAboutNote => 'Add details about this note...';
+
+  @override
+  String get listening => 'Listening...';
+
+  @override
+  String get template => 'Template';
+
+  @override
+  String get add => 'Add';
+
+  @override
+  String get deleteNote => 'Delete Note';
+
+  @override
+  String get confirmDeleteNote => 'Are you sure you want to delete this note?';
+
+  @override
+  String get endTimeAfterStartTime => 'End time must be after start time';
+
+  @override
+  String addedNoteAtTime(String time) {
+    return 'Added new note at $time';
+  }
+
+  @override
+  String get dailySchedule => 'Daily Schedule';
+
+  @override
+  String get scheduleComplete => 'Schedule complete';
+
+  @override
+  String get newNote => 'New Note';
+
+  @override
+  String fromTime(String time) {
+    return 'From: $time';
+  }
+
+  @override
+  String toTime(String time) {
+    return 'To: $time';
+  }
 }

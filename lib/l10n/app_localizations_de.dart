@@ -911,4 +911,72 @@ class AppLocalizationsDe extends AppLocalizations {
   String score(int score) {
     return 'Punkte: $score';
   }
+
+  @override
+  String get createNote => 'Notiz erstellen';
+
+  @override
+  String get fromTemplate => 'Aus Vorlage';
+
+  @override
+  String get noNoteSelected => 'Keine Notiz ausgewählt';
+
+  @override
+  String get clickExistingOrCreateNew =>
+      'Klicke auf eine bestehende Notiz oder erstelle eine neue';
+
+  @override
+  String get title => 'Titel';
+
+  @override
+  String get stopDictation => 'Diktat stoppen';
+
+  @override
+  String get dictateDescription => 'Beschreibung diktieren';
+
+  @override
+  String get addDetailsAboutNote => 'Füge Details zu dieser Notiz hinzu...';
+
+  @override
+  String get listening => 'Hört zu...';
+
+  @override
+  String get template => 'Vorlage';
+
+  @override
+  String get add => 'Hinzufügen';
+
+  @override
+  String get deleteNote => 'Notiz löschen';
+
+  @override
+  String get confirmDeleteNote =>
+      'Bist du sicher, dass du diese Notiz löschen möchtest?';
+
+  @override
+  String get endTimeAfterStartTime => 'Endzeit muss nach der Startzeit liegen';
+
+  @override
+  String addedNoteAtTime(String time) {
+    return 'Neue Notiz um $time hinzugefügt';
+  }
+
+  @override
+  String get dailySchedule => 'Tagesplan';
+
+  @override
+  String get scheduleComplete => 'Tagesplan vollständig';
+
+  @override
+  String get newNote => 'Neue Notiz';
+
+  @override
+  String fromTime(String time) {
+    return 'Von: $time';
+  }
+
+  @override
+  String toTime(String time) {
+    return 'Bis: $time';
+  }
 }

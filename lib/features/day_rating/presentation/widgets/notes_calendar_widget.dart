@@ -85,7 +85,7 @@ class _NotesCalendarWidgetState extends ConsumerState<NotesCalendarWidget> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          'Daily Schedule',
+                          l10n.dailySchedule,
                           style: theme.textTheme.titleLarge?.copyWith(
                             color: theme.colorScheme.primary,
                             fontWeight: FontWeight.bold,
@@ -107,7 +107,7 @@ class _NotesCalendarWidgetState extends ConsumerState<NotesCalendarWidget> {
                             ),
                             const SizedBox(width: 4),
                             Text(
-                              'Schedule complete',
+                              l10n.scheduleComplete,
                               style: theme.textTheme.bodySmall?.copyWith(
                                 color: theme.colorScheme.primary,
                                 fontWeight: FontWeight.bold,
@@ -265,7 +265,7 @@ class _NotesCalendarWidgetState extends ConsumerState<NotesCalendarWidget> {
               children: [
                 Expanded(
                   child: Text(
-                    note.title.isEmpty ? 'New Note' : note.title,
+                    note.title.isEmpty ? AppLocalizations.of(context).newNote : note.title,
                     style: TextStyle(
                       color: theme.colorScheme.surface,
                       fontWeight: FontWeight.bold,

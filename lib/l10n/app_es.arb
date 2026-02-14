@@ -297,5 +297,26 @@
   "featureExportImport": "Exporta e importa datos",
   "copyright": "© {year} Your Company",
 
-  "score": "Puntuación: {score}"
+  "score": "Puntuación: {score}",
+
+  "createNote": "Crear Nota",
+  "fromTemplate": "Desde Plantilla",
+  "noNoteSelected": "Ninguna nota seleccionada",
+  "clickExistingOrCreateNew": "Haz clic en una nota existente o crea una nueva",
+  "title": "Título",
+  "stopDictation": "Detener dictado",
+  "dictateDescription": "Dictar descripción",
+  "addDetailsAboutNote": "Agrega detalles sobre esta nota...",
+  "listening": "Escuchando...",
+  "template": "Plantilla",
+  "add": "Agregar",
+  "deleteNote": "Eliminar Nota",
+  "confirmDeleteNote": "¿Estás seguro de que quieres eliminar esta nota?",
+  "endTimeAfterStartTime": "La hora de fin debe ser posterior a la hora de inicio",
+  "addedNoteAtTime": "Nueva nota agregada a las {time}",
+  "dailySchedule": "Horario Diario",
+  "scheduleComplete": "Horario completo",
+  "newNote": "Nueva Nota",
+  "fromTime": "Desde: {time}",
+  "toTime": "Hasta: {time}"
 }

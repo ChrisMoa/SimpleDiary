@@ -1727,6 +1727,126 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Score: {score}'**
   String score(int score);
+
+  /// No description provided for @createNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Note'**
+  String get createNote;
+
+  /// No description provided for @fromTemplate.
+  ///
+  /// In en, this message translates to:
+  /// **'From Template'**
+  String get fromTemplate;
+
+  /// No description provided for @noNoteSelected.
+  ///
+  /// In en, this message translates to:
+  /// **'No note selected'**
+  String get noNoteSelected;
+
+  /// No description provided for @clickExistingOrCreateNew.
+  ///
+  /// In en, this message translates to:
+  /// **'Click on an existing note or create a new one'**
+  String get clickExistingOrCreateNew;
+
+  /// No description provided for @title.
+  ///
+  /// In en, this message translates to:
+  /// **'Title'**
+  String get title;
+
+  /// No description provided for @stopDictation.
+  ///
+  /// In en, this message translates to:
+  /// **'Stop dictation'**
+  String get stopDictation;
+
+  /// No description provided for @dictateDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Dictate description'**
+  String get dictateDescription;
+
+  /// No description provided for @addDetailsAboutNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Add details about this note...'**
+  String get addDetailsAboutNote;
+
+  /// No description provided for @listening.
+  ///
+  /// In en, this message translates to:
+  /// **'Listening...'**
+  String get listening;
+
+  /// No description provided for @template.
+  ///
+  /// In en, this message translates to:
+  /// **'Template'**
+  String get template;
+
+  /// No description provided for @add.
+  ///
+  /// In en, this message translates to:
+  /// **'Add'**
+  String get add;
+
+  /// No description provided for @deleteNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Note'**
+  String get deleteNote;
+
+  /// No description provided for @confirmDeleteNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete this note?'**
+  String get confirmDeleteNote;
+
+  /// No description provided for @endTimeAfterStartTime.
+  ///
+  /// In en, this message translates to:
+  /// **'End time must be after start time'**
+  String get endTimeAfterStartTime;
+
+  /// No description provided for @addedNoteAtTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Added new note at {time}'**
+  String addedNoteAtTime(String time);
+
+  /// No description provided for @dailySchedule.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily Schedule'**
+  String get dailySchedule;
+
+  /// No description provided for @scheduleComplete.
+  ///
+  /// In en, this message translates to:
+  /// **'Schedule complete'**
+  String get scheduleComplete;
+
+  /// No description provided for @newNote.
+  ///
+  /// In en, this message translates to:
+  /// **'New Note'**
+  String get newNote;
+
+  /// No description provided for @fromTime.
+  ///
+  /// In en, this message translates to:
+  /// **'From: {time}'**
+  String fromTime(String time);
+
+  /// No description provided for @toTime.
+  ///
+  /// In en, this message translates to:
+  /// **'To: {time}'**
+  String toTime(String time);
 }
 
 class _AppLocalizationsDelegate

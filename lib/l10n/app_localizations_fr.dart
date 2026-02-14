@@ -913,4 +913,73 @@ class AppLocalizationsFr extends AppLocalizations {
   String score(int score) {
     return 'Score : $score';
   }
+
+  @override
+  String get createNote => 'Créer une Note';
+
+  @override
+  String get fromTemplate => 'Depuis un Modèle';
+
+  @override
+  String get noNoteSelected => 'Aucune note sélectionnée';
+
+  @override
+  String get clickExistingOrCreateNew =>
+      'Cliquez sur une note existante ou créez-en une nouvelle';
+
+  @override
+  String get title => 'Titre';
+
+  @override
+  String get stopDictation => 'Arrêter la dictée';
+
+  @override
+  String get dictateDescription => 'Dicter la description';
+
+  @override
+  String get addDetailsAboutNote => 'Ajoutez des détails sur cette note...';
+
+  @override
+  String get listening => 'Écoute en cours...';
+
+  @override
+  String get template => 'Modèle';
+
+  @override
+  String get add => 'Ajouter';
+
+  @override
+  String get deleteNote => 'Supprimer la Note';
+
+  @override
+  String get confirmDeleteNote =>
+      'Êtes-vous sûr de vouloir supprimer cette note ?';
+
+  @override
+  String get endTimeAfterStartTime =>
+      'L\'heure de fin doit être postérieure à l\'heure de début';
+
+  @override
+  String addedNoteAtTime(String time) {
+    return 'Nouvelle note ajoutée à $time';
+  }
+
+  @override
+  String get dailySchedule => 'Emploi du Jour';
+
+  @override
+  String get scheduleComplete => 'Emploi du temps complet';
+
+  @override
+  String get newNote => 'Nouvelle Note';
+
+  @override
+  String fromTime(String time) {
+    return 'De : $time';
+  }
+
+  @override
+  String toTime(String time) {
+    return 'À : $time';
+  }
 }
