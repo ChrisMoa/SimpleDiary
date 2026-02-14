@@ -11,7 +11,10 @@ import 'package:day_tracker/features/day_rating/domain/providers/diary_day_local
 import 'package:day_tracker/features/notes/domain/providers/note_local_db_provider.dart';
 import 'package:day_tracker/features/synchronization/data/models/export_data.dart';
 import 'package:day_tracker/features/synchronization/domain/providers/file_db_provider.dart';
+import 'package:day_tracker/features/synchronization/domain/providers/ics_file_provider.dart';
+import 'package:day_tracker/core/utils/utils.dart';
 import 'package:filesystem_picker/filesystem_picker.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -69,7 +72,7 @@ class FileSyncWidget extends ConsumerWidget {
               SizedBox(height: 16),
 
               Text(
-                'Import and export your diary data to JSON files with optional encryption.',
+                'Import and export your diary data to JSON or ICS calendar files with optional encryption.',
                 style: theme.textTheme.bodyMedium?.copyWith(
                   color: theme.colorScheme.onSurface,
                 ),
@@ -99,6 +102,34 @@ class FileSyncWidget extends ConsumerWidget {
                 label: 'Import from JSON',
                 description: 'Load diary data from a file',
                 onPressed: () => _onImportFromFile(context, ref),
+                theme: theme,
+                isSmallScreen: isSmallScreen,
+              ),
+
+              SizedBox(height: 16),
+
+              // Export to ICS Button
+              _buildSyncButton(
+                context: context,
+                ref: ref,
+                icon: Icons.calendar_today,
+                label: 'Export to ICS Calendar',
+                description: 'Save notes as calendar events (.ics)',
+                onPressed: () => _onExportToIcs(context, ref),
+                theme: theme,
+                isSmallScreen: isSmallScreen,
+              ),
+
+              SizedBox(height: 16),
+
+              // Import from ICS Button
+              _buildSyncButton(
+                context: context,
+                ref: ref,
+                icon: Icons.calendar_month,
+                label: 'Import from ICS Calendar',
+                description: 'Load calendar events from .ics file',
+                onPressed: () => _onImportFromIcs(context, ref),
                 theme: theme,
                 isSmallScreen: isSmallScreen,
               ),
@@ -362,6 +393,182 @@ class FileSyncWidget extends ConsumerWidget {
     );
   }
 
+  Future<void> _onExportToIcs(BuildContext context, WidgetRef ref) async {
+    try {
+      LogWrapper.logger.i('ICS export started');
+
+      // Prompt for encryption password first
+      final userData = ref.read(userDataProvider);
+      final defaultPassword = userData.clearPassword;
+
+      final password = await _promptForPassword(
+        context,
+        'Encrypt ICS Export (Optional)',
+        defaultValue: defaultPassword,
+      );
+
+      // Use native file picker to save file
+      final defaultFileName = 'diary_export_${Utils.toFileDateTime(DateTime.now())}.ics';
+
+      String? outputPath = await FilePicker.platform.saveFile(
+        dialogTitle: 'Save ICS Calendar File',
+        fileName: defaultFileName,
+        type: FileType.custom,
+        allowedExtensions: ['ics'],
+      );
+
+      if (outputPath != null) {
+        try {
+          // Ensure .ics extension
+          if (!outputPath.endsWith('.ics')) {
+            outputPath = '$outputPath.ics';
+          }
+
+          File file = File(outputPath);
+          final bool willEncrypt = password != null && password.isNotEmpty;
+
+          // Get all notes from local data provider
+          final notes = ref.read(notesLocalDataProvider);
+
+          // Use ICS export with metadata
+          await ref.read(icsFileStateProvider.notifier).exportWithMetadata(
+                notes: notes,
+                file: file,
+                username: userData.username.isNotEmpty ? userData.username : null,
+                salt: willEncrypt ? userData.salt : null,
+                encrypted: willEncrypt,
+                password: willEncrypt ? password : null,
+              );
+
+          LogWrapper.logger.i('ICS export finished successfully to $outputPath');
+          _onImportExportSuccessfully(context);
+        } catch (e) {
+          LogWrapper.logger.e('Error exporting ICS "$outputPath": "$e"');
+          _onError(context, 'Error during ICS export: $e');
+        }
+      } else {
+        LogWrapper.logger.i('ICS export cancelled by user');
+      }
+    } catch (e) {
+      LogWrapper.logger.e('Error during ICS exporting: ${e.toString()}');
+      _onError(context, 'Error during ICS exporting');
+    }
+  }
+
+  Future<void> _onImportFromIcs(BuildContext context, WidgetRef ref) async {
+    try {
+      LogWrapper.logger.i('ICS import started');
+
+      // Use native file picker to select ICS file
+      FilePickerResult? result = await FilePicker.platform.pickFiles(
+        dialogTitle: 'Select ICS Calendar File to Import',
+        type: FileType.custom,
+        allowedExtensions: ['ics', 'ical'],
+        allowMultiple: false,
+      );
+
+      if (result != null && result.files.single.path != null) {
+        final path = result.files.single.path!;
+
+        try {
+          File file = File(path);
+          LogWrapper.logger.i('Import ICS from file ${file.path}');
+
+          // Read file to check if it's encrypted (wrapped format)
+          String fileContent;
+          try {
+            fileContent = file.readAsStringSync();
+          } catch (e) {
+            LogWrapper.logger.e('File is not readable: $e');
+            _onError(context, 'Cannot read ICS file. File may be corrupted.');
+            return;
+          }
+
+          bool isEncrypted = false;
+
+          // Check if file has metadata wrapper
+          try {
+            final decoded = json.decode(fileContent);
+            if (decoded is Map<String, dynamic> &&
+                decoded.containsKey('format') &&
+                decoded['format'] == 'ics') {
+              final metadataMap = decoded['metadata'] as Map<String, dynamic>;
+              isEncrypted = metadataMap['encrypted'] as bool;
+              LogWrapper.logger.i('Detected wrapped ICS format: encrypted=$isEncrypted');
+            }
+          } catch (e) {
+            // Not JSON wrapped format, it's a plain ICS file
+            LogWrapper.logger.i('Detected plain ICS format');
+          }
+
+          // Prompt for password if encrypted
+          final userData = ref.read(userDataProvider);
+          final defaultPassword = userData.clearPassword;
+          String? password;
+
+          if (isEncrypted) {
+            password = await _promptForPassword(
+              context,
+              'Decrypt ICS Import',
+              defaultValue: defaultPassword,
+            );
+
+            if (password == null || password.isEmpty) {
+              _onError(context, 'Password required for encrypted ICS file');
+              return;
+            }
+          }
+
+          // Import the ICS data
+          try {
+            await ref.read(icsFileStateProvider.notifier).importFromIcs(
+              File(path),
+              password: password,
+            );
+
+            // Get imported notes and add to local DB
+            final importedNotes = ref.read(icsFileStateProvider);
+
+            for (var note in importedNotes) {
+              await ref.read(notesLocalDataProvider.notifier).addElement(note);
+              LogWrapper.logger.d('Imported note: ${note.title}');
+            }
+
+            LogWrapper.logger.i('ICS import finished successfully (${importedNotes.length} notes)');
+
+            // Show success message with count
+            ScaffoldMessenger.of(context).clearSnackBars();
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                duration: const Duration(seconds: 3),
+                content: Text('Successfully imported ${importedNotes.length} notes from ICS calendar'),
+                backgroundColor: Theme.of(context).colorScheme.primary,
+                action: SnackBarAction(
+                  label: 'OK',
+                  textColor: Theme.of(context).colorScheme.onPrimary,
+                  onPressed: () {
+                    ScaffoldMessenger.of(context).clearSnackBars();
+                  },
+                ),
+              ),
+            );
+          } catch (e) {
+            LogWrapper.logger.e('Error during ICS import: $e');
+            _onError(context, 'Error during ICS import. Wrong password or invalid ICS file?');
+          }
+        } catch (e) {
+          LogWrapper.logger.e('Error importing ICS from file "$path": "$e"');
+          _onError(context, 'Error during ICS import: $e');
+        }
+      } else {
+        LogWrapper.logger.i('ICS import cancelled by user');
+      }
+    } catch (e) {
+      LogWrapper.logger.e('Error during ICS importing: ${e.toString()}');
+      _onError(context, 'Error during ICS importing');
+    }
+  }
+
   void _onError(BuildContext context, String errorMsg) {
     if (errorMsg.isNotEmpty) {
       ScaffoldMessenger.of(context).clearSnackBars();
@@ -423,6 +630,14 @@ class FileSyncWidget extends ConsumerWidget {
     final TextEditingController controller = TextEditingController(
       text: defaultName,
     );
+
+    // Detect if it's an ICS or JSON file
+    final isIcsFile = defaultName.endsWith('.ics') || title.contains('ICS');
+    final extension = isIcsFile ? '.ics' : '.json';
+    final hintText = isIcsFile
+        ? 'Enter file name with .ics extension'
+        : 'Enter file name with .json extension';
+
     final fileName = await showDialog<String>(
       context: context,
       builder: (context) => AlertDialog(
@@ -433,9 +648,9 @@ class FileSyncWidget extends ConsumerWidget {
             TextField(
               controller: controller,
               autofocus: true,
-              decoration: const InputDecoration(
+              decoration: InputDecoration(
                 labelText: 'File Name',
-                hintText: 'Enter file name with .json extension',
+                hintText: hintText,
               ),
             ),
             const SizedBox(height: 8),
@@ -453,9 +668,9 @@ class FileSyncWidget extends ConsumerWidget {
           TextButton(
             onPressed: () {
               String name = controller.text.trim();
-              // Ensure the file has .json extension
-              if (!name.endsWith('.json')) {
-                name += '.json';
+              // Ensure the file has the correct extension
+              if (!name.endsWith(extension)) {
+                name += extension;
               }
               Navigator.pop(context, name);
             },

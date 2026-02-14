@@ -1,0 +1,65 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//SimpleDiary//SimpleDiary Flutter App//EN
+CALSCALE:GREGORIAN
+BEGIN:VEVENT
+UID:test-event-001@simplediary.app
+DTSTAMP:20260214T120000Z
+DTSTART:20260215T090000Z
+DTEND:20260215T100000Z
+SUMMARY:Morning Gym Session
+DESCRIPTION:Great workout session at the gym. Focused on upper body exercises and cardio.
+CATEGORIES:Gym
+X-CATEGORY-COLOR:#ff4caf50
+END:VEVENT
+BEGIN:VEVENT
+UID:test-event-002@simplediary.app
+DTSTAMP:20260214T120000Z
+DTSTART:20260215T120000Z
+DTEND:20260215T130000Z
+SUMMARY:Team Meeting
+DESCRIPTION:Weekly team sync to discuss project progress and upcoming milestones.
+CATEGORIES:Arbeit
+X-CATEGORY-COLOR:#ff9c27b0
+END:VEVENT
+BEGIN:VEVENT
+UID:test-event-003@simplediary.app
+DTSTAMP:20260214T120000Z
+DTSTART:20260215T183000Z
+DTEND:20260215T200000Z
+SUMMARY:Dinner with Friends
+DESCRIPTION:Trying out the new Italian restaurant downtown. Looking forward to the pasta!
+CATEGORIES:Essen
+X-CATEGORY-COLOR:#ffffc107
+END:VEVENT
+BEGIN:VEVENT
+UID:test-event-004@simplediary.app
+DTSTAMP:20260214T120000Z
+DTSTART;VALUE=DATE:20260216
+DTEND;VALUE=DATE:20260217
+SUMMARY:Vacation Day
+DESCRIPTION:Taking a well-deserved day off to relax and recharge.
+CATEGORIES:Freizeit
+X-CATEGORY-COLOR:#ff03a9f4
+END:VEVENT
+BEGIN:VEVENT
+UID:test-event-005@simplediary.app
+DTSTAMP:20260214T120000Z
+DTSTART:20260217T140000Z
+DTEND:20260217T160000Z
+SUMMARY:Reading Session
+DESCRIPTION:Continuing my current book - really enjoying the story so far.
+CATEGORIES:Freizeit
+X-CATEGORY-COLOR:#ff03a9f4
+END:VEVENT
+BEGIN:VEVENT
+UID:test-event-006@simplediary.app
+DTSTAMP:20260214T120000Z
+DTSTART:20260218T220000Z
+DTEND:20260219T070000Z
+SUMMARY:Good Night's Sleep
+DESCRIPTION:Went to bed early, slept well. Feeling refreshed this morning!
+CATEGORIES:Schlafen
+X-CATEGORY-COLOR:#ff9e9e9e
+END:VEVENT
+END:VCALENDAR
