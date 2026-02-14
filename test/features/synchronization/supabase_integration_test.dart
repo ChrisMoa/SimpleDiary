@@ -7,6 +7,7 @@ import 'package:day_tracker/features/notes/data/models/note.dart';
 import 'package:day_tracker/features/notes/data/models/note_category.dart';
 import 'package:day_tracker/features/synchronization/data/repositories/supabase_api.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 /// Reads and parses the test/.env file.
 /// Returns null if the file doesn't exist.
@@ -75,24 +76,36 @@ void main() {
   }
 
   group('Supabase integration', () {
+    // Supabase is a singleton — initialize once and reuse across all tests.
     late SupabaseApi api;
 
     // Use fixed IDs so repeated test runs upsert rather than creating duplicates.
     const testNoteId = 'test-note-integration-001';
     const testTemplateId = 'test-template-integration-001';
 
-    setUp(() {
-      SupabaseApi.resetInitialization();
+    /// Ensure the api is signed in before a test that needs auth.
+    Future<void> ensureSignedIn() async {
+      if (!api.isSignedIn) {
+        final ok =
+            await api.signInWithEmailPassword(testEmail, testPassword);
+        assert(ok, 'Could not sign in — check test/.env credentials');
+      }
+    }
+
+    setUpAll(() async {
+      // SharedPreferences must be mocked before Supabase.initialize()
+      // because supabase_flutter stores the auth session there.
+      SharedPreferences.setMockInitialValues({});
+
       api = SupabaseApi();
+      await api.initialize(supabaseUrl, supabaseAnonKey);
     });
 
     // ------------------------------------------------------------------
     // Connection & authentication
     // ------------------------------------------------------------------
     group('connection', () {
-      test('initialize and sign in with valid credentials', () async {
-        await api.initialize(supabaseUrl, supabaseAnonKey);
-
+      test('sign in with valid credentials', () async {
         final success =
             await api.signInWithEmailPassword(testEmail, testPassword);
         expect(success, isTrue);
@@ -101,20 +114,22 @@ void main() {
       });
 
       test('sign in with wrong password returns false', () async {
-        await api.initialize(supabaseUrl, supabaseAnonKey);
-
         final success =
             await api.signInWithEmailPassword(testEmail, 'wrong-password-xyz');
         expect(success, isFalse);
       });
 
-      test('sign out after sign in succeeds', () async {
-        await api.initialize(supabaseUrl, supabaseAnonKey);
-        await api.signInWithEmailPassword(testEmail, testPassword);
+      test('sign out and sign back in', () async {
+        await ensureSignedIn();
         expect(api.isSignedIn, isTrue);
 
         await api.signOut();
         expect(api.isSignedIn, isFalse);
+
+        // Re-authenticate so subsequent tests keep working.
+        final ok =
+            await api.signInWithEmailPassword(testEmail, testPassword);
+        expect(ok, isTrue);
       });
     });
 
@@ -123,8 +138,7 @@ void main() {
     // ------------------------------------------------------------------
     group('sync diary days', () {
       test('upload and fetch diary days round-trip', () async {
-        await api.initialize(supabaseUrl, supabaseAnonKey);
-        await api.signInWithEmailPassword(testEmail, testPassword);
+        await ensureSignedIn();
 
         final testDay = DiaryDay(
           day: DateTime(2099, 1, 1),
@@ -142,7 +156,8 @@ void main() {
         final match = fetched.where(
           (d) => d.day.year == 2099 && d.day.month == 1 && d.day.day == 1,
         );
-        expect(match, isNotEmpty, reason: 'Uploaded diary day should be fetched back');
+        expect(match, isNotEmpty,
+            reason: 'Uploaded diary day should be fetched back');
 
         final fetchedDay = match.first;
         expect(fetchedDay.ratings.length, testDay.ratings.length);
@@ -156,8 +171,7 @@ void main() {
     // ------------------------------------------------------------------
     group('sync notes', () {
       test('upload and fetch notes round-trip', () async {
-        await api.initialize(supabaseUrl, supabaseAnonKey);
-        await api.signInWithEmailPassword(testEmail, testPassword);
+        await ensureSignedIn();
 
         final testNote = Note(
           id: testNoteId,
@@ -175,18 +189,19 @@ void main() {
         // Fetch back
         final fetched = await api.fetchNotes('integration-test-user');
         final match = fetched.where((n) => n.id == testNoteId);
-        expect(match, isNotEmpty, reason: 'Uploaded note should be fetched back');
+        expect(match, isNotEmpty,
+            reason: 'Uploaded note should be fetched back');
 
         final fetchedNote = match.first;
         expect(fetchedNote.title, 'Integration Test Note');
         expect(fetchedNote.description, 'Created by automated test');
         expect(fetchedNote.isAllDay, false);
-        expect(fetchedNote.noteCategory.title, availableNoteCategories.first.title);
+        expect(fetchedNote.noteCategory.title,
+            availableNoteCategories.first.title);
       });
 
       test('upload and fetch all-day note', () async {
-        await api.initialize(supabaseUrl, supabaseAnonKey);
-        await api.signInWithEmailPassword(testEmail, testPassword);
+        await ensureSignedIn();
 
         final allDayNote = Note(
           id: '$testNoteId-allday',
@@ -215,8 +230,7 @@ void main() {
     // ------------------------------------------------------------------
     group('sync templates', () {
       test('upload and fetch templates round-trip', () async {
-        await api.initialize(supabaseUrl, supabaseAnonKey);
-        await api.signInWithEmailPassword(testEmail, testPassword);
+        await ensureSignedIn();
 
         final testTemplate = NoteTemplate(
           id: testTemplateId,
@@ -226,13 +240,26 @@ void main() {
           noteCategory: availableNoteCategories[2], // Essen
         );
 
-        // Upload
-        await api.syncTemplates([testTemplate], 'integration-test-user');
+        // Upload — may fail if the note_templates table schema is outdated.
+        try {
+          await api.syncTemplates([testTemplate], 'integration-test-user');
+        } catch (e) {
+          if (e.toString().contains('description_sections')) {
+            fail('Supabase note_templates table is missing the '
+                '"description_sections" column. Run the migration from '
+                'supabase.sql:\n'
+                '  ALTER TABLE public.note_templates\n'
+                '    ADD COLUMN IF NOT EXISTS description_sections '
+                "TEXT NOT NULL DEFAULT '';");
+          }
+          rethrow;
+        }
 
         // Fetch back
         final fetched = await api.fetchTemplates('integration-test-user');
         final match = fetched.where((t) => t.id == testTemplateId);
-        expect(match, isNotEmpty, reason: 'Uploaded template should be fetched back');
+        expect(match, isNotEmpty,
+            reason: 'Uploaded template should be fetched back');
 
         final fetchedTemplate = match.first;
         expect(fetchedTemplate.title, 'Integration Test Template');
@@ -247,8 +274,7 @@ void main() {
     // ------------------------------------------------------------------
     group('full sync round-trip', () {
       test('upload diary days, notes, templates then fetch all back', () async {
-        await api.initialize(supabaseUrl, supabaseAnonKey);
-        await api.signInWithEmailPassword(testEmail, testPassword);
+        await ensureSignedIn();
 
         // Prepare test data
         final diaryDay = DiaryDay(
@@ -279,7 +305,20 @@ void main() {
         // Upload all
         await api.syncDiaryDays([diaryDay], 'integration-test-user');
         await api.syncNotes([note], 'integration-test-user');
-        await api.syncTemplates([template], 'integration-test-user');
+
+        try {
+          await api.syncTemplates([template], 'integration-test-user');
+        } catch (e) {
+          if (e.toString().contains('description_sections')) {
+            fail('Supabase note_templates table is missing the '
+                '"description_sections" column. Run the migration from '
+                'supabase.sql:\n'
+                '  ALTER TABLE public.note_templates\n'
+                '    ADD COLUMN IF NOT EXISTS description_sections '
+                "TEXT NOT NULL DEFAULT '';");
+          }
+          rethrow;
+        }
 
         // Fetch all back
         final fetchedDays = await api.fetchDiaryDays('integration-test-user');
@@ -310,36 +349,49 @@ void main() {
     });
 
     // ------------------------------------------------------------------
-    // Error handling
+    // Error handling — uses a separate SupabaseApi instance whose
+    // internal _client is null (never initialized locally).
     // ------------------------------------------------------------------
     group('error handling', () {
-      test('operations without initialization throw', () async {
-        // Fresh api, not initialized — client is null
-        expect(
-          () => api.signInWithEmailPassword(testEmail, testPassword),
-          throwsException,
-        );
+      test('sign in on uninitialized api returns false', () async {
+        // Create a fresh wrapper with _client = null.
+        SupabaseApi.resetInitialization();
+        final uninitApi = SupabaseApi();
+
+        // signInWithEmailPassword catches the internal exception
+        // and returns false when the client is not initialized.
+        final result = await uninitApi.signInWithEmailPassword(
+            testEmail, testPassword);
+        expect(result, isFalse);
+
+        // Restore shared state so later tests still work.
+        await api.initialize(supabaseUrl, supabaseAnonKey);
       });
 
       test('sync without authentication throws', () async {
-        await api.initialize(supabaseUrl, supabaseAnonKey);
-        // Signed out — currentUser is null
+        await ensureSignedIn();
         await api.signOut();
 
         expect(
           () => api.syncDiaryDays([], 'user'),
           throwsException,
         );
+
+        // Re-authenticate for any remaining tests.
+        await api.signInWithEmailPassword(testEmail, testPassword);
       });
 
       test('fetch without authentication throws', () async {
-        await api.initialize(supabaseUrl, supabaseAnonKey);
+        await ensureSignedIn();
         await api.signOut();
 
         expect(
           () => api.fetchNotes('user'),
           throwsException,
         );
+
+        // Re-authenticate for any remaining tests.
+        await api.signInWithEmailPassword(testEmail, testPassword);
       });
     });
   }, skip: skipReason);
