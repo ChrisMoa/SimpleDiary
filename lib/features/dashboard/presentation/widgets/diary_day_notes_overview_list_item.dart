@@ -1,5 +1,6 @@
 import 'package:day_tracker/core/provider/theme_provider.dart';
 import 'package:day_tracker/features/notes/data/models/note.dart';
+import 'package:day_tracker/features/notes/domain/providers/note_local_db_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -58,6 +59,21 @@ class DiaryDayNotesOverviewListItem extends ConsumerWidget {
                     ),
                   ),
               ],
+            ),
+          ),
+          const SizedBox(width: 8),
+          // Favorite toggle
+          GestureDetector(
+            onTap: () {
+              final updated = note.copyWith(isFavorite: !note.isFavorite);
+              ref.read(notesLocalDataProvider.notifier).addOrUpdateElement(updated);
+            },
+            child: Icon(
+              note.isFavorite ? Icons.star : Icons.star_outline,
+              size: 20,
+              color: note.isFavorite
+                  ? Colors.amber
+                  : theme.colorScheme.onSecondaryContainer,
             ),
           ),
           const SizedBox(width: 8),

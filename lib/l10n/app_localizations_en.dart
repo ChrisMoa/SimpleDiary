@@ -1014,4 +1014,34 @@ class AppLocalizationsEn extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get favorites => 'Favorites';
+
+  @override
+  String get favoriteDays => 'Favorite Days';
+
+  @override
+  String get favoriteNotes => 'Favorite Notes';
+
+  @override
+  String get addToFavorites => 'Add to favorites';
+
+  @override
+  String get removeFromFavorites => 'Remove from favorites';
+
+  @override
+  String get noFavorites => 'No favorites yet';
+
+  @override
+  String get noFavoriteDays => 'No favorite days';
+
+  @override
+  String get noFavoriteNotes => 'No favorite notes';
+
+  @override
+  String get markAsFavorite => 'Mark as favorite';
+
+  @override
+  String get unmarkAsFavorite => 'Unmark as favorite';
 }

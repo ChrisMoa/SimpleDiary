@@ -15,6 +15,7 @@ final emptyNote = Note(
   ),
   isAllDay: false,
   noteCategory: availableNoteCategories.first,
+  isFavorite: false,
 );
 
 class Note implements LocalDbElement {
@@ -25,6 +26,7 @@ class Note implements LocalDbElement {
   DateTime to;
   bool isAllDay;
   NoteCategory noteCategory;
+  bool isFavorite; //! mark this note as favorite
 
   Note({
     required this.title,
@@ -33,6 +35,7 @@ class Note implements LocalDbElement {
     required this.to,
     required this.noteCategory,
     this.isAllDay = false,
+    this.isFavorite = false,
     id,
   }) : id = id ?? Utils.uuid.v4();
 
@@ -44,6 +47,7 @@ class Note implements LocalDbElement {
     DateTime? to,
     bool? isAllDay,
     NoteCategory? noteCategory,
+    bool? isFavorite,
   }) {
     return Note(
       id: id ?? this.id,
@@ -53,6 +57,7 @@ class Note implements LocalDbElement {
       to: to ?? this.to,
       isAllDay: isAllDay ?? this.isAllDay,
       noteCategory: noteCategory ?? this.noteCategory,
+      isFavorite: isFavorite ?? this.isFavorite,
     );
   }
 
@@ -65,6 +70,7 @@ class Note implements LocalDbElement {
       'to': Utils.toDateTime(to),
       'isAllDay': isAllDay,
       'noteCategory': noteCategory.title,
+      'isFavorite': isFavorite,
     };
   }
 
@@ -77,6 +83,7 @@ class Note implements LocalDbElement {
       to: Utils.fromDateTimeString(map['to']),
       isAllDay: map['isAllDay'],
       noteCategory: NoteCategory.fromString(map['noteCategory']),
+      isFavorite: map['isFavorite'] ?? false,
     );
   }
 
@@ -91,6 +98,7 @@ class Note implements LocalDbElement {
       to: DateTime.now().add(const Duration(minutes: 15)),
       isAllDay: false,
       noteCategory: availableNoteCategories.first,
+      isFavorite: false,
     );
   }
 
@@ -104,6 +112,7 @@ class Note implements LocalDbElement {
       to: Utils.fromDateTimeString(map['toDate']),
       isAllDay: map['isAllDay'] == 0 ? false : true,
       noteCategory: NoteCategory.fromString(map['noteCategory']),
+      isFavorite: (map['isFavorite'] ?? 0) == 1,
     );
   }
 
@@ -118,6 +127,7 @@ class Note implements LocalDbElement {
       // has to be stored as an integer as dart has no int bool conversion
       'isAllDay': isAllDay ? 1 : 0,
       'noteCategory': noteCategory.title,
+      'isFavorite': isFavorite ? 1 : 0,
     };
   }
 

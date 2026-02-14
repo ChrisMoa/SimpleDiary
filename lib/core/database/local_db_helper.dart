@@ -64,6 +64,23 @@ class LocalDbHelper {
     await database!.execute('DROP TABLE IF EXISTS $tableName');
   }
 
+  /// Migrates the database by adding a new column if it doesn't exist
+  /// This is useful for adding new fields to existing tables without losing data
+  Future<void> migrateAddColumn(String columnName, String columnDef) async {
+    assert(database != null, 'database of table "$tableName" is not opened');
+    try {
+      await database!.execute(
+        'ALTER TABLE $tableName ADD COLUMN $columnName $columnDef',
+      );
+      LogWrapper.logger.i(
+          'Migration: Added column $columnName to table $tableName');
+    } catch (e) {
+      // Column already exists, this is expected on subsequent runs
+      LogWrapper.logger.d(
+          'Migration: Column $columnName already exists in table $tableName');
+    }
+  }
+
   // Inserts a row in the database where each key in the Map is a column name
   // and the value is the column value. The return value is the id of the
   // inserted row.

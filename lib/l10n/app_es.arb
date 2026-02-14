@@ -332,5 +332,16 @@
   "allCategories": "Todas las categorías",
   "noNotesMatchSearch": "No hay notas que coincidan con tu búsqueda",
   "tryDifferentSearch": "Intenta ajustar tus criterios de búsqueda",
-  "nResultsFound": "{count, plural, =0{Sin resultados} =1{1 resultado} other{{count} resultados}}"
+  "nResultsFound": "{count, plural, =0{Sin resultados} =1{1 resultado} other{{count} resultados}}",
+
+  "favorites": "Favoritos",
+  "favoriteDays": "Días Favoritos",
+  "favoriteNotes": "Notas Favoritas",
+  "addToFavorites": "Agregar a favoritos",
+  "removeFromFavorites": "Quitar de favoritos",
+  "noFavorites": "Aún no hay favoritos",
+  "noFavoriteDays": "No hay días favoritos",
+  "noFavoriteNotes": "No hay notas favoritas",
+  "markAsFavorite": "Marcar como favorito",
+  "unmarkAsFavorite": "Desmarcar como favorito"
 }

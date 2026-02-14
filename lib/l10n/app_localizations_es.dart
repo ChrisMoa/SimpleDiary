@@ -1026,4 +1026,34 @@ class AppLocalizationsEs extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get favorites => 'Favoritos';
+
+  @override
+  String get favoriteDays => 'Días Favoritos';
+
+  @override
+  String get favoriteNotes => 'Notas Favoritas';
+
+  @override
+  String get addToFavorites => 'Agregar a favoritos';
+
+  @override
+  String get removeFromFavorites => 'Quitar de favoritos';
+
+  @override
+  String get noFavorites => 'Aún no hay favoritos';
+
+  @override
+  String get noFavoriteDays => 'No hay días favoritos';
+
+  @override
+  String get noFavoriteNotes => 'No hay notas favoritas';
+
+  @override
+  String get markAsFavorite => 'Marcar como favorito';
+
+  @override
+  String get unmarkAsFavorite => 'Desmarcar como favorito';
 }

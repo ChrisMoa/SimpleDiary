@@ -1,6 +1,8 @@
 import 'package:day_tracker/core/utils/utils.dart';
 import 'package:day_tracker/features/notes/data/models/note.dart';
+import 'package:day_tracker/features/notes/domain/providers/note_local_db_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// Pure function to build text spans with highlighted matches
 /// Extracted for testability
@@ -56,7 +58,7 @@ List<TextSpan> buildHighlightSpans(
 }
 
 /// A list item widget that displays a note with search query highlighting
-class NoteSearchResultItem extends StatelessWidget {
+class NoteSearchResultItem extends ConsumerWidget {
   const NoteSearchResultItem({
     super.key,
     required this.note,
@@ -69,7 +71,7 @@ class NoteSearchResultItem extends StatelessWidget {
   final String searchQuery;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final highlightColor = theme.colorScheme.primaryContainer;
     final highlightTextColor = theme.colorScheme.onPrimaryContainer;
@@ -107,6 +109,21 @@ class NoteSearchResultItem extends StatelessWidget {
                     style: theme.textTheme.titleMedium!.copyWith(
                       color: theme.colorScheme.primary,
                       fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const Spacer(),
+                  // Favorite toggle
+                  GestureDetector(
+                    onTap: () {
+                      final updated = note.copyWith(isFavorite: !note.isFavorite);
+                      ref.read(notesLocalDataProvider.notifier).addOrUpdateElement(updated);
+                    },
+                    child: Icon(
+                      note.isFavorite ? Icons.star : Icons.star_outline,
+                      size: 20,
+                      color: note.isFavorite
+                          ? Colors.amber
+                          : theme.colorScheme.onSecondaryContainer,
                     ),
                   ),
                 ],
