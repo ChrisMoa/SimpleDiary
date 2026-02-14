@@ -86,6 +86,32 @@ class AbstractLocalDbProviderState<T extends LocalDbElement> extends StateNotifi
     state = [...state, element as T];
   }
 
+  /// Insert or update an element using SQLite REPLACE.
+  /// Always ensures the element ends up in both DB and state.
+  Future<void> addOrUpdateElement(LocalDbElement element) async {
+    assert(element is T, 'conversion error at element');
+    await helper.insertOrReplace(element);
+
+    final existsInState = state.any((cur) => cur.getId() == element.getId());
+    if (existsInState) {
+      state = state.map((cur) => cur.getId() == element.getId() ? element as T : cur).toList();
+    } else {
+      state = [...state, element as T];
+    }
+  }
+
+  /// Force reload all data from the database into state.
+  Future<void> reloadFromDatabase() async {
+    await initDatabase();
+    List<T> elements = [];
+    var objectsFromDb = await helper.getAllRecordsAsObject();
+    for (var element in objectsFromDb) {
+      elements.add(element as T);
+    }
+    LogWrapper.logger.d('$tableName reloaded ${elements.length} elements from DB');
+    state = elements;
+  }
+
   Future<void> deleteElement(LocalDbElement element) async {
     await helper.delete(element);
     state = state.where((curElement) => curElement.getId() != element.getId()).toList();

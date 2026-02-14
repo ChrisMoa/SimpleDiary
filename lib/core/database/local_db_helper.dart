@@ -75,6 +75,14 @@ class LocalDbHelper {
         .insert(tableName, row, conflictAlgorithm: ConflictAlgorithm.ignore);
   }
 
+  /// Insert or replace: if a row with the same primary key exists, replace it.
+  Future<void> insertOrReplace(LocalDbElement element) async {
+    assert(database != null, 'database of table "$tableName" is not opened');
+    final row = element.toLocalDbMap(element);
+    await database!
+        .insert(tableName, row, conflictAlgorithm: ConflictAlgorithm.replace);
+  }
+
   // All of the rows are returned as a list of maps, where each map is
   // a key-value list of columns.
   Future<List<Map<String, dynamic>>> queryAllRows() async {
