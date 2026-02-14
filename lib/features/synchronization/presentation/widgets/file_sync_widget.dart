@@ -8,7 +8,9 @@ import 'package:day_tracker/core/log/logger_instance.dart';
 import 'package:day_tracker/core/provider/theme_provider.dart';
 import 'package:day_tracker/core/utils/utils.dart';
 import 'package:day_tracker/features/authentication/domain/providers/user_data_provider.dart';
+import 'package:day_tracker/features/day_rating/data/models/diary_day.dart';
 import 'package:day_tracker/features/day_rating/domain/providers/diary_day_local_db_provider.dart';
+import 'package:day_tracker/features/notes/data/models/note.dart';
 import 'package:day_tracker/features/notes/domain/providers/note_local_db_provider.dart';
 import 'package:day_tracker/features/synchronization/data/models/export_data.dart';
 import 'package:day_tracker/features/synchronization/domain/providers/file_db_provider.dart';
@@ -244,7 +246,14 @@ class FileSyncWidget extends ConsumerWidget {
     try {
       LogWrapper.logger.i('JSON export started');
 
-      // Prompt for encryption password first
+      // Prompt for date range
+      final dateRange = await _promptForDateRange(context);
+      if (dateRange == null) {
+        LogWrapper.logger.i('JSON export cancelled by user (date range)');
+        return;
+      }
+
+      // Prompt for encryption password
       final userData = ref.read(userDataProvider);
       final defaultPassword = userData.clearPassword;
 
@@ -256,10 +265,44 @@ class FileSyncWidget extends ConsumerWidget {
 
       final defaultFileName = 'data_export_${Utils.toFileDateTime(DateTime.now())}.json';
       final bool willEncrypt = password != null && password.isNotEmpty;
+      final rangeEnd = dateRange.end.add(const Duration(days: 1));
+
+      // Get diary days with their matched notes
+      var diaryDays = ref.read(diaryDayFullDataProvider).where((day) {
+        return !day.day.isBefore(dateRange.start) && day.day.isBefore(rangeEnd);
+      }).toList();
+
+      // Find notes that have no matching diary day (orphan notes)
+      final allNotes = ref.read(notesLocalDataProvider).where((note) {
+        return !note.from.isBefore(dateRange.start) && note.from.isBefore(rangeEnd);
+      }).toList();
+      final exportedNoteIds = diaryDays.expand((d) => d.notes).map((n) => n.id).toSet();
+      final orphanNotes = allNotes.where((n) => !exportedNoteIds.contains(n.id)).toList();
+
+      // Group orphan notes by date and create temporary diary days for them
+      if (orphanNotes.isNotEmpty) {
+        final Map<String, List<Note>> orphanByDate = {};
+        for (var note in orphanNotes) {
+          final dateKey = '${note.from.year}-${note.from.month}-${note.from.day}';
+          orphanByDate.putIfAbsent(dateKey, () => []).add(note);
+        }
+        for (var entry in orphanByDate.entries) {
+          final firstNote = entry.value.first;
+          final dd = DiaryDay(
+            day: DateTime(firstNote.from.year, firstNote.from.month, firstNote.from.day),
+            ratings: [],
+          );
+          dd.notes = entry.value;
+          diaryDays.add(dd);
+        }
+        LogWrapper.logger.i('Added ${orphanNotes.length} orphan notes in ${orphanByDate.length} extra days');
+      }
+
+      LogWrapper.logger.i('Exporting ${diaryDays.length} diary days with ${allNotes.length} total notes');
 
       // Generate export content before showing file picker
       final content = ref.read(fileDbStateProvider.notifier).exportToString(
-            diaryDays: ref.read(diaryDayFullDataProvider),
+            diaryDays: diaryDays,
             username: userData.username.isNotEmpty ? userData.username : null,
             salt: willEncrypt ? userData.salt : null,
             encrypted: willEncrypt,
@@ -379,21 +422,41 @@ class FileSyncWidget extends ConsumerWidget {
               password: password,
             );
 
-            // Add diary entries to local DB
-            for (var diaryDay in ref.read(fileDbStateProvider)) {
+            final importedDays = ref.read(fileDbStateProvider);
+            int noteCount = 0;
+            LogWrapper.logger.i('DEBUG: Parsed ${importedDays.length} diary days from file');
+
+            // Add diary entries to local DB (upsert to restore deleted/modified entries)
+            for (var diaryDay in importedDays) {
+              LogWrapper.logger.d('DEBUG: Processing diary day ${diaryDay.day} with ${diaryDay.notes.length} notes');
               await ref
                   .read(diaryDayLocalDbDataProvider.notifier)
-                  .addElement(diaryDay);
+                  .addOrUpdateElement(diaryDay);
               for (var note in diaryDay.notes) {
-                await ref.read(notesLocalDataProvider.notifier).addElement(note);
+                LogWrapper.logger.d('DEBUG: Importing note "${note.title}" (id=${note.id})');
+                await ref.read(notesLocalDataProvider.notifier).addOrUpdateElement(note);
+                noteCount++;
               }
             }
 
-            LogWrapper.logger.i('JSON import finished successfully');
-            _onImportExportSuccessfully(context);
+            // Force reload state from DB to ensure UI is in sync
+            await ref.read(notesLocalDataProvider.notifier).reloadFromDatabase();
+            await ref.read(diaryDayLocalDbDataProvider.notifier).reloadFromDatabase();
+
+            final notesInState = ref.read(notesLocalDataProvider).length;
+            LogWrapper.logger.i('JSON import finished: $noteCount notes imported, $notesInState total notes in state');
+
+            ScaffoldMessenger.of(context).clearSnackBars();
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                duration: const Duration(seconds: 3),
+                content: Text('Imported ${importedDays.length} days with $noteCount notes'),
+                backgroundColor: Theme.of(context).colorScheme.primary,
+              ),
+            );
           } catch (e) {
             LogWrapper.logger.e('Error during JSON import: $e');
-            _onError(context, 'Error during JSON import. Wrong password or corrupted file?');
+            _onError(context, 'Error during JSON import: $e');
           }
         } catch (e) {
           LogWrapper.logger.e('Error importing from file "$path": "$e"');
@@ -430,7 +493,14 @@ class FileSyncWidget extends ConsumerWidget {
     try {
       LogWrapper.logger.i('ICS export started');
 
-      // Prompt for encryption password first
+      // Prompt for date range
+      final dateRange = await _promptForDateRange(context);
+      if (dateRange == null) {
+        LogWrapper.logger.i('ICS export cancelled by user (date range)');
+        return;
+      }
+
+      // Prompt for encryption password
       final userData = ref.read(userDataProvider);
       final defaultPassword = userData.clearPassword;
 
@@ -443,8 +513,14 @@ class FileSyncWidget extends ConsumerWidget {
       final defaultFileName = 'diary_export_${Utils.toFileDateTime(DateTime.now())}.ics';
       final bool willEncrypt = password != null && password.isNotEmpty;
 
-      // Get all notes from local data provider
-      final notes = ref.read(notesLocalDataProvider);
+      // Filter notes by date range (using the note's 'from' field)
+      final rangeEnd = dateRange.end.add(const Duration(days: 1));
+      final notes = ref.read(notesLocalDataProvider).where((note) {
+        return !note.from.isBefore(dateRange.start) &&
+            note.from.isBefore(rangeEnd);
+      }).toList();
+
+      LogWrapper.logger.i('Exporting ${notes.length} notes in range');
 
       // Generate export content before showing file picker
       final content = ref.read(icsFileStateProvider.notifier).exportToString(
@@ -570,35 +646,31 @@ class FileSyncWidget extends ConsumerWidget {
               password: password,
             );
 
-            // Get imported notes and add to local DB
             final importedNotes = ref.read(icsFileStateProvider);
+            LogWrapper.logger.i('DEBUG: Parsed ${importedNotes.length} notes from ICS file');
 
             for (var note in importedNotes) {
-              await ref.read(notesLocalDataProvider.notifier).addElement(note);
-              LogWrapper.logger.d('Imported note: ${note.title}');
+              LogWrapper.logger.d('DEBUG: Importing note "${note.title}" (id=${note.id})');
+              await ref.read(notesLocalDataProvider.notifier).addOrUpdateElement(note);
             }
 
-            LogWrapper.logger.i('ICS import finished successfully (${importedNotes.length} notes)');
+            // Force reload state from DB to ensure UI is in sync
+            await ref.read(notesLocalDataProvider.notifier).reloadFromDatabase();
 
-            // Show success message with count
+            final notesInState = ref.read(notesLocalDataProvider).length;
+            LogWrapper.logger.i('ICS import finished: ${importedNotes.length} notes imported, $notesInState total notes in state');
+
             ScaffoldMessenger.of(context).clearSnackBars();
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 duration: const Duration(seconds: 3),
-                content: Text('Successfully imported ${importedNotes.length} notes from ICS calendar'),
+                content: Text('Imported ${importedNotes.length} notes from ICS calendar'),
                 backgroundColor: Theme.of(context).colorScheme.primary,
-                action: SnackBarAction(
-                  label: 'OK',
-                  textColor: Theme.of(context).colorScheme.onPrimary,
-                  onPressed: () {
-                    ScaffoldMessenger.of(context).clearSnackBars();
-                  },
-                ),
               ),
             );
           } catch (e) {
             LogWrapper.logger.e('Error during ICS import: $e');
-            _onError(context, 'Error during ICS import. Wrong password or invalid ICS file?');
+            _onError(context, 'Error during ICS import: $e');
           }
         } catch (e) {
           LogWrapper.logger.e('Error importing ICS from file "$path": "$e"');
@@ -631,6 +703,55 @@ class FileSyncWidget extends ConsumerWidget {
         ),
       );
     }
+  }
+
+  /// Prompt the user to select a date range or export all.
+  /// Returns null if the user cancels, or a DateTimeRange if they select a range.
+  /// Returns a range from year 2000 to tomorrow if "All" is selected (sentinel value).
+  Future<DateTimeRange?> _promptForDateRange(BuildContext context) async {
+    final allRange = DateTimeRange(
+      start: DateTime(2000),
+      end: DateTime.now().add(const Duration(days: 1)),
+    );
+
+    final choice = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Export Range'),
+        content: const Text('Which entries do you want to export?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, null),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Custom Range'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('All'),
+          ),
+        ],
+      ),
+    );
+
+    if (choice == null) return null; // cancelled
+    if (choice) return allRange; // all entries
+
+    // Show date range picker
+    final now = DateTime.now();
+    final picked = await showDateRangePicker(
+      context: context,
+      firstDate: DateTime(2000),
+      lastDate: now.add(const Duration(days: 1)),
+      initialDateRange: DateTimeRange(
+        start: DateTime(now.year, now.month, 1),
+        end: now,
+      ),
+    );
+
+    return picked;
   }
 
   Future<String?> _promptForPassword(BuildContext context, String title,
