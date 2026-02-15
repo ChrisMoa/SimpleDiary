@@ -748,6 +748,13 @@ class PdfReportGenerator {
       );
     }
 
+    // Collect all category names for consistent ordering
+    final allCategories = <String>{};
+    for (var score in scores) {
+      allCategories.addAll(score.categoryScores.keys);
+    }
+    final categoryList = allCategories.toList()..sort();
+
     final maxScore = 20.0;
     final chartHeight = 140.0;
     final yLabelWidth = 30.0;
@@ -756,86 +763,135 @@ class PdfReportGenerator {
     const ySteps = [0, 5, 10, 15, 20];
 
     return pw.Container(
-      height: chartHeight + 40,
-      child: pw.Row(
-        crossAxisAlignment: pw.CrossAxisAlignment.start,
+      height: chartHeight + 55, // Extra space for labels + legend
+      child: pw.Column(
         children: [
-          // Y-axis labels
-          pw.SizedBox(
-            width: yLabelWidth,
-            height: chartHeight,
-            child: pw.Stack(
-              children: ySteps.map((value) {
-                // Center labels vertically on grid lines (subtract half of font height ~4px)
-                final y = chartHeight - (value / maxScore) * chartHeight - 4;
-                return pw.Positioned(
-                  top: y,
-                  left: 0,
-                  child: pw.Text(
-                    '$value',
-                    style: const pw.TextStyle(
-                      fontSize: 8,
-                      color: PdfColors.grey600,
-                    ),
-                  ),
-                );
-              }).toList(),
-            ),
-          ),
-          // Chart area
-          pw.Expanded(
-            child: pw.Column(
-              children: [
-                pw.SizedBox(
-                  height: chartHeight,
-                  child: pw.CustomPaint(
-                    size: PdfPoint(chartWidth, chartHeight),
-                    painter: (canvas, size) {
-                      // Draw horizontal grid lines
-                      for (final value in ySteps) {
-                        final y = (value / maxScore) * chartHeight;
-                        canvas
-                          ..setStrokeColor(PdfColors.grey300)
-                          ..setLineWidth(0.5)
-                          ..drawLine(0, y, chartWidth, y)
-                          ..strokePath();
-                      }
-
-                      // Draw bars
-                      for (int i = 0; i < scores.length; i++) {
-                        final score = scores[i];
-                        if (score.totalScore == 0) continue;
-                        final barHeight =
-                            (score.totalScore / maxScore) * chartHeight;
-                        final x = i * pointWidth + pointWidth * 0.15;
-                        final width = pointWidth * 0.7;
-
-                        canvas
-                          ..setFillColor(_primaryColor)
-                          ..drawRect(x, 0, width, barHeight)
-                          ..fillPath();
-                      }
-                    },
-                  ),
-                ),
-                pw.SizedBox(height: 6),
-                // Date labels
-                pw.Row(
-                  mainAxisAlignment: pw.MainAxisAlignment.spaceEvenly,
-                  children: scores.map((score) {
-                    return pw.SizedBox(
-                      width: pointWidth,
+          pw.Row(
+            crossAxisAlignment: pw.CrossAxisAlignment.start,
+            children: [
+              // Y-axis labels
+              pw.SizedBox(
+                width: yLabelWidth,
+                height: chartHeight,
+                child: pw.Stack(
+                  children: ySteps.map((value) {
+                    final y = chartHeight - (value / maxScore) * chartHeight - 4;
+                    return pw.Positioned(
+                      top: y,
+                      left: 0,
                       child: pw.Text(
-                        DateFormat('E\nd').format(score.date),
-                        style: const pw.TextStyle(fontSize: 7),
-                        textAlign: pw.TextAlign.center,
+                        '$value',
+                        style: const pw.TextStyle(
+                          fontSize: 8,
+                          color: PdfColors.grey600,
+                        ),
                       ),
                     );
                   }).toList(),
                 ),
-              ],
-            ),
+              ),
+              // Chart area
+              pw.Expanded(
+                child: pw.Column(
+                  children: [
+                    pw.SizedBox(
+                      height: chartHeight,
+                      child: pw.CustomPaint(
+                        size: PdfPoint(chartWidth, chartHeight),
+                        painter: (canvas, size) {
+                          // Draw horizontal grid lines
+                          for (final value in ySteps) {
+                            final y = (value / maxScore) * chartHeight;
+                            canvas
+                              ..setStrokeColor(PdfColors.grey300)
+                              ..setLineWidth(0.5)
+                              ..drawLine(0, y, chartWidth, y)
+                              ..strokePath();
+                          }
+
+                          // Draw stacked bars per category
+                          for (int i = 0; i < scores.length; i++) {
+                            final score = scores[i];
+                            if (score.totalScore == 0) continue;
+                            final x = i * pointWidth + pointWidth * 0.15;
+                            final width = pointWidth * 0.7;
+
+                            if (score.categoryScores.isNotEmpty) {
+                              // Stacked bar: each category stacked on top
+                              double currentY = 0;
+                              for (final cat in categoryList) {
+                                final catScore = score.categoryScores[cat];
+                                if (catScore == null || catScore == 0) continue;
+                                final segmentHeight = (catScore / maxScore) * chartHeight;
+                                final color = _getCategoryColor(cat);
+                                canvas
+                                  ..setFillColor(color)
+                                  ..drawRect(x, currentY, width, segmentHeight)
+                                  ..fillPath();
+                                currentY += segmentHeight;
+                              }
+                            } else {
+                              // Fallback: single color bar
+                              final barHeight = (score.totalScore / maxScore) * chartHeight;
+                              canvas
+                                ..setFillColor(_primaryColor)
+                                ..drawRect(x, 0, width, barHeight)
+                                ..fillPath();
+                            }
+                          }
+                        },
+                      ),
+                    ),
+                    pw.SizedBox(height: 6),
+                    // Date labels
+                    pw.Row(
+                      mainAxisAlignment: pw.MainAxisAlignment.spaceEvenly,
+                      children: scores.map((score) {
+                        return pw.SizedBox(
+                          width: pointWidth,
+                          child: pw.Text(
+                            DateFormat('E\nd').format(score.date),
+                            style: const pw.TextStyle(fontSize: 7),
+                            textAlign: pw.TextAlign.center,
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
+          // Legend row
+          if (categoryList.isNotEmpty) ...[
+            pw.SizedBox(height: 6),
+            pw.Row(
+              mainAxisAlignment: pw.MainAxisAlignment.center,
+              children: categoryList.map((cat) {
+                return pw.Container(
+                  margin: const pw.EdgeInsets.only(right: 12),
+                  child: pw.Row(
+                    mainAxisSize: pw.MainAxisSize.min,
+                    children: [
+                      pw.Container(
+                        width: 8,
+                        height: 8,
+                        decoration: pw.BoxDecoration(
+                          color: _getCategoryColor(cat),
+                          borderRadius: pw.BorderRadius.circular(2),
+                        ),
+                      ),
+                      pw.SizedBox(width: 3),
+                      pw.Text(
+                        _formatRatingName(cat),
+                        style: const pw.TextStyle(fontSize: 7, color: PdfColors.grey700),
+                      ),
+                    ],
+                  ),
+                );
+              }).toList(),
+            ),
+          ],
         ],
       ),
     );
@@ -846,27 +902,69 @@ class PdfReportGenerator {
       return pw.Text('No data available');
     }
 
+    // Collect all category names from all scores for consistent columns
+    final allCategories = <String>{};
+    for (var score in scores) {
+      allCategories.addAll(score.categoryScores.keys);
+    }
+    final categoryList = allCategories.toList()..sort();
+
     return pw.Table(
-      border: pw.TableBorder.all(color: PdfColors.grey300),
+      border: pw.TableBorder.all(color: PdfColors.grey300, width: 0.5),
+      columnWidths: {
+        0: const pw.FlexColumnWidth(2.5), // Date
+        for (var i = 0; i < categoryList.length; i++)
+          i + 1: const pw.FlexColumnWidth(1), // Category columns
+        categoryList.length + 1: const pw.FlexColumnWidth(1), // Total
+        categoryList.length + 2: const pw.FlexColumnWidth(1), // Notes
+        categoryList.length + 3: const pw.FlexColumnWidth(1.2), // Status
+      },
       children: [
         // Header row
         pw.TableRow(
-          decoration: const pw.BoxDecoration(color: PdfColors.grey200),
+          decoration: pw.BoxDecoration(color: _primaryColor),
           children: [
-            _tableCell('Date', isHeader: true),
-            _tableCell('Score', isHeader: true),
-            _tableCell('Notes', isHeader: true),
-            _tableCell('Status', isHeader: true),
+            _tableCell('Date', isHeader: true, color: PdfColors.white),
+            ...categoryList.map((cat) =>
+              _tableCell(_formatRatingName(cat), isHeader: true, color: PdfColors.white, fontSize: 8)),
+            _tableCell('Total', isHeader: true, color: PdfColors.white),
+            _tableCell('Notes', isHeader: true, color: PdfColors.white),
+            _tableCell('Status', isHeader: true, color: PdfColors.white),
           ],
         ),
         // Data rows
         ...scores.map((score) {
+          final rowColor = _getRowColor(score);
+          final hasNotes = score.noteCount > 0;
+          final hasData = score.isComplete || hasNotes;
+
           return pw.TableRow(
+            decoration: pw.BoxDecoration(color: rowColor),
             children: [
-              _tableCell(DateFormat('EEE, MMM d').format(score.date)),
-              _tableCell('${score.totalScore}/20'),
-              _tableCell('${score.noteCount}'),
-              _tableCell(score.isComplete ? 'Complete' : 'Partial'),
+              _tableCell(
+                DateFormat('EEE, MMM d').format(score.date),
+                fontColor: hasData ? PdfColors.black : PdfColors.grey500,
+              ),
+              ...categoryList.map((cat) {
+                final catScore = score.categoryScores[cat];
+                if (catScore == null) {
+                  return _tableCell('-',
+                    textAlign: pw.TextAlign.center,
+                    fontColor: PdfColors.grey400,
+                  );
+                }
+                return _buildCategoryScoreCell(cat, catScore);
+              }),
+              // Total score
+              _buildTotalScoreCell(score.totalScore, score.isComplete),
+              // Note count
+              _tableCell(
+                score.noteCount > 0 ? '${score.noteCount}' : '-',
+                textAlign: pw.TextAlign.center,
+                fontColor: score.noteCount > 0 ? PdfColors.black : PdfColors.grey400,
+              ),
+              // Status indicator
+              _buildStatusCell(score),
             ],
           );
         }),
@@ -874,15 +972,136 @@ class PdfReportGenerator {
     );
   }
 
-  pw.Widget _tableCell(String text, {bool isHeader = false}) {
+  /// Get row background color based on day status
+  PdfColor _getRowColor(DayScore score) {
+    if (score.isComplete && score.noteCount > 0) {
+      return const PdfColor(0.9, 0.97, 0.9); // Light green - fully complete
+    } else if (score.isComplete) {
+      return const PdfColor(0.92, 0.98, 0.92); // Lighter green - rated but no notes
+    } else if (score.noteCount > 0) {
+      return const PdfColor(1.0, 0.97, 0.88); // Light yellow - notes only
+    } else {
+      return const PdfColor(0.97, 0.97, 0.97); // Light gray - nothing logged
+    }
+  }
+
+  /// Build a colored category score cell
+  pw.Widget _buildCategoryScoreCell(String category, int score) {
+    final color = _getCategoryColor(category);
     return pw.Container(
-      padding: const pw.EdgeInsets.all(8),
+      padding: const pw.EdgeInsets.all(4),
+      alignment: pw.Alignment.center,
+      child: pw.Container(
+        padding: const pw.EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+        decoration: pw.BoxDecoration(
+          color: _lighten(color, 0.85),
+          borderRadius: pw.BorderRadius.circular(8),
+        ),
+        child: pw.Text(
+          '$score',
+          style: pw.TextStyle(
+            fontSize: 9,
+            fontWeight: pw.FontWeight.bold,
+            color: color,
+          ),
+          textAlign: pw.TextAlign.center,
+        ),
+      ),
+    );
+  }
+
+  /// Build total score cell with color gradient
+  pw.Widget _buildTotalScoreCell(int totalScore, bool isComplete) {
+    if (!isComplete && totalScore == 0) {
+      return _tableCell('-', textAlign: pw.TextAlign.center, fontColor: PdfColors.grey400);
+    }
+    final color = _getScoreColor(totalScore);
+    return pw.Container(
+      padding: const pw.EdgeInsets.all(4),
+      alignment: pw.Alignment.center,
+      child: pw.Container(
+        padding: const pw.EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+        decoration: pw.BoxDecoration(
+          color: color,
+          borderRadius: pw.BorderRadius.circular(8),
+        ),
+        child: pw.Text(
+          '$totalScore',
+          style: pw.TextStyle(
+            fontSize: 9,
+            fontWeight: pw.FontWeight.bold,
+            color: PdfColors.white,
+          ),
+          textAlign: pw.TextAlign.center,
+        ),
+      ),
+    );
+  }
+
+  /// Build status cell with visual indicator
+  pw.Widget _buildStatusCell(DayScore score) {
+    String label;
+    PdfColor bgColor;
+    PdfColor textColor;
+
+    if (score.isComplete && score.noteCount > 0) {
+      label = 'Full';
+      bgColor = PdfColors.green;
+      textColor = PdfColors.white;
+    } else if (score.isComplete) {
+      label = 'Rated';
+      bgColor = PdfColors.lightGreen;
+      textColor = PdfColors.white;
+    } else if (score.noteCount > 0) {
+      label = 'Notes';
+      bgColor = PdfColors.amber;
+      textColor = PdfColors.white;
+    } else {
+      label = 'Empty';
+      bgColor = PdfColors.grey400;
+      textColor = PdfColors.white;
+    }
+
+    return pw.Container(
+      padding: const pw.EdgeInsets.all(4),
+      alignment: pw.Alignment.center,
+      child: pw.Container(
+        padding: const pw.EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+        decoration: pw.BoxDecoration(
+          color: bgColor,
+          borderRadius: pw.BorderRadius.circular(10),
+        ),
+        child: pw.Text(
+          label,
+          style: pw.TextStyle(
+            fontSize: 8,
+            fontWeight: pw.FontWeight.bold,
+            color: textColor,
+          ),
+          textAlign: pw.TextAlign.center,
+        ),
+      ),
+    );
+  }
+
+  pw.Widget _tableCell(String text, {
+    bool isHeader = false,
+    PdfColor? color,
+    PdfColor? fontColor,
+    pw.TextAlign? textAlign,
+    double fontSize = 10,
+  }) {
+    return pw.Container(
+      padding: const pw.EdgeInsets.all(6),
+      alignment: textAlign == pw.TextAlign.center ? pw.Alignment.center : null,
       child: pw.Text(
         text,
         style: pw.TextStyle(
-          fontSize: 10,
+          fontSize: isHeader ? fontSize : 9,
           fontWeight: isHeader ? pw.FontWeight.bold : null,
+          color: color ?? fontColor,
         ),
+        textAlign: textAlign,
       ),
     );
   }
@@ -895,6 +1114,15 @@ class PdfReportGenerator {
   String _formatRatingName(String name) {
     if (name.isEmpty) return name;
     return name[0].toUpperCase() + name.substring(1);
+  }
+
+  /// Create a lighter tint of a color by mixing with white
+  PdfColor _lighten(PdfColor color, double amount) {
+    return PdfColor(
+      color.red + (1.0 - color.red) * amount,
+      color.green + (1.0 - color.green) * amount,
+      color.blue + (1.0 - color.blue) * amount,
+    );
   }
 
   PdfColor _getCategoryColor(String category) {

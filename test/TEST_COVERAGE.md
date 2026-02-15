@@ -1,10 +1,10 @@
 # Test Coverage
 
-**Total: 308 passing tests** across 23 test files (+ 11 optional Supabase integration tests)
+**Total: 496 passing tests** across 34 test files (+ 11 optional Supabase integration tests)
 
 Run all tests with:
 ```bash
-flutter test test/core/ test/features/
+flutter test test/core/ test/features/ test/l10n/
 ```
 
 ---
@@ -27,26 +27,36 @@ flutter test test/core/ test/features/
 
 **Source:** `lib/core/encryption/aes_encryptor.dart`
 
+### Providers (`test/core/provider/`)
+
+| File | Tests | Covers |
+|------|-------|--------|
+| `locale_provider_test.dart` | 10 | Locale/language state management, initialization, locale switching, persistence to settings, listener notifications, handling of unsupported locales |
+
+**Source:** `lib/core/provider/locale_provider.dart`
+
 ### Utils (`test/core/utils/`)
 
 | File | Tests | Covers |
 |------|-------|--------|
 | `utils_test.dart` | 22 | Date formatting round-trips (`toDateTime`/`fromDateTimeString`, `toDate`/`fromDate`), `removeTime`, `isSameDay` (same/different day/month/year), `isDateTimeWithinTimeSpan` (within/boundary/outside), `generateRandomString` (length, uniqueness), UUID v4 generation, `toTime`, `toFileDateTime`, `printMonth`, `colorToRGBInt` |
+| `debug_auto_login_test.dart` | 10 | Debug auto-login utility enable/disable logic, credential retrieval from environment variables, password/username validation rules |
 
-**Source:** `lib/core/utils/utils.dart`
+**Source:** `lib/core/utils/utils.dart`, `lib/core/utils/debug_auto_login.dart`
 
 ---
 
 ## Features
 
-### Authentication Models (`test/features/authentication/models/`)
+### Authentication (`test/features/authentication/`)
 
 | File | Tests | Covers |
 |------|-------|--------|
-| `user_data_test.dart` | 12 | UserData construction (all fields, auto-generated userId, fromEmpty, defaults), `clearPassword` not in serialized output, `toMap`/`fromMap` round-trip, backward compatibility (missing salt), `toJson`/`fromJson`, LocalDb interface (`getId`, `toLocalDbMap`/`fromLocalDbMap`) |
-| `user_settings_test.dart` | 8 | UserSettings construction (all fields, fromEmpty defaults), `toMap`/`fromMap` round-trip, missing supabaseSettings handling, `toJson`/`fromJson` string serialization, `name` property |
+| `models/user_data_test.dart` | 12 | UserData construction (all fields, auto-generated userId, fromEmpty, defaults), `clearPassword` not in serialized output, `toMap`/`fromMap` round-trip, backward compatibility (missing salt), `toJson`/`fromJson`, LocalDb interface (`getId`, `toLocalDbMap`/`fromLocalDbMap`) |
+| `models/user_settings_test.dart` | 8 | UserSettings construction (all fields, fromEmpty defaults), `toMap`/`fromMap` round-trip, missing supabaseSettings handling, `toJson`/`fromJson` string serialization, `name` property |
+| `providers/debug_auto_login_provider_test.dart` | 7 | UserDataProvider debug auto-login: creating new debug users, logging in existing users, credential validation, enable/disable states |
 
-**Sources:** `lib/features/authentication/data/models/user_data.dart`, `user_settings.dart`
+**Sources:** `lib/features/authentication/data/models/user_data.dart`, `user_settings.dart`, `lib/features/authentication/domain/providers/user_data_provider.dart`
 
 ### Dashboard (`test/features/dashboard/`)
 
@@ -67,15 +77,19 @@ flutter test test/core/ test/features/
 
 **Sources:** `lib/features/day_rating/data/models/day_rating.dart`, `diary_day.dart`, `lib/features/day_rating/domain/providers/diary_wizard_providers.dart`
 
-### Notes (`test/features/notes/models/`)
+### Notes (`test/features/notes/`)
 
 | File | Tests | Covers |
 |------|-------|--------|
-| `note_test.dart` | 14 | Note construction (all fields, auto UUID, `fromEmpty`), `copyWith` (partial/full), `toMap`/`fromMap` round-trip, all-day note, `toJson`, LocalDb map (`isAllDay` int conversion, `fromDate`/`toDate` keys), `getId` |
-| `note_category_test.dart` | 13 | `availableNoteCategories` (5 defaults, titles, colors), `fromString` (existing, all defaults, unknown fallback, case-sensitive), equality (title-based, hashCode), `copyWith`, LocalDb map (`colorValue`), auto-generated id |
-| `category_logic_test.dart` | 10 | `categoryNameExists` (existing, case-insensitive, non-existing, `excludeId` for rename, conflicts with others, empty list), `getCategoryById` (found/not found/empty), default category provider logic (first/null for empty) |
+| `models/note_test.dart` | 14 | Note construction (all fields, auto UUID, `fromEmpty`), `copyWith` (partial/full), `toMap`/`fromMap` round-trip, all-day note, `toJson`, LocalDb map (`isAllDay` int conversion, `fromDate`/`toDate` keys), `getId` |
+| `models/note_category_test.dart` | 13 | `availableNoteCategories` (5 defaults, titles, colors), `fromString` (existing, all defaults, unknown fallback, case-sensitive), equality (title-based, hashCode), `copyWith`, LocalDb map (`colorValue`), auto-generated id |
+| `models/category_logic_test.dart` | 10 | `categoryNameExists` (existing, case-insensitive, non-existing, `excludeId` for rename, conflicts with others, empty list), `getCategoryById` (found/not found/empty), default category provider logic (first/null for empty) |
+| `providers/note_search_state_test.dart` | 11 | NoteSearchState immutable model: active state detection, `copyWith` operations, helper methods for clearing category and date filters |
+| `providers/note_search_provider_test.dart` | 12 | NoteSearchProvider state management: query updates, category filter, date range, `clearAll` operations, combined filter states |
+| `providers/filtered_notes_test.dart` | 23 | `filterNotes` function: text search (title/description), category filtering, date range filtering, combined filters, sorting by date, edge cases (empty query, no matches, all-day notes) |
+| `widgets/text_highlighting_test.dart` | 20 | `buildHighlightSpans` function: empty queries, matching/non-matching text, case-insensitivity, multiple matches, overlapping matches, special characters, style preservation |
 
-**Sources:** `lib/features/notes/data/models/note.dart`, `note_category.dart`, `lib/features/notes/domain/providers/category_local_db_provider.dart`
+**Sources:** `lib/features/notes/data/models/note.dart`, `note_category.dart`, `lib/features/notes/domain/providers/category_local_db_provider.dart`, `note_search_provider.dart`, `filtered_notes_provider.dart`, `lib/features/notes/presentation/widgets/text_highlighting.dart`
 
 ### Note Templates (`test/features/note_templates/models/`)
 
@@ -95,11 +109,23 @@ flutter test test/core/ test/features/
 | `ics_converter_test.dart` | 11 | `noteToIcsEvent` (timed note, all-day, category), `createCalendar` (multiple/empty), `icsEventsToNotes` (known categories, unknown fallback, empty), ICS string round-trip (`calendarToString`/`stringToCalendar`, invalid string), multi-note round-trip |
 | `ics_file_provider_test.dart` | 15 | **IcsExportMetadata:** `toMap`/`fromMap`, null handling, missing noteCount. **IcsFileProvider:** `exportToString` (unencrypted with ICS metadata, encrypted), `exportPlainIcs` (raw ICS without JSON wrapper), `importFromIcs` (wrapped unencrypted/encrypted, plain ICS, missing password error). **Round-trips:** unencrypted, encrypted. Empty data export |
 | `json_serialization_test.dart` | 8 | DiaryDay list JSON round-trip (with ratings, empty, with notes), Note list JSON round-trip (timed, all-day), NoteTemplate list JSON round-trip (with sections), mixed data combined export, encryption readiness (UTF-8 encode/decode) |
+| `pdf_export_test.dart` | 68 | **DateRange factories:** `lastWeek` (7-day), `lastMonth` (30-day), `currentMonth` (1st of month), `all` (empty/non-empty), `forMonth` (non-leap/leap Feb, Dec, Jan, 30-day month), `forWeek` (Monday-Sunday, week 1, week 52). **DateRange edge cases:** equality/inequality, hashCode, single date, duplicate dates, currentMonth bounds. **File naming:** CW format (week), YYMM (currentMonth), 30d range (month), YYMMDD-YYMMDD (custom/all), `forWeek`/`forMonth` exact format, no spaces/special chars, zero-padded week numbers, year boundary. **PDF generation:** valid header (%PDF), empty data, ratings-only, notes-only, single-day range, size bounds (1KB-5MB). **PDF content verification (text extraction):** username on cover, "Diary Report" title, "Summary"/"Report Period"/"Daily Breakdown" section headers, category names, note titles, score values. **PDF page structure:** minimum 3 pages, more pages with diary entries. **Large datasets:** 30/90/365 days valid PDF, PDF size scales with data. **Edge cases:** all-day notes ("All day" text), max scores (20/20), min scores (4/20), year boundary ranges, favorite days, empty title fallback to category, all 5 note categories, notes outside range excluded from top activities, custom theme colors, empty ratings (Score: 0), multiple notes per day. **Date range filtering precision:** inclusive boundaries, exclusion of out-of-range days, empty range produces valid PDF |
 | `models/supabase_settings_test.dart` | 8 | SupabaseSettings construction (all fields, empty defaults), `toMap`/`fromMap` (round-trip, snake_case keys, missing keys), `copyWith` (partial/full) |
 | `models/sync_state_test.dart` | 9 | `SyncStatus` enum values (idle/syncing/success/error), `SyncState` construction (required fields, all fields), `copyWith` (preserves unchanged, updates all, no mutation), progress default, typical sync lifecycle, error state preserves progress |
 | `supabase_integration_test.dart` | 11 (optional) | **Skipped when `test/.env` is missing.** Connection (initialize + sign in, wrong password, sign out), diary day sync round-trip, note sync round-trip (timed + all-day), template sync round-trip, full upload + download round-trip, error handling (uninitialized, unauthenticated sync/fetch) |
 
-**Sources:** `lib/features/synchronization/data/models/export_data.dart`, `lib/features/synchronization/domain/providers/file_db_provider.dart`, `ics_file_provider.dart`, `lib/features/synchronization/data/repositories/ics_converter.dart`, `supabase_api.dart`, `supabase_provider.dart`
+**Sources:** `lib/features/synchronization/data/models/export_data.dart`, `lib/features/synchronization/domain/providers/file_db_provider.dart`, `ics_file_provider.dart`, `lib/features/synchronization/data/repositories/ics_converter.dart`, `lib/features/synchronization/data/services/pdf_report_generator.dart`, `lib/features/synchronization/domain/providers/pdf_export_provider.dart`, `supabase_api.dart`, `supabase_provider.dart`
+
+---
+
+## Localization (`test/l10n/`)
+
+| File | Tests | Covers |
+|------|-------|--------|
+| `arb_validity_test.dart` | 6 | ARB JSON syntax validation (English + German), placeholder consistency (messages match metadata definitions), value type checks (all non-metadata are strings), ICU message format validation, unclosed placeholder detection |
+| `arb_completeness_test.dart` | 6 | Translation completeness: all English keys exist in German, no extra German keys, no empty string values, orphaned metadata detection, key count parity between locales, locale marker correctness |
+
+**Sources:** `lib/l10n/app_en.arb`, `lib/l10n/app_de.arb`
 
 ---
 
@@ -109,13 +135,18 @@ flutter test test/core/ test/features/
 |------|--------|-------|
 | Password hashing & verification | Covered | PBKDF2, salt, key derivation |
 | AES encryption/decryption | Covered | String, base64, file, IV handling |
+| Locale/language management | Covered | Switching, persistence, unsupported locales |
 | Date/time utilities | Covered | Formatting, parsing, comparisons |
+| Debug auto-login | Covered | Utility + provider, credentials, validation |
 | All data models | Covered | Serialization, round-trips, edge cases |
 | Dashboard statistics | Covered | Streaks, week/month stats, insights |
 | Export/import (JSON) | Covered | Encrypted + plain, format detection, legacy compat |
 | Export/import (ICS) | Covered | Plain ICS, wrapped JSON, encrypted, categories |
+| PDF export | Covered | DateRange model, file naming, PDF generation, content verification, large datasets, edge cases |
+| Note search & filtering | Covered | Search state, provider, filterNotes function, text highlighting |
 | Wizard scheduling logic | Covered | Time slots, gaps, 15-min chunks, day coverage |
 | Category management | Covered | Name validation, lookup, defaults |
+| Localization (ARB) | Covered | JSON validity, completeness, placeholders, ICU format |
 | Supabase settings | Covered | Model serialization |
 | Supabase sync state | Covered | SyncStatus enum, SyncState construction/copyWith |
 | Supabase API (optional) | Covered | Requires `test/.env` with credentials; skipped otherwise |
