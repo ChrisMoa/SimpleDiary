@@ -344,5 +344,19 @@
   "noFavoriteNotes": "Keine Lieblings-Notizen",
   "markAsFavorite": "Als Favorit markieren",
   "unmarkAsFavorite": "Favorit aufheben",
-  "viewAll": "Alle anzeigen"
+  "viewAll": "Alle anzeigen",
+
+  "quickNote": "Schnellnotiz",
+  "tapToAddNote": "Tippen um Notiz hinzuzufügen...",
+  "enterNoteTitle": "Was denkst du gerade?",
+  "optionalDescription": "Details hinzufügen (optional)",
+  "willBeRecordedNow": "Wird zur aktuellen Zeit aufgezeichnet",
+  "titleRequired": "Bitte Titel eingeben",
+  "categoryRequired": "Bitte Kategorie auswählen",
+  "noteSaved": "Notiz gespeichert!",
+  "homeScreenWidget": "Startbildschirm-Widget",
+  "widgetDescription": "Fügen Sie ein Widget zu Ihrem Startbildschirm hinzu, um schnell Notizen zu erfassen.",
+  "defaultCategory": "Standardkategorie",
+  "widgetCategoryUpdated": "Widget verwendet {category} als Standard",
+  "widgetInstructions": "Halten Sie den Startbildschirm gedrückt und wählen Sie Widgets, um das Schnellnotiz-Widget hinzuzufügen."
 }

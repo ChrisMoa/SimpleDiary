@@ -344,5 +344,19 @@
   "noFavoriteNotes": "Pas de notes favorites",
   "markAsFavorite": "Marquer comme favori",
   "unmarkAsFavorite": "Retirer le favori",
-  "viewAll": "Voir tout"
+  "viewAll": "Voir tout",
+
+  "quickNote": "Note Rapide",
+  "tapToAddNote": "Appuyez pour ajouter une note...",
+  "enterNoteTitle": "À quoi pensez-vous ?",
+  "optionalDescription": "Ajouter des détails (facultatif)",
+  "willBeRecordedNow": "Sera enregistré à l'heure actuelle",
+  "titleRequired": "Veuillez saisir un titre",
+  "categoryRequired": "Veuillez sélectionner une catégorie",
+  "noteSaved": "Note enregistrée !",
+  "homeScreenWidget": "Widget d'Écran d'Accueil",
+  "widgetDescription": "Ajoutez un widget à votre écran d'accueil pour capturer rapidement des notes sans ouvrir l'application.",
+  "defaultCategory": "Catégorie par Défaut",
+  "widgetCategoryUpdated": "Le widget utilisera {category} par défaut",
+  "widgetInstructions": "Appuyez longuement sur votre écran d'accueil et sélectionnez Widgets pour ajouter le widget Note Rapide."
 }

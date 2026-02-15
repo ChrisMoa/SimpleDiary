@@ -52,5 +52,16 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>daytracker</string>
+			</array>
+			<key>CFBundleURLName</key>
+			<string>com.example.day_tracker</string>
+		</dict>
+	</array>
 </dict>
 </plist>

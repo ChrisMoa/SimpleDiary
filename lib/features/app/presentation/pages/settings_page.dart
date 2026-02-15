@@ -3,6 +3,7 @@ import 'package:day_tracker/core/settings/settings_container.dart';
 import 'package:day_tracker/features/app/presentation/widgets/language_settings_widget.dart';
 import 'package:day_tracker/features/app/presentation/widgets/supabase_settings_widget.dart';
 import 'package:day_tracker/features/app/presentation/widgets/theme_settings_widget.dart';
+import 'package:day_tracker/features/app/presentation/widgets/widget_settings_widget.dart';
 import 'package:day_tracker/features/notes/presentation/pages/category_management_page.dart';
 import 'package:flutter/material.dart';
 import 'package:day_tracker/l10n/app_localizations.dart';
@@ -47,6 +48,10 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
 
             // Language Settings
             const LanguageSettingsWidget(),
+            const SizedBox(height: 24),
+
+            // Widget Settings (Android/iOS only)
+            const WidgetSettingsWidget(),
             const SizedBox(height: 24),
 
             // Supabase Settings

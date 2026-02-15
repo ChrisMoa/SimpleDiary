@@ -344,5 +344,19 @@
   "noFavoriteNotes": "No hay notas favoritas",
   "markAsFavorite": "Marcar como favorito",
   "unmarkAsFavorite": "Desmarcar como favorito",
-  "viewAll": "Ver todo"
+  "viewAll": "Ver todo",
+
+  "quickNote": "Nota Rápida",
+  "tapToAddNote": "Toca para agregar una nota...",
+  "enterNoteTitle": "¿Qué estás pensando?",
+  "optionalDescription": "Agregar detalles (opcional)",
+  "willBeRecordedNow": "Se registrará a la hora actual",
+  "titleRequired": "Por favor ingresa un título",
+  "categoryRequired": "Por favor selecciona una categoría",
+  "noteSaved": "¡Nota guardada!",
+  "homeScreenWidget": "Widget de Pantalla de Inicio",
+  "widgetDescription": "Agrega un widget a tu pantalla de inicio para capturar notas rápidamente sin abrir la aplicación.",
+  "defaultCategory": "Categoría Predeterminada",
+  "widgetCategoryUpdated": "El widget usará {category} como predeterminada",
+  "widgetInstructions": "Mantén presionada la pantalla de inicio y selecciona Widgets para agregar el widget de Nota Rápida."
 }

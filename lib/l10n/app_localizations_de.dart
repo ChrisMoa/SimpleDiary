@@ -1060,4 +1060,47 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get viewAll => 'Alle anzeigen';
+
+  @override
+  String get quickNote => 'Schnellnotiz';
+
+  @override
+  String get tapToAddNote => 'Tippen um Notiz hinzuzufügen...';
+
+  @override
+  String get enterNoteTitle => 'Was denkst du gerade?';
+
+  @override
+  String get optionalDescription => 'Details hinzufügen (optional)';
+
+  @override
+  String get willBeRecordedNow => 'Wird zur aktuellen Zeit aufgezeichnet';
+
+  @override
+  String get titleRequired => 'Bitte Titel eingeben';
+
+  @override
+  String get categoryRequired => 'Bitte Kategorie auswählen';
+
+  @override
+  String get noteSaved => 'Notiz gespeichert!';
+
+  @override
+  String get homeScreenWidget => 'Startbildschirm-Widget';
+
+  @override
+  String get widgetDescription =>
+      'Fügen Sie ein Widget zu Ihrem Startbildschirm hinzu, um schnell Notizen zu erfassen.';
+
+  @override
+  String get defaultCategory => 'Standardkategorie';
+
+  @override
+  String widgetCategoryUpdated(String category) {
+    return 'Widget verwendet $category als Standard';
+  }
+
+  @override
+  String get widgetInstructions =>
+      'Halten Sie den Startbildschirm gedrückt und wählen Sie Widgets, um das Schnellnotiz-Widget hinzuzufügen.';
 }

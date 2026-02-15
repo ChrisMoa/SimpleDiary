@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_container"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="@drawable/widget_background">
+
+    <!-- Header -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/quick_note_title"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF" />
+
+        <!-- Category indicator -->
+        <ImageView
+            android:id="@+id/category_indicator"
+            android:layout_width="12dp"
+            android:layout_height="12dp"
+            android:src="@drawable/category_circle"
+            android:contentDescription="@string/quick_note_title" />
+    </LinearLayout>
+
+    <!-- Input area (clickable to open app) -->
+    <TextView
+        android:id="@+id/input_hint"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_marginTop="12dp"
+        android:text="@string/tap_to_add_note"
+        android:gravity="center"
+        android:padding="8dp"
+        android:background="@drawable/input_background"
+        android:textColor="#99FFFFFF"
+        android:clickable="true"
+        android:focusable="true" />
+
+</LinearLayout>

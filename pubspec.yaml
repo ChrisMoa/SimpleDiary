@@ -74,6 +74,8 @@ dependencies:
   shimmer: ^3.0.0
   collection: ^1.18.0
   enough_icalendar: ^0.17.0
+  home_widget: ^0.6.0
+  app_links: ^6.3.2
 
 dev_dependencies:
   flutter_test:

@@ -4,6 +4,7 @@ import 'package:day_tracker/core/provider/locale_provider.dart';
 import 'package:day_tracker/core/provider/theme_provider.dart';
 import 'package:day_tracker/core/settings/settings_container.dart';
 import 'package:day_tracker/core/utils/platform_utils.dart';
+import 'package:day_tracker/core/services/widget_service.dart';
 import 'package:day_tracker/features/app/presentation/pages/main_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -16,6 +17,7 @@ import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 //* main() -------------------------------------------------------------------------------------------------------------------------------------
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   LogWrapper.logger.i('Starting application initialization');
 
   try {
@@ -44,6 +46,12 @@ void main() async {
       printer: CustomLogPrinter(),
     );
     LogWrapper.logger.i('Logger initialized with level: ${debugging ? 'trace' : 'info'}');
+
+    //* init widget service
+    LogWrapper.logger.d('Initializing home widget service');
+    await WidgetService.initialize();
+    await WidgetService.registerBackgroundCallback();
+    LogWrapper.logger.i('Widget service initialized');
 
     LogWrapper.logger.i('Initialization complete, starting application');
     //* run

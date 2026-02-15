@@ -1059,4 +1059,47 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get viewAll => 'Ver todo';
+
+  @override
+  String get quickNote => 'Nota Rápida';
+
+  @override
+  String get tapToAddNote => 'Toca para agregar una nota...';
+
+  @override
+  String get enterNoteTitle => '¿Qué estás pensando?';
+
+  @override
+  String get optionalDescription => 'Agregar detalles (opcional)';
+
+  @override
+  String get willBeRecordedNow => 'Se registrará a la hora actual';
+
+  @override
+  String get titleRequired => 'Por favor ingresa un título';
+
+  @override
+  String get categoryRequired => 'Por favor selecciona una categoría';
+
+  @override
+  String get noteSaved => '¡Nota guardada!';
+
+  @override
+  String get homeScreenWidget => 'Widget de Pantalla de Inicio';
+
+  @override
+  String get widgetDescription =>
+      'Agrega un widget a tu pantalla de inicio para capturar notas rápidamente sin abrir la aplicación.';
+
+  @override
+  String get defaultCategory => 'Categoría Predeterminada';
+
+  @override
+  String widgetCategoryUpdated(String category) {
+    return 'El widget usará $category como predeterminada';
+  }
+
+  @override
+  String get widgetInstructions =>
+      'Mantén presionada la pantalla de inicio y selecciona Widgets para agregar el widget de Nota Rápida.';
 }

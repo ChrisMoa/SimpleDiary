@@ -1991,6 +1991,84 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'View All'**
   String get viewAll;
+
+  /// No description provided for @quickNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick Note'**
+  String get quickNote;
+
+  /// No description provided for @tapToAddNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to add a note...'**
+  String get tapToAddNote;
+
+  /// No description provided for @enterNoteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'What\'s on your mind?'**
+  String get enterNoteTitle;
+
+  /// No description provided for @optionalDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Add details (optional)'**
+  String get optionalDescription;
+
+  /// No description provided for @willBeRecordedNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Will be recorded at current time'**
+  String get willBeRecordedNow;
+
+  /// No description provided for @titleRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a title'**
+  String get titleRequired;
+
+  /// No description provided for @categoryRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select a category'**
+  String get categoryRequired;
+
+  /// No description provided for @noteSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'Note saved!'**
+  String get noteSaved;
+
+  /// No description provided for @homeScreenWidget.
+  ///
+  /// In en, this message translates to:
+  /// **'Home Screen Widget'**
+  String get homeScreenWidget;
+
+  /// No description provided for @widgetDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a widget to your home screen for quick note capture without opening the app.'**
+  String get widgetDescription;
+
+  /// No description provided for @defaultCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Default Category'**
+  String get defaultCategory;
+
+  /// No description provided for @widgetCategoryUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Widget will use {category} as default'**
+  String widgetCategoryUpdated(String category);
+
+  /// No description provided for @widgetInstructions.
+  ///
+  /// In en, this message translates to:
+  /// **'Long press on your home screen and select Widgets to add the Quick Note widget.'**
+  String get widgetInstructions;
 }
 
 class _AppLocalizationsDelegate

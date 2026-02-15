@@ -491,5 +491,24 @@
   "noFavoriteNotes": "No favorite notes",
   "markAsFavorite": "Mark as favorite",
   "unmarkAsFavorite": "Unmark as favorite",
-  "viewAll": "View All"
+  "viewAll": "View All",
+
+  "quickNote": "Quick Note",
+  "tapToAddNote": "Tap to add a note...",
+  "enterNoteTitle": "What's on your mind?",
+  "optionalDescription": "Add details (optional)",
+  "willBeRecordedNow": "Will be recorded at current time",
+  "titleRequired": "Please enter a title",
+  "categoryRequired": "Please select a category",
+  "noteSaved": "Note saved!",
+  "homeScreenWidget": "Home Screen Widget",
+  "widgetDescription": "Add a widget to your home screen for quick note capture without opening the app.",
+  "defaultCategory": "Default Category",
+  "widgetCategoryUpdated": "Widget will use {category} as default",
+  "@widgetCategoryUpdated": {
+    "placeholders": {
+      "category": { "type": "String" }
+    }
+  },
+  "widgetInstructions": "Long press on your home screen and select Widgets to add the Quick Note widget."
 }

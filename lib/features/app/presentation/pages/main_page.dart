@@ -5,8 +5,10 @@ import 'package:day_tracker/core/authentication/password_auth_service.dart';
 import 'package:day_tracker/core/encryption/aes_encryptor.dart';
 import 'package:day_tracker/core/log/logger_instance.dart';
 import 'package:day_tracker/core/navigation/drawer_item_builder.dart';
+import 'package:day_tracker/core/services/widget_service.dart';
 import 'package:day_tracker/core/settings/settings_container.dart';
 import 'package:day_tracker/core/utils/debug_auto_login.dart';
+import 'package:day_tracker/features/notes/presentation/widgets/quick_note_dialog.dart';
 import 'package:day_tracker/features/authentication/data/models/user_data.dart';
 import 'package:day_tracker/features/authentication/domain/providers/user_data_provider.dart';
 import 'package:day_tracker/features/authentication/presentation/pages/auth_user_data_page.dart';
@@ -56,6 +58,12 @@ class _MainPageState extends ConsumerState<MainPage> {
         ref.read(userDataProvider.notifier).debugAutoLogin();
       });
     }
+    // Register callback for widget clicks while app is already running
+    WidgetService.setOnWidgetClickCallback((uri) {
+      if (mounted && dbRead) {
+        showQuickNoteDialog(context);
+      }
+    });
     super.initState();
   }
 
@@ -187,6 +195,16 @@ class _MainPageState extends ConsumerState<MainPage> {
       setState(() {
         dbRead = true;
       });
+
+      // Check if app was launched from widget - show quick note dialog
+      final pendingUri = WidgetService.consumePendingUri();
+      if (pendingUri != null && mounted) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted) {
+            showQuickNoteDialog(context);
+          }
+        });
+      }
     } on AssertionError catch (e) {
       showDialog<String>(
         context: context,

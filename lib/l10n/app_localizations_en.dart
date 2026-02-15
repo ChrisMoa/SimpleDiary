@@ -1047,4 +1047,47 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get viewAll => 'View All';
+
+  @override
+  String get quickNote => 'Quick Note';
+
+  @override
+  String get tapToAddNote => 'Tap to add a note...';
+
+  @override
+  String get enterNoteTitle => 'What\'s on your mind?';
+
+  @override
+  String get optionalDescription => 'Add details (optional)';
+
+  @override
+  String get willBeRecordedNow => 'Will be recorded at current time';
+
+  @override
+  String get titleRequired => 'Please enter a title';
+
+  @override
+  String get categoryRequired => 'Please select a category';
+
+  @override
+  String get noteSaved => 'Note saved!';
+
+  @override
+  String get homeScreenWidget => 'Home Screen Widget';
+
+  @override
+  String get widgetDescription =>
+      'Add a widget to your home screen for quick note capture without opening the app.';
+
+  @override
+  String get defaultCategory => 'Default Category';
+
+  @override
+  String widgetCategoryUpdated(String category) {
+    return 'Widget will use $category as default';
+  }
+
+  @override
+  String get widgetInstructions =>
+      'Long press on your home screen and select Widgets to add the Quick Note widget.';
 }
