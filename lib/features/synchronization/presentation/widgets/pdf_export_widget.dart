@@ -1,8 +1,12 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:printing/printing.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:path/path.dart' as path;
 import 'package:day_tracker/features/synchronization/domain/providers/pdf_export_provider.dart';
 import 'package:day_tracker/features/day_rating/domain/providers/diary_day_local_db_provider.dart';
 import 'package:day_tracker/l10n/app_localizations.dart';
@@ -130,6 +134,19 @@ class _PdfExportWidgetState extends ConsumerState<PdfExportWidget> {
                 label: l10n.customRange,
                 description: l10n.selectDateRangeForReport,
                 onPressed: _isGenerating ? null : _selectCustomRange,
+                isSmallScreen: isSmallScreen,
+              ),
+
+              const SizedBox(height: 12),
+
+              // Select month button
+              _buildExportButton(
+                context: context,
+                theme: theme,
+                icon: Icons.calendar_today,
+                label: l10n.selectMonth,
+                description: l10n.selectSpecificMonth,
+                onPressed: _isGenerating ? null : _selectMonth,
                 isSmallScreen: isSmallScreen,
               ),
 
@@ -290,11 +307,74 @@ class _PdfExportWidgetState extends ConsumerState<PdfExportWidget> {
     }
   }
 
+  Future<void> _selectMonth() async {
+    final l10n = AppLocalizations.of(context)!;
+    final theme = ref.read(themeProvider);
+    final now = DateTime.now();
+    final diaryDays = ref.read(diaryDayLocalDbDataProvider);
+
+    // Find earliest date
+    DateTime firstDate = now.subtract(const Duration(days: 365));
+    if (diaryDays.isNotEmpty) {
+      final dates = diaryDays.map((d) => d.day).toList()..sort();
+      firstDate = dates.first;
+    }
+
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: now,
+      firstDate: firstDate,
+      lastDate: now,
+      helpText: l10n.selectMonth,
+      initialDatePickerMode: DatePickerMode.year,
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: theme.colorScheme,
+          ),
+          child: child!,
+        );
+      },
+    );
+
+    if (picked != null) {
+      final range = DateRange.forMonth(picked.year, picked.month);
+      await _generateAndExport(range);
+    }
+  }
+
   Future<void> _exportAll() async {
     final diaryDays = ref.read(diaryDayLocalDbDataProvider);
-    final dates = diaryDays.map((d) => d.day).toList();
-    final range = DateRange.all(dates);
+    final now = DateTime.now();
+    // Filter out invalid dates (future dates beyond 1 year, or dates before 2000)
+    final validDates = diaryDays
+        .map((d) => d.day)
+        .where((date) =>
+          date.year >= 2000 &&
+          date.isBefore(now.add(const Duration(days: 365))))
+        .toList();
+    final range = DateRange.all(validDates);
     await _generateAndExport(range);
+  }
+
+  static const String _kLastUsedDirectoryKey = 'last_used_pdf_export_directory';
+
+  Future<String?> _getLastUsedDirectory() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      return prefs.getString(_kLastUsedDirectoryKey);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  Future<void> _saveLastUsedDirectory(String filePath) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(_kLastUsedDirectoryKey, path.dirname(filePath));
+    } catch (e) {
+      LogWrapper.logger.w('Could not save last used directory: $e');
+    }
   }
 
   Future<void> _generateAndExport(DateRange range) async {
@@ -306,22 +386,42 @@ class _PdfExportWidgetState extends ConsumerState<PdfExportWidget> {
       LogWrapper.logger.i('Generating PDF report for range: ${range.start} to ${range.end}');
 
       final pdfData = await ref.read(pdfExportProvider(range).future);
+      final fileName = '${range.toFileName()}.pdf';
 
-      LogWrapper.logger.i('PDF generated successfully, showing print dialog');
+      LogWrapper.logger.i('PDF generated (${ pdfData.length} bytes), opening save dialog');
 
-      // Show print/share dialog
-      await Printing.layoutPdf(
-        onLayout: (_) => pdfData,
-        name: _generateFileName(range),
+      final lastDir = Platform.isAndroid ? null : await _getLastUsedDirectory();
+
+      String? outputPath = await FilePicker.platform.saveFile(
+        dialogTitle: AppLocalizations.of(context).pdfExport,
+        fileName: fileName,
+        type: FileType.custom,
+        allowedExtensions: ['pdf'],
+        initialDirectory: lastDir,
+        bytes: pdfData,
       );
 
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(AppLocalizations.of(context)!.pdfExportSuccess),
-            backgroundColor: Theme.of(context).colorScheme.primary,
-          ),
-        );
+      if (outputPath != null) {
+        if (!Platform.isAndroid) {
+          if (!outputPath.endsWith('.pdf')) {
+            outputPath = '$outputPath.pdf';
+          }
+          await File(outputPath).writeAsBytes(pdfData);
+          await _saveLastUsedDirectory(outputPath);
+        }
+
+        LogWrapper.logger.i('PDF export saved to $outputPath');
+
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(AppLocalizations.of(context).pdfExportSuccess),
+              backgroundColor: Theme.of(context).colorScheme.primary,
+            ),
+          );
+        }
+      } else {
+        LogWrapper.logger.i('PDF export cancelled by user');
       }
     } catch (e, stackTrace) {
       LogWrapper.logger.e('Failed to generate PDF', error: e, stackTrace: stackTrace);
@@ -330,7 +430,7 @@ class _PdfExportWidgetState extends ConsumerState<PdfExportWidget> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              AppLocalizations.of(context)!.pdfExportError(e.toString()),
+              AppLocalizations.of(context).pdfExportError(e.toString()),
             ),
             backgroundColor: Theme.of(context).colorScheme.error,
           ),
@@ -343,9 +443,5 @@ class _PdfExportWidgetState extends ConsumerState<PdfExportWidget> {
         });
       }
     }
-  }
-
-  String _generateFileName(DateRange range) {
-    return '${range.toFileName()}.pdf';
   }
 }

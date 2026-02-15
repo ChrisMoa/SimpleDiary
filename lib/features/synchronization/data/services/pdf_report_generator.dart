@@ -42,15 +42,15 @@ class PdfReportGenerator {
     final filteredDays = _filterByDateRange(diaryDays);
     final filteredNotes = _filterNotesByDateRange(notes);
 
-    // Calculate statistics
-    final weekStats = _repository.calculateWeekStats(filteredDays, filteredNotes);
+    // Calculate statistics for the date range
+    final rangeStats = _calculateRangeStats(filteredDays, filteredNotes);
     final streak = _repository.calculateStreak(diaryDays); // Full data for streak
     final topActivities = _extractTopActivities(filteredNotes);
 
     // Build PDF pages
     _pdf.addPage(_buildCoverPage());
-    _pdf.addPage(_buildSummaryPage(weekStats, streak, topActivities));
-    _pdf.addPage(_buildChartsPage(weekStats));
+    _pdf.addPage(_buildSummaryPage(rangeStats, streak, topActivities));
+    _pdf.addPage(_buildChartsPage(rangeStats));
     _addDiaryPages(filteredDays);
 
     return _pdf.save();
@@ -67,6 +67,91 @@ class PdfReportGenerator {
     return notesList.where((note) {
       return !note.from.isBefore(startDate) && !note.from.isAfter(endDate);
     }).toList();
+  }
+
+  /// Calculate statistics for the custom date range
+  WeekStats _calculateRangeStats(List<DiaryDay> days, List<Note> notesList) {
+    if (days.isEmpty) {
+      return WeekStats(
+        averageScore: 0,
+        completedDays: 0,
+        categoryAverages: {},
+        dailyScores: [],
+      );
+    }
+
+    // Calculate average score and category totals
+    double totalScore = 0;
+    Map<String, double> categoryTotals = {};
+    Map<String, int> categoryCounts = {};
+
+    for (var day in days) {
+      totalScore += day.overallScore;
+      for (var rating in day.ratings) {
+        final category = rating.dayRating.name;
+        categoryTotals[category] = (categoryTotals[category] ?? 0) + rating.score;
+        categoryCounts[category] = (categoryCounts[category] ?? 0) + 1;
+      }
+    }
+
+    final averageScore = totalScore / days.length;
+
+    // Calculate category averages
+    Map<String, double> categoryAverages = {};
+    categoryTotals.forEach((category, total) {
+      categoryAverages[category] = total / (categoryCounts[category] ?? 1);
+    });
+
+    // Create daily scores for all days in the range
+    List<DayScore> dailyScores = [];
+    DateTime currentDate = DateTime(startDate.year, startDate.month, startDate.day);
+    final endDateNormalized = DateTime(endDate.year, endDate.month, endDate.day);
+
+    while (!currentDate.isAfter(endDateNormalized)) {
+      final dayData = days.where((d) =>
+        d.day.year == currentDate.year &&
+        d.day.month == currentDate.month &&
+        d.day.day == currentDate.day
+      ).firstOrNull;
+
+      if (dayData != null) {
+        Map<String, int> categoryScores = {};
+        for (var rating in dayData.ratings) {
+          categoryScores[rating.dayRating.name] = rating.score;
+        }
+
+        final dayNotes = notesList.where((note) =>
+          note.from.year == currentDate.year &&
+          note.from.month == currentDate.month &&
+          note.from.day == currentDate.day
+        ).length;
+
+        dailyScores.add(DayScore(
+          date: currentDate,
+          totalScore: dayData.overallScore,
+          categoryScores: categoryScores,
+          noteCount: dayNotes,
+          isComplete: dayData.ratings.isNotEmpty,
+        ));
+      } else {
+        dailyScores.add(DayScore(
+          date: currentDate,
+          totalScore: 0,
+          categoryScores: {},
+          noteCount: 0,
+          isComplete: false,
+        ));
+      }
+
+      currentDate = currentDate.add(const Duration(days: 1));
+    }
+
+    return WeekStats(
+      averageScore: averageScore,
+      completedDays: days.length,
+      categoryAverages: categoryAverages,
+      dailyScores: dailyScores,
+    );
   }
 
   List<String> _extractTopActivities(List<Note> notesList) {
@@ -631,7 +716,8 @@ class PdfReportGenerator {
             height: chartHeight,
             child: pw.Stack(
               children: ySteps.map((value) {
-                final y = chartHeight - (value / maxScore) * chartHeight - 5;
+                // Center labels vertically on grid lines (subtract half of font height ~4px)
+                final y = chartHeight - (value / maxScore) * chartHeight - 4;
                 return pw.Positioned(
                   top: y,
                   left: 0,

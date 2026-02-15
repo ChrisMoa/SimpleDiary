@@ -1668,6 +1668,18 @@ abstract class AppLocalizations {
   /// **'Select a custom date range for your report'**
   String get selectDateRangeForReport;
 
+  /// No description provided for @selectMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Month'**
+  String get selectMonth;
+
+  /// No description provided for @selectSpecificMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a specific month to export'**
+  String get selectSpecificMonth;
+
   /// No description provided for @exportAllData.
   ///
   /// In en, this message translates to:

@@ -287,6 +287,8 @@
   "lastMonth": "Últimos 30 Días",
   "currentMonth": "Este Mes",
   "selectDateRangeForReport": "Selecciona un rango de fechas personalizado para tu informe",
+  "selectMonth": "Seleccionar Mes",
+  "selectSpecificMonth": "Elige un mes específico para exportar",
   "exportAllData": "Exportar Todos los Datos",
   "generatePdfWithAllData": "Generar informe PDF con todos tus datos",
   "selectDateRange": "Seleccionar rango de fechas para el informe",

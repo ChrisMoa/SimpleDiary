@@ -877,6 +877,13 @@ class AppLocalizationsDe extends AppLocalizations {
       'Wähle einen benutzerdefinierten Zeitraum für deinen Bericht';
 
   @override
+  String get selectMonth => 'Monat auswählen';
+
+  @override
+  String get selectSpecificMonth =>
+      'Wähle einen bestimmten Monat zum Exportieren';
+
+  @override
   String get exportAllData => 'Alle Daten exportieren';
 
   @override

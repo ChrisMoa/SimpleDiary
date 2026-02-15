@@ -865,6 +865,12 @@ class AppLocalizationsEn extends AppLocalizations {
       'Select a custom date range for your report';
 
   @override
+  String get selectMonth => 'Select Month';
+
+  @override
+  String get selectSpecificMonth => 'Choose a specific month to export';
+
+  @override
   String get exportAllData => 'Export All Data';
 
   @override

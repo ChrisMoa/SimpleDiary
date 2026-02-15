@@ -877,6 +877,12 @@ class AppLocalizationsFr extends AppLocalizations {
       'Sélectionnez une plage de dates personnalisée pour votre rapport';
 
   @override
+  String get selectMonth => 'Sélectionner un Mois';
+
+  @override
+  String get selectSpecificMonth => 'Choisissez un mois spécifique à exporter';
+
+  @override
   String get exportAllData => 'Exporter Toutes les Données';
 
   @override

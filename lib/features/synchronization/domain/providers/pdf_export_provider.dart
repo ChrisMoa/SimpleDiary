@@ -49,6 +49,33 @@ class DateRange {
     );
   }
 
+  /// Specific month
+  factory DateRange.forMonth(int year, int month) {
+    final start = DateTime(year, month, 1);
+    final end = DateTime(year, month + 1, 0); // Last day of the month
+    return DateRange(
+      start: start,
+      end: end,
+      type: DateRangeType.currentMonth,
+    );
+  }
+
+  /// Specific week (ISO week number)
+  factory DateRange.forWeek(int year, int weekNumber) {
+    // Calculate the date of the Monday of the given ISO week
+    final jan4 = DateTime(year, 1, 4);
+    final daysFromMonday = jan4.weekday - 1;
+    final firstMonday = jan4.subtract(Duration(days: daysFromMonday));
+    final weekStart = firstMonday.add(Duration(days: (weekNumber - 1) * 7));
+    final weekEnd = weekStart.add(const Duration(days: 6));
+
+    return DateRange(
+      start: weekStart,
+      end: weekEnd,
+      type: DateRangeType.week,
+    );
+  }
+
   /// All time
   factory DateRange.all(List<DateTime> dates) {
     if (dates.isEmpty) {
@@ -71,11 +98,16 @@ class DateRange {
         final weekNumber = _isoWeekNumber(end);
         final year = end.year % 100;
         return 'TrackingReport_${year.toString().padLeft(2, '0')}CW${weekNumber.toString().padLeft(2, '0')}';
-      case DateRangeType.month:
       case DateRangeType.currentMonth:
+        // Current month: YYMM format
         final year = end.year % 100;
         final month = end.month.toString().padLeft(2, '0');
         return 'TrackingReport_${year.toString().padLeft(2, '0')}$month';
+      case DateRangeType.month:
+        // Last 30 days: use date range format to distinguish from current month
+        final startStr = _formatDateShort(start);
+        final endStr = _formatDateShort(end);
+        return 'TrackingReport_30d_$startStr-$endStr';
       case DateRangeType.custom:
       case DateRangeType.all:
         final startStr = _formatDateShort(start);

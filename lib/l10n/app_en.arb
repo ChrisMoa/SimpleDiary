@@ -399,6 +399,8 @@
   "lastMonth": "Last 30 Days",
   "currentMonth": "This Month",
   "selectDateRangeForReport": "Select a custom date range for your report",
+  "selectMonth": "Select Month",
+  "selectSpecificMonth": "Choose a specific month to export",
   "exportAllData": "Export All Data",
   "generatePdfWithAllData": "Generate PDF report with all your data",
   "selectDateRange": "Select date range for report",

@@ -139,14 +139,14 @@ void main() {
       expect(name, contains('CW'));
     });
 
-    test('month range uses YYMM format', () {
+    test('month range (last 30 days) uses date range format', () {
       final range = DateRange(
         start: DateTime(2026, 1, 16),
         end: DateTime(2026, 2, 15),
         type: DateRangeType.month,
       );
       final name = range.toFileName();
-      expect(name, 'TrackingReport_2602');
+      expect(name, 'TrackingReport_30d_260116-260215');
     });
 
     test('currentMonth range uses YYMM format', () {
