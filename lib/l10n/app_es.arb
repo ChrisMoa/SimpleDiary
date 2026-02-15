@@ -343,5 +343,6 @@
   "noFavoriteDays": "No hay días favoritos",
   "noFavoriteNotes": "No hay notas favoritas",
   "markAsFavorite": "Marcar como favorito",
-  "unmarkAsFavorite": "Desmarcar como favorito"
+  "unmarkAsFavorite": "Desmarcar como favorito",
+  "viewAll": "Ver todo"
 }

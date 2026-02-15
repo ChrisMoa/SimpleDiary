@@ -1062,4 +1062,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get unmarkAsFavorite => 'Retirer le favori';
+
+  @override
+  String get viewAll => 'Voir tout';
 }

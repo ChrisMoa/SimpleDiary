@@ -343,5 +343,6 @@
   "noFavoriteDays": "Keine Lieblings-Tage",
   "noFavoriteNotes": "Keine Lieblings-Notizen",
   "markAsFavorite": "Als Favorit markieren",
-  "unmarkAsFavorite": "Favorit aufheben"
+  "unmarkAsFavorite": "Favorit aufheben",
+  "viewAll": "Alle anzeigen"
 }

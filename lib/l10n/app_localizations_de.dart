@@ -1057,4 +1057,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get unmarkAsFavorite => 'Favorit aufheben';
+
+  @override
+  String get viewAll => 'Alle anzeigen';
 }

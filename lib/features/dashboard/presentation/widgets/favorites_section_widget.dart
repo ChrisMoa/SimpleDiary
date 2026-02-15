@@ -1,3 +1,4 @@
+import 'package:day_tracker/features/dashboard/presentation/pages/favorites_overview_page.dart';
 import 'package:day_tracker/features/day_rating/data/models/diary_day.dart';
 import 'package:day_tracker/features/day_rating/domain/providers/favorite_diary_days_provider.dart';
 import 'package:day_tracker/features/day_rating/presentation/pages/diary_day_wizard_page.dart';
@@ -6,6 +7,7 @@ import 'package:day_tracker/features/notes/domain/providers/favorite_notes_provi
 import 'package:day_tracker/features/notes/domain/providers/note_editing_page_provider.dart';
 import 'package:day_tracker/features/notes/domain/providers/note_selected_date_provider.dart';
 import 'package:day_tracker/features/notes/presentation/pages/note_editing_page.dart';
+import 'package:day_tracker/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -13,16 +15,27 @@ import 'package:intl/intl.dart';
 class FavoritesSectionWidget extends ConsumerWidget {
   const FavoritesSectionWidget({super.key});
 
+  static const int _maxDisplayCount = 5;
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final favoriteDays = ref.watch(favoriteDiaryDaysProvider);
     final favoriteNotes = ref.watch(favoriteNotesProvider);
+    final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
 
     // Don't show section if no favorites
     if (favoriteDays.isEmpty && favoriteNotes.isEmpty) {
       return const SizedBox.shrink();
     }
+
+    final totalCount = favoriteDays.length + favoriteNotes.length;
+    final hasMore = totalCount > _maxDisplayCount;
+
+    // Build a limited list of items: take days first, then notes, up to max
+    final limitedDays = favoriteDays.take(_maxDisplayCount).toList();
+    final remainingSlots = _maxDisplayCount - limitedDays.length;
+    final limitedNotes = favoriteNotes.take(remainingSlots).toList();
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -35,28 +48,39 @@ class FavoritesSectionWidget extends ConsumerWidget {
               const Icon(Icons.star, color: Colors.amber, size: 24),
               const SizedBox(width: 8),
               Text(
-                'Favorites', // TODO: localize
+                l10n.favorites,
                 style: theme.textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
               ),
+              const SizedBox(width: 8),
+              Text(
+                '($totalCount)',
+                style: theme.textTheme.titleMedium?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
+              ),
+              const Spacer(),
+              if (hasMore)
+                TextButton(
+                  onPressed: () => _navigateToFavoritesOverview(context),
+                  child: Text(l10n.viewAll),
+                ),
             ],
           ),
         ),
 
-        // Single horizontal scroll with all favorites
+        // Horizontal scroll with limited favorites
         SizedBox(
           height: 100,
           child: ListView(
             scrollDirection: Axis.horizontal,
             padding: const EdgeInsets.symmetric(horizontal: 12),
             children: [
-              // Favorite days
-              ...favoriteDays.map(
+              ...limitedDays.map(
                 (day) => _buildFavoriteDayCard(context, ref, day),
               ),
-              // Favorite notes
-              ...favoriteNotes.map(
+              ...limitedNotes.map(
                 (note) => _buildFavoriteNoteCard(context, ref, note),
               ),
             ],
@@ -198,6 +222,15 @@ class FavoritesSectionWidget extends ConsumerWidget {
           color: theme.colorScheme.onPrimary,
           fontWeight: FontWeight.bold,
         ),
+      ),
+    );
+  }
+
+  void _navigateToFavoritesOverview(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const FavoritesOverviewPage(),
       ),
     );
   }

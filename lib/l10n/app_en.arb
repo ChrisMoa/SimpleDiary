@@ -490,5 +490,6 @@
   "noFavoriteDays": "No favorite days",
   "noFavoriteNotes": "No favorite notes",
   "markAsFavorite": "Mark as favorite",
-  "unmarkAsFavorite": "Unmark as favorite"
+  "unmarkAsFavorite": "Unmark as favorite",
+  "viewAll": "View All"
 }
