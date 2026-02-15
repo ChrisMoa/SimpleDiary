@@ -854,6 +854,57 @@ class AppLocalizationsFr extends AppLocalizations {
   String get testConnection => 'Tester la Connexion';
 
   @override
+  String get pdfExport => 'Export PDF';
+
+  @override
+  String get pdfExportDescription =>
+      'Générez des rapports PDF imprimables avec vos entrées de journal, évaluations et statistiques.';
+
+  @override
+  String get quickExport => 'Export Rapide';
+
+  @override
+  String get lastWeek => '7 Derniers Jours';
+
+  @override
+  String get lastMonth => '30 Derniers Jours';
+
+  @override
+  String get currentMonth => 'Ce Mois';
+
+  @override
+  String get selectDateRangeForReport =>
+      'Sélectionnez une plage de dates personnalisée pour votre rapport';
+
+  @override
+  String get selectMonth => 'Sélectionner un Mois';
+
+  @override
+  String get selectSpecificMonth => 'Choisissez un mois spécifique à exporter';
+
+  @override
+  String get exportAllData => 'Exporter Toutes les Données';
+
+  @override
+  String get generatePdfWithAllData =>
+      'Générer un rapport PDF avec toutes vos données';
+
+  @override
+  String get selectDateRange =>
+      'Sélectionner la plage de dates pour le rapport';
+
+  @override
+  String get export => 'Exporter';
+
+  @override
+  String get pdfExportSuccess => 'Rapport PDF généré avec succès';
+
+  @override
+  String pdfExportError(String error) {
+    return 'Échec de la génération du PDF : $error';
+  }
+
+  @override
   String get about => 'À propos';
 
   @override

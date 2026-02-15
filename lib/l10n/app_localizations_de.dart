@@ -854,6 +854,57 @@ class AppLocalizationsDe extends AppLocalizations {
   String get testConnection => 'Verbindung testen';
 
   @override
+  String get pdfExport => 'PDF-Export';
+
+  @override
+  String get pdfExportDescription =>
+      'Erstelle druckbare PDF-Berichte mit deinen Tagebucheinträgen, Bewertungen und Statistiken.';
+
+  @override
+  String get quickExport => 'Schnellexport';
+
+  @override
+  String get lastWeek => 'Letzte 7 Tage';
+
+  @override
+  String get lastMonth => 'Letzte 30 Tage';
+
+  @override
+  String get currentMonth => 'Dieser Monat';
+
+  @override
+  String get selectDateRangeForReport =>
+      'Wähle einen benutzerdefinierten Zeitraum für deinen Bericht';
+
+  @override
+  String get selectMonth => 'Monat auswählen';
+
+  @override
+  String get selectSpecificMonth =>
+      'Wähle einen bestimmten Monat zum Exportieren';
+
+  @override
+  String get exportAllData => 'Alle Daten exportieren';
+
+  @override
+  String get generatePdfWithAllData =>
+      'Erstelle PDF-Bericht mit allen deinen Daten';
+
+  @override
+  String get selectDateRange => 'Zeitraum für Bericht auswählen';
+
+  @override
+  String get export => 'Exportieren';
+
+  @override
+  String get pdfExportSuccess => 'PDF-Bericht erfolgreich erstellt';
+
+  @override
+  String pdfExportError(String error) {
+    return 'PDF-Erstellung fehlgeschlagen: $error';
+  }
+
+  @override
   String get about => 'Über';
 
   @override

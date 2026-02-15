@@ -1,4 +1,5 @@
 import 'package:day_tracker/features/synchronization/presentation/widgets/file_sync_widget.dart';
+import 'package:day_tracker/features/synchronization/presentation/widgets/pdf_export_widget.dart';
 import 'package:day_tracker/features/synchronization/presentation/widgets/supabase_sync_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:day_tracker/l10n/app_localizations.dart';
@@ -57,6 +58,11 @@ class SynchronizePage extends ConsumerWidget {
 
           const SizedBox(height: 24),
 
+          // PDF Export Card
+          const PdfExportWidget(),
+
+          const SizedBox(height: 24),
+
           // Supabase Synchronization Card
           const SupabaseSyncWidget(),
         ],
@@ -82,22 +88,30 @@ class SynchronizePage extends ConsumerWidget {
 
         // Cards in horizontal layout
         Expanded(
-          child: Padding(
+          child: SingleChildScrollView(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            child: Column(
               children: [
-                // File Synchronization Card
-                const Expanded(
-                  child: FileSyncWidget(),
-                ),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // File Synchronization Card
+                    const Expanded(
+                      child: FileSyncWidget(),
+                    ),
 
-                const SizedBox(width: 24),
+                    const SizedBox(width: 24),
 
-                // Supabase Synchronization Card
-                const Expanded(
-                  child: SupabaseSyncWidget(),
+                    // Supabase Synchronization Card
+                    const Expanded(
+                      child: SupabaseSyncWidget(),
+                    ),
+                  ],
                 ),
+                const SizedBox(height: 24),
+
+                // PDF Export Card (full width)
+                const PdfExportWidget(),
               ],
             ),
           ),

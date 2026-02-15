@@ -392,6 +392,27 @@
   "anonKey": "Anon Key",
   "testConnection": "Test Connection",
 
+  "pdfExport": "PDF Export",
+  "pdfExportDescription": "Generate printable PDF reports with your diary entries, ratings, and statistics.",
+  "quickExport": "Quick Export",
+  "lastWeek": "Last 7 Days",
+  "lastMonth": "Last 30 Days",
+  "currentMonth": "This Month",
+  "selectDateRangeForReport": "Select a custom date range for your report",
+  "selectMonth": "Select Month",
+  "selectSpecificMonth": "Choose a specific month to export",
+  "exportAllData": "Export All Data",
+  "generatePdfWithAllData": "Generate PDF report with all your data",
+  "selectDateRange": "Select date range for report",
+  "export": "Export",
+  "pdfExportSuccess": "PDF report generated successfully",
+  "pdfExportError": "Failed to generate PDF: {error}",
+  "@pdfExportError": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+
   "about": "About",
   "dayTracker": "Day Tracker",
   "version": "Version: {version}",

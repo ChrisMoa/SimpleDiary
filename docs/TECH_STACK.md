@@ -9,7 +9,7 @@
 | Property | Value |
 |----------|-------|
 | **App Name** | SimpleDiary (package: `day_tracker`) |
-| **Version** | 1.0.5+1 |
+| **Version** | 1.0.6+1 |
 | **Platform Support** | Android, Linux, Windows |
 | **Dart SDK** | >=3.0.3 <4.0.0 |
 | **Flutter Version (CI)** | 3.29.3 stable |
@@ -545,10 +545,11 @@ flutter clean
 6. Create widgets in `presentation/widgets/`
 7. Add navigation entry in `DrawerItemBuilder` if top-level
 8. Add tests in `test/features/<feature_name>/`
-9. Update this document if significant architectural additions
-10. Ensure theming works correct in dark and lightmode
-11. Add translation for ui strings (use @check_translation.py for finding strings)
-12. Update the build nr if manual and automatic tests are valid
+9. Update the TEST_COVERAGE.md file with the new testcoverage
+10. Update this document if significant architectural additions
+11. Ensure theming works correct in dark and lightmode
+12. Add translation for ui strings (use @check_translation.py for finding strings)
+13. Update the build nr if manual and automatic tests are valid
 
 ---
 

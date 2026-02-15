@@ -1626,6 +1626,96 @@ abstract class AppLocalizations {
   /// **'Test Connection'**
   String get testConnection;
 
+  /// No description provided for @pdfExport.
+  ///
+  /// In en, this message translates to:
+  /// **'PDF Export'**
+  String get pdfExport;
+
+  /// No description provided for @pdfExportDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Generate printable PDF reports with your diary entries, ratings, and statistics.'**
+  String get pdfExportDescription;
+
+  /// No description provided for @quickExport.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick Export'**
+  String get quickExport;
+
+  /// No description provided for @lastWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'Last 7 Days'**
+  String get lastWeek;
+
+  /// No description provided for @lastMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'Last 30 Days'**
+  String get lastMonth;
+
+  /// No description provided for @currentMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'This Month'**
+  String get currentMonth;
+
+  /// No description provided for @selectDateRangeForReport.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a custom date range for your report'**
+  String get selectDateRangeForReport;
+
+  /// No description provided for @selectMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Month'**
+  String get selectMonth;
+
+  /// No description provided for @selectSpecificMonth.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a specific month to export'**
+  String get selectSpecificMonth;
+
+  /// No description provided for @exportAllData.
+  ///
+  /// In en, this message translates to:
+  /// **'Export All Data'**
+  String get exportAllData;
+
+  /// No description provided for @generatePdfWithAllData.
+  ///
+  /// In en, this message translates to:
+  /// **'Generate PDF report with all your data'**
+  String get generatePdfWithAllData;
+
+  /// No description provided for @selectDateRange.
+  ///
+  /// In en, this message translates to:
+  /// **'Select date range for report'**
+  String get selectDateRange;
+
+  /// No description provided for @export.
+  ///
+  /// In en, this message translates to:
+  /// **'Export'**
+  String get export;
+
+  /// No description provided for @pdfExportSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'PDF report generated successfully'**
+  String get pdfExportSuccess;
+
+  /// No description provided for @pdfExportError.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to generate PDF: {error}'**
+  String pdfExportError(String error);
+
   /// No description provided for @about.
   ///
   /// In en, this message translates to:
