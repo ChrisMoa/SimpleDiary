@@ -465,10 +465,15 @@ class PdfReportGenerator {
                   children: [
                     pw.Expanded(
                       child: pw.Text(
-                        note.title,
+                        note.title.isNotEmpty
+                            ? note.title
+                            : note.noteCategory.title,
                         style: pw.TextStyle(
                           fontSize: 11,
                           fontWeight: pw.FontWeight.bold,
+                          fontStyle: note.title.isEmpty
+                              ? pw.FontStyle.italic
+                              : null,
                         ),
                       ),
                     ),
@@ -609,55 +614,90 @@ class PdfReportGenerator {
     }
 
     final maxScore = 20.0;
-    final chartHeight = 120.0;
-    final chartWidth = 450.0;
+    final chartHeight = 140.0;
+    final yLabelWidth = 30.0;
+    final chartWidth = 420.0;
     final pointWidth = chartWidth / scores.length;
+    const ySteps = [0, 5, 10, 15, 20];
 
     return pw.Container(
-      height: chartHeight + 50,
-      width: chartWidth,
-      child: pw.Stack(
+      height: chartHeight + 40,
+      child: pw.Row(
+        crossAxisAlignment: pw.CrossAxisAlignment.start,
         children: [
-          // Grid and axes
-          pw.Positioned.fill(
-            child: pw.CustomPaint(
-              painter: (canvas, size) {
-                // Draw grid lines
-                for (int i = 0; i <= 4; i++) {
-                  final y = chartHeight - (i * chartHeight / 4);
-                  canvas
-                    ..setStrokeColor(PdfColors.grey300)
-                    ..drawLine(0, y, chartWidth, y);
-                }
-
-                // Draw bars
-                for (int i = 0; i < scores.length; i++) {
-                  final score = scores[i];
-                  final barHeight = (score.totalScore / maxScore) * chartHeight;
-                  final x = i * pointWidth + pointWidth * 0.2;
-                  final width = pointWidth * 0.6;
-
-                  canvas
-                    ..setFillColor(_primaryColor)
-                    ..drawRect(x, chartHeight - barHeight, width, barHeight)
-                    ..fillPath();
-                }
-              },
-            ),
-          ),
-          // Date labels
-          pw.Positioned(
-            bottom: 0,
-            left: 0,
-            right: 0,
-            child: pw.Row(
-              mainAxisAlignment: pw.MainAxisAlignment.spaceEvenly,
-              children: scores.map((score) {
-                return pw.Text(
-                  DateFormat('E').format(score.date),
-                  style: const pw.TextStyle(fontSize: 8),
+          // Y-axis labels
+          pw.SizedBox(
+            width: yLabelWidth,
+            height: chartHeight,
+            child: pw.Stack(
+              children: ySteps.map((value) {
+                final y = chartHeight - (value / maxScore) * chartHeight - 5;
+                return pw.Positioned(
+                  top: y,
+                  left: 0,
+                  child: pw.Text(
+                    '$value',
+                    style: const pw.TextStyle(
+                      fontSize: 8,
+                      color: PdfColors.grey600,
+                    ),
+                  ),
                 );
               }).toList(),
+            ),
+          ),
+          // Chart area
+          pw.Expanded(
+            child: pw.Column(
+              children: [
+                pw.SizedBox(
+                  height: chartHeight,
+                  child: pw.CustomPaint(
+                    size: PdfPoint(chartWidth, chartHeight),
+                    painter: (canvas, size) {
+                      // Draw horizontal grid lines
+                      for (final value in ySteps) {
+                        final y = (value / maxScore) * chartHeight;
+                        canvas
+                          ..setStrokeColor(PdfColors.grey300)
+                          ..setLineWidth(0.5)
+                          ..drawLine(0, y, chartWidth, y)
+                          ..strokePath();
+                      }
+
+                      // Draw bars
+                      for (int i = 0; i < scores.length; i++) {
+                        final score = scores[i];
+                        if (score.totalScore == 0) continue;
+                        final barHeight =
+                            (score.totalScore / maxScore) * chartHeight;
+                        final x = i * pointWidth + pointWidth * 0.15;
+                        final width = pointWidth * 0.7;
+
+                        canvas
+                          ..setFillColor(_primaryColor)
+                          ..drawRect(x, 0, width, barHeight)
+                          ..fillPath();
+                      }
+                    },
+                  ),
+                ),
+                pw.SizedBox(height: 6),
+                // Date labels
+                pw.Row(
+                  mainAxisAlignment: pw.MainAxisAlignment.spaceEvenly,
+                  children: scores.map((score) {
+                    return pw.SizedBox(
+                      width: pointWidth,
+                      child: pw.Text(
+                        DateFormat('E\nd').format(score.date),
+                        style: const pw.TextStyle(fontSize: 7),
+                        textAlign: pw.TextAlign.center,
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ],
             ),
           ),
         ],

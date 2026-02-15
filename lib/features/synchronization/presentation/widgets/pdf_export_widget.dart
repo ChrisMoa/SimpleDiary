@@ -3,7 +3,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:printing/printing.dart';
-import 'package:intl/intl.dart';
 import 'package:day_tracker/features/synchronization/domain/providers/pdf_export_provider.dart';
 import 'package:day_tracker/features/day_rating/domain/providers/diary_day_local_db_provider.dart';
 import 'package:day_tracker/l10n/app_localizations.dart';
@@ -347,7 +346,6 @@ class _PdfExportWidgetState extends ConsumerState<PdfExportWidget> {
   }
 
   String _generateFileName(DateRange range) {
-    final dateFormat = DateFormat('yyyy-MM-dd');
-    return 'diary_report_${dateFormat.format(range.start)}_to_${dateFormat.format(range.end)}.pdf';
+    return '${range.toFileName()}.pdf';
   }
 }
