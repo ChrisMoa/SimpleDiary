@@ -50,7 +50,7 @@ class PdfReportGenerator {
     // Build PDF pages
     _pdf.addPage(_buildCoverPage());
     _pdf.addPage(_buildSummaryPage(rangeStats, streak, topActivities));
-    _pdf.addPage(_buildChartsPage(rangeStats));
+    _addChartsAndBreakdownPages(rangeStats);
     _addDiaryPages(filteredDays);
 
     return _pdf.save();
@@ -336,38 +336,88 @@ class PdfReportGenerator {
     );
   }
 
-  /// Charts page with mood trend and weekly overview
-  pw.Page _buildChartsPage(WeekStats weekStats) {
-    return pw.Page(
-      pageFormat: PdfPageFormat.a4,
-      build: (context) {
-        return pw.Column(
-          crossAxisAlignment: pw.CrossAxisAlignment.start,
-          children: [
-            _buildSectionHeader('Mood Trends'),
-            pw.SizedBox(height: 20),
+  /// Charts and daily breakdown pages
+  void _addChartsAndBreakdownPages(WeekStats weekStats) {
+    final dailyScores = weekStats.dailyScores;
 
-            // Weekly mood chart
-            if (weekStats.dailyScores.isNotEmpty) ...[
+    // Split daily scores into weekly chunks for chart rendering
+    final chartChunks = <List<DayScore>>[];
+    if (dailyScores.length <= 10) {
+      chartChunks.add(dailyScores);
+    } else {
+      // Group by week (7 days per chart)
+      for (var i = 0; i < dailyScores.length; i += 7) {
+        final end = (i + 7 > dailyScores.length) ? dailyScores.length : i + 7;
+        chartChunks.add(dailyScores.sublist(i, end));
+      }
+    }
+
+    // Charts page(s) using MultiPage
+    _pdf.addPage(
+      pw.MultiPage(
+        pageFormat: PdfPageFormat.a4,
+        header: (context) => pw.Container(
+          margin: const pw.EdgeInsets.only(bottom: 10),
+          child: pw.Row(
+            mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+            children: [
               pw.Text(
-                'Daily Scores',
+                'Mood Trends',
                 style: pw.TextStyle(
-                  fontSize: 14,
+                  fontSize: 18,
                   fontWeight: pw.FontWeight.bold,
+                  color: _primaryColor,
                 ),
               ),
-              pw.SizedBox(height: 12),
-              _buildLineChart(weekStats.dailyScores),
-              pw.SizedBox(height: 30),
+              pw.Text(
+                'Page ${context.pageNumber}',
+                style: const pw.TextStyle(
+                  fontSize: 10,
+                  color: PdfColors.grey500,
+                ),
+              ),
             ],
+          ),
+        ),
+        build: (context) {
+          final widgets = <pw.Widget>[];
 
-            // Daily breakdown table
-            _buildSectionHeader('Daily Breakdown'),
-            pw.SizedBox(height: 16),
-            _buildDailyTable(weekStats.dailyScores),
-          ],
-        );
-      },
+          // Charts
+          if (dailyScores.isNotEmpty) {
+            for (var i = 0; i < chartChunks.length; i++) {
+              if (chartChunks.length > 1) {
+                final startDate = DateFormat('MMM d').format(chartChunks[i].first.date);
+                final endDate = DateFormat('MMM d').format(chartChunks[i].last.date);
+                widgets.add(pw.Text(
+                  'Daily Scores ($startDate - $endDate)',
+                  style: pw.TextStyle(
+                    fontSize: 14,
+                    fontWeight: pw.FontWeight.bold,
+                  ),
+                ));
+              } else {
+                widgets.add(pw.Text(
+                  'Daily Scores',
+                  style: pw.TextStyle(
+                    fontSize: 14,
+                    fontWeight: pw.FontWeight.bold,
+                  ),
+                ));
+              }
+              widgets.add(pw.SizedBox(height: 12));
+              widgets.add(_buildLineChart(chartChunks[i]));
+              widgets.add(pw.SizedBox(height: 20));
+            }
+          }
+
+          // Daily breakdown table
+          widgets.add(_buildSectionHeader('Daily Breakdown'));
+          widgets.add(pw.SizedBox(height: 16));
+          widgets.add(_buildDailyTable(dailyScores));
+
+          return widgets;
+        },
+      ),
     );
   }
 
