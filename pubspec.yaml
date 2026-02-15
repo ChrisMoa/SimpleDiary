@@ -74,6 +74,9 @@ dependencies:
   shimmer: ^3.0.0
   collection: ^1.18.0
   enough_icalendar: ^0.17.0
+  # PDF Generation
+  pdf: ^3.10.0
+  printing: ^5.12.0
 
 dev_dependencies:
   flutter_test:

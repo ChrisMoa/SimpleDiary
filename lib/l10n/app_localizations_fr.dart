@@ -854,6 +854,49 @@ class AppLocalizationsFr extends AppLocalizations {
   String get testConnection => 'Tester la Connexion';
 
   @override
+  String get pdfExport => 'PDF Export';
+
+  @override
+  String get pdfExportDescription =>
+      'Generate printable PDF reports with your diary entries, ratings, and statistics.';
+
+  @override
+  String get quickExport => 'Quick Export';
+
+  @override
+  String get lastWeek => 'Last 7 Days';
+
+  @override
+  String get lastMonth => 'Last 30 Days';
+
+  @override
+  String get currentMonth => 'This Month';
+
+  @override
+  String get selectDateRangeForReport =>
+      'Select a custom date range for your report';
+
+  @override
+  String get exportAllData => 'Export All Data';
+
+  @override
+  String get generatePdfWithAllData => 'Generate PDF report with all your data';
+
+  @override
+  String get selectDateRange => 'Select date range for report';
+
+  @override
+  String get export => 'Export';
+
+  @override
+  String get pdfExportSuccess => 'PDF report generated successfully';
+
+  @override
+  String pdfExportError(String error) {
+    return 'Failed to generate PDF: $error';
+  }
+
+  @override
   String get about => 'À propos';
 
   @override
