@@ -479,5 +479,17 @@
     "placeholders": {
       "count": { "type": "int" }
     }
-  }
+  },
+
+  "favorites": "Favorites",
+  "favoriteDays": "Favorite Days",
+  "favoriteNotes": "Favorite Notes",
+  "addToFavorites": "Add to favorites",
+  "removeFromFavorites": "Remove from favorites",
+  "noFavorites": "No favorites yet",
+  "noFavoriteDays": "No favorite days",
+  "noFavoriteNotes": "No favorite notes",
+  "markAsFavorite": "Mark as favorite",
+  "unmarkAsFavorite": "Unmark as favorite",
+  "viewAll": "View All"
 }

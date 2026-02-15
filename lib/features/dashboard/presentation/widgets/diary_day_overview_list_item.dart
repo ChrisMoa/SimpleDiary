@@ -1,10 +1,12 @@
 import 'package:day_tracker/core/utils/utils.dart';
 import 'package:day_tracker/features/dashboard/presentation/widgets/diary_day_notes_overview_list_item.dart';
 import 'package:day_tracker/features/day_rating/data/models/diary_day.dart';
+import 'package:day_tracker/features/day_rating/domain/providers/diary_day_local_db_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
-class DiaryDayOverviewListItem extends StatelessWidget {
+class DiaryDayOverviewListItem extends ConsumerWidget {
   final DiaryDay diaryDay;
   final Function(DiaryDay) onSelectDiaryDay;
 
@@ -15,7 +17,7 @@ class DiaryDayOverviewListItem extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
 
     return Card(
@@ -39,7 +41,7 @@ class DiaryDayOverviewListItem extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildHeader(context),
+              _buildHeader(context, ref),
               Divider(color: theme.colorScheme.outline.withValues(alpha: 0.2)),
               _buildRatingsSection(context),
               const SizedBox(height: 16),
@@ -51,7 +53,7 @@ class DiaryDayOverviewListItem extends StatelessWidget {
     );
   }
 
-  Widget _buildHeader(BuildContext context) {
+  Widget _buildHeader(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final date = diaryDay.day;
     final dateFormat = DateFormat('EEEE, MMMM d, yyyy');
@@ -86,6 +88,29 @@ class DiaryDayOverviewListItem extends StatelessWidget {
           ],
         ),
         const Spacer(),
+        // Favorite toggle button
+        IconButton(
+          icon: Icon(
+            diaryDay.isFavorite ? Icons.star : Icons.star_outline,
+            color: diaryDay.isFavorite
+                ? Colors.amber
+                : theme.colorScheme.onSecondaryContainer,
+          ),
+          onPressed: () {
+            final updated = DiaryDay(
+              day: diaryDay.day,
+              ratings: diaryDay.ratings,
+              isFavorite: !diaryDay.isFavorite,
+            );
+            updated.notes = diaryDay.notes;
+            ref
+                .read(diaryDayLocalDbDataProvider.notifier)
+                .addOrUpdateElement(updated);
+          },
+          tooltip: diaryDay.isFavorite
+              ? 'Remove from favorites'
+              : 'Add to favorites',
+        ),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
           decoration: BoxDecoration(

@@ -332,5 +332,17 @@
   "allCategories": "Alle Kategorien",
   "noNotesMatchSearch": "Keine Notizen entsprechen deiner Suche",
   "tryDifferentSearch": "Versuche, deine Suchkriterien anzupassen",
-  "nResultsFound": "{count, plural, =0{Keine Ergebnisse} =1{1 Ergebnis} other{{count} Ergebnisse}}"
+  "nResultsFound": "{count, plural, =0{Keine Ergebnisse} =1{1 Ergebnis} other{{count} Ergebnisse}}",
+
+  "favorites": "Favoriten",
+  "favoriteDays": "Lieblings-Tage",
+  "favoriteNotes": "Lieblings-Notizen",
+  "addToFavorites": "Zu Favoriten hinzufügen",
+  "removeFromFavorites": "Aus Favoriten entfernen",
+  "noFavorites": "Noch keine Favoriten",
+  "noFavoriteDays": "Keine Lieblings-Tage",
+  "noFavoriteNotes": "Keine Lieblings-Notizen",
+  "markAsFavorite": "Als Favorit markieren",
+  "unmarkAsFavorite": "Favorit aufheben",
+  "viewAll": "Alle anzeigen"
 }

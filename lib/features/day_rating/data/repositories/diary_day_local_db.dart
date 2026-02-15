@@ -11,7 +11,14 @@ class DiaryDayLocalDbHelper extends LocalDbHelper {
   Future<void> onCreateSqlTable() async {
     //* create table
     await database!.execute(
-        'CREATE TABLE IF NOT EXISTS $tableName ($primaryKey TEXT PRIMARY KEY, ratings TEXT)');
+        'CREATE TABLE IF NOT EXISTS $tableName ($primaryKey TEXT PRIMARY KEY, ratings TEXT, isFavorite INTEGER NOT NULL DEFAULT 0)');
+  }
+
+  @override
+  initDatabase() async {
+    await super.initDatabase();
+    // Migrate existing databases to add isFavorite column
+    await migrateAddColumn('isFavorite', 'INTEGER NOT NULL DEFAULT 0');
   }
 
   @override

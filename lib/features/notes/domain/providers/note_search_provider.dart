@@ -9,12 +9,14 @@ class NoteSearchState {
   final NoteCategory? categoryFilter;
   final DateTime? dateFrom;
   final DateTime? dateTo;
+  final bool favoritesOnly;
 
   const NoteSearchState({
     this.query = '',
     this.categoryFilter,
     this.dateFrom,
     this.dateTo,
+    this.favoritesOnly = false,
   });
 
   /// Returns true if any filter is active
@@ -22,13 +24,15 @@ class NoteSearchState {
       query.isNotEmpty ||
       categoryFilter != null ||
       dateFrom != null ||
-      dateTo != null;
+      dateTo != null ||
+      favoritesOnly;
 
   NoteSearchState copyWith({
     String? query,
     NoteCategory? Function()? categoryFilter,
     DateTime? Function()? dateFrom,
     DateTime? Function()? dateTo,
+    bool? favoritesOnly,
   }) {
     return NoteSearchState(
       query: query ?? this.query,
@@ -36,6 +40,7 @@ class NoteSearchState {
           categoryFilter != null ? categoryFilter() : this.categoryFilter,
       dateFrom: dateFrom != null ? dateFrom() : this.dateFrom,
       dateTo: dateTo != null ? dateTo() : this.dateTo,
+      favoritesOnly: favoritesOnly ?? this.favoritesOnly,
     );
   }
 
@@ -64,6 +69,10 @@ class NoteSearchProvider extends StateNotifier<NoteSearchState> {
     );
   }
 
+  void toggleFavoritesOnly() {
+    state = state.copyWith(favoritesOnly: !state.favoritesOnly);
+  }
+
   void clearAll() {
     state = const NoteSearchState();
   }
@@ -85,6 +94,11 @@ List<Note> filterNotes(List<Note> notes, NoteSearchState search) {
   }
 
   var filtered = notes.where((note) {
+    // Favorites filter
+    if (search.favoritesOnly && !note.isFavorite) {
+      return false;
+    }
+
     // Text search (case-insensitive) - search in title and description
     if (search.query.isNotEmpty) {
       final q = search.query.toLowerCase();

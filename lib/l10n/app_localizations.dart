@@ -1925,6 +1925,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{count, plural, =0{No results} =1{1 result} other{{count} results}}'**
   String nResultsFound(int count);
+
+  /// No description provided for @favorites.
+  ///
+  /// In en, this message translates to:
+  /// **'Favorites'**
+  String get favorites;
+
+  /// No description provided for @favoriteDays.
+  ///
+  /// In en, this message translates to:
+  /// **'Favorite Days'**
+  String get favoriteDays;
+
+  /// No description provided for @favoriteNotes.
+  ///
+  /// In en, this message translates to:
+  /// **'Favorite Notes'**
+  String get favoriteNotes;
+
+  /// No description provided for @addToFavorites.
+  ///
+  /// In en, this message translates to:
+  /// **'Add to favorites'**
+  String get addToFavorites;
+
+  /// No description provided for @removeFromFavorites.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove from favorites'**
+  String get removeFromFavorites;
+
+  /// No description provided for @noFavorites.
+  ///
+  /// In en, this message translates to:
+  /// **'No favorites yet'**
+  String get noFavorites;
+
+  /// No description provided for @noFavoriteDays.
+  ///
+  /// In en, this message translates to:
+  /// **'No favorite days'**
+  String get noFavoriteDays;
+
+  /// No description provided for @noFavoriteNotes.
+  ///
+  /// In en, this message translates to:
+  /// **'No favorite notes'**
+  String get noFavoriteNotes;
+
+  /// No description provided for @markAsFavorite.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark as favorite'**
+  String get markAsFavorite;
+
+  /// No description provided for @unmarkAsFavorite.
+  ///
+  /// In en, this message translates to:
+  /// **'Unmark as favorite'**
+  String get unmarkAsFavorite;
+
+  /// No description provided for @viewAll.
+  ///
+  /// In en, this message translates to:
+  /// **'View All'**
+  String get viewAll;
 }
 
 class _AppLocalizationsDelegate

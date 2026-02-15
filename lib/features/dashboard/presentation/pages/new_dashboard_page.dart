@@ -2,6 +2,7 @@ import 'package:day_tracker/core/utils/responsive_breakpoints.dart';
 import 'package:day_tracker/features/dashboard/domain/providers/dashboard_stats_provider.dart';
 import 'package:day_tracker/features/dashboard/presentation/sections/insights_section.dart';
 import 'package:day_tracker/features/dashboard/presentation/sections/statistics_section.dart';
+import 'package:day_tracker/features/dashboard/presentation/widgets/favorites_section_widget.dart';
 import 'package:day_tracker/features/dashboard/presentation/widgets/quick_stats_header.dart';
 import 'package:day_tracker/features/dashboard/presentation/widgets/week_overview_widget.dart';
 import 'package:day_tracker/features/day_rating/presentation/pages/diary_day_wizard_page.dart';
@@ -68,11 +69,13 @@ class _NewDashboardPageState extends ConsumerState<NewDashboardPage> {
   Widget _buildMobileLayout() {
     return CustomScrollView(
       slivers: [
-        SliverToBoxAdapter(child: QuickStatsHeader()),
-        SliverToBoxAdapter(child: WeekOverviewWidget()),
-        SliverToBoxAdapter(child: StatisticsSection()),
-        SliverToBoxAdapter(child: InsightsSection()),
-        SliverToBoxAdapter(child: SizedBox(height: 80)), // Space for FAB
+        const SliverToBoxAdapter(child: QuickStatsHeader()),
+        const SliverToBoxAdapter(child: WeekOverviewWidget()),
+        const SliverToBoxAdapter(child: FavoritesSectionWidget()),
+        const SliverToBoxAdapter(child: SizedBox(height: 16)),
+        const SliverToBoxAdapter(child: StatisticsSection()),
+        const SliverToBoxAdapter(child: InsightsSection()),
+        const SliverToBoxAdapter(child: SizedBox(height: 80)), // Space for FAB
       ],
     );
   }
@@ -84,14 +87,16 @@ class _NewDashboardPageState extends ConsumerState<NewDashboardPage> {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(child: QuickStatsHeader()),
-              Expanded(child: WeekOverviewWidget()),
+              const Expanded(child: QuickStatsHeader()),
+              const Expanded(child: WeekOverviewWidget()),
             ],
           ),
         ),
-        SliverToBoxAdapter(child: StatisticsSection()),
-        SliverToBoxAdapter(child: InsightsSection()),
-        SliverToBoxAdapter(child: SizedBox(height: 80)), // Space for FAB
+        const SliverToBoxAdapter(child: FavoritesSectionWidget()),
+        const SliverToBoxAdapter(child: SizedBox(height: 16)),
+        const SliverToBoxAdapter(child: StatisticsSection()),
+        const SliverToBoxAdapter(child: InsightsSection()),
+        const SliverToBoxAdapter(child: SizedBox(height: 80)), // Space for FAB
       ],
     );
   }
@@ -114,6 +119,8 @@ class _NewDashboardPageState extends ConsumerState<NewDashboardPage> {
                 slivers: [
                   const SliverToBoxAdapter(child: QuickStatsHeader()),
                   const SliverToBoxAdapter(child: WeekOverviewWidget()),
+                  const SliverToBoxAdapter(child: FavoritesSectionWidget()),
+                  const SliverToBoxAdapter(child: SizedBox(height: 16)),
                   const SliverToBoxAdapter(child: StatisticsSection()),
                   const SliverToBoxAdapter(child: SizedBox(height: 80)), // Space for FAB
                 ],

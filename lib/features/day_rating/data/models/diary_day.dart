@@ -10,14 +10,16 @@ class DiaryDay implements LocalDbElement {
   DateTime day; //! the day for which the diary note is be done
   List<Note> notes = []; //! the list of connected notes
   List<DayRating> ratings;
+  bool isFavorite; //! mark this day as favorite
 
   DiaryDay({
     required this.day,
     required this.ratings,
+    this.isFavorite = false,
   });
 
   factory DiaryDay.fromEmpty() {
-    return DiaryDay(day: DateTime.now(), ratings: []);
+    return DiaryDay(day: DateTime.now(), ratings: [], isFavorite: false);
   }
 
   int get overallScore {
@@ -42,6 +44,7 @@ class DiaryDay implements LocalDbElement {
       'day': Utils.toDate(day),
       'ratings': ratingsList,
       'notes': notesList,
+      'isFavorite': isFavorite,
     };
   }
 
@@ -54,7 +57,11 @@ class DiaryDay implements LocalDbElement {
     for (Map<String, dynamic> notes in map['notes']) {
       noteList.add(Note.fromMap(notes));
     }
-    var diaryDay = DiaryDay(day: Utils.fromDate(map['day']), ratings: ratings);
+    var diaryDay = DiaryDay(
+      day: Utils.fromDate(map['day']),
+      ratings: ratings,
+      isFavorite: map['isFavorite'] ?? false,
+    );
     diaryDay.notes = noteList;
     return diaryDay;
   }
@@ -69,7 +76,11 @@ class DiaryDay implements LocalDbElement {
         LogWrapper.logger.e('cannot read $rating');
       }
     }
-    return DiaryDay(day: Utils.fromDate(map['day']), ratings: ratings);
+    return DiaryDay(
+      day: Utils.fromDate(map['day']),
+      ratings: ratings,
+      isFavorite: (map['isFavorite'] ?? 0) == 1,
+    );
   }
 
   @override
@@ -83,7 +94,11 @@ class DiaryDay implements LocalDbElement {
         LogWrapper.logger.e('cannot read $rating');
       }
     }
-    return DiaryDay(day: Utils.fromDate(map['day']), ratings: ratings);
+    return DiaryDay(
+      day: Utils.fromDate(map['day']),
+      ratings: ratings,
+      isFavorite: (map['isFavorite'] ?? 0) == 1,
+    );
   }
 
   @override
@@ -96,6 +111,7 @@ class DiaryDay implements LocalDbElement {
     return {
       'day': Utils.toDate(ddMap.day),
       'ratings': jsonEncode(ratingsList),
+      'isFavorite': ddMap.isFavorite ? 1 : 0,
     };
   }
 
