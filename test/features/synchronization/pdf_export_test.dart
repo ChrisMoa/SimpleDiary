@@ -1066,8 +1066,8 @@ void main() {
       final pdfBytes = await generator.generate();
       expect(pdfBytes[0], 0x25); // %PDF
       final text = extractPdfText(pdfBytes);
-      // Overall score is 20 (5+5+5+5), should appear in table as "20/20"
-      expect(text, contains('20/20'));
+      // Overall score is 20 (5+5+5+5), should appear as "Score: 20"
+      expect(text, contains('Score: 20'));
     });
 
     test('handles minimum scores (all 1s)', () async {
@@ -1094,8 +1094,8 @@ void main() {
       final pdfBytes = await generator.generate();
       expect(pdfBytes[0], 0x25); // %PDF
       final text = extractPdfText(pdfBytes);
-      // Overall score is 4 (1+1+1+1), should appear in table as "4/20"
-      expect(text, contains('4/20'));
+      // Overall score is 4 (1+1+1+1), should appear as "Score: 4"
+      expect(text, contains('Score: 4'));
     });
 
     test('handles date range spanning year boundary', () async {
