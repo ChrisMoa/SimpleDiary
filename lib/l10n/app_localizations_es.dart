@@ -853,46 +853,47 @@ class AppLocalizationsEs extends AppLocalizations {
   String get testConnection => 'Probar Conexión';
 
   @override
-  String get pdfExport => 'PDF Export';
+  String get pdfExport => 'Exportar PDF';
 
   @override
   String get pdfExportDescription =>
-      'Generate printable PDF reports with your diary entries, ratings, and statistics.';
+      'Genera informes PDF imprimibles con tus entradas de diario, calificaciones y estadísticas.';
 
   @override
-  String get quickExport => 'Quick Export';
+  String get quickExport => 'Exportación Rápida';
 
   @override
-  String get lastWeek => 'Last 7 Days';
+  String get lastWeek => 'Últimos 7 Días';
 
   @override
-  String get lastMonth => 'Last 30 Days';
+  String get lastMonth => 'Últimos 30 Días';
 
   @override
-  String get currentMonth => 'This Month';
+  String get currentMonth => 'Este Mes';
 
   @override
   String get selectDateRangeForReport =>
-      'Select a custom date range for your report';
+      'Selecciona un rango de fechas personalizado para tu informe';
 
   @override
-  String get exportAllData => 'Export All Data';
+  String get exportAllData => 'Exportar Todos los Datos';
 
   @override
-  String get generatePdfWithAllData => 'Generate PDF report with all your data';
+  String get generatePdfWithAllData =>
+      'Generar informe PDF con todos tus datos';
 
   @override
-  String get selectDateRange => 'Select date range for report';
+  String get selectDateRange => 'Seleccionar rango de fechas para el informe';
 
   @override
-  String get export => 'Export';
+  String get export => 'Exportar';
 
   @override
-  String get pdfExportSuccess => 'PDF report generated successfully';
+  String get pdfExportSuccess => 'Informe PDF generado exitosamente';
 
   @override
   String pdfExportError(String error) {
-    return 'Failed to generate PDF: $error';
+    return 'Error al generar PDF: $error';
   }
 
   @override
