@@ -9,7 +9,7 @@
 | Property | Value |
 |----------|-------|
 | **App Name** | SimpleDiary (package: `day_tracker`) |
-| **Version** | 1.0.4+1 |
+| **Version** | 1.0.5+1 |
 | **Platform Support** | Android, Linux, Windows |
 | **Dart SDK** | >=3.0.3 <4.0.0 |
 | **Flutter Version (CI)** | 3.29.3 stable |
