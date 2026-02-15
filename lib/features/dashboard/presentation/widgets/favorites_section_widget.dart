@@ -51,6 +51,7 @@ class FavoritesSectionWidget extends ConsumerWidget {
                 l10n.favorites,
                 style: theme.textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.bold,
+                  color: theme.colorScheme.onSurface,
                 ),
               ),
               const SizedBox(width: 8),

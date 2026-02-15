@@ -32,6 +32,7 @@ class FavoritesOverviewPage extends ConsumerWidget {
       appBar: AppBar(
         title: Text(l10n.favorites),
       ),
+      backgroundColor: theme.colorScheme.surface,
       body: items.isEmpty
           ? Center(
               child: Column(
