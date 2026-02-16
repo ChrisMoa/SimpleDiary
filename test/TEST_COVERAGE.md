@@ -1,6 +1,6 @@
 # Test Coverage
 
-**Total: 496 passing tests** across 34 test files (+ 11 optional Supabase integration tests)
+**Total: 522 passing tests** across 35 test files (+ 11 optional Supabase integration tests)
 
 Run all tests with:
 ```bash
@@ -63,9 +63,10 @@ flutter test test/core/ test/features/ test/l10n/
 | File | Tests | Covers |
 |------|-------|--------|
 | `repositories/dashboard_repository_test.dart` | 30 | **Streak calculation:** empty data, single day (today/yesterday), consecutive days, 2+ day gap breaks streak, single-day gap tolerance, longest vs current, inactive old entries, 7-day milestone, lastEntryDate. **isTodayLogged:** logged/not logged/empty. **Week stats:** empty data, average score, category averages, note counts per day, incomplete days. **Monthly trend:** empty data, week grouping, excludes other months. **Top activities:** empty, sorted by frequency, max 5. **Insights:** today-not-logged suggestion, perfect week achievement, best category, streak milestone. **generateDashboardStats:** combined output, empty data |
-| `models/dashboard_models_test.dart` | 25 | **StreakData:** empty factory, `isMilestone` (7/30/100/365 and non-milestones), `milestoneText` (Jahr/100 Tage/30 Tage/Woche/empty), `copyWith`. **WeekStats:** construction, `copyWith`. **DayScore:** construction, `copyWith`. **Insight:** construction (with/without metadata), `copyWith`, InsightType enum values. **DashboardStats:** construction, `copyWith` |
+| `models/dashboard_models_test.dart` | 25 | **StreakData:** empty factory, `isMilestone` (7/30/100/365 and non-milestones), `milestoneValue` (365/100/30/7/0), `copyWith`. **WeekStats:** construction, `copyWith`. **DayScore:** construction, `copyWith`. **Insight:** construction (with/without metadata), `copyWith`, InsightType enum values (9 types). **DashboardStats:** construction, `copyWith` |
+| `services/mood_correlation_service_test.dart` | 26 | **Correlation Analysis:** Pearson correlation (perfect positive/negative/no correlation/insufficient data/mismatched lengths/zero variance), activity-rating correlation (insufficient days/positive correlation detection/impact calculation/case-insensitive matching), strong correlation finding (empty/sorting/threshold filtering). **Day of Week Analysis:** best/worst day identification, day names, empty handling. **Trend Detection:** insufficient data/improving/declining/stable trends, all trends filtering. **Model Tests:** CorrelationResult (strengthLabel/isPositive), DayOfWeekAnalysis (variance threshold), TrendAnalysis (significance validation) |
 
-**Sources:** `lib/features/dashboard/data/repositories/dashboard_repository.dart`, `models/dashboard_stats.dart`, `streak_data.dart`, `week_stats.dart`, `insight.dart`
+**Sources:** `lib/features/dashboard/data/repositories/dashboard_repository.dart`, `data/services/mood_correlation_service.dart`, `data/models/dashboard_stats.dart`, `streak_data.dart`, `week_stats.dart`, `insight.dart`
 
 ### Day Rating (`test/features/day_rating/`)
 

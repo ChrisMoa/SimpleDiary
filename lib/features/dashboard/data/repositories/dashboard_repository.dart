@@ -4,11 +4,14 @@ import 'package:day_tracker/features/dashboard/data/models/dashboard_stats.dart'
 import 'package:day_tracker/features/dashboard/data/models/insight.dart';
 import 'package:day_tracker/features/dashboard/data/models/streak_data.dart';
 import 'package:day_tracker/features/dashboard/data/models/week_stats.dart';
+import 'package:day_tracker/features/dashboard/data/services/mood_correlation_service.dart';
 import 'package:day_tracker/features/day_rating/data/models/diary_day.dart';
+import 'package:day_tracker/features/day_rating/data/models/day_rating.dart';
 import 'package:day_tracker/features/notes/data/models/note.dart';
 
 /// Repository for dashboard data operations
 class DashboardRepository {
+  final MoodCorrelationService _correlationService = MoodCorrelationService();
   /// Calculate current streak from diary days
   StreakData calculateStreak(List<DiaryDay> diaryDays) {
     if (diaryDays.isEmpty) {
@@ -222,7 +225,13 @@ class DashboardRepository {
     final weekStats = calculateWeekStats(diaryDays, notes);
     final monthlyTrend = calculateMonthlyTrend(diaryDays);
     final topActivities = extractTopActivities(notes);
-    final insights = _generateInsights(streak, weekStats, todayLogged);
+    final insights = _generateInsights(
+      diaryDays: diaryDays,
+      notes: notes,
+      streak: streak,
+      weekStats: weekStats,
+      todayLogged: todayLogged,
+    );
 
     LogWrapper.logger.i('Generated dashboard stats');
 
@@ -240,14 +249,16 @@ class DashboardRepository {
   /// Titles and descriptions use English keys/fallbacks.
   /// The presentation layer should resolve localized strings
   /// based on InsightType and dynamicData.
-  List<Insight> _generateInsights(
-    StreakData streak,
-    WeekStats weekStats,
-    bool todayLogged,
-  ) {
-    List<Insight> insights = [];
+  List<Insight> _generateInsights({
+    required List<DiaryDay> diaryDays,
+    required List<Note> notes,
+    required StreakData streak,
+    required WeekStats weekStats,
+    required bool todayLogged,
+  }) {
+    final insights = <Insight>[];
 
-    // Streak milestone
+    // Existing basic insights
     if (streak.isMilestone) {
       insights.add(Insight(
         title: 'Streak Milestone',
@@ -258,7 +269,6 @@ class DashboardRepository {
       ));
     }
 
-    // Perfect week
     if (weekStats.completedDays == 7) {
       insights.add(Insight(
         title: 'Perfect Week',
@@ -268,7 +278,6 @@ class DashboardRepository {
       ));
     }
 
-    // Today not logged reminder
     if (!todayLogged) {
       insights.add(Insight(
         title: 'Not Recorded Today',
@@ -278,7 +287,6 @@ class DashboardRepository {
       ));
     }
 
-    // Best category
     if (weekStats.categoryAverages.isNotEmpty) {
       final bestCategory = weekStats.categoryAverages.entries
           .reduce((a, b) => a.value > b.value ? a : b);
@@ -288,9 +296,170 @@ class DashboardRepository {
         type: InsightType.improvement,
         icon: '📊',
         dynamicData: bestCategory.key,
+        metadata: {'category': bestCategory.key},
       ));
     }
 
+    // NEW: Pattern-based insights (only if sufficient data)
+    if (diaryDays.length >= 7) {
+      _addCorrelationInsights(insights, diaryDays);
+      _addTrendInsights(insights, diaryDays);
+      _addDayOfWeekInsights(insights, diaryDays);
+      _addRecommendations(insights, diaryDays);
+    }
+
     return insights;
+  }
+
+  void _addCorrelationInsights(List<Insight> insights, List<DiaryDay> diaryDays) {
+    final noteCategories = ['Work', 'Leisure', 'Food', 'Gym', 'Sleep'];
+
+    final correlations = _correlationService.findStrongCorrelations(
+      diaryDays: diaryDays,
+      noteCategories: noteCategories,
+      threshold: 0.35,
+    );
+
+    // Add top 2 correlations as insights
+    for (final correlation in correlations.take(2)) {
+      final isPositive = correlation.isPositive;
+      final ratingName = _formatRatingName(correlation.ratingCategory);
+      final activityName = correlation.noteCategory;
+
+      insights.add(Insight(
+        title: isPositive
+            ? '$activityName boosts $ratingName'
+            : '$activityName may affect $ratingName',
+        description: isPositive
+            ? 'Days with $activityName activities show ${correlation.impact.toStringAsFixed(1)} points higher $ratingName ratings on average.'
+            : 'Your $ratingName tends to be lower on days with $activityName. Consider balancing activities.',
+        type: InsightType.correlation,
+        icon: isPositive ? 'trending_up' : 'info',
+        patternData: PatternData(
+          patternType: 'correlation',
+          strength: correlation.correlation,
+          activityCategory: activityName,
+          ratingCategory: ratingName,
+          statistics: {
+            'withActivity': correlation.averageWithActivity,
+            'withoutActivity': correlation.averageWithoutActivity,
+            'sampleSize': correlation.sampleSize,
+          },
+        ),
+      ));
+    }
+  }
+
+  void _addTrendInsights(List<Insight> insights, List<DiaryDay> diaryDays) {
+    final trends = _correlationService.detectAllTrends(diaryDays);
+
+    for (final trend in trends
+        .where((t) => t.direction != TrendDirection.stable)
+        .take(2)) {
+      final ratingName = _formatRatingName(trend.ratingCategory);
+      final isImproving = trend.direction == TrendDirection.improving;
+
+      insights.add(Insight(
+        title: isImproving
+            ? '$ratingName is improving!'
+            : '$ratingName needs attention',
+        description: isImproving
+            ? 'Your $ratingName has improved by ${trend.absoluteChange.toStringAsFixed(1)} points recently. Keep it up!'
+            : 'Your $ratingName has declined by ${trend.absoluteChange.abs().toStringAsFixed(1)} points. Consider what might help.',
+        type: InsightType.trend,
+        icon: isImproving ? 'trending_up' : 'trending_down',
+        patternData: PatternData(
+          patternType: 'trend',
+          strength: trend.absoluteChange / 5.0, // Normalize to 0-1
+          ratingCategory: ratingName,
+          statistics: {
+            'previousAverage': trend.firstPeriodAverage,
+            'currentAverage': trend.secondPeriodAverage,
+            'percentChange': trend.percentChange,
+          },
+        ),
+      ));
+    }
+  }
+
+  void _addDayOfWeekInsights(List<Insight> insights, List<DiaryDay> diaryDays) {
+    final analysis = _correlationService.analyzeDayOfWeek(diaryDays);
+
+    if (analysis.hasSignificantVariance && analysis.bestDay != null) {
+      insights.add(Insight(
+        title: '${analysis.bestDayName}s are your best days',
+        description:
+            'You score ${analysis.bestDayAverage.toStringAsFixed(1)} on average on ${analysis.bestDayName}s, '
+            'compared to ${analysis.worstDayAverage.toStringAsFixed(1)} on ${analysis.worstDayName}s.',
+        type: InsightType.dayPattern,
+        icon: 'calendar_today',
+        patternData: PatternData(
+          patternType: 'dayOfWeek',
+          strength: analysis.variance / 20.0, // Normalize
+          statistics: {
+            'bestDay': analysis.bestDayName,
+            'worstDay': analysis.worstDayName,
+            'bestAverage': analysis.bestDayAverage,
+            'worstAverage': analysis.worstDayAverage,
+          },
+        ),
+      ));
+    }
+  }
+
+  void _addRecommendations(List<Insight> insights, List<DiaryDay> diaryDays) {
+    final noteCategories = ['Work', 'Leisure', 'Food', 'Gym', 'Sleep'];
+
+    final correlations = _correlationService.findStrongCorrelations(
+      diaryDays: diaryDays,
+      noteCategories: noteCategories,
+      threshold: 0.4,
+    );
+
+    // Find positive correlations with low activity frequency
+    for (final correlation in correlations.where((c) => c.isPositive).take(1)) {
+      final activityDays = diaryDays
+          .where((d) => d.notes
+              .any((n) => n.noteCategory.title == correlation.noteCategory))
+          .length;
+      final percentage = (activityDays / diaryDays.length) * 100;
+
+      if (percentage < 50) {
+        final ratingName = _formatRatingName(correlation.ratingCategory);
+
+        insights.add(Insight(
+          title: 'Try more ${correlation.noteCategory}',
+          description:
+              '${correlation.noteCategory} activities boost your $ratingName by '
+              '${correlation.impact.toStringAsFixed(1)} points, but you only do them '
+              '${percentage.toStringAsFixed(0)}% of days.',
+          type: InsightType.recommendation,
+          icon: 'lightbulb',
+          patternData: PatternData(
+            patternType: 'recommendation',
+            strength: correlation.correlation,
+            activityCategory: correlation.noteCategory,
+            ratingCategory: ratingName,
+            statistics: {
+              'currentFrequency': percentage,
+              'impact': correlation.impact,
+            },
+          ),
+        ));
+      }
+    }
+  }
+
+  String _formatRatingName(DayRatings rating) {
+    switch (rating) {
+      case DayRatings.social:
+        return 'Social';
+      case DayRatings.productivity:
+        return 'Productivity';
+      case DayRatings.sport:
+        return 'Sport';
+      case DayRatings.food:
+        return 'Food';
+    }
   }
 }

@@ -98,6 +98,12 @@
   "bestCategory": "Beste Kategorie",
   "bestCategoryDescription": "Deine beste Kategorie diese Woche: {category}!",
 
+  "moodPatterns": "Stimmungsmuster",
+  "patternInsight": "Muster",
+  "trendInsight": "Trend",
+  "weeklyInsight": "Wöchentlich",
+  "tipInsight": "Tipp",
+
   "dayDetail": "Tagesdetail: {date}",
   "noDiaryEntryForDay": "Kein Tagebucheintrag f\u00fcr diesen Tag",
   "errorLoadingNotes": "Fehler beim Laden der Notizen: {error}",

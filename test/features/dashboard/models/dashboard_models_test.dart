@@ -69,55 +69,55 @@ void main() {
       });
     });
 
-    group('milestoneText', () {
-      test('365+ returns 1 Jahr text', () {
+    group('milestoneValue', () {
+      test('365+ returns 365', () {
         final streak = StreakData(
           currentStreak: 365,
           longestStreak: 365,
           streakDates: [],
           isActive: true,
         );
-        expect(streak.milestoneText, contains('Jahr'));
+        expect(streak.milestoneValue, 365);
       });
 
-      test('100+ returns 100 Tage text', () {
+      test('100+ returns 100', () {
         final streak = StreakData(
           currentStreak: 100,
           longestStreak: 100,
           streakDates: [],
           isActive: true,
         );
-        expect(streak.milestoneText, contains('100'));
+        expect(streak.milestoneValue, 100);
       });
 
-      test('30+ returns 30 Tage text', () {
+      test('30+ returns 30', () {
         final streak = StreakData(
           currentStreak: 30,
           longestStreak: 30,
           streakDates: [],
           isActive: true,
         );
-        expect(streak.milestoneText, contains('30'));
+        expect(streak.milestoneValue, 30);
       });
 
-      test('7+ returns 1 Woche text', () {
+      test('7+ returns 7', () {
         final streak = StreakData(
           currentStreak: 7,
           longestStreak: 7,
           streakDates: [],
           isActive: true,
         );
-        expect(streak.milestoneText, contains('Woche'));
+        expect(streak.milestoneValue, 7);
       });
 
-      test('below 7 returns empty string', () {
+      test('below 7 returns 0', () {
         final streak = StreakData(
           currentStreak: 3,
           longestStreak: 3,
           streakDates: [],
           isActive: true,
         );
-        expect(streak.milestoneText, '');
+        expect(streak.milestoneValue, 0);
       });
     });
 
@@ -237,7 +237,11 @@ void main() {
       expect(InsightType.values, contains(InsightType.warning));
       expect(InsightType.values, contains(InsightType.suggestion));
       expect(InsightType.values, contains(InsightType.milestone));
-      expect(InsightType.values.length, 5);
+      expect(InsightType.values, contains(InsightType.correlation));
+      expect(InsightType.values, contains(InsightType.trend));
+      expect(InsightType.values, contains(InsightType.dayPattern));
+      expect(InsightType.values, contains(InsightType.recommendation));
+      expect(InsightType.values.length, 9); // Added pattern insight types
     });
   });
 

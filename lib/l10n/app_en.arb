@@ -128,6 +128,12 @@
     }
   },
 
+  "moodPatterns": "Mood Patterns",
+  "patternInsight": "Pattern",
+  "trendInsight": "Trend",
+  "weeklyInsight": "Weekly",
+  "tipInsight": "Tip",
+
   "dayDetail": "Day Detail: {date}",
   "@dayDetail": {
     "placeholders": {
