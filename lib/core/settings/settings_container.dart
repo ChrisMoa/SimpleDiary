@@ -39,7 +39,13 @@ class SettingsContainer {
       settingsFile.createSync(recursive: true);
       userSettings = [UserSettings.fromEmpty()];
     } else {
-      settingsAsJson = json.decode(settingsFile.readAsStringSync());
+      final fileContent = settingsFile.readAsStringSync();
+      if (fileContent.isNotEmpty) {
+        settingsAsJson = json.decode(fileContent);
+      } else {
+        // Handle empty settings file (treat as new)
+        userSettings = [UserSettings.fromEmpty()];
+      }
     }
     lastLoggedInUsername = settingsAsJson['lastLoggedInUsername'] ?? '';
 

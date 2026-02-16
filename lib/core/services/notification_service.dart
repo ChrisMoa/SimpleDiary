@@ -31,6 +31,14 @@ class NotificationService {
 
       // Initialize timezone database
       tz.initializeTimeZones();
+      // Set local timezone to device's timezone
+      final String timeZoneName = DateTime.now().timeZoneName;
+      try {
+        tz.setLocalLocation(tz.getLocation(timeZoneName));
+      } catch (e) {
+        // If timezone name not found, try with Europe/Berlin or UTC
+        LogWrapper.logger.w('Timezone $timeZoneName not found, using local default');
+      }
 
       // Initialize notifications plugin
       const androidSettings = AndroidInitializationSettings('@mipmap/ic_launcher');
@@ -50,6 +58,21 @@ class NotificationService {
         initSettings,
         onDidReceiveNotificationResponse: _onNotificationTapped,
       );
+
+      // Create Android notification channel
+      const androidChannel = AndroidNotificationChannel(
+        'diary_reminders',
+        'Diary Reminders',
+        description: 'Daily reminders to write diary entries',
+        importance: Importance.high,
+        playSound: true,
+        enableVibration: true,
+      );
+
+      await _notificationsPlugin
+          .resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin>()
+          ?.createNotificationChannel(androidChannel);
 
       // Initialize Workmanager for background tasks
       await Workmanager().initialize(
@@ -71,15 +94,25 @@ class NotificationService {
       LogWrapper.logger.d('Requesting notification permissions');
 
       // Request notification permission
-      final status = await Permission.notification.request();
+      final notificationStatus = await Permission.notification.request();
 
-      if (status.isGranted) {
-        LogWrapper.logger.i('Notification permission granted');
-        return true;
-      } else {
+      if (!notificationStatus.isGranted) {
         LogWrapper.logger.w('Notification permission denied');
         return false;
       }
+
+      LogWrapper.logger.i('Notification permission granted');
+
+      // Request exact alarm permission (required for Android 12+)
+      final exactAlarmStatus = await Permission.scheduleExactAlarm.request();
+
+      if (!exactAlarmStatus.isGranted) {
+        LogWrapper.logger.w('Exact alarm permission denied');
+        return false;
+      }
+
+      LogWrapper.logger.i('Exact alarm permission granted');
+      return true;
     } catch (e) {
       LogWrapper.logger.e('Error requesting notification permissions: $e');
       return false;
@@ -144,7 +177,7 @@ class NotificationService {
           'diary_reminder_check',
           frequency: const Duration(hours: 1),
           constraints: Constraints(
-            networkType: NetworkType.not_required,
+            networkType: NetworkType.notRequired,
           ),
         );
       }
