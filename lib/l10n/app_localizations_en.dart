@@ -281,6 +281,21 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get moodPatterns => 'Mood Patterns';
+
+  @override
+  String get patternInsight => 'Pattern';
+
+  @override
+  String get trendInsight => 'Trend';
+
+  @override
+  String get weeklyInsight => 'Weekly';
+
+  @override
+  String get tipInsight => 'Tip';
+
+  @override
   String dayDetail(String date) {
     return 'Day Detail: $date';
   }

@@ -288,6 +288,21 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
+  String get moodPatterns => 'Modèles d\'Humeur';
+
+  @override
+  String get patternInsight => 'Modèle';
+
+  @override
+  String get trendInsight => 'Tendance';
+
+  @override
+  String get weeklyInsight => 'Hebdomadaire';
+
+  @override
+  String get tipInsight => 'Conseil';
+
+  @override
   String dayDetail(String date) {
     return 'Détail du Jour : $date';
   }
