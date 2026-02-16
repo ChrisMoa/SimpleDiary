@@ -22,8 +22,8 @@ class InsightCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(12),
           gradient: LinearGradient(
             colors: [
-              color.withOpacity(0.1),
-              color.withOpacity(0.05),
+              color.withValues(alpha: 0.1),
+              color.withValues(alpha: 0.05),
             ],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
@@ -38,7 +38,7 @@ class InsightCard extends StatelessWidget {
                 width: 48,
                 height: 48,
                 decoration: BoxDecoration(
-                  color: color.withOpacity(0.2),
+                  color: color.withValues(alpha: 0.2),
                   shape: BoxShape.circle,
                 ),
                 child: Center(
@@ -93,6 +93,14 @@ class InsightCard extends StatelessWidget {
         return colorScheme.primary;
       case InsightType.milestone:
         return colorScheme.primary;
+      case InsightType.correlation:
+        return Colors.blue;
+      case InsightType.trend:
+        return Colors.green;
+      case InsightType.dayPattern:
+        return Colors.orange;
+      case InsightType.recommendation:
+        return Colors.purple;
     }
   }
 }

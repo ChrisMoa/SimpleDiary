@@ -98,6 +98,12 @@
   "bestCategory": "Meilleure Catégorie",
   "bestCategoryDescription": "Votre meilleure catégorie cette semaine : {category} !",
 
+  "moodPatterns": "Modèles d'Humeur",
+  "patternInsight": "Modèle",
+  "trendInsight": "Tendance",
+  "weeklyInsight": "Hebdomadaire",
+  "tipInsight": "Conseil",
+
   "dayDetail": "Détail du Jour : {date}",
   "noDiaryEntryForDay": "Aucune entrée de journal pour ce jour",
   "errorLoadingNotes": "Erreur lors du chargement des notes : {error}",

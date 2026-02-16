@@ -6,6 +6,7 @@ import 'package:day_tracker/features/day_rating/data/models/diary_day.dart';
 import 'package:day_tracker/features/notes/data/models/note.dart';
 import 'package:day_tracker/features/dashboard/data/models/week_stats.dart';
 import 'package:day_tracker/features/dashboard/data/models/streak_data.dart';
+import 'package:day_tracker/features/dashboard/data/models/insight.dart';
 import 'package:day_tracker/features/dashboard/data/repositories/dashboard_repository.dart';
 
 /// Generates PDF reports from diary data
@@ -47,9 +48,13 @@ class PdfReportGenerator {
     final streak = _repository.calculateStreak(diaryDays); // Full data for streak
     final topActivities = _extractTopActivities(filteredNotes);
 
+    // Generate insights
+    final dashboardStats = _repository.generateDashboardStats(filteredDays, filteredNotes);
+    final insights = dashboardStats.insights;
+
     // Build PDF pages
     _pdf.addPage(_buildCoverPage());
-    _pdf.addPage(_buildSummaryPage(rangeStats, streak, topActivities));
+    _pdf.addPage(_buildSummaryPage(rangeStats, streak, topActivities, insights));
     _addChartsAndBreakdownPages(rangeStats);
     _addDiaryPages(filteredDays);
 
@@ -239,6 +244,7 @@ class PdfReportGenerator {
     WeekStats weekStats,
     StreakData streak,
     List<String> topActivities,
+    List<dynamic> insights,
   ) {
     return pw.Page(
       pageFormat: PdfPageFormat.a4,
@@ -329,6 +335,49 @@ class PdfReportGenerator {
                   );
                 }).toList(),
               ),
+              pw.SizedBox(height: 30),
+            ],
+
+            // Mood Patterns & Insights
+            if (insights.isNotEmpty) ...[
+              _buildSectionHeader('Mood Patterns & Insights'),
+              pw.SizedBox(height: 16),
+              ...insights.take(5).map((insight) {
+                final insightObj = insight as Insight;
+                return pw.Container(
+                  margin: const pw.EdgeInsets.only(bottom: 12),
+                  padding: const pw.EdgeInsets.all(12),
+                  decoration: pw.BoxDecoration(
+                    color: _getInsightColor(insightObj.type),
+                    borderRadius: pw.BorderRadius.circular(8),
+                    border: pw.Border.all(
+                      color: _getInsightBorderColor(insightObj.type),
+                      width: 1,
+                    ),
+                  ),
+                  child: pw.Column(
+                    crossAxisAlignment: pw.CrossAxisAlignment.start,
+                    children: [
+                      pw.Text(
+                        insightObj.title,
+                        style: pw.TextStyle(
+                          fontSize: 12,
+                          fontWeight: pw.FontWeight.bold,
+                          color: _getInsightBorderColor(insightObj.type),
+                        ),
+                      ),
+                      pw.SizedBox(height: 4),
+                      pw.Text(
+                        insightObj.description,
+                        style: const pw.TextStyle(
+                          fontSize: 10,
+                          color: PdfColors.grey800,
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }),
             ],
           ],
         );
@@ -1166,6 +1215,48 @@ class PdfReportGenerator {
         return PdfColors.grey;
       default:
         return PdfColors.blueGrey;
+    }
+  }
+
+  PdfColor _getInsightColor(InsightType type) {
+    switch (type) {
+      case InsightType.correlation:
+        return _lighten(PdfColors.blue, 0.85);
+      case InsightType.trend:
+        return _lighten(PdfColors.green, 0.85);
+      case InsightType.dayPattern:
+        return _lighten(PdfColors.orange, 0.85);
+      case InsightType.recommendation:
+        return _lighten(PdfColors.purple, 0.85);
+      case InsightType.achievement:
+      case InsightType.improvement:
+      case InsightType.milestone:
+        return _lighten(_primaryColor, 0.85);
+      case InsightType.warning:
+        return _lighten(PdfColors.red, 0.85);
+      case InsightType.suggestion:
+        return _lighten(PdfColors.amber, 0.85);
+    }
+  }
+
+  PdfColor _getInsightBorderColor(InsightType type) {
+    switch (type) {
+      case InsightType.correlation:
+        return PdfColors.blue;
+      case InsightType.trend:
+        return PdfColors.green;
+      case InsightType.dayPattern:
+        return PdfColors.orange;
+      case InsightType.recommendation:
+        return PdfColors.purple;
+      case InsightType.achievement:
+      case InsightType.improvement:
+      case InsightType.milestone:
+        return _primaryColor;
+      case InsightType.warning:
+        return PdfColors.red;
+      case InsightType.suggestion:
+        return PdfColors.amber;
     }
   }
 }

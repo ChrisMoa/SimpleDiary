@@ -612,6 +612,36 @@ abstract class AppLocalizations {
   /// **'Your best category this week: {category}!'**
   String bestCategoryDescription(String category);
 
+  /// No description provided for @moodPatterns.
+  ///
+  /// In en, this message translates to:
+  /// **'Mood Patterns'**
+  String get moodPatterns;
+
+  /// No description provided for @patternInsight.
+  ///
+  /// In en, this message translates to:
+  /// **'Pattern'**
+  String get patternInsight;
+
+  /// No description provided for @trendInsight.
+  ///
+  /// In en, this message translates to:
+  /// **'Trend'**
+  String get trendInsight;
+
+  /// No description provided for @weeklyInsight.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly'**
+  String get weeklyInsight;
+
+  /// No description provided for @tipInsight.
+  ///
+  /// In en, this message translates to:
+  /// **'Tip'**
+  String get tipInsight;
+
   /// No description provided for @dayDetail.
   ///
   /// In en, this message translates to:

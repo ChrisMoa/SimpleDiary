@@ -287,6 +287,21 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
+  String get moodPatterns => 'Patrones de Humor';
+
+  @override
+  String get patternInsight => 'Patrón';
+
+  @override
+  String get trendInsight => 'Tendencia';
+
+  @override
+  String get weeklyInsight => 'Semanal';
+
+  @override
+  String get tipInsight => 'Consejo';
+
+  @override
   String dayDetail(String date) {
     return 'Detalle del Día: $date';
   }

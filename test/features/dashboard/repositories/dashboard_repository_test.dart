@@ -133,7 +133,7 @@ void main() {
 
         expect(streak.currentStreak, 7);
         expect(streak.isMilestone, true);
-        expect(streak.milestoneText, contains('Woche'));
+        expect(streak.milestoneValue, 7);
       });
 
       test('lastEntryDate is the most recent day', () {

@@ -5,6 +5,11 @@ enum InsightType {
   warning,
   suggestion,
   milestone,
+  // NEW types for pattern analysis
+  correlation, // Activity correlates with rating
+  trend, // Rating trending up/down
+  dayPattern, // Best/worst day of week
+  recommendation, // Actionable suggestion
 }
 
 /// Insight model for displaying smart insights to the user
@@ -16,6 +21,7 @@ class Insight {
   final DateTime createdAt;
   final Map<String, dynamic>? metadata;
   final String? dynamicData;
+  final PatternData? patternData; // NEW
 
   Insight({
     required this.title,
@@ -25,6 +31,7 @@ class Insight {
     DateTime? createdAt,
     this.metadata,
     this.dynamicData,
+    this.patternData, // NEW
   }) : createdAt = createdAt ?? DateTime.now();
 
   Insight copyWith({
@@ -35,6 +42,7 @@ class Insight {
     DateTime? createdAt,
     Map<String, dynamic>? metadata,
     String? dynamicData,
+    PatternData? patternData,
   }) {
     return Insight(
       title: title ?? this.title,
@@ -44,6 +52,30 @@ class Insight {
       createdAt: createdAt ?? this.createdAt,
       metadata: metadata ?? this.metadata,
       dynamicData: dynamicData ?? this.dynamicData,
+      patternData: patternData ?? this.patternData,
     );
   }
+}
+
+/// Data for pattern-based insights
+class PatternData {
+  final String patternType; // 'correlation', 'trend', 'dayOfWeek'
+  final double strength; // 0.0 - 1.0
+  final String? activityCategory;
+  final String? ratingCategory;
+  final Map<String, dynamic>? statistics;
+
+  PatternData({
+    required this.patternType,
+    required this.strength,
+    this.activityCategory,
+    this.ratingCategory,
+    this.statistics,
+  });
+
+  /// Strength as percentage (0-100)
+  int get strengthPercent => (strength.abs() * 100).round();
+
+  /// Is this a strong pattern worth highlighting?
+  bool get isStrong => strength.abs() >= 0.4;
 }

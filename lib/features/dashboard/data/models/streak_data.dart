@@ -37,12 +37,13 @@ class StreakData {
         currentStreak == 365;
   }
 
-  String get milestoneText {
-    if (currentStreak >= 365) return '🎉 1 Jahr Streak!';
-    if (currentStreak >= 100) return '💯 100 Tage Streak!';
-    if (currentStreak >= 30) return '🌟 30 Tage Streak!';
-    if (currentStreak >= 7) return '🔥 1 Woche Streak!';
-    return '';
+  /// Returns milestone value for display (use localization in UI layer)
+  int get milestoneValue {
+    if (currentStreak >= 365) return 365;
+    if (currentStreak >= 100) return 100;
+    if (currentStreak >= 30) return 30;
+    if (currentStreak >= 7) return 7;
+    return 0;
   }
 
   factory StreakData.empty() {
