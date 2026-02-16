@@ -1168,4 +1168,99 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get selectReminderTime => 'Erinnerungszeit auswählen';
+
+  @override
+  String get goalsSectionTitle => 'Ziele';
+
+  @override
+  String get goalCreateNew => 'Ziel erstellen';
+
+  @override
+  String get goalCreate => 'Erstellen';
+
+  @override
+  String get goalSelectCategory => 'Welchen Bereich möchtest du verbessern?';
+
+  @override
+  String get goalSelectTimeframe => 'Wähle deinen Zeitrahmen';
+
+  @override
+  String get goalSetTarget => 'Setze dein Ziel';
+
+  @override
+  String goalTargetHint(String category) {
+    return 'Welchen Durchschnitt für $category möchtest du erreichen?';
+  }
+
+  @override
+  String get goalWeekly => 'Wöchentlich';
+
+  @override
+  String get goalMonthly => 'Monatlich';
+
+  @override
+  String get goalDaysLeft => 'Tage übrig';
+
+  @override
+  String get goalDaysRemaining => 'Tage übrig';
+
+  @override
+  String get goalCurrentAverage => 'Aktuell';
+
+  @override
+  String get goalTarget => 'Ziel';
+
+  @override
+  String get goalTargetLabel => 'Zielpunktzahl';
+
+  @override
+  String goalSuggestedTarget(String target) {
+    return 'Basierend auf deiner Historie empfehlen wir $target';
+  }
+
+  @override
+  String get goalUseSuggestion => 'Nutzen';
+
+  @override
+  String get goalEmptyTitle => 'Keine aktiven Ziele';
+
+  @override
+  String get goalEmptySubtitle =>
+      'Setze ein Ziel um deinen Fortschritt zu verfolgen und motiviert zu bleiben';
+
+  @override
+  String get goalSetFirst => 'Erstes Ziel setzen';
+
+  @override
+  String get goalStatusOnTrack => 'Auf Kurs';
+
+  @override
+  String get goalStatusBehind => 'Braucht Aufmerksamkeit';
+
+  @override
+  String get goalStatusAhead => 'Übertrifft Ziel!';
+
+  @override
+  String get goalStatusCompleted => 'Ziel erreicht!';
+
+  @override
+  String get goalStatusFailed => 'Ziel nicht erreicht';
+
+  @override
+  String get goalStreak => 'Ziel-Serie';
+
+  @override
+  String get goalHistory => 'Ziel-Verlauf';
+
+  @override
+  String get goalSuccessRate => 'Erfolgsrate';
+
+  @override
+  String get days => 'Tage';
+
+  @override
+  String get back => 'Zurück';
+
+  @override
+  String get next => 'Weiter';
 }

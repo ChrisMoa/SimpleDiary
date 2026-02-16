@@ -531,5 +531,42 @@
   "streakWarnings": "Streak Warnings",
   "streakWarningsDescription": "Get notified when your writing streak is at risk",
   "notificationPermissionDenied": "Notification permission was denied. Please enable it in settings.",
-  "selectReminderTime": "Select reminder time"
+  "selectReminderTime": "Select reminder time",
+
+  "goalsSectionTitle": "Goals",
+  "goalCreateNew": "Create Goal",
+  "goalCreate": "Create",
+  "goalSelectCategory": "Which area do you want to improve?",
+  "goalSelectTimeframe": "Choose your timeframe",
+  "goalSetTarget": "Set your target",
+  "goalTargetHint": "What average {category} score do you want to achieve?",
+  "@goalTargetHint": {
+    "placeholders": { "category": {"type": "String"} }
+  },
+  "goalWeekly": "Weekly",
+  "goalMonthly": "Monthly",
+  "goalDaysLeft": "days left",
+  "goalDaysRemaining": "Days Left",
+  "goalCurrentAverage": "Current",
+  "goalTarget": "Target",
+  "goalTargetLabel": "Target Score",
+  "goalSuggestedTarget": "Based on your history, we suggest {target}",
+  "@goalSuggestedTarget": {
+    "placeholders": { "target": {"type": "String"} }
+  },
+  "goalUseSuggestion": "Use",
+  "goalEmptyTitle": "No active goals",
+  "goalEmptySubtitle": "Set a goal to track your progress and stay motivated",
+  "goalSetFirst": "Set Your First Goal",
+  "goalStatusOnTrack": "On track",
+  "goalStatusBehind": "Needs attention",
+  "goalStatusAhead": "Exceeding target!",
+  "goalStatusCompleted": "Goal achieved!",
+  "goalStatusFailed": "Goal not met",
+  "goalStreak": "Goal Streak",
+  "goalHistory": "Goal History",
+  "goalSuccessRate": "Success Rate",
+  "days": "days",
+  "back": "Back",
+  "next": "Next"
 }

@@ -1152,4 +1152,99 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get selectReminderTime => 'Select reminder time';
+
+  @override
+  String get goalsSectionTitle => 'Goals';
+
+  @override
+  String get goalCreateNew => 'Create Goal';
+
+  @override
+  String get goalCreate => 'Create';
+
+  @override
+  String get goalSelectCategory => 'Which area do you want to improve?';
+
+  @override
+  String get goalSelectTimeframe => 'Choose your timeframe';
+
+  @override
+  String get goalSetTarget => 'Set your target';
+
+  @override
+  String goalTargetHint(String category) {
+    return 'What average $category score do you want to achieve?';
+  }
+
+  @override
+  String get goalWeekly => 'Weekly';
+
+  @override
+  String get goalMonthly => 'Monthly';
+
+  @override
+  String get goalDaysLeft => 'days left';
+
+  @override
+  String get goalDaysRemaining => 'Days Left';
+
+  @override
+  String get goalCurrentAverage => 'Current';
+
+  @override
+  String get goalTarget => 'Target';
+
+  @override
+  String get goalTargetLabel => 'Target Score';
+
+  @override
+  String goalSuggestedTarget(String target) {
+    return 'Based on your history, we suggest $target';
+  }
+
+  @override
+  String get goalUseSuggestion => 'Use';
+
+  @override
+  String get goalEmptyTitle => 'No active goals';
+
+  @override
+  String get goalEmptySubtitle =>
+      'Set a goal to track your progress and stay motivated';
+
+  @override
+  String get goalSetFirst => 'Set Your First Goal';
+
+  @override
+  String get goalStatusOnTrack => 'On track';
+
+  @override
+  String get goalStatusBehind => 'Needs attention';
+
+  @override
+  String get goalStatusAhead => 'Exceeding target!';
+
+  @override
+  String get goalStatusCompleted => 'Goal achieved!';
+
+  @override
+  String get goalStatusFailed => 'Goal not met';
+
+  @override
+  String get goalStreak => 'Goal Streak';
+
+  @override
+  String get goalHistory => 'Goal History';
+
+  @override
+  String get goalSuccessRate => 'Success Rate';
+
+  @override
+  String get days => 'days';
+
+  @override
+  String get back => 'Back';
+
+  @override
+  String get next => 'Next';
 }
