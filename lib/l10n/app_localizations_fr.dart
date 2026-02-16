@@ -1131,4 +1131,99 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get viewAll => 'Voir tout';
+
+  @override
+  String get goalsSectionTitle => 'Objectifs';
+
+  @override
+  String get goalCreateNew => 'Créer un Objectif';
+
+  @override
+  String get goalCreate => 'Créer';
+
+  @override
+  String get goalSelectCategory => 'Quel domaine souhaitez-vous améliorer ?';
+
+  @override
+  String get goalSelectTimeframe => 'Choisissez votre période';
+
+  @override
+  String get goalSetTarget => 'Définissez votre objectif';
+
+  @override
+  String goalTargetHint(String category) {
+    return 'Quelle moyenne de $category souhaitez-vous atteindre ?';
+  }
+
+  @override
+  String get goalWeekly => 'Hebdomadaire';
+
+  @override
+  String get goalMonthly => 'Mensuel';
+
+  @override
+  String get goalDaysLeft => 'jours restants';
+
+  @override
+  String get goalDaysRemaining => 'Jours Restants';
+
+  @override
+  String get goalCurrentAverage => 'Actuel';
+
+  @override
+  String get goalTarget => 'Objectif';
+
+  @override
+  String get goalTargetLabel => 'Score Cible';
+
+  @override
+  String goalSuggestedTarget(String target) {
+    return 'Basé sur votre historique, nous suggérons $target';
+  }
+
+  @override
+  String get goalUseSuggestion => 'Utiliser';
+
+  @override
+  String get goalEmptyTitle => 'Aucun objectif actif';
+
+  @override
+  String get goalEmptySubtitle =>
+      'Définissez un objectif pour suivre vos progrès et rester motivé';
+
+  @override
+  String get goalSetFirst => 'Définir votre Premier Objectif';
+
+  @override
+  String get goalStatusOnTrack => 'Sur la bonne voie';
+
+  @override
+  String get goalStatusBehind => 'Nécessite attention';
+
+  @override
+  String get goalStatusAhead => 'Dépasse l\'objectif !';
+
+  @override
+  String get goalStatusCompleted => 'Objectif atteint !';
+
+  @override
+  String get goalStatusFailed => 'Objectif non atteint';
+
+  @override
+  String get goalStreak => 'Série d\'Objectifs';
+
+  @override
+  String get goalHistory => 'Historique des Objectifs';
+
+  @override
+  String get goalSuccessRate => 'Taux de Réussite';
+
+  @override
+  String get days => 'jours';
+
+  @override
+  String get back => 'Retour';
+
+  @override
+  String get next => 'Suivant';
 }
