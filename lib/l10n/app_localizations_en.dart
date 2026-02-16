@@ -1113,6 +1113,47 @@ class AppLocalizationsEn extends AppLocalizations {
   String get viewAll => 'View All';
 
   @override
+  String get notificationSettings => 'Notification Settings';
+
+  @override
+  String get notificationSettingsDescription =>
+      'Configure reminders and notifications for your diary entries.';
+
+  @override
+  String get enableNotifications => 'Enable Notifications';
+
+  @override
+  String get enableNotificationsDescription =>
+      'Turn on daily reminders to write in your diary';
+
+  @override
+  String get reminderTime => 'Reminder Time';
+
+  @override
+  String get reminderTimeDescription => 'Choose when you want to be reminded';
+
+  @override
+  String get smartReminders => 'Smart Reminders';
+
+  @override
+  String get smartRemindersDescription =>
+      'Only remind if you haven\'t written today\'s entry';
+
+  @override
+  String get streakWarnings => 'Streak Warnings';
+
+  @override
+  String get streakWarningsDescription =>
+      'Get notified when your writing streak is at risk';
+
+  @override
+  String get notificationPermissionDenied =>
+      'Notification permission was denied. Please enable it in settings.';
+
+  @override
+  String get selectReminderTime => 'Select reminder time';
+
+  @override
   String get goalsSectionTitle => 'Goals';
 
   @override

@@ -2112,6 +2112,78 @@ abstract class AppLocalizations {
   /// **'View All'**
   String get viewAll;
 
+  /// No description provided for @notificationSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Notification Settings'**
+  String get notificationSettings;
+
+  /// No description provided for @notificationSettingsDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Configure reminders and notifications for your diary entries.'**
+  String get notificationSettingsDescription;
+
+  /// No description provided for @enableNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable Notifications'**
+  String get enableNotifications;
+
+  /// No description provided for @enableNotificationsDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Turn on daily reminders to write in your diary'**
+  String get enableNotificationsDescription;
+
+  /// No description provided for @reminderTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Reminder Time'**
+  String get reminderTime;
+
+  /// No description provided for @reminderTimeDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose when you want to be reminded'**
+  String get reminderTimeDescription;
+
+  /// No description provided for @smartReminders.
+  ///
+  /// In en, this message translates to:
+  /// **'Smart Reminders'**
+  String get smartReminders;
+
+  /// No description provided for @smartRemindersDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Only remind if you haven\'t written today\'s entry'**
+  String get smartRemindersDescription;
+
+  /// No description provided for @streakWarnings.
+  ///
+  /// In en, this message translates to:
+  /// **'Streak Warnings'**
+  String get streakWarnings;
+
+  /// No description provided for @streakWarningsDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Get notified when your writing streak is at risk'**
+  String get streakWarningsDescription;
+
+  /// No description provided for @notificationPermissionDenied.
+  ///
+  /// In en, this message translates to:
+  /// **'Notification permission was denied. Please enable it in settings.'**
+  String get notificationPermissionDenied;
+
+  /// No description provided for @selectReminderTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Select reminder time'**
+  String get selectReminderTime;
+
   /// No description provided for @goalsSectionTitle.
   ///
   /// In en, this message translates to:

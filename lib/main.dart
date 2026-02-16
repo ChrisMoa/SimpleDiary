@@ -2,6 +2,7 @@ import 'package:day_tracker/core/log/custom_log_printer.dart';
 import 'package:day_tracker/core/log/logger_instance.dart';
 import 'package:day_tracker/core/provider/locale_provider.dart';
 import 'package:day_tracker/core/provider/theme_provider.dart';
+import 'package:day_tracker/core/services/notification_service.dart';
 import 'package:day_tracker/core/settings/settings_container.dart';
 import 'package:day_tracker/core/utils/platform_utils.dart';
 import 'package:day_tracker/features/app/presentation/pages/main_page.dart';
@@ -44,6 +45,17 @@ void main() async {
       printer: CustomLogPrinter(),
     );
     LogWrapper.logger.i('Logger initialized with level: ${debugging ? 'trace' : 'info'}');
+
+    //* init notification service
+    LogWrapper.logger.d('Initializing NotificationService');
+    await NotificationService().initialize();
+
+    // Schedule notifications if enabled
+    final notificationSettings = settingsContainer.activeUserSettings.notificationSettings;
+    if (notificationSettings.enabled) {
+      LogWrapper.logger.d('Scheduling notifications (enabled in settings)');
+      await NotificationService().scheduleDailyReminder(notificationSettings);
+    }
 
     LogWrapper.logger.i('Initialization complete, starting application');
     //* run

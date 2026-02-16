@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:day_tracker/core/settings/notification_settings.dart';
 import 'package:day_tracker/features/authentication/data/models/user_data.dart';
 import 'package:day_tracker/features/authentication/data/models/user_settings.dart';
 import 'package:day_tracker/features/synchronization/data/models/supabase_settings.dart';
@@ -26,6 +27,7 @@ void main() {
           password: 'supapass',
         ),
         'en',
+        NotificationSettings.fromEmpty(),
       );
     }
 
@@ -89,6 +91,7 @@ void main() {
           UserData.fromEmpty(),
           SupabaseSettings.empty(),
           'de',
+          NotificationSettings.fromEmpty(),
         );
         final map = original.toMap();
         final restored = UserSettings.fromMap(map);

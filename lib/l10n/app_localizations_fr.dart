@@ -1133,6 +1133,48 @@ class AppLocalizationsFr extends AppLocalizations {
   String get viewAll => 'Voir tout';
 
   @override
+  String get notificationSettings => 'Paramètres de notification';
+
+  @override
+  String get notificationSettingsDescription =>
+      'Configurez les rappels et les notifications pour vos entrées de journal.';
+
+  @override
+  String get enableNotifications => 'Activer les notifications';
+
+  @override
+  String get enableNotificationsDescription =>
+      'Activez les rappels quotidiens pour écrire dans votre journal';
+
+  @override
+  String get reminderTime => 'Heure du rappel';
+
+  @override
+  String get reminderTimeDescription =>
+      'Choisissez quand vous voulez être rappelé';
+
+  @override
+  String get smartReminders => 'Rappels intelligents';
+
+  @override
+  String get smartRemindersDescription =>
+      'Ne rappeler que si vous n\'avez pas écrit l\'entrée d\'aujourd\'hui';
+
+  @override
+  String get streakWarnings => 'Avertissements de série';
+
+  @override
+  String get streakWarningsDescription =>
+      'Soyez averti lorsque votre série d\'écriture est en danger';
+
+  @override
+  String get notificationPermissionDenied =>
+      'L\'autorisation de notification a été refusée. Veuillez l\'activer dans les paramètres.';
+
+  @override
+  String get selectReminderTime => 'Sélectionner l\'heure du rappel';
+
+  @override
   String get goalsSectionTitle => 'Objectifs';
 
   @override

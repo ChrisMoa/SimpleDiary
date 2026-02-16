@@ -16,7 +16,7 @@ publish_to: "none" # Remove this line if you wish to publish to pub.dev
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
 # In Windows, build-name is used as the major, minor, and patch parts
 # of the product and file versions while build-number is used as the build suffix.
-version: 1.0.8+1
+version: 1.0.9+1
 
 environment:
   sdk: ">=3.0.3 <4.0.0"
@@ -68,7 +68,10 @@ dependencies:
   # Charts & Visualisierung
   fl_chart: ^0.66.0
   syncfusion_flutter_charts: ^29.1.38
-  # Notifications (timezone already included via syncfusion_flutter_calendar)
+  # Notifications
+  flutter_local_notifications: ^18.0.1
+  timezone: ^0.10.1
+  workmanager: ^0.7.0
   # Animations
   animations: ^2.0.8
   shimmer: ^3.0.0

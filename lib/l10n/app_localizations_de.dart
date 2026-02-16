@@ -1128,6 +1128,48 @@ class AppLocalizationsDe extends AppLocalizations {
   String get viewAll => 'Alle anzeigen';
 
   @override
+  String get notificationSettings => 'Benachrichtigungseinstellungen';
+
+  @override
+  String get notificationSettingsDescription =>
+      'Konfiguriere Erinnerungen und Benachrichtigungen für deine Tagebucheinträge.';
+
+  @override
+  String get enableNotifications => 'Benachrichtigungen aktivieren';
+
+  @override
+  String get enableNotificationsDescription =>
+      'Aktiviere tägliche Erinnerungen zum Schreiben in dein Tagebuch';
+
+  @override
+  String get reminderTime => 'Erinnerungszeit';
+
+  @override
+  String get reminderTimeDescription =>
+      'Wähle, wann du erinnert werden möchtest';
+
+  @override
+  String get smartReminders => 'Intelligente Erinnerungen';
+
+  @override
+  String get smartRemindersDescription =>
+      'Nur erinnern, wenn du den heutigen Eintrag noch nicht geschrieben hast';
+
+  @override
+  String get streakWarnings => 'Streak-Warnungen';
+
+  @override
+  String get streakWarningsDescription =>
+      'Werde benachrichtigt, wenn deine Schreibsträhne gefährdet ist';
+
+  @override
+  String get notificationPermissionDenied =>
+      'Benachrichtigungsberechtigung wurde verweigert. Bitte aktiviere sie in den Einstellungen.';
+
+  @override
+  String get selectReminderTime => 'Erinnerungszeit auswählen';
+
+  @override
   String get goalsSectionTitle => 'Ziele';
 
   @override
