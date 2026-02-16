@@ -366,5 +366,18 @@
   "noFavoriteNotes": "No hay notas favoritas",
   "markAsFavorite": "Marcar como favorito",
   "unmarkAsFavorite": "Desmarcar como favorito",
-  "viewAll": "Ver todo"
+  "viewAll": "Ver todo",
+
+  "notificationSettings": "Configuración de notificaciones",
+  "notificationSettingsDescription": "Configura recordatorios y notificaciones para tus entradas de diario.",
+  "enableNotifications": "Activar notificaciones",
+  "enableNotificationsDescription": "Activa recordatorios diarios para escribir en tu diario",
+  "reminderTime": "Hora del recordatorio",
+  "reminderTimeDescription": "Elige cuándo quieres ser recordado",
+  "smartReminders": "Recordatorios inteligentes",
+  "smartRemindersDescription": "Solo recordar si aún no has escrito la entrada de hoy",
+  "streakWarnings": "Advertencias de racha",
+  "streakWarningsDescription": "Recibe notificaciones cuando tu racha de escritura esté en riesgo",
+  "notificationPermissionDenied": "Se denegó el permiso de notificación. Por favor, actívalo en la configuración.",
+  "selectReminderTime": "Seleccionar hora del recordatorio"
 }

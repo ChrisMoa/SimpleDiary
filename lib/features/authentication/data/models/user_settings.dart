@@ -2,6 +2,7 @@
 import 'dart:convert';
 import 'dart:ui';
 
+import 'package:day_tracker/core/settings/notification_settings.dart';
 import 'package:day_tracker/core/theme/themes.dart';
 import 'package:day_tracker/features/authentication/data/models/user_data.dart';
 import 'package:day_tracker/features/synchronization/data/models/supabase_settings.dart';
@@ -12,6 +13,7 @@ class UserSettings {
   UserData savedUserData;
   SupabaseSettings supabaseSettings;
   String languageCode;
+  NotificationSettings notificationSettings;
 
   UserSettings(
     this.darkThemeMode,
@@ -19,6 +21,7 @@ class UserSettings {
     this.savedUserData,
     this.supabaseSettings,
     this.languageCode,
+    this.notificationSettings,
   );
 
   Map<String, dynamic> toMap() {
@@ -28,6 +31,7 @@ class UserSettings {
       'userData': savedUserData.toMap(),
       'supabaseSettings': supabaseSettings.toMap(),
       'languageCode': languageCode,
+      'notificationSettings': notificationSettings.toMap(),
     };
   }
 
@@ -38,6 +42,7 @@ class UserSettings {
       UserData.fromMap(map['userData']),
       SupabaseSettings.fromMap(map['supabaseSettings'] ?? {}),
       (map['languageCode'] as String?) ?? 'en',
+      NotificationSettings.fromMap(map['notificationSettings'] ?? {}),
     );
   }
 
@@ -47,6 +52,7 @@ class UserSettings {
         UserData.fromEmpty(),
         SupabaseSettings.empty(),
         'en',
+        NotificationSettings.fromEmpty(),
       );
 
   String get name => 'UserSettings';

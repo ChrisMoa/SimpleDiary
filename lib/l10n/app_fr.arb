@@ -366,5 +366,18 @@
   "noFavoriteNotes": "Pas de notes favorites",
   "markAsFavorite": "Marquer comme favori",
   "unmarkAsFavorite": "Retirer le favori",
-  "viewAll": "Voir tout"
+  "viewAll": "Voir tout",
+
+  "notificationSettings": "Paramètres de notification",
+  "notificationSettingsDescription": "Configurez les rappels et les notifications pour vos entrées de journal.",
+  "enableNotifications": "Activer les notifications",
+  "enableNotificationsDescription": "Activez les rappels quotidiens pour écrire dans votre journal",
+  "reminderTime": "Heure du rappel",
+  "reminderTimeDescription": "Choisissez quand vous voulez être rappelé",
+  "smartReminders": "Rappels intelligents",
+  "smartRemindersDescription": "Ne rappeler que si vous n'avez pas écrit l'entrée d'aujourd'hui",
+  "streakWarnings": "Avertissements de série",
+  "streakWarningsDescription": "Soyez averti lorsque votre série d'écriture est en danger",
+  "notificationPermissionDenied": "L'autorisation de notification a été refusée. Veuillez l'activer dans les paramètres.",
+  "selectReminderTime": "Sélectionner l'heure du rappel"
 }

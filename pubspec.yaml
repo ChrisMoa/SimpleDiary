@@ -68,7 +68,10 @@ dependencies:
   # Charts & Visualisierung
   fl_chart: ^0.66.0
   syncfusion_flutter_charts: ^29.1.38
-  # Notifications (timezone already included via syncfusion_flutter_calendar)
+  # Notifications
+  flutter_local_notifications: ^18.0.1
+  timezone: ^0.10.1
+  workmanager: ^0.5.2
   # Animations
   animations: ^2.0.8
   shimmer: ^3.0.0

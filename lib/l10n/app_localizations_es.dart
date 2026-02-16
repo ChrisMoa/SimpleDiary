@@ -1124,4 +1124,45 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get viewAll => 'Ver todo';
+
+  @override
+  String get notificationSettings => 'Configuración de notificaciones';
+
+  @override
+  String get notificationSettingsDescription =>
+      'Configura recordatorios y notificaciones para tus entradas de diario.';
+
+  @override
+  String get enableNotifications => 'Activar notificaciones';
+
+  @override
+  String get enableNotificationsDescription =>
+      'Activa recordatorios diarios para escribir en tu diario';
+
+  @override
+  String get reminderTime => 'Hora del recordatorio';
+
+  @override
+  String get reminderTimeDescription => 'Elige cuándo quieres ser recordado';
+
+  @override
+  String get smartReminders => 'Recordatorios inteligentes';
+
+  @override
+  String get smartRemindersDescription =>
+      'Solo recordar si aún no has escrito la entrada de hoy';
+
+  @override
+  String get streakWarnings => 'Advertencias de racha';
+
+  @override
+  String get streakWarningsDescription =>
+      'Recibe notificaciones cuando tu racha de escritura esté en riesgo';
+
+  @override
+  String get notificationPermissionDenied =>
+      'Se denegó el permiso de notificación. Por favor, actívalo en la configuración.';
+
+  @override
+  String get selectReminderTime => 'Seleccionar hora del recordatorio';
 }
