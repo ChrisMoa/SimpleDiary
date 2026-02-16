@@ -177,7 +177,7 @@ class NotificationService {
           'diary_reminder_check',
           frequency: const Duration(hours: 1),
           constraints: Constraints(
-            networkType: NetworkType.notRequired,
+            networkType: NetworkType.not_required,
           ),
         );
       }
