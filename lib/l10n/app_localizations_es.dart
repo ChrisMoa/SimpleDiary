@@ -1124,4 +1124,99 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get viewAll => 'Ver todo';
+
+  @override
+  String get goalsSectionTitle => 'Objetivos';
+
+  @override
+  String get goalCreateNew => 'Crear Objetivo';
+
+  @override
+  String get goalCreate => 'Crear';
+
+  @override
+  String get goalSelectCategory => '¿Qué área quieres mejorar?';
+
+  @override
+  String get goalSelectTimeframe => 'Elige tu plazo';
+
+  @override
+  String get goalSetTarget => 'Establece tu objetivo';
+
+  @override
+  String goalTargetHint(String category) {
+    return '¿Qué promedio de $category quieres alcanzar?';
+  }
+
+  @override
+  String get goalWeekly => 'Semanal';
+
+  @override
+  String get goalMonthly => 'Mensual';
+
+  @override
+  String get goalDaysLeft => 'días restantes';
+
+  @override
+  String get goalDaysRemaining => 'Días Restantes';
+
+  @override
+  String get goalCurrentAverage => 'Actual';
+
+  @override
+  String get goalTarget => 'Objetivo';
+
+  @override
+  String get goalTargetLabel => 'Puntuación Objetivo';
+
+  @override
+  String goalSuggestedTarget(String target) {
+    return 'Basado en tu historial, sugerimos $target';
+  }
+
+  @override
+  String get goalUseSuggestion => 'Usar';
+
+  @override
+  String get goalEmptyTitle => 'Sin objetivos activos';
+
+  @override
+  String get goalEmptySubtitle =>
+      'Establece un objetivo para seguir tu progreso y mantenerte motivado';
+
+  @override
+  String get goalSetFirst => 'Establece tu Primer Objetivo';
+
+  @override
+  String get goalStatusOnTrack => 'En camino';
+
+  @override
+  String get goalStatusBehind => 'Necesita atención';
+
+  @override
+  String get goalStatusAhead => '¡Superando el objetivo!';
+
+  @override
+  String get goalStatusCompleted => '¡Objetivo alcanzado!';
+
+  @override
+  String get goalStatusFailed => 'Objetivo no alcanzado';
+
+  @override
+  String get goalStreak => 'Racha de Objetivos';
+
+  @override
+  String get goalHistory => 'Historial de Objetivos';
+
+  @override
+  String get goalSuccessRate => 'Tasa de Éxito';
+
+  @override
+  String get days => 'días';
+
+  @override
+  String get back => 'Atrás';
+
+  @override
+  String get next => 'Siguiente';
 }

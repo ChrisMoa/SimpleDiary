@@ -2111,6 +2111,186 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'View All'**
   String get viewAll;
+
+  /// No description provided for @goalsSectionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Goals'**
+  String get goalsSectionTitle;
+
+  /// No description provided for @goalCreateNew.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Goal'**
+  String get goalCreateNew;
+
+  /// No description provided for @goalCreate.
+  ///
+  /// In en, this message translates to:
+  /// **'Create'**
+  String get goalCreate;
+
+  /// No description provided for @goalSelectCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Which area do you want to improve?'**
+  String get goalSelectCategory;
+
+  /// No description provided for @goalSelectTimeframe.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose your timeframe'**
+  String get goalSelectTimeframe;
+
+  /// No description provided for @goalSetTarget.
+  ///
+  /// In en, this message translates to:
+  /// **'Set your target'**
+  String get goalSetTarget;
+
+  /// No description provided for @goalTargetHint.
+  ///
+  /// In en, this message translates to:
+  /// **'What average {category} score do you want to achieve?'**
+  String goalTargetHint(String category);
+
+  /// No description provided for @goalWeekly.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly'**
+  String get goalWeekly;
+
+  /// No description provided for @goalMonthly.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly'**
+  String get goalMonthly;
+
+  /// No description provided for @goalDaysLeft.
+  ///
+  /// In en, this message translates to:
+  /// **'days left'**
+  String get goalDaysLeft;
+
+  /// No description provided for @goalDaysRemaining.
+  ///
+  /// In en, this message translates to:
+  /// **'Days Left'**
+  String get goalDaysRemaining;
+
+  /// No description provided for @goalCurrentAverage.
+  ///
+  /// In en, this message translates to:
+  /// **'Current'**
+  String get goalCurrentAverage;
+
+  /// No description provided for @goalTarget.
+  ///
+  /// In en, this message translates to:
+  /// **'Target'**
+  String get goalTarget;
+
+  /// No description provided for @goalTargetLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Target Score'**
+  String get goalTargetLabel;
+
+  /// No description provided for @goalSuggestedTarget.
+  ///
+  /// In en, this message translates to:
+  /// **'Based on your history, we suggest {target}'**
+  String goalSuggestedTarget(String target);
+
+  /// No description provided for @goalUseSuggestion.
+  ///
+  /// In en, this message translates to:
+  /// **'Use'**
+  String get goalUseSuggestion;
+
+  /// No description provided for @goalEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No active goals'**
+  String get goalEmptyTitle;
+
+  /// No description provided for @goalEmptySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Set a goal to track your progress and stay motivated'**
+  String get goalEmptySubtitle;
+
+  /// No description provided for @goalSetFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'Set Your First Goal'**
+  String get goalSetFirst;
+
+  /// No description provided for @goalStatusOnTrack.
+  ///
+  /// In en, this message translates to:
+  /// **'On track'**
+  String get goalStatusOnTrack;
+
+  /// No description provided for @goalStatusBehind.
+  ///
+  /// In en, this message translates to:
+  /// **'Needs attention'**
+  String get goalStatusBehind;
+
+  /// No description provided for @goalStatusAhead.
+  ///
+  /// In en, this message translates to:
+  /// **'Exceeding target!'**
+  String get goalStatusAhead;
+
+  /// No description provided for @goalStatusCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Goal achieved!'**
+  String get goalStatusCompleted;
+
+  /// No description provided for @goalStatusFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Goal not met'**
+  String get goalStatusFailed;
+
+  /// No description provided for @goalStreak.
+  ///
+  /// In en, this message translates to:
+  /// **'Goal Streak'**
+  String get goalStreak;
+
+  /// No description provided for @goalHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Goal History'**
+  String get goalHistory;
+
+  /// No description provided for @goalSuccessRate.
+  ///
+  /// In en, this message translates to:
+  /// **'Success Rate'**
+  String get goalSuccessRate;
+
+  /// No description provided for @days.
+  ///
+  /// In en, this message translates to:
+  /// **'days'**
+  String get days;
+
+  /// No description provided for @back.
+  ///
+  /// In en, this message translates to:
+  /// **'Back'**
+  String get back;
+
+  /// No description provided for @next.
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get next;
 }
 
 class _AppLocalizationsDelegate
