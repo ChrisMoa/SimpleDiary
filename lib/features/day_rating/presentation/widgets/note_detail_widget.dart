@@ -8,6 +8,7 @@ import 'package:day_tracker/features/notes/domain/providers/category_local_db_pr
 import 'package:day_tracker/features/notes/domain/providers/note_local_db_provider.dart';
 import 'package:day_tracker/features/note_templates/data/models/note_template.dart';
 import 'package:day_tracker/features/note_templates/domain/providers/note_template_local_db_provider.dart';
+import 'package:day_tracker/features/notes/presentation/widgets/image_picker_widget.dart';
 import 'package:day_tracker/features/note_templates/presentation/widgets/template_selector_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -394,8 +395,9 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
                 ),
               ),
 
-              // Add some extra space at the bottom for better scrolling
+              // Photo attachments
               const SizedBox(height: 16),
+              ImagePickerWidget(noteId: selectedNote.id!),
 
               // Action buttons for notes - show only when keyboard is not visible on small screens
               if (!isKeyboardVisible || !isSmallScreen)

@@ -1,5 +1,6 @@
 import 'package:day_tracker/core/database/local_db_element.dart';
 import 'package:day_tracker/core/database/local_db_helper.dart';
+import 'package:day_tracker/core/utils/utils.dart';
 import 'package:day_tracker/features/notes/data/models/note_attachment.dart';
 
 class NoteAttachmentsLocalDbHelper extends LocalDbHelper {
@@ -28,7 +29,7 @@ class NoteAttachmentsLocalDbHelper extends LocalDbHelper {
       id: elementMap['id'],
       noteId: elementMap['noteId'],
       filePath: elementMap['filePath'],
-      createdAt: DateTime.parse(elementMap['createdAt']),
+      createdAt: Utils.fromDateTimeString(elementMap['createdAt']),
       fileSize: elementMap['fileSize'] ?? 0,
     );
   }
