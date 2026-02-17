@@ -5,6 +5,7 @@ import 'package:day_tracker/features/notes/domain/providers/category_local_db_pr
 import 'package:day_tracker/features/notes/domain/providers/note_editing_page_provider.dart';
 import 'package:day_tracker/features/notes/domain/providers/note_local_db_provider.dart';
 import 'package:day_tracker/features/notes/domain/providers/note_selected_date_provider.dart';
+import 'package:day_tracker/features/notes/presentation/widgets/image_picker_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:day_tracker/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -73,43 +74,37 @@ class _NoteEditingPageState extends ConsumerState<NoteEditingPage> {
     final l10n = AppLocalizations.of(context)!;
     return Form(
       key: _formKey,
-      child: Container(
-        color: Theme.of(context).colorScheme.background,
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            buildTitle(),
-            const SizedBox(
-              height: 20,
-            ),
-            buildDateTimePickers(),
-            const SizedBox(
-              height: 20,
-            ),
-            buildAllDayCheckbox(),
-            const SizedBox(
-              height: 20,
-            ),
-            buildDescription(),
-            const SizedBox(
-              height: 20,
-            ),
-            buildCategory(),
-            const SizedBox(
-              height: 20,
-            ),
-            if (widget.addAdditionalSaveButton)
-              Row(
-                children: [
-                  TextButton(
-                    onPressed: saveForm,
-                    child: Text(l10n.saveWord),
-                  ),
-                  TextButton(
-                    onPressed: reloadForm,
-                    child: Text(l10n.reload),
-                  ),
-                ],
-              )
+              buildTitle(),
+              const SizedBox(height: 20),
+              buildDateTimePickers(),
+              const SizedBox(height: 20),
+              buildAllDayCheckbox(),
+              const SizedBox(height: 20),
+              buildDescription(),
+              const SizedBox(height: 20),
+              buildCategory(),
+              const SizedBox(height: 20),
+              ImagePickerWidget(noteId: note.id!),
+              if (widget.addAdditionalSaveButton) ...[
+                const SizedBox(height: 20),
+                Row(
+                  children: [
+                    TextButton(
+                      onPressed: saveForm,
+                      child: Text(l10n.saveWord),
+                    ),
+                    TextButton(
+                      onPressed: reloadForm,
+                      child: Text(l10n.reload),
+                    ),
+                  ],
+                ),
+              ],
           ],
         ),
       ),

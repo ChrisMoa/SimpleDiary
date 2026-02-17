@@ -4,9 +4,11 @@ import 'package:day_tracker/core/utils/utils.dart';
 import 'package:day_tracker/features/notes/data/models/note.dart';
 import 'package:day_tracker/features/notes/data/models/note_category.dart';
 import 'package:day_tracker/features/notes/domain/providers/category_local_db_provider.dart';
+import 'package:day_tracker/features/notes/domain/providers/note_attachments_provider.dart';
 import 'package:day_tracker/features/notes/domain/providers/note_editing_page_provider.dart';
 import 'package:day_tracker/features/notes/domain/providers/note_local_db_provider.dart';
 import 'package:day_tracker/features/notes/domain/providers/note_selected_date_provider.dart';
+import 'package:day_tracker/features/notes/presentation/widgets/image_picker_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:day_tracker/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -43,7 +45,7 @@ class _NoteEditingwizardWidgetState extends ConsumerState<NoteEditingWizardWidge
   final _descriptionController = TextEditingController();
   String _oldText = '';
   final SpeechToText speechToTextInstance = SpeechToText();
-  DateTime selectedDate = DateTime.now().copyWith(hour: 0, second: 0, minute: 0);
+  DateTime? _lastSelectedDate;
   bool _calculateNewNote = true;
   bool _isListening = false;
 
@@ -64,12 +66,24 @@ class _NoteEditingwizardWidgetState extends ConsumerState<NoteEditingWizardWidge
 
   @override
   Widget build(BuildContext contex) {
-    selectedDate = ref.watch(noteSelectedDateProvider);
-    if (_calculateNewNote) {
+    final newSelectedDate = ref.watch(noteSelectedDateProvider);
+    final dateChanged = _lastSelectedDate != null && !_isSameDay(_lastSelectedDate!, newSelectedDate);
+    if (_calculateNewNote || dateChanged) {
+      if (dateChanged && !_calculateNewNote) {
+        // Date changed — clean up orphaned attachments from the previous unsaved note
+        final oldNoteId = note.id!;
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted) ref.read(noteAttachmentsProvider.notifier).removeAllForNote(oldNoteId);
+        });
+      }
+      _lastSelectedDate = newSelectedDate;
       calculateNextFreeNoteOfDay();
+      _calculateNewNote = false;
     }
     return buildScaffoldBody();
   }
+
+  bool _isSameDay(DateTime a, DateTime b) => a.year == b.year && a.month == b.month && a.day == b.day;
 
   Widget buildScaffoldBody() => Form(
         key: _formKey,
@@ -91,6 +105,10 @@ class _NoteEditingwizardWidgetState extends ConsumerState<NoteEditingWizardWidge
                 height: 20,
               ),
               buildCategory(),
+              const SizedBox(
+                height: 20,
+              ),
+              ImagePickerWidget(noteId: note.id!),
               const SizedBox(
                 height: 20,
               ),
@@ -369,6 +387,7 @@ class _NoteEditingwizardWidgetState extends ConsumerState<NoteEditingWizardWidge
   }
 
   void reloadForm() {
+    ref.read(noteAttachmentsProvider.notifier).removeAllForNote(note.id!);
     setState(() {
       _calculateNewNote = true;
       _descriptionController.text = "";

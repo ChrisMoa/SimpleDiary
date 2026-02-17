@@ -14,6 +14,7 @@ import 'package:day_tracker/features/authentication/presentation/pages/password_
 import 'package:day_tracker/features/authentication/presentation/pages/show_user_data_page.dart';
 import 'package:day_tracker/features/day_rating/domain/providers/diary_day_local_db_provider.dart';
 import 'package:day_tracker/features/notes/domain/providers/category_local_db_provider.dart';
+import 'package:day_tracker/features/notes/domain/providers/note_attachments_provider.dart';
 import 'package:day_tracker/features/notes/domain/providers/note_local_db_provider.dart';
 import 'package:day_tracker/features/note_templates/domain/providers/note_template_local_db_provider.dart';
 import 'package:flutter/material.dart';
@@ -182,6 +183,9 @@ class _MainPageState extends ConsumerState<MainPage> {
       LogWrapper.logger.d('Initializing templates for user ${userData.username}');
       await ref.read(noteTemplateLocalDataProvider.notifier).changeDbFileToUser(userData);
       await ref.read(noteTemplateLocalDataProvider.notifier).readObjectsFromDatabase();
+
+      // Initialize note attachments
+      await ref.read(noteAttachmentsProvider.notifier).readObjectsFromDatabase();
 
       _userData = userData;
       setState(() {

@@ -1247,4 +1247,20 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get next => 'Next';
+
+  @override
+  String get photos => 'Photos';
+
+  @override
+  String get noPhotos => 'No photos attached';
+
+  @override
+  String get deletePhoto => 'Delete Photo';
+
+  @override
+  String get deletePhotoConfirm =>
+      'Are you sure you want to delete this photo?';
+
+  @override
+  String get imageNotFound => 'Image not found';
 }

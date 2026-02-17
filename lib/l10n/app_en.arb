@@ -1,8 +1,6 @@
 {
   "@@locale": "en",
-
   "appTitle": "Simple Diary",
-
   "drawerHome": "Home",
   "drawerSettings": "Settings",
   "drawerCalendar": "Calendar",
@@ -12,20 +10,20 @@
   "drawerSync": "Datasynchronization",
   "drawerAbout": "About",
   "drawerErrorInvalidEntry": "Error: Invalid entry",
-
   "settingsTitle": "Settings",
   "saveSettings": "Save Settings",
   "settingsSavedSuccessfully": "Settings saved successfully",
   "errorSavingSettings": "Error saving settings: {error}",
   "@errorSavingSettings": {
     "placeholders": {
-      "error": { "type": "String" }
+      "error": {
+        "type": "String"
+      }
     }
   },
   "noteCategories": "Note Categories",
   "manageCategoriesAndTags": "Manage your note categories and tags",
   "manageCategories": "Manage Categories",
-
   "themeSettings": "Theme Settings",
   "customizeAppearance": "Customize the appearance of your diary application.",
   "themeColor": "Theme Color",
@@ -35,7 +33,6 @@
   "selectColor": "Select color",
   "selectColorShade": "Select color shade",
   "selectedColorAndShades": "Selected color and its shades",
-
   "languageSettings": "Language Settings",
   "languageDescription": "Choose the language for the application interface.",
   "language": "Language",
@@ -43,7 +40,6 @@
   "german": "Deutsch",
   "spanish": "Español",
   "french": "Français",
-
   "username": "Username",
   "password": "Password",
   "email": "Email",
@@ -64,15 +60,15 @@
   "unexpectedError": "An unexpected error occurred: {error}",
   "@unexpectedError": {
     "placeholders": {
-      "error": { "type": "String" }
+      "error": {
+        "type": "String"
+      }
     }
   },
-
   "welcomeBack": "Welcome back",
   "enterPasswordToContinue": "Enter your password to continue",
   "incorrectPassword": "Incorrect password",
   "switchUser": "Switch User",
-
   "accountSettings": "Account settings",
   "save": "Save",
   "logout": "Logout",
@@ -81,7 +77,6 @@
   "logoutTitle": "Logout",
   "logoutMessage": "Are you sure that you want to logout?",
   "stayHere": "stay here",
-
   "today": "Today",
   "recorded": "Recorded",
   "pending": "Pending",
@@ -93,26 +88,29 @@
   "errorWithMessage": "Error: {error}",
   "@errorWithMessage": {
     "placeholders": {
-      "error": { "type": "String" }
+      "error": {
+        "type": "String"
+      }
     }
   },
-
   "sevenDayOverview": "7-Day Overview",
   "ratingTrend": "Rating Trend",
   "noDataAvailable": "No data available",
-
   "insightsAndAchievements": "Insights & Achievements",
   "errorLoadingInsights": "Error loading insights: {error}",
   "@errorLoadingInsights": {
     "placeholders": {
-      "error": { "type": "String" }
+      "error": {
+        "type": "String"
+      }
     }
   },
-
   "weekNumber": "Week {number}",
   "@weekNumber": {
     "placeholders": {
-      "number": { "type": "int" }
+      "number": {
+        "type": "int"
+      }
     }
   },
   "milestoneReached": "You have reached an important milestone!",
@@ -124,33 +122,39 @@
   "bestCategoryDescription": "Your best category this week: {category}!",
   "@bestCategoryDescription": {
     "placeholders": {
-      "category": { "type": "String" }
+      "category": {
+        "type": "String"
+      }
     }
   },
-
   "moodPatterns": "Mood Patterns",
   "patternInsight": "Pattern",
   "trendInsight": "Trend",
   "weeklyInsight": "Weekly",
   "tipInsight": "Tip",
-
   "dayDetail": "Day Detail: {date}",
   "@dayDetail": {
     "placeholders": {
-      "date": { "type": "String" }
+      "date": {
+        "type": "String"
+      }
     }
   },
   "noDiaryEntryForDay": "No diary entry for this day",
   "errorLoadingNotes": "Error loading notes: {error}",
   "@errorLoadingNotes": {
     "placeholders": {
-      "error": { "type": "String" }
+      "error": {
+        "type": "String"
+      }
     }
   },
   "errorLoadingDiaryDay": "Error loading diary day: {error}",
   "@errorLoadingDiaryDay": {
     "placeholders": {
-      "error": { "type": "String" }
+      "error": {
+        "type": "String"
+      }
     }
   },
   "addANote": "Add a note",
@@ -159,7 +163,9 @@
   "nEntries": "{count} entries",
   "@nEntries": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "noNotesForDay": "No notes for this day",
@@ -169,7 +175,9 @@
   "overallMood": "Overall Mood: {mood}",
   "@overallMood": {
     "placeholders": {
-      "mood": { "type": "String" }
+      "mood": {
+        "type": "String"
+      }
     }
   },
   "deleteDiaryEntry": "Delete Diary Entry",
@@ -181,7 +189,6 @@
   "edit": "Edit",
   "create": "Create",
   "update": "Update",
-
   "ratingPoor": "Poor",
   "ratingFair": "Fair",
   "ratingGood": "Good",
@@ -192,7 +199,6 @@
   "moodPrettyGood": "Pretty Good",
   "moodGreatDay": "Great Day",
   "moodPerfectDay": "Perfect Day",
-
   "noDiaryEntriesYet": "No diary entries yet",
   "startTrackingDescription": "Start tracking your day by adding notes\nand completing daily evaluations",
   "startTodaysJournal": "Start Today's Journal",
@@ -200,7 +206,6 @@
   "confirmDeleteDiaryEntryShort": "Are you sure you want to delete this diary entry?",
   "diaryEntryDeleted": "Diary entry deleted",
   "undo": "Undo",
-
   "loadingDayData": "Loading your day data...",
   "calendar": "Calendar",
   "noteDetails": "Note Details",
@@ -209,17 +214,14 @@
   "saveDayRating": "Save Day Rating",
   "dayRatingSaved": "Day rating saved successfully!",
   "notRated": "Not Rated",
-
   "ratingSocialDescription": "How were your social interactions and relationships today?",
   "ratingProductivityDescription": "How productive were you in your work or daily tasks?",
   "ratingSportDescription": "How was your physical activity and exercise today?",
   "ratingFoodDescription": "How healthy and satisfying was your diet today?",
-
   "tapToChangeDate": "Tap to change date",
   "previousDay": "Previous day",
   "selectDate": "Select date",
   "nextDay": "Next day",
-
   "addTitle": "Add Title",
   "addNote": "Add note",
   "description": "Description",
@@ -233,10 +235,11 @@
   "dateLabel": "Date: {date}",
   "@dateLabel": {
     "placeholders": {
-      "date": { "type": "String" }
+      "date": {
+        "type": "String"
+      }
     }
   },
-
   "organizeCategoriesDescription": "Organize your notes with custom categories",
   "noCategoriesYet": "No categories yet",
   "createCategoriesToOrganize": "Create categories to organize your notes",
@@ -254,25 +257,27 @@
   "categoryInUse": "The category \"{title}\" is currently used by one or more notes. Please reassign or delete those notes first.",
   "@categoryInUse": {
     "placeholders": {
-      "title": { "type": "String" }
+      "title": {
+        "type": "String"
+      }
     }
   },
   "deleteCategory": "Delete Category",
   "confirmDeleteCategory": "Are you sure you want to delete \"{title}\"?",
   "@confirmDeleteCategory": {
     "placeholders": {
-      "title": { "type": "String" }
+      "title": {
+        "type": "String"
+      }
     }
   },
   "editCategoryTooltip": "Edit category",
   "deleteCategoryTooltip": "Delete category",
-
   "defaultCategoryWork": "Work",
   "defaultCategoryLeisure": "Leisure",
   "defaultCategoryFood": "Food",
   "defaultCategoryGym": "Gym",
   "defaultCategorySleep": "Sleep",
-
   "noteTemplates": "Note Templates",
   "selectTemplate": "Select Template",
   "noTemplatesAvailable": "No templates available",
@@ -298,33 +303,41 @@
   "confirmDeleteTemplate": "Are you sure you want to delete \"{title}\"?",
   "@confirmDeleteTemplate": {
     "placeholders": {
-      "title": { "type": "String" }
+      "title": {
+        "type": "String"
+      }
     }
   },
   "templateDeleted": "Template deleted",
   "durationInMinutes": "{minutes} min",
   "@durationInMinutes": {
     "placeholders": {
-      "minutes": { "type": "int" }
+      "minutes": {
+        "type": "int"
+      }
     }
   },
   "descriptionSections": "Description Sections:",
   "descriptionLabel": "Description:",
-
   "addedTemplateAtTime": "Added \"{title}\" at {time}",
   "@addedTemplateAtTime": {
     "placeholders": {
-      "title": { "type": "String" },
-      "time": { "type": "String" }
+      "title": {
+        "type": "String"
+      },
+      "time": {
+        "type": "String"
+      }
     }
   },
   "errorCreatingNote": "Error creating note: {error}",
   "@errorCreatingNote": {
     "placeholders": {
-      "error": { "type": "String" }
+      "error": {
+        "type": "String"
+      }
     }
   },
-
   "fileSynchronization": "File Synchronization",
   "fileSyncDescription": "Import and export your diary data to JSON or ICS calendar files with optional encryption.",
   "exportToJson": "Export to JSON",
@@ -353,20 +366,28 @@
   "importedDaysWithNotes": "Imported {days} days with {notes} notes",
   "@importedDaysWithNotes": {
     "placeholders": {
-      "days": { "type": "int" },
-      "notes": { "type": "int" }
+      "days": {
+        "type": "int"
+      },
+      "notes": {
+        "type": "int"
+      }
     }
   },
   "importedNotesFromIcs": "Imported {count} notes from ICS calendar",
   "@importedNotesFromIcs": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
   "errorPrefix": "Error: {error}",
   "@errorPrefix": {
     "placeholders": {
-      "error": { "type": "String" }
+      "error": {
+        "type": "String"
+      }
     }
   },
   "oldEncryptionFormatError": "This file uses the old encryption format and cannot be imported.\nPlease export your data again with the new version.",
@@ -381,10 +402,11 @@
   "connectionFailed": "Connection failed: {error}",
   "@connectionFailed": {
     "placeholders": {
-      "error": { "type": "String" }
+      "error": {
+        "type": "String"
+      }
     }
   },
-
   "synchronization": "Synchronization",
   "supabaseSynchronization": "Supabase Synchronization",
   "supabaseSyncDescription": "Sync your diary data with Supabase cloud storage for backup and cross-device access.",
@@ -397,7 +419,6 @@
   "supabaseUrl": "Supabase URL",
   "anonKey": "Anon Key",
   "testConnection": "Test Connection",
-
   "pdfExport": "PDF Export",
   "pdfExportDescription": "Generate printable PDF reports with your diary entries, ratings, and statistics.",
   "quickExport": "Quick Export",
@@ -415,16 +436,19 @@
   "pdfExportError": "Failed to generate PDF: {error}",
   "@pdfExportError": {
     "placeholders": {
-      "error": { "type": "String" }
+      "error": {
+        "type": "String"
+      }
     }
   },
-
   "about": "About",
   "dayTracker": "Day Tracker",
   "version": "Version: {version}",
   "@version": {
     "placeholders": {
-      "version": { "type": "String" }
+      "version": {
+        "type": "String"
+      }
     }
   },
   "developer": "Developer",
@@ -439,20 +463,22 @@
   "featureEncryption": "Secure data with encryption",
   "featureSync": "Sync data across devices with Supabase",
   "featureExportImport": "Export and import data",
-  "copyright": "\u00a9 {year} Your Company",
+  "copyright": "© {year} Your Company",
   "@copyright": {
     "placeholders": {
-      "year": { "type": "int" }
+      "year": {
+        "type": "int"
+      }
     }
   },
-
   "score": "Score: {score}",
   "@score": {
     "placeholders": {
-      "score": { "type": "int" }
+      "score": {
+        "type": "int"
+      }
     }
   },
-
   "createNote": "Create Note",
   "fromTemplate": "From Template",
   "noNoteSelected": "No note selected",
@@ -470,7 +496,9 @@
   "addedNoteAtTime": "Added new note at {time}",
   "@addedNoteAtTime": {
     "placeholders": {
-      "time": { "type": "String" }
+      "time": {
+        "type": "String"
+      }
     }
   },
   "dailySchedule": "Daily Schedule",
@@ -479,16 +507,19 @@
   "fromTime": "From: {time}",
   "@fromTime": {
     "placeholders": {
-      "time": { "type": "String" }
+      "time": {
+        "type": "String"
+      }
     }
   },
   "toTime": "To: {time}",
   "@toTime": {
     "placeholders": {
-      "time": { "type": "String" }
+      "time": {
+        "type": "String"
+      }
     }
   },
-
   "searchNotes": "Search notes...",
   "searchNotesPlaceholder": "Search by title or description",
   "filterByCategory": "Filter by category",
@@ -504,10 +535,11 @@
   "nResultsFound": "{count, plural, =0{No results} =1{1 result} other{{count} results}}",
   "@nResultsFound": {
     "placeholders": {
-      "count": { "type": "int" }
+      "count": {
+        "type": "int"
+      }
     }
   },
-
   "favorites": "Favorites",
   "favoriteDays": "Favorite Days",
   "favoriteNotes": "Favorite Notes",
@@ -519,7 +551,6 @@
   "markAsFavorite": "Mark as favorite",
   "unmarkAsFavorite": "Unmark as favorite",
   "viewAll": "View All",
-
   "notificationSettings": "Notification Settings",
   "notificationSettingsDescription": "Configure reminders and notifications for your diary entries.",
   "enableNotifications": "Enable Notifications",
@@ -532,7 +563,6 @@
   "streakWarningsDescription": "Get notified when your writing streak is at risk",
   "notificationPermissionDenied": "Notification permission was denied. Please enable it in settings.",
   "selectReminderTime": "Select reminder time",
-
   "goalsSectionTitle": "Goals",
   "goalCreateNew": "Create Goal",
   "goalCreate": "Create",
@@ -541,7 +571,11 @@
   "goalSetTarget": "Set your target",
   "goalTargetHint": "What average {category} score do you want to achieve?",
   "@goalTargetHint": {
-    "placeholders": { "category": {"type": "String"} }
+    "placeholders": {
+      "category": {
+        "type": "String"
+      }
+    }
   },
   "goalWeekly": "Weekly",
   "goalMonthly": "Monthly",
@@ -552,7 +586,11 @@
   "goalTargetLabel": "Target Score",
   "goalSuggestedTarget": "Based on your history, we suggest {target}",
   "@goalSuggestedTarget": {
-    "placeholders": { "target": {"type": "String"} }
+    "placeholders": {
+      "target": {
+        "type": "String"
+      }
+    }
   },
   "goalUseSuggestion": "Use",
   "goalEmptyTitle": "No active goals",
@@ -568,5 +606,10 @@
   "goalSuccessRate": "Success Rate",
   "days": "days",
   "back": "Back",
-  "next": "Next"
+  "next": "Next",
+  "photos": "Photos",
+  "noPhotos": "No photos attached",
+  "deletePhoto": "Delete Photo",
+  "deletePhotoConfirm": "Are you sure you want to delete this photo?",
+  "imageNotFound": "Image not found"
 }

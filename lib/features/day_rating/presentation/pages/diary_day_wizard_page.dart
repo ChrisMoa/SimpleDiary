@@ -1,5 +1,6 @@
 import 'package:day_tracker/core/log/logger_instance.dart';
 import 'package:day_tracker/features/day_rating/presentation/widgets/diary_day_editing_wizard_widget.dart';
+import 'package:day_tracker/features/notes/domain/providers/note_attachments_provider.dart';
 import 'package:day_tracker/features/notes/domain/providers/note_local_db_provider.dart';
 import 'package:day_tracker/features/notes/domain/providers/note_selected_date_provider.dart';
 import 'package:flutter/material.dart';
@@ -29,6 +30,7 @@ class _DiaryDayWizardPageState extends ConsumerState<DiaryDayWizardPage> {
 
     LogWrapper.logger.d('Loading data for diary day wizard');
     await ref.read(notesLocalDataProvider.notifier).readObjectsFromDatabase();
+    await ref.read(noteAttachmentsProvider.notifier).readObjectsFromDatabase();
     ref.read(noteSelectedDateProvider);
 
     setState(() {
