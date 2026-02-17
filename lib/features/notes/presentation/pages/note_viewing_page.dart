@@ -1,8 +1,10 @@
 import 'package:day_tracker/core/utils/utils.dart';
 import 'package:day_tracker/features/notes/data/models/note.dart';
+import 'package:day_tracker/features/notes/domain/providers/note_attachments_provider.dart';
 import 'package:day_tracker/features/notes/domain/providers/note_editing_page_provider.dart';
 import 'package:day_tracker/features/notes/domain/providers/note_local_db_provider.dart';
 import 'package:day_tracker/features/notes/presentation/pages/note_editing_page.dart';
+import 'package:day_tracker/features/notes/presentation/widgets/image_picker_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -28,7 +30,7 @@ class _NoteViewingPageState extends ConsumerState<NoteViewingPage> {
       body: Container(
         width: double.infinity,
         height: double.infinity,
-        color: Theme.of(context).colorScheme.background,
+        color: Theme.of(context).colorScheme.surface,
         child: ListView(
           padding: const EdgeInsets.all(32),
           children: <Widget>[
@@ -51,6 +53,8 @@ class _NoteViewingPageState extends ConsumerState<NoteViewingPage> {
                   .titleMedium!
                   .copyWith(color: Theme.of(context).colorScheme.secondary),
             ),
+            const SizedBox(height: 24),
+            ImagePickerWidget(noteId: note.id!, readOnly: true),
           ],
         ),
       ),
@@ -140,9 +144,14 @@ class _NoteViewingPageState extends ConsumerState<NoteViewingPage> {
         ),
         IconButton(
             icon: const Icon(Icons.delete),
-            onPressed: () {
-              ref.read(notesLocalDataProvider.notifier).deleteElement(note);
-              Navigator.of(context).pop();
+            onPressed: () async {
+              await ref
+                  .read(noteAttachmentsProvider.notifier)
+                  .removeAllForNote(note.id!);
+              await ref
+                  .read(notesLocalDataProvider.notifier)
+                  .deleteElement(note);
+              if (context.mounted) Navigator.of(context).pop();
             }),
       ];
 }

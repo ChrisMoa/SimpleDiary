@@ -1,8 +1,6 @@
 {
   "@@locale": "es",
-
   "appTitle": "Simple Diary",
-
   "drawerHome": "Inicio",
   "drawerSettings": "Configuración",
   "drawerCalendar": "Calendario",
@@ -12,7 +10,6 @@
   "drawerSync": "Sincronización de Datos",
   "drawerAbout": "Acerca de",
   "drawerErrorInvalidEntry": "Error: Entrada inválida",
-
   "settingsTitle": "Configuración",
   "saveSettings": "Guardar Configuración",
   "settingsSavedSuccessfully": "Configuración guardada correctamente",
@@ -20,7 +17,6 @@
   "noteCategories": "Categorías de Notas",
   "manageCategoriesAndTags": "Administra tus categorías y etiquetas de notas",
   "manageCategories": "Administrar Categorías",
-
   "themeSettings": "Configuración de Tema",
   "customizeAppearance": "Personaliza la apariencia de tu aplicación de diario.",
   "themeColor": "Color del Tema",
@@ -30,7 +26,6 @@
   "selectColor": "Seleccionar color",
   "selectColorShade": "Seleccionar tono de color",
   "selectedColorAndShades": "Color seleccionado y sus tonos",
-
   "languageSettings": "Configuración de Idioma",
   "languageDescription": "Elige el idioma para la interfaz de la aplicación.",
   "language": "Idioma",
@@ -38,7 +33,6 @@
   "german": "Deutsch",
   "spanish": "Español",
   "french": "Français",
-
   "username": "Nombre de usuario",
   "password": "Contraseña",
   "email": "Correo electrónico",
@@ -57,12 +51,10 @@
   "authenticationError": "Error de Autenticación",
   "invalidUsernameOrPassword": "Nombre de usuario o contraseña incorrectos. Por favor intenta de nuevo.",
   "unexpectedError": "Ocurrió un error inesperado: {error}",
-
   "welcomeBack": "Bienvenido de nuevo",
   "enterPasswordToContinue": "Ingresa tu contraseña para continuar",
   "incorrectPassword": "Contraseña incorrecta",
   "switchUser": "Cambiar Usuario",
-
   "accountSettings": "Configuración de cuenta",
   "save": "Guardar",
   "logout": "Cerrar sesión",
@@ -71,7 +63,6 @@
   "logoutTitle": "Cerrar sesión",
   "logoutMessage": "¿Estás seguro de que quieres cerrar sesión?",
   "stayHere": "quedarse aquí",
-
   "today": "Hoy",
   "recorded": "Registrado",
   "pending": "Pendiente",
@@ -81,14 +72,11 @@
   "status": "Estado",
   "newEntry": "Nueva Entrada",
   "errorWithMessage": "Error: {error}",
-
   "sevenDayOverview": "Resumen de 7 Días",
   "ratingTrend": "Tendencia de Valoración",
   "noDataAvailable": "No hay datos disponibles",
-
   "insightsAndAchievements": "Perspectivas y Logros",
   "errorLoadingInsights": "Error al cargar perspectivas: {error}",
-
   "weekNumber": "Semana {number}",
   "milestoneReached": "¡Has alcanzado un hito importante!",
   "perfectWeek": "¡Semana Perfecta!",
@@ -97,13 +85,11 @@
   "rememberToRate": "¡No olvides calificar tu día de hoy!",
   "bestCategory": "Mejor Categoría",
   "bestCategoryDescription": "Tu mejor categoría esta semana: ¡{category}!",
-
   "moodPatterns": "Patrones de Humor",
   "patternInsight": "Patrón",
   "trendInsight": "Tendencia",
   "weeklyInsight": "Semanal",
   "tipInsight": "Consejo",
-
   "dayDetail": "Detalle del Día: {date}",
   "noDiaryEntryForDay": "No hay entrada de diario para este día",
   "errorLoadingNotes": "Error al cargar notas: {error}",
@@ -126,7 +112,6 @@
   "edit": "Editar",
   "create": "Crear",
   "update": "Actualizar",
-
   "ratingPoor": "Pobre",
   "ratingFair": "Regular",
   "ratingGood": "Bueno",
@@ -137,7 +122,6 @@
   "moodPrettyGood": "Bastante Bueno",
   "moodGreatDay": "Gran Día",
   "moodPerfectDay": "Día Perfecto",
-
   "noDiaryEntriesYet": "Aún no hay entradas de diario",
   "startTrackingDescription": "Comienza a rastrear tu día agregando notas\ny completando evaluaciones diarias",
   "startTodaysJournal": "Comenzar Diario de Hoy",
@@ -145,7 +129,6 @@
   "confirmDeleteDiaryEntryShort": "¿Estás seguro de que quieres eliminar esta entrada de diario?",
   "diaryEntryDeleted": "Entrada de diario eliminada",
   "undo": "Deshacer",
-
   "loadingDayData": "Cargando datos del día...",
   "calendar": "Calendario",
   "noteDetails": "Detalles de la Nota",
@@ -154,17 +137,14 @@
   "saveDayRating": "Guardar Calificación del Día",
   "dayRatingSaved": "¡Calificación del día guardada correctamente!",
   "notRated": "Sin Calificar",
-
   "ratingSocialDescription": "¿Cómo fueron tus interacciones sociales y relaciones hoy?",
   "ratingProductivityDescription": "¿Qué tan productivo fuiste en tu trabajo o tareas diarias?",
   "ratingSportDescription": "¿Cómo estuvo tu actividad física y ejercicio hoy?",
   "ratingFoodDescription": "¿Qué tan saludable y satisfactoria fue tu dieta hoy?",
-
   "tapToChangeDate": "Toca para cambiar la fecha",
   "previousDay": "Día anterior",
   "selectDate": "Seleccionar fecha",
   "nextDay": "Día siguiente",
-
   "addTitle": "Agregar Título",
   "addNote": "Agregar nota",
   "description": "Descripción",
@@ -176,7 +156,6 @@
   "reload": "recargar",
   "noteUpdateError": "No se pudo actualizar la nota",
   "dateLabel": "Fecha: {date}",
-
   "organizeCategoriesDescription": "Organiza tus notas con categorías personalizadas",
   "noCategoriesYet": "Aún no hay categorías",
   "createCategoriesToOrganize": "Crea categorías para organizar tus notas",
@@ -196,13 +175,11 @@
   "confirmDeleteCategory": "¿Estás seguro de que quieres eliminar \"{title}\"?",
   "editCategoryTooltip": "Editar categoría",
   "deleteCategoryTooltip": "Eliminar categoría",
-
   "defaultCategoryWork": "Trabajo",
   "defaultCategoryLeisure": "Ocio",
   "defaultCategoryFood": "Comida",
   "defaultCategoryGym": "Gimnasio",
   "defaultCategorySleep": "Dormir",
-
   "noteTemplates": "Plantillas de Notas",
   "selectTemplate": "Seleccionar Plantilla",
   "noTemplatesAvailable": "No hay plantillas disponibles",
@@ -230,10 +207,8 @@
   "durationInMinutes": "{minutes} min",
   "descriptionSections": "Secciones de Descripción:",
   "descriptionLabel": "Descripción:",
-
   "addedTemplateAtTime": "Agregado \"{title}\" a las {time}",
   "errorCreatingNote": "Error al crear nota: {error}",
-
   "fileSynchronization": "Sincronización de Archivos",
   "fileSyncDescription": "Importa y exporta tus datos de diario a archivos JSON o ICS de calendario con cifrado opcional.",
   "exportToJson": "Exportar a JSON",
@@ -272,7 +247,6 @@
   "connectionSuccessful": "¡Conexión exitosa!",
   "connectionFailedAuth": "Conexión fallida: Error de autenticación",
   "connectionFailed": "Conexión fallida: {error}",
-
   "synchronization": "Sincronización",
   "supabaseSynchronization": "Sincronización Supabase",
   "supabaseSyncDescription": "Sincroniza tus datos del diario con el almacenamiento en la nube de Supabase para respaldo y acceso entre dispositivos.",
@@ -285,7 +259,6 @@
   "supabaseUrl": "URL de Supabase",
   "anonKey": "Clave Anónima",
   "testConnection": "Probar Conexión",
-
   "pdfExport": "Exportar PDF",
   "pdfExportDescription": "Genera informes PDF imprimibles con tus entradas de diario, calificaciones y estadísticas.",
   "quickExport": "Exportación Rápida",
@@ -301,7 +274,6 @@
   "export": "Exportar",
   "pdfExportSuccess": "Informe PDF generado exitosamente",
   "pdfExportError": "Error al generar PDF: {error}",
-
   "about": "Acerca de",
   "dayTracker": "Day Tracker",
   "version": "Versión: {version}",
@@ -318,9 +290,7 @@
   "featureSync": "Sincroniza datos entre dispositivos con Supabase",
   "featureExportImport": "Exporta e importa datos",
   "copyright": "© {year} Your Company",
-
   "score": "Puntuación: {score}",
-
   "createNote": "Crear Nota",
   "fromTemplate": "Desde Plantilla",
   "noNoteSelected": "Ninguna nota seleccionada",
@@ -341,7 +311,6 @@
   "newNote": "Nueva Nota",
   "fromTime": "Desde: {time}",
   "toTime": "Hasta: {time}",
-
   "searchNotes": "Buscar notas...",
   "searchNotesPlaceholder": "Buscar por título o descripción",
   "filterByCategory": "Filtrar por categoría",
@@ -355,7 +324,6 @@
   "noNotesMatchSearch": "No hay notas que coincidan con tu búsqueda",
   "tryDifferentSearch": "Intenta ajustar tus criterios de búsqueda",
   "nResultsFound": "{count, plural, =0{Sin resultados} =1{1 resultado} other{{count} resultados}}",
-
   "favorites": "Favoritos",
   "favoriteDays": "Días Favoritos",
   "favoriteNotes": "Notas Favoritas",
@@ -367,7 +335,6 @@
   "markAsFavorite": "Marcar como favorito",
   "unmarkAsFavorite": "Desmarcar como favorito",
   "viewAll": "Ver todo",
-
   "notificationSettings": "Configuración de notificaciones",
   "notificationSettingsDescription": "Configura recordatorios y notificaciones para tus entradas de diario.",
   "enableNotifications": "Activar notificaciones",
@@ -380,7 +347,6 @@
   "streakWarningsDescription": "Recibe notificaciones cuando tu racha de escritura esté en riesgo",
   "notificationPermissionDenied": "Se denegó el permiso de notificación. Por favor, actívalo en la configuración.",
   "selectReminderTime": "Seleccionar hora del recordatorio",
-
   "goalsSectionTitle": "Objetivos",
   "goalCreateNew": "Crear Objetivo",
   "goalCreate": "Crear",
@@ -410,5 +376,10 @@
   "goalSuccessRate": "Tasa de Éxito",
   "days": "días",
   "back": "Atrás",
-  "next": "Siguiente"
+  "next": "Siguiente",
+  "photos": "Fotos",
+  "noPhotos": "No hay fotos adjuntas",
+  "deletePhoto": "Eliminar foto",
+  "deletePhotoConfirm": "¿Está seguro de que desea eliminar esta foto?",
+  "imageNotFound": "Imagen no encontrada"
 }
