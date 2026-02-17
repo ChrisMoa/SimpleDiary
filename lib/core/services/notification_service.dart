@@ -2,6 +2,7 @@
 import 'package:day_tracker/core/log/logger_instance.dart';
 import 'package:day_tracker/core/settings/notification_settings.dart';
 import 'package:day_tracker/core/settings/settings_container.dart';
+import 'package:day_tracker/core/utils/platform_utils.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:timezone/timezone.dart' as tz;
@@ -74,17 +75,19 @@ class NotificationService {
               AndroidFlutterLocalNotificationsPlugin>()
           ?.createNotificationChannel(androidChannel);
 
-      // Initialize Workmanager for background tasks
-      await Workmanager().initialize(
-        _callbackDispatcher,
-        isInDebugMode: false,
-      );
+      // Initialize Workmanager for background tasks (Android only)
+      if (activePlatform.platform == ActivePlatform.android) {
+        await Workmanager().initialize(
+          _callbackDispatcher,
+          isInDebugMode: false,
+        );
+      }
 
       _isInitialized = true;
       LogWrapper.logger.i('NotificationService initialized successfully');
     } catch (e) {
       LogWrapper.logger.e('Failed to initialize NotificationService: $e');
-      rethrow;
+      // Don't rethrow — missing plugin on desktop is non-fatal
     }
   }
 
@@ -170,8 +173,9 @@ class NotificationService {
         matchDateTimeComponents: DateTimeComponents.time, // Daily repeat
       );
 
-      // Register background task for smart reminders
-      if (settings.smartRemindersEnabled) {
+      // Register background task for smart reminders (Android only)
+      if (settings.smartRemindersEnabled &&
+          activePlatform.platform == ActivePlatform.android) {
         await Workmanager().registerPeriodicTask(
           'diary_reminder_check',
           'diary_reminder_check',
@@ -192,7 +196,9 @@ class NotificationService {
   Future<void> cancelAllNotifications() async {
     try {
       await _notificationsPlugin.cancelAll();
-      await Workmanager().cancelAll();
+      if (activePlatform.platform == ActivePlatform.android) {
+        await Workmanager().cancelAll();
+      }
       LogWrapper.logger.i('All notifications cancelled');
     } catch (e) {
       LogWrapper.logger.e('Error cancelling notifications: $e');

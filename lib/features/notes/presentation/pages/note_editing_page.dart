@@ -2,7 +2,6 @@ import 'package:day_tracker/core/log/logger_instance.dart';
 import 'package:day_tracker/core/utils/utils.dart';
 import 'package:day_tracker/features/notes/data/models/note.dart';
 import 'package:day_tracker/features/notes/domain/providers/category_local_db_provider.dart';
-import 'package:day_tracker/features/notes/domain/providers/note_attachments_provider.dart';
 import 'package:day_tracker/features/notes/domain/providers/note_editing_page_provider.dart';
 import 'package:day_tracker/features/notes/domain/providers/note_local_db_provider.dart';
 import 'package:day_tracker/features/notes/domain/providers/note_selected_date_provider.dart';
@@ -75,13 +74,11 @@ class _NoteEditingPageState extends ConsumerState<NoteEditingPage> {
     final l10n = AppLocalizations.of(context)!;
     return Form(
       key: _formKey,
-      child: Container(
-        color: Theme.of(context).colorScheme.surface,
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
               buildTitle(),
               const SizedBox(height: 20),
               buildDateTimePickers(),
@@ -108,8 +105,7 @@ class _NoteEditingPageState extends ConsumerState<NoteEditingPage> {
                   ],
                 ),
               ],
-            ],
-          ),
+          ],
         ),
       ),
     );

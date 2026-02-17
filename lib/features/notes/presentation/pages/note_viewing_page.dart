@@ -27,11 +27,7 @@ class _NoteViewingPageState extends ConsumerState<NoteViewingPage> {
         leading: const CloseButton(),
         actions: buildViewingActions(context, note),
       ),
-      body: Container(
-        width: double.infinity,
-        height: double.infinity,
-        color: Theme.of(context).colorScheme.surface,
-        child: ListView(
+      body: ListView(
           padding: const EdgeInsets.all(32),
           children: <Widget>[
             Text(
@@ -56,7 +52,6 @@ class _NoteViewingPageState extends ConsumerState<NoteViewingPage> {
             const SizedBox(height: 24),
             ImagePickerWidget(noteId: note.id!, readOnly: true),
           ],
-        ),
       ),
     );
   }
