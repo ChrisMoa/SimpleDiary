@@ -80,7 +80,7 @@ class HabitStatsWidget extends ConsumerWidget {
                       l10n.habitCurrentStreak,
                       '${stats.currentStreak}',
                       Icons.local_fire_department,
-                      Colors.orange,
+                      Colors.orange.shade700,
                     ),
                     const SizedBox(width: 12),
                     _buildStatBox(
@@ -88,7 +88,7 @@ class HabitStatsWidget extends ConsumerWidget {
                       l10n.habitBestStreak,
                       '${stats.bestStreak}',
                       Icons.emoji_events,
-                      Colors.amber,
+                      Colors.amber.shade700,
                     ),
                     const SizedBox(width: 12),
                     _buildStatBox(
@@ -133,7 +133,7 @@ class HabitStatsWidget extends ConsumerWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
         decoration: BoxDecoration(
-          color: color.withValues(alpha: 0.08),
+          color: color.withValues(alpha: theme.brightness == Brightness.dark ? 0.2 : 0.08),
           borderRadius: BorderRadius.circular(12),
         ),
         child: Column(

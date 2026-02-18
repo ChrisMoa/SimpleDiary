@@ -56,7 +56,7 @@ class HabitsSummarySection extends ConsumerWidget {
               minHeight: 8,
               backgroundColor: theme.colorScheme.surfaceContainerHighest,
               color: progress >= 1.0
-                  ? Colors.green
+                  ? Colors.green.shade600
                   : theme.colorScheme.primary,
             ),
           ),
@@ -66,7 +66,7 @@ class HabitsSummarySection extends ConsumerWidget {
               child: Text(
                 l10n.habitAllHabitsCompleted,
                 style: theme.textTheme.bodySmall?.copyWith(
-                  color: Colors.green,
+                  color: Colors.green.shade600,
                   fontWeight: FontWeight.w600,
                 ),
               ),

@@ -63,7 +63,7 @@ class HabitChecklistWidget extends ConsumerWidget {
                   backgroundColor:
                       theme.colorScheme.surfaceContainerHighest,
                   color: progress >= 1.0
-                      ? Colors.green
+                      ? Colors.green.shade600
                       : theme.colorScheme.primary,
                 ),
                 Text(
@@ -231,7 +231,7 @@ class _HabitChecklistItem extends StatelessWidget {
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       color: isCompleted
-          ? habit.color.withValues(alpha: 0.08)
+          ? habit.color.withValues(alpha: theme.brightness == Brightness.dark ? 0.2 : 0.08)
           : theme.colorScheme.surface,
       elevation: 0,
       shape: RoundedRectangleBorder(

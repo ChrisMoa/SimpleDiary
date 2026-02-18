@@ -55,6 +55,7 @@ class _HabitEditDialogState extends ConsumerState<HabitEditDialog> {
     final l10n = AppLocalizations.of(context);
 
     return AlertDialog(
+      backgroundColor: theme.colorScheme.surfaceContainerHigh,
       title: Text(
         isEditing ? l10n.habitEdit : l10n.habitCreateNew,
         style: theme.textTheme.titleLarge?.copyWith(
@@ -73,9 +74,24 @@ class _HabitEditDialogState extends ConsumerState<HabitEditDialog> {
                 // Name
                 TextFormField(
                   controller: _nameController,
+                  style: TextStyle(color: theme.colorScheme.onSurface),
                   decoration: InputDecoration(
                     labelText: l10n.habitName,
+                    labelStyle: TextStyle(
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
                     border: const OutlineInputBorder(),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: theme.colorScheme.outline,
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: theme.colorScheme.primary,
+                        width: 2,
+                      ),
+                    ),
                   ),
                   validator: (value) {
                     if (value == null || value.trim().isEmpty) {
@@ -89,9 +105,24 @@ class _HabitEditDialogState extends ConsumerState<HabitEditDialog> {
                 // Description
                 TextFormField(
                   controller: _descriptionController,
+                  style: TextStyle(color: theme.colorScheme.onSurface),
                   decoration: InputDecoration(
                     labelText: l10n.habitDescription,
+                    labelStyle: TextStyle(
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
                     border: const OutlineInputBorder(),
+                    enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: theme.colorScheme.outline,
+                      ),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: theme.colorScheme.primary,
+                        width: 2,
+                      ),
+                    ),
                   ),
                   maxLines: 2,
                 ),
@@ -184,7 +215,10 @@ class _HabitEditDialogState extends ConsumerState<HabitEditDialog> {
                     IconButton(
                       onPressed:
                           _targetCount > 1 ? () => setState(() => _targetCount--) : null,
-                      icon: const Icon(Icons.remove_circle_outline),
+                      icon: Icon(
+                        Icons.remove_circle_outline,
+                        color: theme.colorScheme.onSurfaceVariant,
+                      ),
                     ),
                     Text(
                       '$_targetCount',
@@ -194,7 +228,10 @@ class _HabitEditDialogState extends ConsumerState<HabitEditDialog> {
                     ),
                     IconButton(
                       onPressed: () => setState(() => _targetCount++),
-                      icon: const Icon(Icons.add_circle_outline),
+                      icon: Icon(
+                        Icons.add_circle_outline,
+                        color: theme.colorScheme.onSurfaceVariant,
+                      ),
                     ),
                   ],
                 ),
@@ -206,9 +243,16 @@ class _HabitEditDialogState extends ConsumerState<HabitEditDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(),
-          child: Text(l10n.cancel),
+          child: Text(
+            l10n.cancel,
+            style: TextStyle(color: theme.colorScheme.onSurfaceVariant),
+          ),
         ),
         FilledButton(
+          style: FilledButton.styleFrom(
+            backgroundColor: theme.colorScheme.primary,
+            foregroundColor: theme.colorScheme.onPrimary,
+          ),
           onPressed: _save,
           child: Text(l10n.save),
         ),
@@ -235,10 +279,13 @@ class _HabitEditDialogState extends ConsumerState<HabitEditDialog> {
           selected: isSelected,
           onSelected: (_) => setState(() => _frequency = freq),
           selectedColor: theme.colorScheme.primaryContainer,
+          backgroundColor: theme.colorScheme.surfaceContainerLow,
+          side: BorderSide(color: theme.colorScheme.outlineVariant),
+          checkmarkColor: theme.colorScheme.onPrimaryContainer,
           labelStyle: TextStyle(
             color: isSelected
                 ? theme.colorScheme.onPrimaryContainer
-                : theme.colorScheme.onSurface,
+                : theme.colorScheme.onSurfaceVariant,
           ),
         );
       }).toList(),
@@ -278,10 +325,13 @@ class _HabitEditDialogState extends ConsumerState<HabitEditDialog> {
                 });
               },
               selectedColor: theme.colorScheme.primaryContainer,
+              backgroundColor: theme.colorScheme.surfaceContainerLow,
+              side: BorderSide(color: theme.colorScheme.outlineVariant),
+              checkmarkColor: theme.colorScheme.onPrimaryContainer,
               labelStyle: TextStyle(
                 color: isSelected
                     ? theme.colorScheme.onPrimaryContainer
-                    : theme.colorScheme.onSurface,
+                    : theme.colorScheme.onSurfaceVariant,
               ),
             );
           }),
@@ -303,7 +353,10 @@ class _HabitEditDialogState extends ConsumerState<HabitEditDialog> {
         IconButton(
           onPressed:
               _timesPerWeek > 1 ? () => setState(() => _timesPerWeek--) : null,
-          icon: const Icon(Icons.remove_circle_outline),
+          icon: Icon(
+            Icons.remove_circle_outline,
+            color: theme.colorScheme.onSurfaceVariant,
+          ),
         ),
         Text(
           '$_timesPerWeek',
@@ -314,7 +367,10 @@ class _HabitEditDialogState extends ConsumerState<HabitEditDialog> {
         IconButton(
           onPressed:
               _timesPerWeek < 7 ? () => setState(() => _timesPerWeek++) : null,
-          icon: const Icon(Icons.add_circle_outline),
+          icon: Icon(
+            Icons.add_circle_outline,
+            color: theme.colorScheme.onSurfaceVariant,
+          ),
         ),
       ],
     );
@@ -348,6 +404,7 @@ class _HabitEditDialogState extends ConsumerState<HabitEditDialog> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
+        backgroundColor: theme.colorScheme.surfaceContainerHigh,
         title: Text(
           AppLocalizations.of(context).habitSelectIcon,
           style: theme.textTheme.titleMedium?.copyWith(
@@ -399,10 +456,17 @@ class _HabitEditDialogState extends ConsumerState<HabitEditDialog> {
   }
 
   void _showColorPicker(BuildContext context) {
+    final theme = Theme.of(context);
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(AppLocalizations.of(context).habitSelectColor),
+        backgroundColor: theme.colorScheme.surfaceContainerHigh,
+        title: Text(
+          AppLocalizations.of(context).habitSelectColor,
+          style: theme.textTheme.titleMedium?.copyWith(
+            color: theme.colorScheme.onSurface,
+          ),
+        ),
         content: SingleChildScrollView(
           child: ColorPicker(
             color: _color,
@@ -420,7 +484,10 @@ class _HabitEditDialogState extends ConsumerState<HabitEditDialog> {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: Text(AppLocalizations.of(context).ok),
+            child: Text(
+              AppLocalizations.of(context).ok,
+              style: TextStyle(color: theme.colorScheme.primary),
+            ),
           ),
         ],
       ),
