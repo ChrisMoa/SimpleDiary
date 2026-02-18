@@ -16,6 +16,7 @@ import 'package:day_tracker/features/day_rating/domain/providers/diary_day_local
 import 'package:day_tracker/features/notes/domain/providers/category_local_db_provider.dart';
 import 'package:day_tracker/features/notes/domain/providers/note_attachments_provider.dart';
 import 'package:day_tracker/features/notes/domain/providers/note_local_db_provider.dart';
+import 'package:day_tracker/features/habits/domain/providers/habit_providers.dart';
 import 'package:day_tracker/features/note_templates/domain/providers/note_template_local_db_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -186,6 +187,13 @@ class _MainPageState extends ConsumerState<MainPage> {
 
       // Initialize note attachments
       await ref.read(noteAttachmentsProvider.notifier).readObjectsFromDatabase();
+
+      // Initialize habits databases for the user
+      LogWrapper.logger.d('Initializing habits for user ${userData.username}');
+      await ref.read(habitsLocalDbDataProvider.notifier).changeDbFileToUser(userData);
+      await ref.read(habitsLocalDbDataProvider.notifier).readObjectsFromDatabase();
+      await ref.read(habitEntriesLocalDbDataProvider.notifier).changeDbFileToUser(userData);
+      await ref.read(habitEntriesLocalDbDataProvider.notifier).readObjectsFromDatabase();
 
       _userData = userData;
       setState(() {

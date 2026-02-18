@@ -2393,6 +2393,312 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Image not found'**
   String get imageNotFound;
+
+  /// No description provided for @drawerHabits.
+  ///
+  /// In en, this message translates to:
+  /// **'Habits'**
+  String get drawerHabits;
+
+  /// No description provided for @habitsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Habits'**
+  String get habitsTitle;
+
+  /// No description provided for @habitsToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get habitsToday;
+
+  /// No description provided for @habitsGrid.
+  ///
+  /// In en, this message translates to:
+  /// **'Grid'**
+  String get habitsGrid;
+
+  /// No description provided for @habitsStats.
+  ///
+  /// In en, this message translates to:
+  /// **'Stats'**
+  String get habitsStats;
+
+  /// No description provided for @habitName.
+  ///
+  /// In en, this message translates to:
+  /// **'Habit Name'**
+  String get habitName;
+
+  /// No description provided for @habitNameRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a habit name'**
+  String get habitNameRequired;
+
+  /// No description provided for @habitDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Description'**
+  String get habitDescription;
+
+  /// No description provided for @habitIconAndColor.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to change icon or color'**
+  String get habitIconAndColor;
+
+  /// No description provided for @habitFrequency.
+  ///
+  /// In en, this message translates to:
+  /// **'Frequency'**
+  String get habitFrequency;
+
+  /// No description provided for @habitFrequencyDaily.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily'**
+  String get habitFrequencyDaily;
+
+  /// No description provided for @habitFrequencyWeekdays.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekdays'**
+  String get habitFrequencyWeekdays;
+
+  /// No description provided for @habitFrequencyWeekends.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekends'**
+  String get habitFrequencyWeekends;
+
+  /// No description provided for @habitFrequencySpecificDays.
+  ///
+  /// In en, this message translates to:
+  /// **'Specific Days'**
+  String get habitFrequencySpecificDays;
+
+  /// No description provided for @habitFrequencyTimesPerWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'Times/Week'**
+  String get habitFrequencyTimesPerWeek;
+
+  /// No description provided for @habitTargetCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Target Count'**
+  String get habitTargetCount;
+
+  /// No description provided for @habitTimesPerWeekLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Times per week'**
+  String get habitTimesPerWeekLabel;
+
+  /// No description provided for @habitCreateNew.
+  ///
+  /// In en, this message translates to:
+  /// **'New Habit'**
+  String get habitCreateNew;
+
+  /// No description provided for @habitEdit.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Habit'**
+  String get habitEdit;
+
+  /// No description provided for @habitArchive.
+  ///
+  /// In en, this message translates to:
+  /// **'Archive Habit'**
+  String get habitArchive;
+
+  /// No description provided for @habitUnarchive.
+  ///
+  /// In en, this message translates to:
+  /// **'Unarchive Habit'**
+  String get habitUnarchive;
+
+  /// No description provided for @habitNoHabits.
+  ///
+  /// In en, this message translates to:
+  /// **'No habits yet'**
+  String get habitNoHabits;
+
+  /// No description provided for @habitNoHabitsDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Create habits to track your daily routines'**
+  String get habitNoHabitsDescription;
+
+  /// No description provided for @habitCreateFirst.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Your First Habit'**
+  String get habitCreateFirst;
+
+  /// No description provided for @habitCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed'**
+  String get habitCompleted;
+
+  /// No description provided for @habitProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Progress'**
+  String get habitProgress;
+
+  /// No description provided for @habitDueToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Due Today'**
+  String get habitDueToday;
+
+  /// No description provided for @habitCurrentStreak.
+  ///
+  /// In en, this message translates to:
+  /// **'Current Streak'**
+  String get habitCurrentStreak;
+
+  /// No description provided for @habitBestStreak.
+  ///
+  /// In en, this message translates to:
+  /// **'Best Streak'**
+  String get habitBestStreak;
+
+  /// No description provided for @habitCompletionRate.
+  ///
+  /// In en, this message translates to:
+  /// **'Completion Rate'**
+  String get habitCompletionRate;
+
+  /// No description provided for @habitLast7Days.
+  ///
+  /// In en, this message translates to:
+  /// **'Last 7 days'**
+  String get habitLast7Days;
+
+  /// No description provided for @habitLast30Days.
+  ///
+  /// In en, this message translates to:
+  /// **'Last 30 days'**
+  String get habitLast30Days;
+
+  /// No description provided for @habitAllTime.
+  ///
+  /// In en, this message translates to:
+  /// **'All time'**
+  String get habitAllTime;
+
+  /// No description provided for @habitTotalCompletions.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Completions'**
+  String get habitTotalCompletions;
+
+  /// No description provided for @habitSelectIcon.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Icon'**
+  String get habitSelectIcon;
+
+  /// No description provided for @habitSelectColor.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Color'**
+  String get habitSelectColor;
+
+  /// No description provided for @habitSelectAtLeastOneDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Please select at least one day'**
+  String get habitSelectAtLeastOneDay;
+
+  /// No description provided for @habitDayMon.
+  ///
+  /// In en, this message translates to:
+  /// **'Mon'**
+  String get habitDayMon;
+
+  /// No description provided for @habitDayTue.
+  ///
+  /// In en, this message translates to:
+  /// **'Tue'**
+  String get habitDayTue;
+
+  /// No description provided for @habitDayWed.
+  ///
+  /// In en, this message translates to:
+  /// **'Wed'**
+  String get habitDayWed;
+
+  /// No description provided for @habitDayThu.
+  ///
+  /// In en, this message translates to:
+  /// **'Thu'**
+  String get habitDayThu;
+
+  /// No description provided for @habitDayFri.
+  ///
+  /// In en, this message translates to:
+  /// **'Fri'**
+  String get habitDayFri;
+
+  /// No description provided for @habitDaySat.
+  ///
+  /// In en, this message translates to:
+  /// **'Sat'**
+  String get habitDaySat;
+
+  /// No description provided for @habitDaySun.
+  ///
+  /// In en, this message translates to:
+  /// **'Sun'**
+  String get habitDaySun;
+
+  /// No description provided for @habitDeleteConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete this habit and all its entries?'**
+  String get habitDeleteConfirm;
+
+  /// No description provided for @habitDeleteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Habit'**
+  String get habitDeleteTitle;
+
+  /// No description provided for @habitTodayProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Today\'s Progress'**
+  String get habitTodayProgress;
+
+  /// No description provided for @habitAllHabitsCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'All habits completed!'**
+  String get habitAllHabitsCompleted;
+
+  /// No description provided for @habitContributionGrid.
+  ///
+  /// In en, this message translates to:
+  /// **'Contribution Grid'**
+  String get habitContributionGrid;
+
+  /// No description provided for @habitLess.
+  ///
+  /// In en, this message translates to:
+  /// **'Less'**
+  String get habitLess;
+
+  /// No description provided for @habitMore.
+  ///
+  /// In en, this message translates to:
+  /// **'More'**
+  String get habitMore;
 }
 
 class _AppLocalizationsDelegate

@@ -7,6 +7,7 @@ import 'package:day_tracker/features/dashboard/presentation/widgets/quick_stats_
 import 'package:day_tracker/features/dashboard/presentation/widgets/week_overview_widget.dart';
 import 'package:day_tracker/features/day_rating/presentation/pages/diary_day_wizard_page.dart';
 import 'package:day_tracker/features/goals/presentation/widgets/goals_section.dart';
+import 'package:day_tracker/features/habits/presentation/widgets/habits_summary_section.dart';
 import 'package:flutter/material.dart';
 import 'package:day_tracker/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -72,6 +73,7 @@ class _NewDashboardPageState extends ConsumerState<NewDashboardPage> {
       slivers: [
         const SliverToBoxAdapter(child: QuickStatsHeader()),
         const SliverToBoxAdapter(child: GoalsSection()),
+        const SliverToBoxAdapter(child: HabitsSummarySection()),
         const SliverToBoxAdapter(child: SizedBox(height: 16)),
         const SliverToBoxAdapter(child: WeekOverviewWidget()),
         const SliverToBoxAdapter(child: FavoritesSectionWidget()),
@@ -96,6 +98,7 @@ class _NewDashboardPageState extends ConsumerState<NewDashboardPage> {
           ),
         ),
         const SliverToBoxAdapter(child: GoalsSection()),
+        const SliverToBoxAdapter(child: HabitsSummarySection()),
         const SliverToBoxAdapter(child: SizedBox(height: 16)),
         const SliverToBoxAdapter(child: FavoritesSectionWidget()),
         const SliverToBoxAdapter(child: SizedBox(height: 16)),
@@ -124,6 +127,7 @@ class _NewDashboardPageState extends ConsumerState<NewDashboardPage> {
                 slivers: [
                   const SliverToBoxAdapter(child: QuickStatsHeader()),
                   const SliverToBoxAdapter(child: GoalsSection()),
+                  const SliverToBoxAdapter(child: HabitsSummarySection()),
                   const SliverToBoxAdapter(child: SizedBox(height: 16)),
                   const SliverToBoxAdapter(child: WeekOverviewWidget()),
                   const SliverToBoxAdapter(child: FavoritesSectionWidget()),

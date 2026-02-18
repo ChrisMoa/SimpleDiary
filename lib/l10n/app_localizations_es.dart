@@ -1276,4 +1276,159 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get imageNotFound => 'Imagen no encontrada';
+
+  @override
+  String get drawerHabits => 'Hábitos';
+
+  @override
+  String get habitsTitle => 'Hábitos';
+
+  @override
+  String get habitsToday => 'Hoy';
+
+  @override
+  String get habitsGrid => 'Cuadrícula';
+
+  @override
+  String get habitsStats => 'Estadísticas';
+
+  @override
+  String get habitName => 'Nombre del hábito';
+
+  @override
+  String get habitNameRequired => 'Por favor ingresa un nombre';
+
+  @override
+  String get habitDescription => 'Descripción';
+
+  @override
+  String get habitIconAndColor => 'Toca para cambiar icono o color';
+
+  @override
+  String get habitFrequency => 'Frecuencia';
+
+  @override
+  String get habitFrequencyDaily => 'Diario';
+
+  @override
+  String get habitFrequencyWeekdays => 'Días laborales';
+
+  @override
+  String get habitFrequencyWeekends => 'Fines de semana';
+
+  @override
+  String get habitFrequencySpecificDays => 'Días específicos';
+
+  @override
+  String get habitFrequencyTimesPerWeek => 'Veces/Semana';
+
+  @override
+  String get habitTargetCount => 'Cantidad objetivo';
+
+  @override
+  String get habitTimesPerWeekLabel => 'Veces por semana';
+
+  @override
+  String get habitCreateNew => 'Nuevo Hábito';
+
+  @override
+  String get habitEdit => 'Editar Hábito';
+
+  @override
+  String get habitArchive => 'Archivar Hábito';
+
+  @override
+  String get habitUnarchive => 'Desarchivar Hábito';
+
+  @override
+  String get habitNoHabits => 'Aún no hay hábitos';
+
+  @override
+  String get habitNoHabitsDescription =>
+      'Crea hábitos para seguir tus rutinas diarias';
+
+  @override
+  String get habitCreateFirst => 'Crea tu Primer Hábito';
+
+  @override
+  String get habitCompleted => 'Completado';
+
+  @override
+  String get habitProgress => 'Progreso';
+
+  @override
+  String get habitDueToday => 'Pendiente Hoy';
+
+  @override
+  String get habitCurrentStreak => 'Racha Actual';
+
+  @override
+  String get habitBestStreak => 'Mejor Racha';
+
+  @override
+  String get habitCompletionRate => 'Tasa de Completado';
+
+  @override
+  String get habitLast7Days => 'Últimos 7 días';
+
+  @override
+  String get habitLast30Days => 'Últimos 30 días';
+
+  @override
+  String get habitAllTime => 'Total';
+
+  @override
+  String get habitTotalCompletions => 'Total Completados';
+
+  @override
+  String get habitSelectIcon => 'Seleccionar Icono';
+
+  @override
+  String get habitSelectColor => 'Seleccionar Color';
+
+  @override
+  String get habitSelectAtLeastOneDay => 'Por favor selecciona al menos un día';
+
+  @override
+  String get habitDayMon => 'Lun';
+
+  @override
+  String get habitDayTue => 'Mar';
+
+  @override
+  String get habitDayWed => 'Mié';
+
+  @override
+  String get habitDayThu => 'Jue';
+
+  @override
+  String get habitDayFri => 'Vie';
+
+  @override
+  String get habitDaySat => 'Sáb';
+
+  @override
+  String get habitDaySun => 'Dom';
+
+  @override
+  String get habitDeleteConfirm =>
+      '¿Estás seguro de que quieres eliminar este hábito y todas sus entradas?';
+
+  @override
+  String get habitDeleteTitle => 'Eliminar Hábito';
+
+  @override
+  String get habitTodayProgress => 'Progreso de Hoy';
+
+  @override
+  String get habitAllHabitsCompleted => '¡Todos los hábitos completados!';
+
+  @override
+  String get habitContributionGrid => 'Cuadrícula de Contribuciones';
+
+  @override
+  String get habitLess => 'Menos';
+
+  @override
+  String get habitMore => 'Más';
 }
