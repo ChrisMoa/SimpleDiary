@@ -2,6 +2,7 @@
 import 'dart:convert';
 import 'dart:ui';
 
+import 'package:day_tracker/core/settings/biometric_settings.dart';
 import 'package:day_tracker/core/settings/notification_settings.dart';
 import 'package:day_tracker/core/theme/themes.dart';
 import 'package:day_tracker/features/authentication/data/models/user_data.dart';
@@ -14,6 +15,7 @@ class UserSettings {
   SupabaseSettings supabaseSettings;
   String languageCode;
   NotificationSettings notificationSettings;
+  BiometricSettings biometricSettings;
 
   UserSettings(
     this.darkThemeMode,
@@ -22,6 +24,7 @@ class UserSettings {
     this.supabaseSettings,
     this.languageCode,
     this.notificationSettings,
+    this.biometricSettings,
   );
 
   Map<String, dynamic> toMap() {
@@ -32,6 +35,7 @@ class UserSettings {
       'supabaseSettings': supabaseSettings.toMap(),
       'languageCode': languageCode,
       'notificationSettings': notificationSettings.toMap(),
+      'biometricSettings': biometricSettings.toMap(),
     };
   }
 
@@ -43,6 +47,7 @@ class UserSettings {
       SupabaseSettings.fromMap(map['supabaseSettings'] ?? {}),
       (map['languageCode'] as String?) ?? 'en',
       NotificationSettings.fromMap(map['notificationSettings'] ?? {}),
+      BiometricSettings.fromMap(map['biometricSettings'] ?? {}),
     );
   }
 
@@ -53,6 +58,7 @@ class UserSettings {
         SupabaseSettings.empty(),
         'en',
         NotificationSettings.fromEmpty(),
+        BiometricSettings.fromEmpty(),
       );
 
   String get name => 'UserSettings';

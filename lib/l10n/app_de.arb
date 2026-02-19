@@ -432,5 +432,34 @@
   "habitAllHabitsCompleted": "Alle Gewohnheiten erledigt!",
   "habitContributionGrid": "Beitragsraster",
   "habitLess": "Weniger",
-  "habitMore": "Mehr"
+  "habitMore": "Mehr",
+
+  "biometricSettings": "Biometrische Anmeldung",
+  "biometricSettingsDescription": "Fingerabdruck oder Gesichtserkennung zum Entsperren verwenden",
+  "enableBiometric": "Biometrische Anmeldung aktivieren",
+  "enableBiometricDescription": "App mit Fingerabdruck oder Gesicht entsperren",
+  "biometricLockOnResume": "Bei App-Wechsel sperren",
+  "biometricLockOnResumeDescription": "Biometrie beim Zurückkehren zur App verlangen",
+  "biometricLockTimeout": "Sperr-Timeout",
+  "biometricLockTimeoutDescription": "Zeit bis zur erneuten Authentifizierung",
+  "biometricImmediately": "Sofort",
+  "biometricMinutes": "{count} Minuten",
+  "@biometricMinutes": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "biometricTestButton": "Biometrie testen",
+  "biometricTestSuccess": "Biometrische Authentifizierung erfolgreich",
+  "biometricTestFailed": "Biometrische Authentifizierung fehlgeschlagen",
+  "biometricNotAvailable": "Biometrische Authentifizierung auf diesem Gerät nicht verfügbar",
+  "biometricNotEnrolled": "Keine Biometrie auf diesem Gerät eingerichtet",
+  "biometricUnlockPrompt": "SimpleDiary entsperren",
+  "biometricTapToUnlock": "Tippen zum biometrischen Entsperren",
+  "usePasswordInstead": "Stattdessen Passwort verwenden",
+  "biometricRetry": "Erneut versuchen",
+  "biometricEnrollSuccess": "Biometrische Anmeldung erfolgreich aktiviert",
+  "biometricEnrollFailed": "Biometrische Anmeldung konnte nicht aktiviert werden"
 }

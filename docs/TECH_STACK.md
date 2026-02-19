@@ -79,6 +79,8 @@ intl: any                             # Internationalization utilities
 |---------|---------|-------|
 | `crypto` | ^3.0.3 | Password hashing |
 | `encrypt` | ^5.0.3 | AES encryption |
+| `local_auth` | ^2.3.0 | Biometric authentication (fingerprint/face) |
+| `flutter_secure_storage` | ^9.2.4 | Secure credential storage for biometric login |
 
 ### Utilities
 | Package | Version | Usage |
@@ -307,6 +309,7 @@ LogWrapper.logger.t('Trace message');
 - `Color themeSeedColor`
 - `UserData savedUserData` - Profile info
 - `SupabaseSettings? supabaseSettings`
+- `BiometricSettings biometricSettings` - Biometric login preferences
 
 ### UserData
 - `String username`

@@ -1440,4 +1440,78 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get habitMore => 'Plus';
+
+  @override
+  String get biometricSettings => 'Connexion biométrique';
+
+  @override
+  String get biometricSettingsDescription =>
+      'Utiliser l\'empreinte digitale ou la reconnaissance faciale pour déverrouiller l\'application';
+
+  @override
+  String get enableBiometric => 'Activer la connexion biométrique';
+
+  @override
+  String get enableBiometricDescription =>
+      'Déverrouiller l\'application avec votre empreinte digitale ou votre visage';
+
+  @override
+  String get biometricLockOnResume => 'Verrouiller lors du changement d\'app';
+
+  @override
+  String get biometricLockOnResumeDescription =>
+      'Exiger la biométrie lors du retour à l\'application';
+
+  @override
+  String get biometricLockTimeout => 'Délai de verrouillage';
+
+  @override
+  String get biometricLockTimeoutDescription =>
+      'Temps avant de nécessiter une ré-authentification';
+
+  @override
+  String get biometricImmediately => 'Immédiatement';
+
+  @override
+  String biometricMinutes(int count) {
+    return '$count minutes';
+  }
+
+  @override
+  String get biometricTestButton => 'Tester la biométrie';
+
+  @override
+  String get biometricTestSuccess => 'Authentification biométrique réussie';
+
+  @override
+  String get biometricTestFailed => 'Authentification biométrique échouée';
+
+  @override
+  String get biometricNotAvailable =>
+      'Authentification biométrique non disponible sur cet appareil';
+
+  @override
+  String get biometricNotEnrolled =>
+      'Aucune biométrie enregistrée sur cet appareil';
+
+  @override
+  String get biometricUnlockPrompt => 'Déverrouiller SimpleDiary';
+
+  @override
+  String get biometricTapToUnlock =>
+      'Appuyez pour déverrouiller avec la biométrie';
+
+  @override
+  String get usePasswordInstead => 'Utiliser le mot de passe à la place';
+
+  @override
+  String get biometricRetry => 'Réessayer';
+
+  @override
+  String get biometricEnrollSuccess =>
+      'Connexion biométrique activée avec succès';
+
+  @override
+  String get biometricEnrollFailed =>
+      'Impossible d\'activer la connexion biométrique';
 }

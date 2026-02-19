@@ -1418,4 +1418,74 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get habitMore => 'More';
+
+  @override
+  String get biometricSettings => 'Biometric Login';
+
+  @override
+  String get biometricSettingsDescription =>
+      'Use fingerprint or face recognition to unlock the app';
+
+  @override
+  String get enableBiometric => 'Enable biometric login';
+
+  @override
+  String get enableBiometricDescription =>
+      'Unlock the app with your fingerprint or face';
+
+  @override
+  String get biometricLockOnResume => 'Lock on app switch';
+
+  @override
+  String get biometricLockOnResumeDescription =>
+      'Require biometric when returning to app';
+
+  @override
+  String get biometricLockTimeout => 'Lock timeout';
+
+  @override
+  String get biometricLockTimeoutDescription =>
+      'Time before requiring re-authentication';
+
+  @override
+  String get biometricImmediately => 'Immediately';
+
+  @override
+  String biometricMinutes(int count) {
+    return '$count minutes';
+  }
+
+  @override
+  String get biometricTestButton => 'Test biometric';
+
+  @override
+  String get biometricTestSuccess => 'Biometric authentication successful';
+
+  @override
+  String get biometricTestFailed => 'Biometric authentication failed';
+
+  @override
+  String get biometricNotAvailable =>
+      'Biometric authentication not available on this device';
+
+  @override
+  String get biometricNotEnrolled => 'No biometrics enrolled on this device';
+
+  @override
+  String get biometricUnlockPrompt => 'Unlock SimpleDiary';
+
+  @override
+  String get biometricTapToUnlock => 'Tap to unlock with biometrics';
+
+  @override
+  String get usePasswordInstead => 'Use password instead';
+
+  @override
+  String get biometricRetry => 'Try again';
+
+  @override
+  String get biometricEnrollSuccess => 'Biometric login enabled successfully';
+
+  @override
+  String get biometricEnrollFailed => 'Could not enable biometric login';
 }

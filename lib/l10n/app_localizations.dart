@@ -2699,6 +2699,132 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'More'**
   String get habitMore;
+
+  /// No description provided for @biometricSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Biometric Login'**
+  String get biometricSettings;
+
+  /// No description provided for @biometricSettingsDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Use fingerprint or face recognition to unlock the app'**
+  String get biometricSettingsDescription;
+
+  /// No description provided for @enableBiometric.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable biometric login'**
+  String get enableBiometric;
+
+  /// No description provided for @enableBiometricDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock the app with your fingerprint or face'**
+  String get enableBiometricDescription;
+
+  /// No description provided for @biometricLockOnResume.
+  ///
+  /// In en, this message translates to:
+  /// **'Lock on app switch'**
+  String get biometricLockOnResume;
+
+  /// No description provided for @biometricLockOnResumeDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Require biometric when returning to app'**
+  String get biometricLockOnResumeDescription;
+
+  /// No description provided for @biometricLockTimeout.
+  ///
+  /// In en, this message translates to:
+  /// **'Lock timeout'**
+  String get biometricLockTimeout;
+
+  /// No description provided for @biometricLockTimeoutDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Time before requiring re-authentication'**
+  String get biometricLockTimeoutDescription;
+
+  /// No description provided for @biometricImmediately.
+  ///
+  /// In en, this message translates to:
+  /// **'Immediately'**
+  String get biometricImmediately;
+
+  /// No description provided for @biometricMinutes.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} minutes'**
+  String biometricMinutes(int count);
+
+  /// No description provided for @biometricTestButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Test biometric'**
+  String get biometricTestButton;
+
+  /// No description provided for @biometricTestSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Biometric authentication successful'**
+  String get biometricTestSuccess;
+
+  /// No description provided for @biometricTestFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Biometric authentication failed'**
+  String get biometricTestFailed;
+
+  /// No description provided for @biometricNotAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Biometric authentication not available on this device'**
+  String get biometricNotAvailable;
+
+  /// No description provided for @biometricNotEnrolled.
+  ///
+  /// In en, this message translates to:
+  /// **'No biometrics enrolled on this device'**
+  String get biometricNotEnrolled;
+
+  /// No description provided for @biometricUnlockPrompt.
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock SimpleDiary'**
+  String get biometricUnlockPrompt;
+
+  /// No description provided for @biometricTapToUnlock.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to unlock with biometrics'**
+  String get biometricTapToUnlock;
+
+  /// No description provided for @usePasswordInstead.
+  ///
+  /// In en, this message translates to:
+  /// **'Use password instead'**
+  String get usePasswordInstead;
+
+  /// No description provided for @biometricRetry.
+  ///
+  /// In en, this message translates to:
+  /// **'Try again'**
+  String get biometricRetry;
+
+  /// No description provided for @biometricEnrollSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Biometric login enabled successfully'**
+  String get biometricEnrollSuccess;
+
+  /// No description provided for @biometricEnrollFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not enable biometric login'**
+  String get biometricEnrollFailed;
 }
 
 class _AppLocalizationsDelegate
