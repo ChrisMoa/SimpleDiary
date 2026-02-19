@@ -217,6 +217,7 @@ class _BiometricSettingsWidgetState
                   settingsContainer.activeUserSettings.biometricSettings
                       .requireOnResume = value;
                 });
+                settingsContainer.saveSettings();
               },
             ),
           ),
@@ -253,6 +254,7 @@ class _BiometricSettingsWidgetState
                       settingsContainer.activeUserSettings.biometricSettings
                           .lockTimeoutMinutes = value;
                     });
+                    settingsContainer.saveSettings();
                   }
                 },
               ),
@@ -385,6 +387,7 @@ class _BiometricSettingsWidgetState
       _biometricEnabled = value;
       settingsContainer.activeUserSettings.biometricSettings.isEnabled = value;
     });
+    await settingsContainer.saveSettings();
   }
 
   Future<void> _testBiometric() async {

@@ -17,3 +17,7 @@ final biometricStatusProvider = FutureProvider<BiometricStatus>((ref) async {
 final biometricEnabledProvider = Provider<bool>((ref) {
   return settingsContainer.activeUserSettings.biometricSettings.isEnabled;
 });
+
+/// Temporary flag to skip biometric and show password page instead.
+/// Reset to false after successful login.
+final skipBiometricProvider = StateProvider<bool>((ref) => false);

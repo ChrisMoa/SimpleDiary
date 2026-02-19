@@ -1,7 +1,7 @@
 // ignore_for_file: public_member_api_docs
 import 'package:day_tracker/core/log/logger_instance.dart';
 import 'package:day_tracker/core/services/biometric_service.dart';
-import 'package:day_tracker/core/settings/settings_container.dart';
+import 'package:day_tracker/features/authentication/domain/providers/biometric_provider.dart';
 import 'package:day_tracker/features/authentication/domain/providers/user_data_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:day_tracker/l10n/app_localizations.dart';
@@ -64,16 +64,19 @@ class _BiometricLockPageState extends ConsumerState<BiometricLockPage> {
 
   Future<void> _loginWithStoredCredentials() async {
     final userData = ref.read(userDataProvider);
+    LogWrapper.logger.d('Attempting biometric login for ${userData.username}');
     final password = await _biometricService.getStoredPassword(userData.username);
 
     if (!mounted) return;
 
     if (password != null) {
+      LogWrapper.logger.d('Retrieved stored credentials, attempting login');
       final success = ref
           .read(userDataProvider.notifier)
           .login(userData.username, password);
 
       if (!success && mounted) {
+        LogWrapper.logger.e('Biometric auto-login failed: password mismatch');
         final l10n = AppLocalizations.of(context);
         setState(() {
           _errorMessage = l10n.biometricEnrollFailed;
@@ -81,17 +84,16 @@ class _BiometricLockPageState extends ConsumerState<BiometricLockPage> {
         });
       }
     } else {
-      // No stored credentials — fall back to password
+      LogWrapper.logger.e('No stored credentials found, falling back to password');
       _switchToPassword();
     }
   }
 
   void _switchToPassword() {
-    // Setting biometric to disabled forces MainPage to show PasswordAuthenticationPage
-    settingsContainer.activeUserSettings.biometricSettings.isEnabled = false;
+    // Tell MainPage to skip biometric and show PasswordAuthenticationPage
+    ref.read(skipBiometricProvider.notifier).state = true;
+    // Force a rebuild by re-setting the lock state
     ref.read(userDataProvider.notifier).lockSession();
-    // Re-enable for next login
-    settingsContainer.activeUserSettings.biometricSettings.isEnabled = true;
   }
 
   @override
