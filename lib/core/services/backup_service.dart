@@ -2,7 +2,9 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:day_tracker/core/authentication/password_auth_service.dart';
 import 'package:day_tracker/core/backup/backup_metadata.dart';
+import 'package:day_tracker/core/encryption/aes_encryptor.dart';
 import 'package:day_tracker/core/log/logger_instance.dart';
 import 'package:day_tracker/core/settings/settings_container.dart';
 
@@ -10,6 +12,7 @@ import 'package:day_tracker/core/settings/settings_container.dart';
 ///
 /// Backups are stored as versioned JSON files in a dedicated backup directory.
 /// Each backup captures diary days, notes, habits, and habit entries.
+/// Backup data is encrypted using AES-256-CBC with the user's password-derived key.
 class BackupService {
   static final BackupService _instance = BackupService._internal();
   factory BackupService() => _instance;
@@ -27,6 +30,23 @@ class BackupService {
       await dir.create(recursive: true);
     }
     return dir;
+  }
+
+  /// Create an [AesEncryptor] from the current user's credentials.
+  /// Returns null if no clear password is available (user not logged in).
+  AesEncryptor? _createEncryptor() {
+    final userData = settingsContainer.activeUserSettings.savedUserData;
+    final clearPassword = userData.clearPassword;
+    final salt = userData.salt;
+
+    if (clearPassword.isEmpty || salt.isEmpty) {
+      LogWrapper.logger.w('Cannot create encryptor: missing password or salt');
+      return null;
+    }
+
+    final encryptionKey =
+        PasswordAuthService.getDatabaseEncryptionKey(clearPassword, salt);
+    return AesEncryptor(encryptionKey: encryptionKey);
   }
 
   /// Create a backup from raw data maps.
@@ -51,16 +71,36 @@ class BackupService {
     final filePath = '${backupDir.path}/$id.json';
 
     try {
+      // Build the plain-text data payload
+      final dataMap = {
+        'diaryDays': diaryDaysJson,
+        'notes': notesJson,
+        'habits': habitsJson,
+        'habitEntries': habitEntriesJson,
+      };
+
+      // Encrypt data if credentials are available
+      final encryptor = _createEncryptor();
+      final bool encrypted = encryptor != null;
+      dynamic dataField;
+
+      if (encrypted) {
+        final plainDataJson = jsonEncode(dataMap);
+        dataField = encryptor.encryptStringAsBase64(plainDataJson);
+        LogWrapper.logger.i(
+          'Backup data encrypted (${plainDataJson.length} → ${(dataField as String).length} chars)',
+        );
+      } else {
+        dataField = dataMap;
+        LogWrapper.logger.w('Backup created WITHOUT encryption (no credentials available)');
+      }
+
       final backupContent = {
         'version': '2.0',
         'createdAt': now.toIso8601String(),
         'type': type.toJson(),
-        'data': {
-          'diaryDays': diaryDaysJson,
-          'notes': notesJson,
-          'habits': habitsJson,
-          'habitEntries': habitEntriesJson,
-        },
+        'encrypted': encrypted,
+        'data': dataField,
       };
 
       final jsonString = jsonEncode(backupContent);
@@ -77,6 +117,7 @@ class BackupService {
         noteCount: notesJson.length,
         habitCount: habitsJson.length,
         habitEntryCount: habitEntriesJson.length,
+        encrypted: encrypted,
       );
 
       await _saveMetadataToIndex(metadata);
@@ -89,7 +130,7 @@ class BackupService {
       LogWrapper.logger.i(
         'Backup created: $id (${metadata.formattedSize}, '
         '${diaryDaysJson.length} days, ${notesJson.length} notes, '
-        '${habitsJson.length} habits)',
+        '${habitsJson.length} habits, encrypted: $encrypted)',
       );
 
       // Prune old backups after successful creation
@@ -120,7 +161,8 @@ class BackupService {
   /// Read backup content from a backup file.
   ///
   /// Returns a map with keys: diaryDays, notes, habits, habitEntries
-  /// Each value is a List<Map<String, dynamic>>.
+  /// Each value is a `List<Map<String, dynamic>>`.
+  /// Automatically decrypts encrypted backups using the current user's credentials.
   Future<Map<String, List<Map<String, dynamic>>>> readBackupContent(
     String backupId,
   ) async {
@@ -136,7 +178,28 @@ class BackupService {
 
     final jsonString = await file.readAsString();
     final backupMap = jsonDecode(jsonString) as Map<String, dynamic>;
-    final data = backupMap['data'] as Map<String, dynamic>;
+    final isEncrypted = backupMap['encrypted'] as bool? ?? false;
+
+    Map<String, dynamic> data;
+
+    if (isEncrypted) {
+      final encryptor = _createEncryptor();
+      if (encryptor == null) {
+        throw Exception('Cannot decrypt backup: no credentials available');
+      }
+
+      final encryptedData = backupMap['data'] as String;
+      try {
+        final decryptedJson = encryptor.decryptStringFromBase64(encryptedData);
+        data = jsonDecode(decryptedJson) as Map<String, dynamic>;
+      } catch (e) {
+        throw Exception(
+          'Failed to decrypt backup. Wrong password or corrupted file. Details: $e',
+        );
+      }
+    } else {
+      data = backupMap['data'] as Map<String, dynamic>;
+    }
 
     return {
       'diaryDays': List<Map<String, dynamic>>.from(

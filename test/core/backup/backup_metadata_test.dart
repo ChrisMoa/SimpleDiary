@@ -92,7 +92,25 @@ void main() {
       expect(map['noteCount'], 50);
       expect(map['habitCount'], 5);
       expect(map['habitEntryCount'], 120);
+      expect(map['encrypted'], false);
       expect(map['error'], isNull);
+    });
+
+    test('toMap serializes encrypted flag when true', () {
+      final metadata = BackupMetadata(
+        id: 'test',
+        createdAt: DateTime(2026, 2, 20),
+        sizeBytes: 100,
+        filePath: '/tmp/test.json',
+        type: BackupType.manual,
+        diaryDayCount: 0,
+        noteCount: 0,
+        habitCount: 0,
+        habitEntryCount: 0,
+        encrypted: true,
+      );
+      final map = metadata.toMap();
+      expect(map['encrypted'], true);
     });
 
     test('fromMap deserializes all fields', () {
@@ -106,6 +124,7 @@ void main() {
         'noteCount': 20,
         'habitCount': 3,
         'habitEntryCount': 50,
+        'encrypted': true,
         'error': null,
       };
 
@@ -120,6 +139,7 @@ void main() {
       expect(metadata.noteCount, 20);
       expect(metadata.habitCount, 3);
       expect(metadata.habitEntryCount, 50);
+      expect(metadata.encrypted, true);
       expect(metadata.error, isNull);
     });
 
@@ -138,6 +158,7 @@ void main() {
       expect(metadata.noteCount, 0);
       expect(metadata.habitCount, 0);
       expect(metadata.habitEntryCount, 0);
+      expect(metadata.encrypted, false);
     });
 
     test('round-trip through JSON preserves data', () {
@@ -154,7 +175,26 @@ void main() {
       expect(restored.noteCount, original.noteCount);
       expect(restored.habitCount, original.habitCount);
       expect(restored.habitEntryCount, original.habitEntryCount);
+      expect(restored.encrypted, original.encrypted);
       expect(restored.error, original.error);
+    });
+
+    test('round-trip preserves encrypted flag', () {
+      final original = BackupMetadata(
+        id: 'backup_encrypted',
+        createdAt: DateTime(2026, 2, 20),
+        sizeBytes: 2048,
+        filePath: '/tmp/test.json',
+        type: BackupType.manual,
+        diaryDayCount: 5,
+        noteCount: 10,
+        habitCount: 2,
+        habitEntryCount: 20,
+        encrypted: true,
+      );
+      final json = original.toJson();
+      final restored = BackupMetadata.fromJson(json);
+      expect(restored.encrypted, true);
     });
 
     test('round-trip preserves error field', () {
@@ -175,6 +215,12 @@ void main() {
       expect(str, contains('days: 30'));
       expect(str, contains('notes: 50'));
       expect(str, contains('habits: 5'));
+      expect(str, contains('encrypted: false'));
+    });
+
+    test('encrypted defaults to false', () {
+      final metadata = createSample();
+      expect(metadata.encrypted, false);
     });
   });
 

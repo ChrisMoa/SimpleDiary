@@ -46,6 +46,9 @@ class BackupMetadata {
   /// Number of habit entries in this backup
   final int habitEntryCount;
 
+  /// Whether the backup data is encrypted
+  final bool encrypted;
+
   /// Error message if backup failed (null = success)
   final String? error;
 
@@ -59,6 +62,7 @@ class BackupMetadata {
     required this.noteCount,
     required this.habitCount,
     required this.habitEntryCount,
+    this.encrypted = false,
     this.error,
   });
 
@@ -83,6 +87,7 @@ class BackupMetadata {
       'noteCount': noteCount,
       'habitCount': habitCount,
       'habitEntryCount': habitEntryCount,
+      'encrypted': encrypted,
       'error': error,
     };
   }
@@ -98,6 +103,7 @@ class BackupMetadata {
       noteCount: map['noteCount'] as int? ?? 0,
       habitCount: map['habitCount'] as int? ?? 0,
       habitEntryCount: map['habitEntryCount'] as int? ?? 0,
+      encrypted: map['encrypted'] as bool? ?? false,
       error: map['error'] as String?,
     );
   }
@@ -109,6 +115,6 @@ class BackupMetadata {
 
   @override
   String toString() {
-    return 'BackupMetadata(id: $id, type: ${type.name}, days: $diaryDayCount, notes: $noteCount, habits: $habitCount, size: $formattedSize, error: $error)';
+    return 'BackupMetadata(id: $id, type: ${type.name}, days: $diaryDayCount, notes: $noteCount, habits: $habitCount, size: $formattedSize, encrypted: $encrypted, error: $error)';
   }
 }

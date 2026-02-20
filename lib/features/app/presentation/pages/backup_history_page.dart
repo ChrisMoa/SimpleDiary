@@ -189,6 +189,14 @@ class _BackupHistoryPageState extends ConsumerState<BackupHistoryPage> {
             Row(
               children: [
                 _buildTypeBadge(theme, l10n, backup.type),
+                if (backup.encrypted) ...[
+                  const SizedBox(width: 4),
+                  Icon(
+                    Icons.lock,
+                    size: 14,
+                    color: theme.colorScheme.primary,
+                  ),
+                ],
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
