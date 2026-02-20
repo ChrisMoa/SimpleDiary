@@ -1,28 +1,18 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:day_tracker/core/database/abstract_local_db_provider_state.dart';
-import 'package:day_tracker/core/database/local_db_helper.dart';
+import 'package:day_tracker/core/database/db_provider_factory.dart';
 import 'package:day_tracker/features/day_rating/data/models/day_rating.dart';
 import 'package:day_tracker/features/goals/data/models/goal.dart';
 import 'package:day_tracker/features/goals/data/models/goal_progress.dart';
 import 'package:day_tracker/features/goals/data/repositories/goal_repository.dart';
-import 'package:day_tracker/features/goals/data/repositories/goal_local_db.dart';
 import 'package:day_tracker/features/day_rating/domain/providers/diary_day_local_db_provider.dart';
 
-/// Database provider for goals
-class GoalDataProvider extends AbstractLocalDbProviderState<Goal> {
-  GoalDataProvider() : super(tableName: 'goals', primaryKey: 'id');
-
-  @override
-  LocalDbHelper createLocalDbHelper(String tableName, String primaryKey) {
-    return GoalLocalDbHelper(
-        tableName: tableName, primaryKey: primaryKey, dbFile: dbFile);
-  }
-}
-
-final goalsLocalDbDataProvider =
-    StateNotifierProvider<GoalDataProvider, List<Goal>>((ref) {
-  return GoalDataProvider();
-});
+/// Goal provider — migrated to schema-driven DbRepository.
+final goalsLocalDbDataProvider = createDbProvider<Goal>(
+  tableName: Goal.tableName,
+  columns: Goal.columns,
+  fromMap: Goal.fromDbMap,
+  migrations: Goal.migrations,
+);
 
 /// Repository provider
 final goalRepositoryProvider = Provider<GoalRepository>((ref) {

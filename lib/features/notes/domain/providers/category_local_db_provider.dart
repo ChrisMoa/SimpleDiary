@@ -1,33 +1,26 @@
-import 'package:day_tracker/core/database/abstract_local_db_provider_state.dart';
-import 'package:day_tracker/core/database/local_db_helper.dart';
+import 'package:day_tracker/core/database/db_repository.dart';
 import 'package:day_tracker/core/log/logger_instance.dart';
 import 'package:day_tracker/core/settings/settings_container.dart';
 import 'package:day_tracker/features/notes/data/models/note_category.dart';
-import 'package:day_tracker/features/notes/data/repositories/category_local_db.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class CategoryLocalDataProvider
-    extends AbstractLocalDbProviderState<NoteCategory> {
+/// CategoryLocalDataProvider — subclasses DbRepository for custom logic
+/// (default category initialization, name validation).
+class CategoryLocalDataProvider extends DbRepository<NoteCategory> {
   CategoryLocalDataProvider()
-      : super(tableName: 'categories', primaryKey: 'id');
-
-  @override
-  LocalDbHelper createLocalDbHelper(String tableName, String primaryKey) {
-    return CategoryLocalDbHelper(
-      tableName: tableName,
-      primaryKey: primaryKey,
-      dbFile: dbFile,
-    );
-  }
+      : super(
+          tableName: NoteCategory.tableName,
+          columns: NoteCategory.columns,
+          fromMap: NoteCategory.fromDbMap,
+          migrations: NoteCategory.migrations,
+        );
 
   /// Override to automatically add defaults for new/empty databases
   @override
   Future<void> readObjectsFromDatabase() async {
     await super.readObjectsFromDatabase();
 
-    // If no categories exist, add the default ones
-    // This ensures defaults are added for new users and on first run
     if (state.isEmpty) {
       LogWrapper.logger.i('No categories found, initializing with defaults');
       await _addDefaultCategories();
@@ -35,10 +28,7 @@ class CategoryLocalDataProvider
   }
 
   Future<void> _addDefaultCategories() async {
-    // Get localized category names based on current language
     final languageCode = settingsContainer.activeUserSettings.languageCode;
-
-    // Localized category names
     final categoryNames = _getLocalizedCategoryNames(languageCode);
 
     final defaultCategories = [
@@ -70,7 +60,6 @@ class CategoryLocalDataProvider
     LogWrapper.logger.i('Added ${defaultCategories.length} default categories in language: $languageCode');
   }
 
-  /// Get localized category names based on language code
   Map<String, String> _getLocalizedCategoryNames(String languageCode) {
     switch (languageCode) {
       case 'de':
@@ -109,7 +98,6 @@ class CategoryLocalDataProvider
     }
   }
 
-  /// Check if a category name already exists (for validation)
   bool categoryNameExists(String name, {String? excludeId}) {
     return state.any(
       (category) =>
@@ -118,7 +106,6 @@ class CategoryLocalDataProvider
     );
   }
 
-  /// Get a category by ID
   NoteCategory? getCategoryById(String id) {
     try {
       return state.firstWhere((category) => category.id == id);
@@ -127,10 +114,7 @@ class CategoryLocalDataProvider
     }
   }
 
-  /// Check if any notes use this category (to be implemented when integrating with notes)
   Future<bool> isCategoryInUse(String categoryId) async {
-    // TODO: This will need to check the notes database
-    // For now, return false to allow deletion
     return false;
   }
 }

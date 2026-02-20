@@ -1,22 +1,22 @@
-import 'package:day_tracker/core/database/abstract_local_db_provider_state.dart';
-import 'package:day_tracker/core/database/local_db_helper.dart';
+import 'package:day_tracker/core/database/db_repository.dart';
 import 'package:day_tracker/core/log/logger_instance.dart';
 import 'package:day_tracker/features/note_templates/data/models/note_template.dart';
-import 'package:day_tracker/features/note_templates/data/repositories/note_template_local_db.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class NoteTemplateLocalDataProvider extends AbstractLocalDbProviderState<NoteTemplate> {
-  NoteTemplateLocalDataProvider() : super(tableName: 'note_templates', primaryKey: 'id');
-
-  @override
-  LocalDbHelper createLocalDbHelper(String tableName, String primaryKey) {
-    return NoteTemplateLocalDb(tableName: tableName, primaryKey: primaryKey, dbFile: dbFile);
-  }
+/// NoteTemplateLocalDataProvider — subclasses DbRepository for custom
+/// default template initialization logic.
+class NoteTemplateLocalDataProvider extends DbRepository<NoteTemplate> {
+  NoteTemplateLocalDataProvider()
+      : super(
+          tableName: NoteTemplate.tableName,
+          columns: NoteTemplate.columns,
+          fromMap: NoteTemplate.fromDbMap,
+          migrations: NoteTemplate.migrations,
+        );
 
   Future<void> initializeWithDefaults(List<NoteTemplate> defaultTemplates) async {
     await readObjectsFromDatabase();
 
-    // Check if templates are empty and add defaults if needed
     if (state.isEmpty) {
       LogWrapper.logger.d('No templates found, adding default templates');
       await addDefaultTemplates(defaultTemplates);

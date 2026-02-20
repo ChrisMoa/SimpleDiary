@@ -141,7 +141,7 @@ void main() {
     group('LocalDb map conversion', () {
       test('round-trip preserves data', () {
         final original = createSample();
-        final dbMap = original.toLocalDbMap(original);
+        final dbMap = original.toDbMap();
         final restored = original.fromLocalDbMap(dbMap) as NoteAttachment;
 
         expect(restored.id, original.id);
@@ -152,7 +152,7 @@ void main() {
 
       test('dbMap uses same keys as toMap', () {
         final a = createSample();
-        final dbMap = a.toLocalDbMap(a);
+        final dbMap = a.toDbMap();
         expect(dbMap, contains('id'));
         expect(dbMap, contains('noteId'));
         expect(dbMap, contains('filePath'));

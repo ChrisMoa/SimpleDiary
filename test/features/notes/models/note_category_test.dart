@@ -112,7 +112,7 @@ void main() {
           title: 'TestCategory',
           color: const Color(0xFF4CAF50),
         );
-        final localDbMap = original.toLocalDbMap(original);
+        final localDbMap = original.toDbMap();
 
         expect(localDbMap['id'], 'cat-test');
         expect(localDbMap['title'], 'TestCategory');

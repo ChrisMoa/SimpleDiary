@@ -140,8 +140,8 @@ void main() {
         createdAt: DateTime(2026, 2, 1, 10, 0),
       );
 
-      final map = goal.toLocalDbMap(goal);
-      final deserialized = goal.fromLocalDbMap(map);
+      final map = goal.toDbMap();
+      final deserialized = Goal.fromDbMap(map);
 
       expect(deserialized.id, goal.id);
       expect(deserialized.category, goal.category);

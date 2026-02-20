@@ -152,7 +152,7 @@ void main() {
     group('LocalDb map conversion', () {
       test('round-trip with isAllDay as int', () {
         final original = createSampleNote();
-        final localDbMap = original.toLocalDbMap(original);
+        final localDbMap = original.toDbMap();
 
         // isAllDay should be stored as int (0 or 1)
         expect(localDbMap['isAllDay'], 0);
@@ -176,7 +176,7 @@ void main() {
           isAllDay: true,
           noteCategory: availableNoteCategories.first,
         );
-        final localDbMap = note.toLocalDbMap(note);
+        final localDbMap = note.toDbMap();
         expect(localDbMap['isAllDay'], 1);
       });
     });

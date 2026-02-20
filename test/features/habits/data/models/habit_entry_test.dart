@@ -61,7 +61,38 @@ void main() {
       expect(entry.getId(), 'my-entry');
     });
 
+    test('primaryKeyValue returns id', () {
+      final entry = HabitEntry(
+        id: 'my-entry',
+        habitId: 'h1',
+        date: DateTime(2026, 2, 18),
+      );
+
+      expect(entry.primaryKeyValue, 'my-entry');
+    });
+
     test('serializes to and from database map correctly', () {
+      final entry = HabitEntry(
+        id: 'entry-1',
+        habitId: 'habit-1',
+        date: DateTime(2026, 2, 18),
+        isCompleted: true,
+        count: 2,
+        note: 'Good session',
+      );
+
+      final map = entry.toDbMap();
+      final deserialized = HabitEntry.fromDbMap(map);
+
+      expect(deserialized.id, entry.id);
+      expect(deserialized.habitId, entry.habitId);
+      expect(deserialized.date, entry.date);
+      expect(deserialized.isCompleted, entry.isCompleted);
+      expect(deserialized.count, entry.count);
+      expect(deserialized.note, entry.note);
+    });
+
+    test('backward compat: toLocalDbMap/fromLocalDbMap round-trip', () {
       final entry = HabitEntry(
         id: 'entry-1',
         habitId: 'habit-1',
@@ -76,10 +107,6 @@ void main() {
 
       expect(deserialized.id, entry.id);
       expect(deserialized.habitId, entry.habitId);
-      expect(deserialized.date, entry.date);
-      expect(deserialized.isCompleted, entry.isCompleted);
-      expect(deserialized.count, entry.count);
-      expect(deserialized.note, entry.note);
     });
 
     test('serializes boolean as integer in database map', () {
@@ -94,9 +121,8 @@ void main() {
         isCompleted: false,
       );
 
-      expect(completedEntry.toLocalDbMap(completedEntry)['isCompleted'], 1);
-      expect(
-          notCompletedEntry.toLocalDbMap(notCompletedEntry)['isCompleted'], 0);
+      expect(completedEntry.toDbMap()['isCompleted'], 1);
+      expect(notCompletedEntry.toDbMap()['isCompleted'], 0);
     });
 
     test('copyWith updates fields correctly', () {
@@ -137,6 +163,14 @@ void main() {
       expect(updated.isCompleted, false);
       expect(updated.count, 5);
       expect(updated.note, 'Original note');
+    });
+
+    test('columns define correct schema', () {
+      expect(HabitEntry.columns.length, 6);
+      expect(
+        HabitEntry.columns.where((c) => c.isPrimaryKey).single.name,
+        'id',
+      );
     });
   });
 }

@@ -108,7 +108,7 @@ void main() {
     group('LocalDb map conversion', () {
       test('round-trip with JSON-encoded ratings', () {
         final original = createSampleDiaryDay();
-        final localDbMap = original.toLocalDbMap(original);
+        final localDbMap = original.toDbMap();
 
         expect(localDbMap['day'], Utils.toDate(original.day));
         expect(localDbMap['ratings'], isA<String>());
@@ -118,8 +118,8 @@ void main() {
         expect(ratingsJson, isA<List>());
         expect(ratingsJson.length, original.ratings.length);
 
-        // Round-trip through fromLocalDbMap
-        final restored = DiaryDay.fromLocalDbMap(localDbMap);
+        // Round-trip through fromDbMap
+        final restored = DiaryDay.fromDbMap(localDbMap);
         expect(restored.ratings.length, original.ratings.length);
         for (var i = 0; i < original.ratings.length; i++) {
           expect(restored.ratings[i].dayRating, original.ratings[i].dayRating);

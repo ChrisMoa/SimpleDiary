@@ -1,27 +1,19 @@
 import 'dart:io';
 
-import 'package:day_tracker/core/database/abstract_local_db_provider_state.dart';
-import 'package:day_tracker/core/database/local_db_helper.dart';
+import 'package:day_tracker/core/database/db_repository.dart';
 import 'package:day_tracker/core/services/image_storage_service.dart';
-import 'package:day_tracker/core/settings/settings_container.dart';
 import 'package:day_tracker/features/notes/data/models/note_attachment.dart';
-import 'package:day_tracker/features/notes/data/repositories/note_attachments_local_db.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class NoteAttachmentsProvider
-    extends AbstractLocalDbProviderState<NoteAttachment> {
+/// NoteAttachmentsProvider — subclasses DbRepository for custom image logic.
+class NoteAttachmentsProvider extends DbRepository<NoteAttachment> {
   NoteAttachmentsProvider()
-      : super(tableName: 'note_attachments', primaryKey: 'id');
-
-  @override
-  LocalDbHelper createLocalDbHelper(String tableName, String primaryKey) {
-    return NoteAttachmentsLocalDbHelper(
-      tableName: tableName,
-      primaryKey: primaryKey,
-      dbFile: File(
-          '${settingsContainer.applicationDocumentsPath}/note_attachments.db'),
-    );
-  }
+      : super(
+          tableName: NoteAttachment.tableName,
+          columns: NoteAttachment.columns,
+          fromMap: NoteAttachment.fromDbMap,
+          migrations: NoteAttachment.migrations,
+        );
 
   List<NoteAttachment> getAttachmentsForNote(String noteId) {
     return state.where((a) => a.noteId == noteId).toList()

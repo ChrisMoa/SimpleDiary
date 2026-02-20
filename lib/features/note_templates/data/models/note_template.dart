@@ -1,11 +1,13 @@
 import 'dart:convert';
 
-import 'package:day_tracker/core/database/local_db_element.dart';
+import 'package:day_tracker/core/database/db_column.dart';
+import 'package:day_tracker/core/database/db_entity.dart';
+import 'package:day_tracker/core/database/db_migration.dart';
 import 'package:day_tracker/core/utils/utils.dart';
 import 'package:day_tracker/features/note_templates/data/models/description_section.dart';
 import 'package:day_tracker/features/notes/data/models/note_category.dart';
 
-class NoteTemplate implements LocalDbElement {
+class NoteTemplate extends DbEntity {
   String? id;
   String title;
   String description;
@@ -22,32 +24,48 @@ class NoteTemplate implements LocalDbElement {
     String? id,
   }) : id = id ?? Utils.uuid.v4();
 
-  bool get hasDescriptionSections => descriptionSections.isNotEmpty;
+  // ── Schema (single source of truth) ────────────────────────────
 
-  String generateDescription() {
-    if (descriptionSections.isEmpty) return description;
-    return descriptionSections
-        .map((section) => '${section.title}:\n')
-        .join('\n');
-  }
+  static const String tableName = 'note_templates';
 
-  NoteTemplate copyWith({
-    String? id,
-    String? title,
-    String? description,
-    int? durationMinutes,
-    NoteCategory? noteCategory,
-    List<DescriptionSection>? descriptionSections,
-  }) {
-    return NoteTemplate(
-      id: id ?? this.id,
-      title: title ?? this.title,
-      description: description ?? this.description,
-      durationMinutes: durationMinutes ?? this.durationMinutes,
-      noteCategory: noteCategory ?? this.noteCategory,
-      descriptionSections: descriptionSections ?? this.descriptionSections,
-    );
-  }
+  static const List<DbColumn> columns = [
+    DbColumn.textPrimaryKey('id'),
+    DbColumn.text('title'),
+    DbColumn.text('description'),
+    DbColumn.integer('durationMinutes'),
+    DbColumn.text('noteCategory'),
+    DbColumn.text('descriptionSections', defaultValue: "''"),
+  ];
+
+  static final List<DbMigration> migrations = [
+    DbMigration.addColumn(
+      version: 1,
+      columnName: 'descriptionSections',
+      columnDefinition: "TEXT NOT NULL DEFAULT ''",
+    ),
+  ];
+
+  // ── Serialization (single source of truth for SQLite & JSON) ───
+
+  @override
+  Map<String, dynamic> toDbMap() => toMap();
+
+  static NoteTemplate fromDbMap(Map<String, dynamic> map) =>
+      NoteTemplate.fromMap({
+        ...map,
+        'descriptionSections':
+            map.containsKey('descriptionSections') ? map['descriptionSections'] : '',
+      });
+
+  @override
+  String get primaryKeyValue => id!;
+
+  // ── LocalDbElement backward compat ─────────────────────────────
+
+  @override
+  NoteTemplate fromLocalDbMap(Map<String, dynamic> map) => fromDbMap(map);
+
+  // ── JSON export/import ─────────────────────────────────────────
 
   Map<String, dynamic> toMap() {
     return {
@@ -86,22 +104,32 @@ class NoteTemplate implements LocalDbElement {
     );
   }
 
-  @override
-  LocalDbElement fromLocalDbMap(Map<String, dynamic> map) {
-    return NoteTemplate.fromMap({
-      ...map,
-      'descriptionSections': map.containsKey('descriptionSections') ? map['descriptionSections'] : '',
-    });
+  // ── Domain helpers ─────────────────────────────────────────────
+
+  bool get hasDescriptionSections => descriptionSections.isNotEmpty;
+
+  String generateDescription() {
+    if (descriptionSections.isEmpty) return description;
+    return descriptionSections
+        .map((section) => '${section.title}:\n')
+        .join('\n');
   }
 
-  @override
-  Map<String, dynamic> toLocalDbMap(LocalDbElement map) {
-    final templateMap = map as NoteTemplate;
-    return templateMap.toMap();
-  }
-
-  @override
-  getId() {
-    return id;
+  NoteTemplate copyWith({
+    String? id,
+    String? title,
+    String? description,
+    int? durationMinutes,
+    NoteCategory? noteCategory,
+    List<DescriptionSection>? descriptionSections,
+  }) {
+    return NoteTemplate(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      description: description ?? this.description,
+      durationMinutes: durationMinutes ?? this.durationMinutes,
+      noteCategory: noteCategory ?? this.noteCategory,
+      descriptionSections: descriptionSections ?? this.descriptionSections,
+    );
   }
 }

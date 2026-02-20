@@ -1,11 +1,13 @@
 import 'dart:convert';
 
-import 'package:day_tracker/core/database/local_db_element.dart';
+import 'package:day_tracker/core/database/db_column.dart';
+import 'package:day_tracker/core/database/db_entity.dart';
+import 'package:day_tracker/core/database/db_migration.dart';
 import 'package:day_tracker/features/habits/data/models/habit_frequency.dart';
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 
-class Habit implements LocalDbElement {
+class Habit extends DbEntity {
   final String id;
   final String name;
   final String description;
@@ -33,6 +35,69 @@ class Habit implements LocalDbElement {
   })  : id = id ?? const Uuid().v4(),
         createdAt = createdAt ?? DateTime.now();
 
+  // ── Schema (single source of truth) ────────────────────────────
+
+  static const String tableName = 'habits';
+
+  static const List<DbColumn> columns = [
+    DbColumn.textPrimaryKey('id'),
+    DbColumn.text('name'),
+    DbColumn.text('description', defaultValue: "''"),
+    DbColumn.integer('iconCodePoint', defaultValue: '57686'),
+    DbColumn.integer('colorValue', defaultValue: '4283215696'),
+    DbColumn.integer('frequency', defaultValue: '0'),
+    DbColumn.integer('targetCount', defaultValue: '1'),
+    DbColumn.text('specificDays', defaultValue: "'[]'"),
+    DbColumn.integer('timesPerWeek', defaultValue: '3'),
+    DbColumn.text('createdAt'),
+    DbColumn.integer('isArchived', defaultValue: '0'),
+  ];
+
+  static const List<DbMigration> migrations = [];
+
+  // ── Serialization (single source of truth) ─────────────────────
+
+  @override
+  Map<String, dynamic> toDbMap() => {
+        'id': id,
+        'name': name,
+        'description': description,
+        'iconCodePoint': iconCodePoint,
+        'colorValue': colorValue,
+        'frequency': frequency.index,
+        'targetCount': targetCount,
+        'specificDays': jsonEncode(specificDays),
+        'timesPerWeek': timesPerWeek,
+        'createdAt': createdAt.toIso8601String(),
+        'isArchived': isArchived ? 1 : 0,
+      };
+
+  static Habit fromDbMap(Map<String, dynamic> map) => Habit(
+        id: map['id'] as String,
+        name: map['name'] as String,
+        description: map['description'] as String? ?? '',
+        iconCodePoint: map['iconCodePoint'] as int? ?? 0xe156,
+        colorValue: map['colorValue'] as int? ?? 0xFF4CAF50,
+        frequency: HabitFrequency.values[map['frequency'] as int],
+        targetCount: map['targetCount'] as int? ?? 1,
+        specificDays: map['specificDays'] != null
+            ? List<int>.from(jsonDecode(map['specificDays'] as String))
+            : [],
+        timesPerWeek: map['timesPerWeek'] as int? ?? 3,
+        createdAt: DateTime.parse(map['createdAt'] as String),
+        isArchived: (map['isArchived'] as int? ?? 0) == 1,
+      );
+
+  @override
+  String get primaryKeyValue => id;
+
+  // ── LocalDbElement backward compat ─────────────────────────────
+
+  @override
+  Habit fromLocalDbMap(Map<String, dynamic> map) => fromDbMap(map);
+
+  // ── Domain helpers ─────────────────────────────────────────────
+
   IconData get icon => IconData(iconCodePoint, fontFamily: 'MaterialIcons');
   Color get color => Color(colorValue);
 
@@ -52,46 +117,6 @@ class Habit implements LocalDbElement {
         // Always due - the user decides which days
         return true;
     }
-  }
-
-  @override
-  String getId() => id;
-
-  @override
-  Map<String, dynamic> toLocalDbMap(LocalDbElement element) {
-    final habit = element as Habit;
-    return {
-      'id': habit.id,
-      'name': habit.name,
-      'description': habit.description,
-      'iconCodePoint': habit.iconCodePoint,
-      'colorValue': habit.colorValue,
-      'frequency': habit.frequency.index,
-      'targetCount': habit.targetCount,
-      'specificDays': jsonEncode(habit.specificDays),
-      'timesPerWeek': habit.timesPerWeek,
-      'createdAt': habit.createdAt.toIso8601String(),
-      'isArchived': habit.isArchived ? 1 : 0,
-    };
-  }
-
-  @override
-  Habit fromLocalDbMap(Map<String, dynamic> map) {
-    return Habit(
-      id: map['id'] as String,
-      name: map['name'] as String,
-      description: map['description'] as String? ?? '',
-      iconCodePoint: map['iconCodePoint'] as int? ?? 0xe156,
-      colorValue: map['colorValue'] as int? ?? 0xFF4CAF50,
-      frequency: HabitFrequency.values[map['frequency'] as int],
-      targetCount: map['targetCount'] as int? ?? 1,
-      specificDays: map['specificDays'] != null
-          ? List<int>.from(jsonDecode(map['specificDays'] as String))
-          : [],
-      timesPerWeek: map['timesPerWeek'] as int? ?? 3,
-      createdAt: DateTime.parse(map['createdAt'] as String),
-      isArchived: (map['isArchived'] as int? ?? 0) == 1,
-    );
   }
 
   Habit copyWith({

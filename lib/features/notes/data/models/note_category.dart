@@ -1,4 +1,6 @@
-import 'package:day_tracker/core/database/local_db_element.dart';
+import 'package:day_tracker/core/database/db_column.dart';
+import 'package:day_tracker/core/database/db_entity.dart';
+import 'package:day_tracker/core/database/db_migration.dart';
 import 'package:day_tracker/core/utils/utils.dart';
 import 'package:flutter/material.dart';
 
@@ -10,7 +12,7 @@ enum NoteCategories {
   schlafen,
 }
 
-class NoteCategory implements LocalDbElement {
+class NoteCategory extends DbEntity {
   NoteCategory({required this.title, required this.color, id})
       : id = id ?? Utils.uuid.v4();
 
@@ -22,8 +24,6 @@ class NoteCategory implements LocalDbElement {
     if (cats.isNotEmpty) {
       return cats.first;
     }
-    // Category not in hardcoded list (user-created category) - use placeholder color
-    // The actual color will be resolved from the categories provider
     return NoteCategory(title: title, color: Colors.blue);
   }
 
@@ -31,7 +31,43 @@ class NoteCategory implements LocalDbElement {
   final Color color;
   final String id;
 
-  /// Equality based on title, since notes reference categories by title
+  // ── Schema (single source of truth) ────────────────────────────
+
+  static const String tableName = 'categories';
+
+  static const List<DbColumn> columns = [
+    DbColumn.textPrimaryKey('id'),
+    DbColumn.text('title'),
+    DbColumn.integer('colorValue'),
+  ];
+
+  static const List<DbMigration> migrations = [];
+
+  // ── Serialization (single source of truth) ─────────────────────
+
+  @override
+  Map<String, dynamic> toDbMap() => {
+        'id': id,
+        'title': title,
+        'colorValue': color.toARGB32(),
+      };
+
+  static NoteCategory fromDbMap(Map<String, dynamic> map) => NoteCategory(
+        id: map['id'] as String,
+        title: map['title'] as String,
+        color: Color(map['colorValue'] as int),
+      );
+
+  @override
+  String get primaryKeyValue => id;
+
+  // ── LocalDbElement backward compat ─────────────────────────────
+
+  @override
+  NoteCategory fromLocalDbMap(Map<String, dynamic> map) => fromDbMap(map);
+
+  // ── Domain helpers ─────────────────────────────────────────────
+
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
@@ -51,30 +87,6 @@ class NoteCategory implements LocalDbElement {
       title: title ?? this.title,
       color: color ?? this.color,
     );
-  }
-
-  @override
-  LocalDbElement fromLocalDbMap(Map<String, dynamic> map) {
-    return NoteCategory(
-      id: map['id'] as String,
-      title: map['title'] as String,
-      color: Color(map['colorValue'] as int),
-    );
-  }
-
-  @override
-  Map<String, dynamic> toLocalDbMap(LocalDbElement element) {
-    final category = element as NoteCategory;
-    return {
-      'id': category.id,
-      'title': category.title,
-      'colorValue': category.color.toARGB32(),
-    };
-  }
-
-  @override
-  getId() {
-    return id;
   }
 }
 
