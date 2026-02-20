@@ -1,6 +1,7 @@
 import 'package:day_tracker/core/log/logger_instance.dart';
 import 'package:day_tracker/core/settings/settings_container.dart';
 import 'package:day_tracker/features/app/presentation/widgets/language_settings_widget.dart';
+import 'package:day_tracker/features/app/presentation/widgets/biometric_settings_widget.dart';
 import 'package:day_tracker/features/app/presentation/widgets/notification_settings_widget.dart';
 import 'package:day_tracker/features/app/presentation/widgets/supabase_settings_widget.dart';
 import 'package:day_tracker/features/app/presentation/widgets/theme_settings_widget.dart';
@@ -52,6 +53,10 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
 
             // Notification Settings
             const NotificationSettingsWidget(),
+            const SizedBox(height: 24),
+
+            // Biometric Settings
+            const BiometricSettingsWidget(),
             const SizedBox(height: 24),
 
             // Supabase Settings

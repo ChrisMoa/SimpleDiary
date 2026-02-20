@@ -1,6 +1,6 @@
 # Test Coverage
 
-**Total: 570 passing tests** across 38 test files (+ 11 optional Supabase integration tests)
+**Total: 631 passing tests** across 39 test files (+ 11 optional Supabase integration tests)
 
 Run all tests with:
 ```bash
@@ -34,6 +34,15 @@ flutter test test/core/ test/features/ test/l10n/
 | `locale_provider_test.dart` | 10 | Locale/language state management, initialization, locale switching, persistence to settings, listener notifications, handling of unsupported locales |
 
 **Source:** `lib/core/provider/locale_provider.dart`
+
+### Settings (`test/core/settings/`)
+
+| File | Tests | Covers |
+|------|-------|--------|
+| `notification_settings_test.dart` | 11 | NotificationSettings defaults (`fromEmpty`), `toMap`/`fromMap` (all fields, missing fields with defaults), JSON round-trip, `copyWith` (partial/full/no-args), `toString` (time format), list independence, map key completeness |
+| `biometric_settings_test.dart` | 10 | BiometricSettings defaults (`fromEmpty`), `toMap`/`fromMap` (all fields, missing fields with defaults), JSON round-trip, `copyWith` (partial/no-args), `toString`, map key completeness, zero timeout (immediate lock) |
+
+**Sources:** `lib/core/settings/notification_settings.dart`, `lib/core/settings/biometric_settings.dart`
 
 ### Utils (`test/core/utils/`)
 
@@ -160,6 +169,7 @@ flutter test test/core/ test/features/ test/l10n/
 | Goals & progress tracking | Covered | Goal models, progress calculation, streaks, repository logic |
 | Localization (ARB) | Covered | JSON validity, completeness, placeholders, ICU format |
 | Supabase settings | Covered | Model serialization |
+| Biometric settings | Covered | Settings model serialization, defaults, backwards compat |
 | Supabase sync state | Covered | SyncStatus enum, SyncState construction/copyWith |
 | Supabase API (optional) | Covered | Requires `test/.env` with credentials; skipped otherwise |
 

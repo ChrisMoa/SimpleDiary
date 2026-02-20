@@ -1431,4 +1431,76 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get habitMore => 'Más';
+
+  @override
+  String get biometricSettings => 'Inicio de sesión biométrico';
+
+  @override
+  String get biometricSettingsDescription =>
+      'Usar huella dactilar o reconocimiento facial para desbloquear la app';
+
+  @override
+  String get enableBiometric => 'Activar inicio biométrico';
+
+  @override
+  String get enableBiometricDescription =>
+      'Desbloquear la app con huella dactilar o rostro';
+
+  @override
+  String get biometricLockOnResume => 'Bloquear al cambiar de app';
+
+  @override
+  String get biometricLockOnResumeDescription =>
+      'Requerir biometría al volver a la app';
+
+  @override
+  String get biometricLockTimeout => 'Tiempo de bloqueo';
+
+  @override
+  String get biometricLockTimeoutDescription =>
+      'Tiempo antes de requerir re-autenticación';
+
+  @override
+  String get biometricImmediately => 'Inmediatamente';
+
+  @override
+  String biometricMinutes(int count) {
+    return '$count minutos';
+  }
+
+  @override
+  String get biometricTestButton => 'Probar biometría';
+
+  @override
+  String get biometricTestSuccess => 'Autenticación biométrica exitosa';
+
+  @override
+  String get biometricTestFailed => 'Autenticación biométrica fallida';
+
+  @override
+  String get biometricNotAvailable =>
+      'Autenticación biométrica no disponible en este dispositivo';
+
+  @override
+  String get biometricNotEnrolled =>
+      'No hay biometría registrada en este dispositivo';
+
+  @override
+  String get biometricUnlockPrompt => 'Desbloquear SimpleDiary';
+
+  @override
+  String get biometricTapToUnlock => 'Toca para desbloquear con biometría';
+
+  @override
+  String get usePasswordInstead => 'Usar contraseña en su lugar';
+
+  @override
+  String get biometricRetry => 'Intentar de nuevo';
+
+  @override
+  String get biometricEnrollSuccess =>
+      'Inicio biométrico activado exitosamente';
+
+  @override
+  String get biometricEnrollFailed => 'No se pudo activar el inicio biométrico';
 }

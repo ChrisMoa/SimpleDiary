@@ -10,6 +10,8 @@ import 'package:day_tracker/core/utils/debug_auto_login.dart';
 import 'package:day_tracker/features/authentication/data/models/user_data.dart';
 import 'package:day_tracker/features/authentication/domain/providers/user_data_provider.dart';
 import 'package:day_tracker/features/authentication/presentation/pages/auth_user_data_page.dart';
+import 'package:day_tracker/features/authentication/domain/providers/biometric_provider.dart';
+import 'package:day_tracker/features/authentication/presentation/pages/biometric_lock_page.dart';
 import 'package:day_tracker/features/authentication/presentation/pages/password_authentication_page.dart';
 import 'package:day_tracker/features/authentication/presentation/pages/show_user_data_page.dart';
 import 'package:day_tracker/features/day_rating/domain/providers/diary_day_local_db_provider.dart';
@@ -38,6 +40,7 @@ class _MainPageState extends ConsumerState<MainPage> {
   bool dbRead = false;
   bool _asyncInit = false;
   late final AppLifecycleListener _listener;
+  DateTime? _backgroundTimestamp;
 
   //* builds -----------------------------------------------------------------------------------------------------------------------------------------
 
@@ -49,6 +52,7 @@ class _MainPageState extends ConsumerState<MainPage> {
     _listener = AppLifecycleListener(
       onExitRequested: _handleExitRequest,
       onDetach: _handleOnDetach,
+      onHide: _handleOnHide,
       onResume: _handleOnResume,
     );
     _onInitAsync();
@@ -86,10 +90,20 @@ class _MainPageState extends ConsumerState<MainPage> {
           LogWrapper.logger.t('changed to authUserDataPage');
           return const AuthUserDataPage();
         } else if (userData.username.isNotEmpty && !userData.isLoggedIn) {
-          // go to login/register page
-          LogWrapper.logger.t('changed to PinAuthenticationPage');
+          // Check if biometric is enabled for this user
+          final biometricEnabled = settingsContainer
+              .activeUserSettings.biometricSettings.isEnabled;
+          final skipBiometric = ref.watch(skipBiometricProvider);
+          if (biometricEnabled && !skipBiometric) {
+            LogWrapper.logger.t('changed to BiometricLockPage');
+            return const BiometricLockPage();
+          }
+          LogWrapper.logger.t('changed to PasswordAuthenticationPage');
           return const PasswordAuthenticationPage();
         }
+
+        // Reset skip-biometric flag on successful login
+        ref.read(skipBiometricProvider.notifier).state = false;
 
         if (userData.username != _userData.username) {
           dbRead = false;
@@ -323,7 +337,27 @@ class _MainPageState extends ConsumerState<MainPage> {
     LogWrapper.logger.d('detached app');
   }
 
+  void _handleOnHide() {
+    _backgroundTimestamp = DateTime.now();
+    LogWrapper.logger.d('app hidden, recording timestamp');
+  }
+
   void _handleOnResume() {
     LogWrapper.logger.d('resumes app');
+    final biometricSettings =
+        settingsContainer.activeUserSettings.biometricSettings;
+    if (biometricSettings.isEnabled &&
+        biometricSettings.requireOnResume &&
+        _backgroundTimestamp != null &&
+        _userData.isLoggedIn) {
+      final elapsed =
+          DateTime.now().difference(_backgroundTimestamp!).inMinutes;
+      if (elapsed >= biometricSettings.lockTimeoutMinutes) {
+        LogWrapper.logger.i(
+            'Lock timeout exceeded ($elapsed min >= ${biometricSettings.lockTimeoutMinutes} min), locking session');
+        ref.read(userDataProvider.notifier).lockSession();
+      }
+    }
+    _backgroundTimestamp = null;
   }
 }

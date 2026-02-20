@@ -432,5 +432,34 @@
   "habitAllHabitsCompleted": "Toutes les habitudes terminées !",
   "habitContributionGrid": "Grille de Contributions",
   "habitLess": "Moins",
-  "habitMore": "Plus"
+  "habitMore": "Plus",
+
+  "biometricSettings": "Connexion biométrique",
+  "biometricSettingsDescription": "Utiliser l'empreinte digitale ou la reconnaissance faciale pour déverrouiller l'application",
+  "enableBiometric": "Activer la connexion biométrique",
+  "enableBiometricDescription": "Déverrouiller l'application avec votre empreinte digitale ou votre visage",
+  "biometricLockOnResume": "Verrouiller lors du changement d'app",
+  "biometricLockOnResumeDescription": "Exiger la biométrie lors du retour à l'application",
+  "biometricLockTimeout": "Délai de verrouillage",
+  "biometricLockTimeoutDescription": "Temps avant de nécessiter une ré-authentification",
+  "biometricImmediately": "Immédiatement",
+  "biometricMinutes": "{count} minutes",
+  "@biometricMinutes": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "biometricTestButton": "Tester la biométrie",
+  "biometricTestSuccess": "Authentification biométrique réussie",
+  "biometricTestFailed": "Authentification biométrique échouée",
+  "biometricNotAvailable": "Authentification biométrique non disponible sur cet appareil",
+  "biometricNotEnrolled": "Aucune biométrie enregistrée sur cet appareil",
+  "biometricUnlockPrompt": "Déverrouiller SimpleDiary",
+  "biometricTapToUnlock": "Appuyez pour déverrouiller avec la biométrie",
+  "usePasswordInstead": "Utiliser le mot de passe à la place",
+  "biometricRetry": "Réessayer",
+  "biometricEnrollSuccess": "Connexion biométrique activée avec succès",
+  "biometricEnrollFailed": "Impossible d'activer la connexion biométrique"
 }

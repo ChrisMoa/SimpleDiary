@@ -1433,4 +1433,79 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get habitMore => 'Mehr';
+
+  @override
+  String get biometricSettings => 'Biometrische Anmeldung';
+
+  @override
+  String get biometricSettingsDescription =>
+      'Fingerabdruck oder Gesichtserkennung zum Entsperren verwenden';
+
+  @override
+  String get enableBiometric => 'Biometrische Anmeldung aktivieren';
+
+  @override
+  String get enableBiometricDescription =>
+      'App mit Fingerabdruck oder Gesicht entsperren';
+
+  @override
+  String get biometricLockOnResume => 'Bei App-Wechsel sperren';
+
+  @override
+  String get biometricLockOnResumeDescription =>
+      'Biometrie beim Zurückkehren zur App verlangen';
+
+  @override
+  String get biometricLockTimeout => 'Sperr-Timeout';
+
+  @override
+  String get biometricLockTimeoutDescription =>
+      'Zeit bis zur erneuten Authentifizierung';
+
+  @override
+  String get biometricImmediately => 'Sofort';
+
+  @override
+  String biometricMinutes(int count) {
+    return '$count Minuten';
+  }
+
+  @override
+  String get biometricTestButton => 'Biometrie testen';
+
+  @override
+  String get biometricTestSuccess =>
+      'Biometrische Authentifizierung erfolgreich';
+
+  @override
+  String get biometricTestFailed =>
+      'Biometrische Authentifizierung fehlgeschlagen';
+
+  @override
+  String get biometricNotAvailable =>
+      'Biometrische Authentifizierung auf diesem Gerät nicht verfügbar';
+
+  @override
+  String get biometricNotEnrolled =>
+      'Keine Biometrie auf diesem Gerät eingerichtet';
+
+  @override
+  String get biometricUnlockPrompt => 'SimpleDiary entsperren';
+
+  @override
+  String get biometricTapToUnlock => 'Tippen zum biometrischen Entsperren';
+
+  @override
+  String get usePasswordInstead => 'Stattdessen Passwort verwenden';
+
+  @override
+  String get biometricRetry => 'Erneut versuchen';
+
+  @override
+  String get biometricEnrollSuccess =>
+      'Biometrische Anmeldung erfolgreich aktiviert';
+
+  @override
+  String get biometricEnrollFailed =>
+      'Biometrische Anmeldung konnte nicht aktiviert werden';
 }

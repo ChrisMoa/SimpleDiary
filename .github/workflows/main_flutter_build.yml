@@ -15,7 +15,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.29.3'
+          flutter-version: '3.41.2'
           channel: 'stable'
       - uses: SpicyPizza/create-envfile@v2.0
         with:
@@ -31,7 +31,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.29.3'
+          flutter-version: '3.41.2'
           channel: 'stable'
       - uses: SpicyPizza/create-envfile@v2.0
         with:
@@ -41,6 +41,13 @@ jobs:
       - run: flutter clean || true
       - run: flutter pub get
       - run: flutter pub outdated || true
+      - name: Fix speech_to_text_windows include guard collision with local_auth_windows
+        shell: pwsh
+        run: |
+          $header = "windows/flutter/ephemeral/.plugin_symlinks/speech_to_text_windows/windows/include/speech_to_text_windows/speech_to_text_windows.h"
+          if (Test-Path $header) {
+            (Get-Content $header) -replace 'FLUTTER_PLUGIN_LOCAL_AUTH_WINDOWS_PLUGIN_H_', 'FLUTTER_PLUGIN_SPEECH_TO_TEXT_WINDOWS_H_' | Set-Content $header
+          }
       - run: flutter build windows --release --no-tree-shake-icons
       - name: Upload Windows build
         uses: actions/upload-artifact@v4
@@ -55,7 +62,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.29.3'
+          flutter-version: '3.41.2'
           channel: 'stable'
       - uses: SpicyPizza/create-envfile@v2.0
         with:
@@ -63,7 +70,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev libstdc++-12-dev
+          sudo apt-get install -y clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev libstdc++-12-dev libsecret-1-dev
       - name: Ensure platform directories exist
         run: flutter create --platforms=linux --org com.example . || true
       - run: flutter clean || true
@@ -87,7 +94,7 @@ jobs:
           java-version: '17'
       - uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.29.3'
+          flutter-version: '3.41.2'
           channel: 'stable'
       - uses: SpicyPizza/create-envfile@v2.0
         with:

@@ -662,5 +662,34 @@
   "habitAllHabitsCompleted": "All habits completed!",
   "habitContributionGrid": "Contribution Grid",
   "habitLess": "Less",
-  "habitMore": "More"
+  "habitMore": "More",
+
+  "biometricSettings": "Biometric Login",
+  "biometricSettingsDescription": "Use fingerprint or face recognition to unlock the app",
+  "enableBiometric": "Enable biometric login",
+  "enableBiometricDescription": "Unlock the app with your fingerprint or face",
+  "biometricLockOnResume": "Lock on app switch",
+  "biometricLockOnResumeDescription": "Require biometric when returning to app",
+  "biometricLockTimeout": "Lock timeout",
+  "biometricLockTimeoutDescription": "Time before requiring re-authentication",
+  "biometricImmediately": "Immediately",
+  "biometricMinutes": "{count} minutes",
+  "@biometricMinutes": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "biometricTestButton": "Test biometric",
+  "biometricTestSuccess": "Biometric authentication successful",
+  "biometricTestFailed": "Biometric authentication failed",
+  "biometricNotAvailable": "Biometric authentication not available on this device",
+  "biometricNotEnrolled": "No biometrics enrolled on this device",
+  "biometricUnlockPrompt": "Unlock SimpleDiary",
+  "biometricTapToUnlock": "Tap to unlock with biometrics",
+  "usePasswordInstead": "Use password instead",
+  "biometricRetry": "Try again",
+  "biometricEnrollSuccess": "Biometric login enabled successfully",
+  "biometricEnrollFailed": "Could not enable biometric login"
 }

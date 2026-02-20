@@ -432,5 +432,34 @@
   "habitAllHabitsCompleted": "¡Todos los hábitos completados!",
   "habitContributionGrid": "Cuadrícula de Contribuciones",
   "habitLess": "Menos",
-  "habitMore": "Más"
+  "habitMore": "Más",
+
+  "biometricSettings": "Inicio de sesión biométrico",
+  "biometricSettingsDescription": "Usar huella dactilar o reconocimiento facial para desbloquear la app",
+  "enableBiometric": "Activar inicio biométrico",
+  "enableBiometricDescription": "Desbloquear la app con huella dactilar o rostro",
+  "biometricLockOnResume": "Bloquear al cambiar de app",
+  "biometricLockOnResumeDescription": "Requerir biometría al volver a la app",
+  "biometricLockTimeout": "Tiempo de bloqueo",
+  "biometricLockTimeoutDescription": "Tiempo antes de requerir re-autenticación",
+  "biometricImmediately": "Inmediatamente",
+  "biometricMinutes": "{count} minutos",
+  "@biometricMinutes": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "biometricTestButton": "Probar biometría",
+  "biometricTestSuccess": "Autenticación biométrica exitosa",
+  "biometricTestFailed": "Autenticación biométrica fallida",
+  "biometricNotAvailable": "Autenticación biométrica no disponible en este dispositivo",
+  "biometricNotEnrolled": "No hay biometría registrada en este dispositivo",
+  "biometricUnlockPrompt": "Desbloquear SimpleDiary",
+  "biometricTapToUnlock": "Toca para desbloquear con biometría",
+  "usePasswordInstead": "Usar contraseña en su lugar",
+  "biometricRetry": "Intentar de nuevo",
+  "biometricEnrollSuccess": "Inicio biométrico activado exitosamente",
+  "biometricEnrollFailed": "No se pudo activar el inicio biométrico"
 }

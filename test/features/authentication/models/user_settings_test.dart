@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:day_tracker/core/settings/biometric_settings.dart';
 import 'package:day_tracker/core/settings/notification_settings.dart';
 import 'package:day_tracker/features/authentication/data/models/user_data.dart';
 import 'package:day_tracker/features/authentication/data/models/user_settings.dart';
@@ -28,6 +29,7 @@ void main() {
         ),
         'en',
         NotificationSettings.fromEmpty(),
+        BiometricSettings.fromEmpty(),
       );
     }
 
@@ -92,6 +94,7 @@ void main() {
           SupabaseSettings.empty(),
           'de',
           NotificationSettings.fromEmpty(),
+          BiometricSettings.fromEmpty(),
         );
         final map = original.toMap();
         final restored = UserSettings.fromMap(map);

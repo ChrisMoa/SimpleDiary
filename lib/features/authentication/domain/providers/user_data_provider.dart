@@ -147,6 +147,21 @@ class UserDataProvider extends StateNotifier<UserData> {
     state = updatedStateUser;
   }
 
+  /// Lock the session without clearing credentials.
+  /// Used for biometric re-lock on app resume.
+  void lockSession() {
+    LogWrapper.logger.i('Locking session for user ${state.username}');
+    state = UserData(
+      username: state.username,
+      password: state.password,
+      salt: state.salt,
+      email: state.email,
+      userId: state.userId,
+      isLoggedIn: false,
+      clearPassword: state.clearPassword,
+    );
+  }
+
   void logout() {
     LogWrapper.logger.i('logout from user ${state.username}');
     UserData emptyUser = UserData.fromEmpty();
