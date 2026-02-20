@@ -14,6 +14,7 @@ void main() {
       expect(settings.maxBackups, 10);
       expect(settings.lastBackupTimestamp, isNull);
       expect(settings.backupDirectoryPath, isNull);
+      expect(settings.cloudSyncEnabled, false);
     });
 
     test('toMap serializes all fields', () {
@@ -25,6 +26,7 @@ void main() {
         maxBackups: 5,
         lastBackupTimestamp: '2026-02-20T10:00:00.000Z',
         backupDirectoryPath: '/tmp/backups',
+        cloudSyncEnabled: true,
       );
 
       final map = settings.toMap();
@@ -36,6 +38,7 @@ void main() {
       expect(map['maxBackups'], 5);
       expect(map['lastBackupTimestamp'], '2026-02-20T10:00:00.000Z');
       expect(map['backupDirectoryPath'], '/tmp/backups');
+      expect(map['cloudSyncEnabled'], true);
     });
 
     test('fromMap deserializes all fields', () {
@@ -47,6 +50,7 @@ void main() {
         'maxBackups': 20,
         'lastBackupTimestamp': '2026-01-15T08:00:00.000Z',
         'backupDirectoryPath': '/custom/path',
+        'cloudSyncEnabled': true,
       };
 
       final settings = BackupSettings.fromMap(map);
@@ -58,6 +62,7 @@ void main() {
       expect(settings.maxBackups, 20);
       expect(settings.lastBackupTimestamp, '2026-01-15T08:00:00.000Z');
       expect(settings.backupDirectoryPath, '/custom/path');
+      expect(settings.cloudSyncEnabled, true);
     });
 
     test('fromMap handles missing fields with defaults', () {
@@ -72,6 +77,7 @@ void main() {
       expect(settings.maxBackups, 10);
       expect(settings.lastBackupTimestamp, isNull);
       expect(settings.backupDirectoryPath, isNull);
+      expect(settings.cloudSyncEnabled, false);
     });
 
     test('round-trip through JSON preserves data', () {
@@ -83,6 +89,7 @@ void main() {
         maxBackups: 15,
         lastBackupTimestamp: '2026-02-20T10:00:00.000Z',
         backupDirectoryPath: '/test/path',
+        cloudSyncEnabled: true,
       );
 
       final json = original.toJson();
@@ -95,6 +102,7 @@ void main() {
       expect(restored.maxBackups, original.maxBackups);
       expect(restored.lastBackupTimestamp, original.lastBackupTimestamp);
       expect(restored.backupDirectoryPath, original.backupDirectoryPath);
+      expect(restored.cloudSyncEnabled, original.cloudSyncEnabled);
     });
 
     test('copyWith creates new instance with updated fields', () {
@@ -256,6 +264,28 @@ void main() {
       expect(str, contains('enabled: true'));
       expect(str, contains('frequency: weekly'));
       expect(str, contains('maxBackups: 10'));
+    });
+
+    test('copyWith updates cloudSyncEnabled', () {
+      final original = BackupSettings.fromEmpty();
+      expect(original.cloudSyncEnabled, false);
+
+      final updated = original.copyWith(cloudSyncEnabled: true);
+      expect(updated.cloudSyncEnabled, true);
+      expect(updated.enabled, original.enabled);
+    });
+
+    test('toString contains cloudSync field', () {
+      final settings = BackupSettings(
+        enabled: true,
+        frequency: BackupFrequency.weekly,
+        preferredTimeMinutes: 120,
+        wifiOnly: true,
+        maxBackups: 10,
+        cloudSyncEnabled: true,
+      );
+
+      expect(settings.toString(), contains('cloudSync: true'));
     });
   });
 

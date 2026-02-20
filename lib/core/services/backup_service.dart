@@ -100,6 +100,10 @@ class BackupService {
         'createdAt': now.toIso8601String(),
         'type': type.toJson(),
         'encrypted': encrypted,
+        'diaryDayCount': diaryDaysJson.length,
+        'noteCount': notesJson.length,
+        'habitCount': habitsJson.length,
+        'habitEntryCount': habitEntriesJson.length,
         'data': dataField,
       };
 
@@ -282,6 +286,12 @@ class BackupService {
   Future<int> getStorageUsageBytes() async {
     final index = await _loadMetadataIndex();
     return index.fold<int>(0, (sum, m) => sum + m.sizeBytes);
+  }
+
+  /// Update metadata for an existing backup in the index.
+  /// Used by CloudBackupService to mark backups as cloud-synced.
+  Future<void> updateMetadataInIndex(BackupMetadata metadata) async {
+    await _saveMetadataToIndex(metadata);
   }
 
   // -- Index file management --

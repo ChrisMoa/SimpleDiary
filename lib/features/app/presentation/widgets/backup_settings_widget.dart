@@ -27,6 +27,7 @@ class _BackupSettingsWidgetState extends ConsumerState<BackupSettingsWidget> {
   late TimeOfDay _preferredTime;
   late bool _wifiOnly;
   late int _maxBackups;
+  late bool _cloudSyncEnabled;
   bool _isBackingUp = false;
 
   @override
@@ -38,6 +39,15 @@ class _BackupSettingsWidgetState extends ConsumerState<BackupSettingsWidget> {
     _preferredTime = settings.preferredTime;
     _wifiOnly = settings.wifiOnly;
     _maxBackups = settings.maxBackups;
+    _cloudSyncEnabled = settings.cloudSyncEnabled;
+  }
+
+  bool get _isSupabaseConfigured {
+    final s = settingsContainer.activeUserSettings.supabaseSettings;
+    return s.supabaseUrl.isNotEmpty &&
+        s.supabaseAnonKey.isNotEmpty &&
+        s.email.isNotEmpty &&
+        s.password.isNotEmpty;
   }
 
   @override
@@ -199,23 +209,52 @@ class _BackupSettingsWidgetState extends ConsumerState<BackupSettingsWidget> {
 
                 SizedBox(height: isSmallScreen ? 16 : 20),
 
-                // WiFi only
+                // Cloud sync toggle
                 _buildSettingContainer(
                   theme,
                   isSmallScreen,
-                  l10n.backupWifiOnly,
-                  l10n.backupWifiOnlyDescription,
+                  l10n.backupCloudSync,
+                  _isSupabaseConfigured
+                      ? l10n.backupCloudSyncDescription
+                      : l10n.backupCloudSyncRequiresSupabase,
                   Switch(
-                    value: _wifiOnly,
-                    onChanged: (value) {
-                      setState(() {
-                        _wifiOnly = value;
-                        settingsContainer.activeUserSettings.backupSettings
-                            .wifiOnly = value;
-                      });
-                    },
+                    value: _cloudSyncEnabled,
+                    onChanged: _isSupabaseConfigured
+                        ? (value) {
+                            setState(() {
+                              _cloudSyncEnabled = value;
+                              settingsContainer.activeUserSettings.backupSettings
+                                  .cloudSyncEnabled = value;
+                            });
+                            BackupScheduler().updateSchedule(
+                              settingsContainer.activeUserSettings.backupSettings,
+                            );
+                          }
+                        : null,
                   ),
                 ),
+
+                // WiFi only (only relevant when cloud sync is enabled)
+                if (_cloudSyncEnabled) ...[
+                  SizedBox(height: isSmallScreen ? 16 : 20),
+
+                  _buildSettingContainer(
+                    theme,
+                    isSmallScreen,
+                    l10n.backupWifiOnly,
+                    l10n.backupWifiOnlyDescription,
+                    Switch(
+                      value: _wifiOnly,
+                      onChanged: (value) {
+                        setState(() {
+                          _wifiOnly = value;
+                          settingsContainer.activeUserSettings.backupSettings
+                              .wifiOnly = value;
+                        });
+                      },
+                    ),
+                  ),
+                ],
 
                 SizedBox(height: isSmallScreen ? 16 : 20),
 
@@ -462,11 +501,17 @@ class _BackupSettingsWidgetState extends ConsumerState<BackupSettingsWidget> {
 
       if (mounted) {
         setState(() => _isBackingUp = false);
+        String message;
+        if (metadata.isSuccessful) {
+          message = metadata.cloudSynced
+              ? '${l10n.backupSuccess} · ${l10n.backupUploadSuccess}'
+              : l10n.backupSuccess;
+        } else {
+          message = l10n.backupFailed(metadata.error ?? '');
+        }
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(metadata.isSuccessful
-                ? l10n.backupSuccess
-                : l10n.backupFailed(metadata.error ?? '')),
+            content: Text(message),
             backgroundColor: metadata.isSuccessful
                 ? Theme.of(context).colorScheme.primary
                 : Theme.of(context).colorScheme.error,

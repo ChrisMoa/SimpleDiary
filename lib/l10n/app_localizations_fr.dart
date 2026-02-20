@@ -1661,4 +1661,53 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get backupOverdue => 'Sauvegarde en retard';
+
+  @override
+  String get backupCloudSync => 'Synchronisation cloud';
+
+  @override
+  String get backupCloudSyncDescription =>
+      'Téléverser les sauvegardes vers le stockage cloud Supabase après leur création';
+
+  @override
+  String get backupCloudSyncRequiresSupabase =>
+      'Configurez d\'abord les paramètres Supabase pour activer la synchronisation cloud';
+
+  @override
+  String get backupUploadToCloud => 'Téléverser';
+
+  @override
+  String get backupUploadSuccess => 'Sauvegarde téléversée dans le cloud';
+
+  @override
+  String backupUploadFailed(String error) {
+    return 'Échec du téléversement cloud : $error';
+  }
+
+  @override
+  String get backupCloudBackups => 'Sauvegardes cloud';
+
+  @override
+  String get backupDownloadFromCloud => 'Télécharger';
+
+  @override
+  String get backupDownloadSuccess => 'Sauvegarde téléchargée depuis le cloud';
+
+  @override
+  String backupDownloadFailed(String error) {
+    return 'Échec du téléchargement cloud : $error';
+  }
+
+  @override
+  String get backupCloudDeleteConfirm => 'Supprimer du cloud';
+
+  @override
+  String get backupCloudDeleteConfirmMessage =>
+      'Êtes-vous sûr de vouloir supprimer cette sauvegarde du stockage cloud ?';
+
+  @override
+  String get backupCloudDeleted => 'Sauvegarde supprimée du cloud';
+
+  @override
+  String get backupCloudNoBackups => 'Aucune sauvegarde cloud trouvée';
 }

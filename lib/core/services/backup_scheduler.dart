@@ -2,6 +2,7 @@
 import 'package:day_tracker/core/backup/backup_metadata.dart';
 import 'package:day_tracker/core/log/logger_instance.dart';
 import 'package:day_tracker/core/services/backup_service.dart';
+import 'package:day_tracker/core/services/cloud_backup_service.dart';
 import 'package:day_tracker/core/settings/backup_settings.dart';
 import 'package:day_tracker/core/settings/settings_container.dart';
 import 'package:day_tracker/core/utils/platform_utils.dart';
@@ -69,7 +70,8 @@ class BackupScheduler {
     );
   }
 
-  /// Execute a backup with the given data
+  /// Execute a backup with the given data.
+  /// Creates a local backup, then optionally uploads to cloud if enabled.
   Future<BackupMetadata> runBackup({
     required List<DiaryDay> diaryDays,
     required List<Note> notes,
@@ -77,13 +79,39 @@ class BackupScheduler {
     required List<HabitEntry> habitEntries,
     required BackupType type,
   }) async {
-    return await BackupService().createBackup(
+    // Step 1: Create local backup
+    var metadata = await BackupService().createBackup(
       diaryDaysJson: diaryDays.map((d) => d.toMap()).toList(),
       notesJson: notes.map((n) => n.toLocalDbMap(n)).toList(),
       habitsJson: habits.map((h) => h.toLocalDbMap(h)).toList(),
       habitEntriesJson: habitEntries.map((e) => e.toLocalDbMap(e)).toList(),
       type: type,
     );
+
+    // Step 2: Optionally upload to cloud (never fails the local backup)
+    if (metadata.isSuccessful) {
+      metadata = await _tryCloudUpload(metadata);
+    }
+
+    return metadata;
+  }
+
+  /// Attempt to upload a backup to cloud storage if cloud sync is enabled.
+  /// Returns updated metadata with cloudSynced flag on success.
+  Future<BackupMetadata> _tryCloudUpload(BackupMetadata metadata) async {
+    final settings = settingsContainer.activeUserSettings.backupSettings;
+    if (!settings.cloudSyncEnabled) return metadata;
+
+    final success = await CloudBackupService().uploadBackup(metadata);
+    if (success) {
+      final updated = metadata.copyWith(cloudSynced: true);
+      await BackupService().updateMetadataInIndex(updated);
+      LogWrapper.logger.i('Backup ${metadata.id} synced to cloud');
+      return updated;
+    } else {
+      LogWrapper.logger.w('Backup ${metadata.id} cloud sync failed (non-fatal)');
+      return metadata;
+    }
   }
 
   // -- Android Workmanager scheduling --
@@ -100,19 +128,30 @@ class BackupScheduler {
 
       final frequency = _frequencyToDuration(settings.frequency);
 
+      // When cloud sync is enabled, require network connectivity
+      final NetworkType networkType;
+      if (settings.cloudSyncEnabled) {
+        networkType = settings.wifiOnly
+            ? NetworkType.unmetered
+            : NetworkType.connected;
+      } else {
+        networkType = NetworkType.not_required;
+      }
+
       await Workmanager().registerPeriodicTask(
         scheduledBackupTaskName,
         scheduledBackupTaskName,
         frequency: frequency,
         constraints: Constraints(
-          networkType: settings.wifiOnly ? NetworkType.metered : NetworkType.not_required,
+          networkType: networkType,
         ),
         existingWorkPolicy: ExistingWorkPolicy.replace,
       );
 
       LogWrapper.logger.i(
         'Scheduled backup registered: ${settings.frequency.name} '
-        '(every ${frequency.inHours}h, wifiOnly: ${settings.wifiOnly})',
+        '(every ${frequency.inHours}h, cloudSync: ${settings.cloudSyncEnabled}, '
+        'wifiOnly: ${settings.wifiOnly})',
       );
     } catch (e) {
       LogWrapper.logger.e('Error scheduling backup: $e');

@@ -41,6 +41,9 @@ class BackupSettings {
   /// Directory path for storing local backups (null = default app documents path)
   String? backupDirectoryPath;
 
+  /// Whether to sync backups to Supabase cloud storage
+  bool cloudSyncEnabled;
+
   BackupSettings({
     required this.enabled,
     required this.frequency,
@@ -49,6 +52,7 @@ class BackupSettings {
     required this.maxBackups,
     this.lastBackupTimestamp,
     this.backupDirectoryPath,
+    this.cloudSyncEnabled = false,
   });
 
   /// Convert minutes since midnight to TimeOfDay
@@ -105,6 +109,7 @@ class BackupSettings {
       'maxBackups': maxBackups,
       'lastBackupTimestamp': lastBackupTimestamp,
       'backupDirectoryPath': backupDirectoryPath,
+      'cloudSyncEnabled': cloudSyncEnabled,
     };
   }
 
@@ -118,6 +123,7 @@ class BackupSettings {
       maxBackups: map['maxBackups'] as int? ?? 10,
       lastBackupTimestamp: map['lastBackupTimestamp'] as String?,
       backupDirectoryPath: map['backupDirectoryPath'] as String?,
+      cloudSyncEnabled: map['cloudSyncEnabled'] as bool? ?? false,
     );
   }
 
@@ -135,6 +141,7 @@ class BackupSettings {
     int? maxBackups,
     String? lastBackupTimestamp,
     String? backupDirectoryPath,
+    bool? cloudSyncEnabled,
   }) {
     return BackupSettings(
       enabled: enabled ?? this.enabled,
@@ -144,6 +151,7 @@ class BackupSettings {
       maxBackups: maxBackups ?? this.maxBackups,
       lastBackupTimestamp: lastBackupTimestamp ?? this.lastBackupTimestamp,
       backupDirectoryPath: backupDirectoryPath ?? this.backupDirectoryPath,
+      cloudSyncEnabled: cloudSyncEnabled ?? this.cloudSyncEnabled,
     );
   }
 
@@ -151,6 +159,6 @@ class BackupSettings {
   String toString() {
     final time = preferredTime;
     final timeStr = '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}';
-    return 'BackupSettings(enabled: $enabled, frequency: ${frequency.name}, time: $timeStr, wifiOnly: $wifiOnly, maxBackups: $maxBackups, lastBackup: $lastBackupTimestamp)';
+    return 'BackupSettings(enabled: $enabled, frequency: ${frequency.name}, time: $timeStr, wifiOnly: $wifiOnly, maxBackups: $maxBackups, cloudSync: $cloudSyncEnabled, lastBackup: $lastBackupTimestamp)';
   }
 }

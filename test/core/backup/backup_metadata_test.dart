@@ -93,6 +93,7 @@ void main() {
       expect(map['habitCount'], 5);
       expect(map['habitEntryCount'], 120);
       expect(map['encrypted'], false);
+      expect(map['cloudSynced'], false);
       expect(map['error'], isNull);
     });
 
@@ -140,7 +141,20 @@ void main() {
       expect(metadata.habitCount, 3);
       expect(metadata.habitEntryCount, 50);
       expect(metadata.encrypted, true);
+      expect(metadata.cloudSynced, false);
       expect(metadata.error, isNull);
+    });
+
+    test('fromMap deserializes cloudSynced', () {
+      final map = {
+        'id': 'backup_test',
+        'createdAt': '2026-02-20T10:00:00.000',
+        'filePath': '/tmp/test.json',
+        'cloudSynced': true,
+      };
+
+      final metadata = BackupMetadata.fromMap(map);
+      expect(metadata.cloudSynced, true);
     });
 
     test('fromMap handles missing optional fields', () {
@@ -159,6 +173,7 @@ void main() {
       expect(metadata.habitCount, 0);
       expect(metadata.habitEntryCount, 0);
       expect(metadata.encrypted, false);
+      expect(metadata.cloudSynced, false);
     });
 
     test('round-trip through JSON preserves data', () {
@@ -176,6 +191,7 @@ void main() {
       expect(restored.habitCount, original.habitCount);
       expect(restored.habitEntryCount, original.habitEntryCount);
       expect(restored.encrypted, original.encrypted);
+      expect(restored.cloudSynced, original.cloudSynced);
       expect(restored.error, original.error);
     });
 
@@ -216,11 +232,57 @@ void main() {
       expect(str, contains('notes: 50'));
       expect(str, contains('habits: 5'));
       expect(str, contains('encrypted: false'));
+      expect(str, contains('cloudSynced: false'));
     });
 
     test('encrypted defaults to false', () {
       final metadata = createSample();
       expect(metadata.encrypted, false);
+    });
+
+    test('cloudSynced defaults to false', () {
+      final metadata = createSample();
+      expect(metadata.cloudSynced, false);
+    });
+
+    test('copyWith updates cloudSynced', () {
+      final original = createSample();
+      expect(original.cloudSynced, false);
+
+      final updated = original.copyWith(cloudSynced: true);
+      expect(updated.cloudSynced, true);
+      expect(updated.id, original.id);
+      expect(updated.type, original.type);
+      expect(updated.encrypted, original.encrypted);
+    });
+
+    test('copyWith with no args preserves all fields', () {
+      final original = BackupMetadata(
+        id: 'test',
+        createdAt: DateTime(2026, 2, 20),
+        sizeBytes: 100,
+        filePath: '/tmp/test.json',
+        type: BackupType.scheduled,
+        diaryDayCount: 5,
+        noteCount: 10,
+        habitCount: 2,
+        habitEntryCount: 20,
+        encrypted: true,
+        cloudSynced: true,
+      );
+
+      final copy = original.copyWith();
+      expect(copy.id, original.id);
+      expect(copy.createdAt, original.createdAt);
+      expect(copy.sizeBytes, original.sizeBytes);
+      expect(copy.filePath, original.filePath);
+      expect(copy.type, original.type);
+      expect(copy.diaryDayCount, original.diaryDayCount);
+      expect(copy.noteCount, original.noteCount);
+      expect(copy.habitCount, original.habitCount);
+      expect(copy.habitEntryCount, original.habitEntryCount);
+      expect(copy.encrypted, original.encrypted);
+      expect(copy.cloudSynced, original.cloudSynced);
     });
   });
 

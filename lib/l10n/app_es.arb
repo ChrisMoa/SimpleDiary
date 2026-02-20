@@ -558,5 +558,19 @@
   "backupTypePreRestore": "Pre-restauración",
   "backupNoBackups": "Aún no hay copias de seguridad",
   "backupNoBackupsDescription": "Activa las copias automáticas o crea una manual para proteger tus datos",
-  "backupOverdue": "Copia de seguridad atrasada"
+  "backupOverdue": "Copia de seguridad atrasada",
+  "backupCloudSync": "Sincronización en la nube",
+  "backupCloudSyncDescription": "Subir copias de seguridad al almacenamiento en la nube de Supabase después de su creación",
+  "backupCloudSyncRequiresSupabase": "Configura primero los ajustes de Supabase para activar la sincronización en la nube",
+  "backupUploadToCloud": "Subir",
+  "backupUploadSuccess": "Copia de seguridad subida a la nube",
+  "backupUploadFailed": "Error al subir a la nube: {error}",
+  "backupCloudBackups": "Copias en la nube",
+  "backupDownloadFromCloud": "Descargar",
+  "backupDownloadSuccess": "Copia de seguridad descargada de la nube",
+  "backupDownloadFailed": "Error al descargar de la nube: {error}",
+  "backupCloudDeleteConfirm": "Eliminar de la nube",
+  "backupCloudDeleteConfirmMessage": "¿Estás seguro de que quieres eliminar esta copia de seguridad del almacenamiento en la nube?",
+  "backupCloudDeleted": "Copia de seguridad eliminada de la nube",
+  "backupCloudNoBackups": "No se encontraron copias en la nube"
 }

@@ -1651,4 +1651,54 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get backupOverdue => 'Copia de seguridad atrasada';
+
+  @override
+  String get backupCloudSync => 'Sincronización en la nube';
+
+  @override
+  String get backupCloudSyncDescription =>
+      'Subir copias de seguridad al almacenamiento en la nube de Supabase después de su creación';
+
+  @override
+  String get backupCloudSyncRequiresSupabase =>
+      'Configura primero los ajustes de Supabase para activar la sincronización en la nube';
+
+  @override
+  String get backupUploadToCloud => 'Subir';
+
+  @override
+  String get backupUploadSuccess => 'Copia de seguridad subida a la nube';
+
+  @override
+  String backupUploadFailed(String error) {
+    return 'Error al subir a la nube: $error';
+  }
+
+  @override
+  String get backupCloudBackups => 'Copias en la nube';
+
+  @override
+  String get backupDownloadFromCloud => 'Descargar';
+
+  @override
+  String get backupDownloadSuccess =>
+      'Copia de seguridad descargada de la nube';
+
+  @override
+  String backupDownloadFailed(String error) {
+    return 'Error al descargar de la nube: $error';
+  }
+
+  @override
+  String get backupCloudDeleteConfirm => 'Eliminar de la nube';
+
+  @override
+  String get backupCloudDeleteConfirmMessage =>
+      '¿Estás seguro de que quieres eliminar esta copia de seguridad del almacenamiento en la nube?';
+
+  @override
+  String get backupCloudDeleted => 'Copia de seguridad eliminada de la nube';
+
+  @override
+  String get backupCloudNoBackups => 'No se encontraron copias en la nube';
 }

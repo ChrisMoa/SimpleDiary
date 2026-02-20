@@ -3071,6 +3071,90 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Backup overdue'**
   String get backupOverdue;
+
+  /// No description provided for @backupCloudSync.
+  ///
+  /// In en, this message translates to:
+  /// **'Cloud Sync'**
+  String get backupCloudSync;
+
+  /// No description provided for @backupCloudSyncDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload backups to Supabase cloud storage after creation'**
+  String get backupCloudSyncDescription;
+
+  /// No description provided for @backupCloudSyncRequiresSupabase.
+  ///
+  /// In en, this message translates to:
+  /// **'Configure Supabase settings first to enable cloud sync'**
+  String get backupCloudSyncRequiresSupabase;
+
+  /// No description provided for @backupUploadToCloud.
+  ///
+  /// In en, this message translates to:
+  /// **'Upload'**
+  String get backupUploadToCloud;
+
+  /// No description provided for @backupUploadSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Backup uploaded to cloud'**
+  String get backupUploadSuccess;
+
+  /// No description provided for @backupUploadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Cloud upload failed: {error}'**
+  String backupUploadFailed(String error);
+
+  /// No description provided for @backupCloudBackups.
+  ///
+  /// In en, this message translates to:
+  /// **'Cloud Backups'**
+  String get backupCloudBackups;
+
+  /// No description provided for @backupDownloadFromCloud.
+  ///
+  /// In en, this message translates to:
+  /// **'Download'**
+  String get backupDownloadFromCloud;
+
+  /// No description provided for @backupDownloadSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Backup downloaded from cloud'**
+  String get backupDownloadSuccess;
+
+  /// No description provided for @backupDownloadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Cloud download failed: {error}'**
+  String backupDownloadFailed(String error);
+
+  /// No description provided for @backupCloudDeleteConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete from Cloud'**
+  String get backupCloudDeleteConfirm;
+
+  /// No description provided for @backupCloudDeleteConfirmMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete this backup from cloud storage?'**
+  String get backupCloudDeleteConfirmMessage;
+
+  /// No description provided for @backupCloudDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Backup deleted from cloud'**
+  String get backupCloudDeleted;
+
+  /// No description provided for @backupCloudNoBackups.
+  ///
+  /// In en, this message translates to:
+  /// **'No cloud backups found'**
+  String get backupCloudNoBackups;
 }
 
 class _AppLocalizationsDelegate

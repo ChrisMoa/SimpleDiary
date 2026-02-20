@@ -788,5 +788,29 @@
   "backupTypePreRestore": "Pre-restore",
   "backupNoBackups": "No backups yet",
   "backupNoBackupsDescription": "Enable automatic backups or create a manual backup to protect your data",
-  "backupOverdue": "Backup overdue"
+  "backupOverdue": "Backup overdue",
+  "backupCloudSync": "Cloud Sync",
+  "backupCloudSyncDescription": "Upload backups to Supabase cloud storage after creation",
+  "backupCloudSyncRequiresSupabase": "Configure Supabase settings first to enable cloud sync",
+  "backupUploadToCloud": "Upload",
+  "backupUploadSuccess": "Backup uploaded to cloud",
+  "backupUploadFailed": "Cloud upload failed: {error}",
+  "@backupUploadFailed": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "backupCloudBackups": "Cloud Backups",
+  "backupDownloadFromCloud": "Download",
+  "backupDownloadSuccess": "Backup downloaded from cloud",
+  "backupDownloadFailed": "Cloud download failed: {error}",
+  "@backupDownloadFailed": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "backupCloudDeleteConfirm": "Delete from Cloud",
+  "backupCloudDeleteConfirmMessage": "Are you sure you want to delete this backup from cloud storage?",
+  "backupCloudDeleted": "Backup deleted from cloud",
+  "backupCloudNoBackups": "No cloud backups found"
 }

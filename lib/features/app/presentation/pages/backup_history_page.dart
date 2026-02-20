@@ -3,6 +3,8 @@ import 'package:day_tracker/core/backup/backup_metadata.dart';
 import 'package:day_tracker/core/log/logger_instance.dart';
 import 'package:day_tracker/core/services/backup_service.dart';
 import 'package:day_tracker/core/services/backup_scheduler.dart';
+import 'package:day_tracker/core/services/cloud_backup_service.dart';
+import 'package:day_tracker/core/settings/settings_container.dart';
 import 'package:day_tracker/features/day_rating/data/models/diary_day.dart';
 import 'package:day_tracker/features/day_rating/domain/providers/diary_day_local_db_provider.dart';
 import 'package:day_tracker/features/habits/data/models/habit.dart';
@@ -157,6 +159,13 @@ class _BackupHistoryPageState extends ConsumerState<BackupHistoryPage> {
             ),
           ),
           const Spacer(),
+          if (_isCloudSyncEnabled)
+            IconButton(
+              icon: Icon(Icons.cloud_download, color: theme.colorScheme.primary),
+              tooltip: l10n.backupCloudBackups,
+              onPressed: () => _showCloudBackups(l10n),
+              visualDensity: VisualDensity.compact,
+            ),
           Text(
             '${_backups?.length ?? 0} ${_backups?.length == 1 ? 'backup' : 'backups'}',
             style: theme.textTheme.bodySmall?.copyWith(
@@ -193,6 +202,14 @@ class _BackupHistoryPageState extends ConsumerState<BackupHistoryPage> {
                   const SizedBox(width: 4),
                   Icon(
                     Icons.lock,
+                    size: 14,
+                    color: theme.colorScheme.primary,
+                  ),
+                ],
+                if (backup.cloudSynced) ...[
+                  const SizedBox(width: 4),
+                  Icon(
+                    Icons.cloud_done,
                     size: 14,
                     color: theme.colorScheme.primary,
                   ),
@@ -265,6 +282,12 @@ class _BackupHistoryPageState extends ConsumerState<BackupHistoryPage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
+                if (isSuccess && _isCloudSyncEnabled && !backup.cloudSynced)
+                  TextButton.icon(
+                    onPressed: () => _uploadToCloud(backup, l10n),
+                    icon: const Icon(Icons.cloud_upload, size: 18),
+                    label: Text(l10n.backupUploadToCloud),
+                  ),
                 if (isSuccess)
                   TextButton.icon(
                     onPressed: _isRestoring
@@ -501,6 +524,164 @@ class _BackupHistoryPageState extends ConsumerState<BackupHistoryPage> {
         );
         await _loadBackups();
       }
+    }
+  }
+
+  // -- Cloud sync helpers --
+
+  bool get _isCloudSyncEnabled =>
+      settingsContainer.activeUserSettings.backupSettings.cloudSyncEnabled;
+
+  Future<void> _uploadToCloud(
+    BackupMetadata backup,
+    AppLocalizations l10n,
+  ) async {
+    final success = await CloudBackupService().uploadBackup(backup);
+    if (success) {
+      final updated = backup.copyWith(cloudSynced: true);
+      await BackupService().updateMetadataInIndex(updated);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(l10n.backupUploadSuccess),
+            backgroundColor: Theme.of(context).colorScheme.primary,
+            behavior: SnackBarBehavior.floating,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+          ),
+        );
+        await _loadBackups();
+      }
+    } else if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(l10n.backupUploadFailed('')),
+          backgroundColor: Theme.of(context).colorScheme.error,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+          ),
+        ),
+      );
+    }
+  }
+
+  Future<void> _showCloudBackups(AppLocalizations l10n) async {
+    final theme = Theme.of(context);
+    final cloudFiles = await CloudBackupService().listCloudBackups();
+
+    // Filter out backups already present locally
+    final localIds = _backups?.map((b) => b.id).toSet() ?? {};
+    final cloudOnlyFiles = cloudFiles
+        .where((f) => !localIds.contains(f.name.replaceAll('.json', '')))
+        .toList();
+
+    if (!mounted) return;
+
+    await showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (context) => DraggableScrollableSheet(
+        initialChildSize: 0.5,
+        minChildSize: 0.3,
+        maxChildSize: 0.8,
+        expand: false,
+        builder: (context, scrollController) => Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Row(
+                children: [
+                  Icon(Icons.cloud, color: theme.colorScheme.primary),
+                  const SizedBox(width: 8),
+                  Text(
+                    l10n.backupCloudBackups,
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: theme.colorScheme.onSurface,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const Divider(height: 1),
+            Expanded(
+              child: cloudOnlyFiles.isEmpty
+                  ? Center(
+                      child: Text(
+                        l10n.backupCloudNoBackups,
+                        style: theme.textTheme.bodyMedium?.copyWith(
+                          color: theme.colorScheme.onSurface.withValues(alpha: .5),
+                        ),
+                      ),
+                    )
+                  : ListView.builder(
+                      controller: scrollController,
+                      itemCount: cloudOnlyFiles.length,
+                      itemBuilder: (context, index) {
+                        final file = cloudOnlyFiles[index];
+                        final backupId = file.name.replaceAll('.json', '');
+                        return ListTile(
+                          leading: Icon(
+                            Icons.cloud_outlined,
+                            color: theme.colorScheme.primary,
+                          ),
+                          title: Text(
+                            backupId,
+                            style: TextStyle(
+                              color: theme.colorScheme.onSurface,
+                            ),
+                          ),
+                          trailing: TextButton.icon(
+                            icon: const Icon(Icons.download, size: 18),
+                            label: Text(l10n.backupDownloadFromCloud),
+                            onPressed: () async {
+                              Navigator.pop(context);
+                              await _downloadFromCloud(backupId, l10n);
+                            },
+                          ),
+                        );
+                      },
+                    ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _downloadFromCloud(
+    String backupId,
+    AppLocalizations l10n,
+  ) async {
+    final metadata = await CloudBackupService().downloadBackup(backupId);
+    if (metadata != null && mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(l10n.backupDownloadSuccess),
+          backgroundColor: Theme.of(context).colorScheme.primary,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+          ),
+        ),
+      );
+      await _loadBackups();
+    } else if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(l10n.backupDownloadFailed('')),
+          backgroundColor: Theme.of(context).colorScheme.error,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+          ),
+        ),
+      );
     }
   }
 

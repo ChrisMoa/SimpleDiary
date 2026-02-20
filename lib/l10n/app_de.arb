@@ -558,5 +558,19 @@
   "backupTypePreRestore": "Vor Wiederherstellung",
   "backupNoBackups": "Noch keine Backups",
   "backupNoBackupsDescription": "Aktiviere automatische Backups oder erstelle ein manuelles Backup zum Schutz deiner Daten",
-  "backupOverdue": "Backup überfällig"
+  "backupOverdue": "Backup überfällig",
+  "backupCloudSync": "Cloud-Synchronisierung",
+  "backupCloudSyncDescription": "Backups nach der Erstellung in den Supabase-Cloud-Speicher hochladen",
+  "backupCloudSyncRequiresSupabase": "Konfiguriere zuerst die Supabase-Einstellungen, um die Cloud-Synchronisierung zu aktivieren",
+  "backupUploadToCloud": "Hochladen",
+  "backupUploadSuccess": "Backup in die Cloud hochgeladen",
+  "backupUploadFailed": "Cloud-Upload fehlgeschlagen: {error}",
+  "backupCloudBackups": "Cloud-Backups",
+  "backupDownloadFromCloud": "Herunterladen",
+  "backupDownloadSuccess": "Backup aus der Cloud heruntergeladen",
+  "backupDownloadFailed": "Cloud-Download fehlgeschlagen: {error}",
+  "backupCloudDeleteConfirm": "Aus Cloud löschen",
+  "backupCloudDeleteConfirmMessage": "Möchtest du dieses Backup wirklich aus dem Cloud-Speicher löschen?",
+  "backupCloudDeleted": "Backup aus der Cloud gelöscht",
+  "backupCloudNoBackups": "Keine Cloud-Backups gefunden"
 }

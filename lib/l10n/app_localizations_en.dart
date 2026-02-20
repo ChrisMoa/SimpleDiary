@@ -1633,4 +1633,53 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get backupOverdue => 'Backup overdue';
+
+  @override
+  String get backupCloudSync => 'Cloud Sync';
+
+  @override
+  String get backupCloudSyncDescription =>
+      'Upload backups to Supabase cloud storage after creation';
+
+  @override
+  String get backupCloudSyncRequiresSupabase =>
+      'Configure Supabase settings first to enable cloud sync';
+
+  @override
+  String get backupUploadToCloud => 'Upload';
+
+  @override
+  String get backupUploadSuccess => 'Backup uploaded to cloud';
+
+  @override
+  String backupUploadFailed(String error) {
+    return 'Cloud upload failed: $error';
+  }
+
+  @override
+  String get backupCloudBackups => 'Cloud Backups';
+
+  @override
+  String get backupDownloadFromCloud => 'Download';
+
+  @override
+  String get backupDownloadSuccess => 'Backup downloaded from cloud';
+
+  @override
+  String backupDownloadFailed(String error) {
+    return 'Cloud download failed: $error';
+  }
+
+  @override
+  String get backupCloudDeleteConfirm => 'Delete from Cloud';
+
+  @override
+  String get backupCloudDeleteConfirmMessage =>
+      'Are you sure you want to delete this backup from cloud storage?';
+
+  @override
+  String get backupCloudDeleted => 'Backup deleted from cloud';
+
+  @override
+  String get backupCloudNoBackups => 'No cloud backups found';
 }

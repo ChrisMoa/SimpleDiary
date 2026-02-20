@@ -558,5 +558,19 @@
   "backupTypePreRestore": "Pré-restauration",
   "backupNoBackups": "Pas encore de sauvegardes",
   "backupNoBackupsDescription": "Activez les sauvegardes automatiques ou créez une sauvegarde manuelle pour protéger vos données",
-  "backupOverdue": "Sauvegarde en retard"
+  "backupOverdue": "Sauvegarde en retard",
+  "backupCloudSync": "Synchronisation cloud",
+  "backupCloudSyncDescription": "Téléverser les sauvegardes vers le stockage cloud Supabase après leur création",
+  "backupCloudSyncRequiresSupabase": "Configurez d'abord les paramètres Supabase pour activer la synchronisation cloud",
+  "backupUploadToCloud": "Téléverser",
+  "backupUploadSuccess": "Sauvegarde téléversée dans le cloud",
+  "backupUploadFailed": "Échec du téléversement cloud : {error}",
+  "backupCloudBackups": "Sauvegardes cloud",
+  "backupDownloadFromCloud": "Télécharger",
+  "backupDownloadSuccess": "Sauvegarde téléchargée depuis le cloud",
+  "backupDownloadFailed": "Échec du téléchargement cloud : {error}",
+  "backupCloudDeleteConfirm": "Supprimer du cloud",
+  "backupCloudDeleteConfirmMessage": "Êtes-vous sûr de vouloir supprimer cette sauvegarde du stockage cloud ?",
+  "backupCloudDeleted": "Sauvegarde supprimée du cloud",
+  "backupCloudNoBackups": "Aucune sauvegarde cloud trouvée"
 }

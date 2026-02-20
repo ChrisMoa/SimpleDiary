@@ -49,6 +49,9 @@ class BackupMetadata {
   /// Whether the backup data is encrypted
   final bool encrypted;
 
+  /// Whether this backup has been synced to cloud storage
+  final bool cloudSynced;
+
   /// Error message if backup failed (null = success)
   final String? error;
 
@@ -63,6 +66,7 @@ class BackupMetadata {
     required this.habitCount,
     required this.habitEntryCount,
     this.encrypted = false,
+    this.cloudSynced = false,
     this.error,
   });
 
@@ -88,6 +92,7 @@ class BackupMetadata {
       'habitCount': habitCount,
       'habitEntryCount': habitEntryCount,
       'encrypted': encrypted,
+      'cloudSynced': cloudSynced,
       'error': error,
     };
   }
@@ -104,6 +109,7 @@ class BackupMetadata {
       habitCount: map['habitCount'] as int? ?? 0,
       habitEntryCount: map['habitEntryCount'] as int? ?? 0,
       encrypted: map['encrypted'] as bool? ?? false,
+      cloudSynced: map['cloudSynced'] as bool? ?? false,
       error: map['error'] as String?,
     );
   }
@@ -113,8 +119,38 @@ class BackupMetadata {
   factory BackupMetadata.fromJson(String source) =>
       BackupMetadata.fromMap(json.decode(source) as Map<String, dynamic>);
 
+  BackupMetadata copyWith({
+    String? id,
+    DateTime? createdAt,
+    int? sizeBytes,
+    String? filePath,
+    BackupType? type,
+    int? diaryDayCount,
+    int? noteCount,
+    int? habitCount,
+    int? habitEntryCount,
+    bool? encrypted,
+    bool? cloudSynced,
+    String? error,
+  }) {
+    return BackupMetadata(
+      id: id ?? this.id,
+      createdAt: createdAt ?? this.createdAt,
+      sizeBytes: sizeBytes ?? this.sizeBytes,
+      filePath: filePath ?? this.filePath,
+      type: type ?? this.type,
+      diaryDayCount: diaryDayCount ?? this.diaryDayCount,
+      noteCount: noteCount ?? this.noteCount,
+      habitCount: habitCount ?? this.habitCount,
+      habitEntryCount: habitEntryCount ?? this.habitEntryCount,
+      encrypted: encrypted ?? this.encrypted,
+      cloudSynced: cloudSynced ?? this.cloudSynced,
+      error: error ?? this.error,
+    );
+  }
+
   @override
   String toString() {
-    return 'BackupMetadata(id: $id, type: ${type.name}, days: $diaryDayCount, notes: $noteCount, habits: $habitCount, size: $formattedSize, encrypted: $encrypted, error: $error)';
+    return 'BackupMetadata(id: $id, type: ${type.name}, days: $diaryDayCount, notes: $noteCount, habits: $habitCount, size: $formattedSize, encrypted: $encrypted, cloudSynced: $cloudSynced, error: $error)';
   }
 }
