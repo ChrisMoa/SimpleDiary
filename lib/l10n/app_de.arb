@@ -575,5 +575,11 @@
   "backupCloudDeleteConfirm": "Aus Cloud löschen",
   "backupCloudDeleteConfirmMessage": "Möchtest du dieses Backup wirklich aus dem Cloud-Speicher löschen?",
   "backupCloudDeleted": "Backup aus der Cloud gelöscht",
-  "backupCloudNoBackups": "Keine Cloud-Backups gefunden"
+  "backupCloudNoBackups": "Keine Cloud-Backups gefunden",
+  "backupLocation": "Speicherort",
+  "backupLocationDescription": "Wähle, wo lokale Backups auf diesem Gerät gespeichert werden",
+  "backupLocationDefault": "Standard ({path})",
+  "backupLocationCustom": "Benutzerdefiniert: {path}",
+  "backupLocationChange": "Ändern",
+  "backupLocationReset": "Auf Standard zurücksetzen"
 }

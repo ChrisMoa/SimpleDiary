@@ -8,6 +8,7 @@ import 'package:day_tracker/features/app/presentation/pages/backup_history_page.
 import 'package:day_tracker/features/day_rating/domain/providers/diary_day_local_db_provider.dart';
 import 'package:day_tracker/features/habits/domain/providers/habit_providers.dart';
 import 'package:day_tracker/features/notes/domain/providers/note_local_db_provider.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:day_tracker/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -303,6 +304,20 @@ class _BackupSettingsWidgetState extends ConsumerState<BackupSettingsWidget> {
                     ],
                   ),
                 ),
+
+                // Only show location picker when destination includes local storage
+                if (_destination != BackupDestination.cloudOnly) ...[
+                  SizedBox(height: isSmallScreen ? 16 : 20),
+
+                  // Backup location
+                  _buildSettingContainer(
+                    theme,
+                    isSmallScreen,
+                    l10n.backupLocation,
+                    l10n.backupLocationDescription,
+                    _buildBackupLocationControl(theme, l10n),
+                  ),
+                ],
               ],
 
               SizedBox(height: isSmallScreen ? 16 : 20),
@@ -476,6 +491,79 @@ class _BackupSettingsWidgetState extends ConsumerState<BackupSettingsWidget> {
     }
 
     LogWrapper.logger.i('Auto-backup ${value ? 'enabled' : 'disabled'}');
+  }
+
+  Widget _buildBackupLocationControl(ThemeData theme, AppLocalizations l10n) {
+    final customPath = settingsContainer
+        .activeUserSettings.backupSettings.backupDirectoryPath;
+    final defaultPath = settingsContainer.applicationDocumentsPath;
+    final isCustom = customPath != null;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+          decoration: BoxDecoration(
+            color: theme.colorScheme.surfaceContainerHighest,
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Row(
+            children: [
+              Icon(
+                Icons.folder,
+                color: theme.colorScheme.primary,
+                size: 20,
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  isCustom
+                      ? l10n.backupLocationCustom(customPath)
+                      : l10n.backupLocationDefault(defaultPath),
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: theme.colorScheme.onSurface,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 2,
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 8),
+        Row(
+          children: [
+            TextButton.icon(
+              onPressed: _selectBackupDirectory,
+              icon: const Icon(Icons.folder_open, size: 18),
+              label: Text(l10n.backupLocationChange),
+            ),
+            if (isCustom)
+              TextButton.icon(
+                onPressed: () {
+                  setState(() {
+                    settingsContainer.activeUserSettings.backupSettings
+                        .backupDirectoryPath = null;
+                  });
+                },
+                icon: const Icon(Icons.restore, size: 18),
+                label: Text(l10n.backupLocationReset),
+              ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Future<void> _selectBackupDirectory() async {
+    final selectedDirectory = await FilePicker.platform.getDirectoryPath();
+    if (selectedDirectory != null && mounted) {
+      setState(() {
+        settingsContainer.activeUserSettings.backupSettings
+            .backupDirectoryPath = selectedDirectory;
+      });
+    }
   }
 
   Future<void> _selectPreferredTime() async {

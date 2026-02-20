@@ -3173,6 +3173,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No cloud backups found'**
   String get backupCloudNoBackups;
+
+  /// No description provided for @backupLocation.
+  ///
+  /// In en, this message translates to:
+  /// **'Backup Location'**
+  String get backupLocation;
+
+  /// No description provided for @backupLocationDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose where local backups are stored on this device'**
+  String get backupLocationDescription;
+
+  /// No description provided for @backupLocationDefault.
+  ///
+  /// In en, this message translates to:
+  /// **'Default ({path})'**
+  String backupLocationDefault(String path);
+
+  /// No description provided for @backupLocationCustom.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom: {path}'**
+  String backupLocationCustom(String path);
+
+  /// No description provided for @backupLocationChange.
+  ///
+  /// In en, this message translates to:
+  /// **'Change'**
+  String get backupLocationChange;
+
+  /// No description provided for @backupLocationReset.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset to Default'**
+  String get backupLocationReset;
 }
 
 class _AppLocalizationsDelegate

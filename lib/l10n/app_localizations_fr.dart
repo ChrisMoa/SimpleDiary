@@ -1719,4 +1719,27 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get backupCloudNoBackups => 'Aucune sauvegarde cloud trouvée';
+
+  @override
+  String get backupLocation => 'Emplacement des sauvegardes';
+
+  @override
+  String get backupLocationDescription =>
+      'Choisissez où les sauvegardes locales sont stockées sur cet appareil';
+
+  @override
+  String backupLocationDefault(String path) {
+    return 'Par défaut ($path)';
+  }
+
+  @override
+  String backupLocationCustom(String path) {
+    return 'Personnalisé : $path';
+  }
+
+  @override
+  String get backupLocationChange => 'Modifier';
+
+  @override
+  String get backupLocationReset => 'Réinitialiser par défaut';
 }

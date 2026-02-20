@@ -815,5 +815,21 @@
   "backupCloudDeleteConfirm": "Delete from Cloud",
   "backupCloudDeleteConfirmMessage": "Are you sure you want to delete this backup from cloud storage?",
   "backupCloudDeleted": "Backup deleted from cloud",
-  "backupCloudNoBackups": "No cloud backups found"
+  "backupCloudNoBackups": "No cloud backups found",
+  "backupLocation": "Backup Location",
+  "backupLocationDescription": "Choose where local backups are stored on this device",
+  "backupLocationDefault": "Default ({path})",
+  "@backupLocationDefault": {
+    "placeholders": {
+      "path": { "type": "String" }
+    }
+  },
+  "backupLocationCustom": "Custom: {path}",
+  "@backupLocationCustom": {
+    "placeholders": {
+      "path": { "type": "String" }
+    }
+  },
+  "backupLocationChange": "Change",
+  "backupLocationReset": "Reset to Default"
 }

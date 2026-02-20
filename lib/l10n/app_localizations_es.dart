@@ -1710,4 +1710,27 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get backupCloudNoBackups => 'No se encontraron copias en la nube';
+
+  @override
+  String get backupLocation => 'Ubicación de copia';
+
+  @override
+  String get backupLocationDescription =>
+      'Elige dónde se almacenan las copias de seguridad locales en este dispositivo';
+
+  @override
+  String backupLocationDefault(String path) {
+    return 'Predeterminado ($path)';
+  }
+
+  @override
+  String backupLocationCustom(String path) {
+    return 'Personalizado: $path';
+  }
+
+  @override
+  String get backupLocationChange => 'Cambiar';
+
+  @override
+  String get backupLocationReset => 'Restablecer a predeterminado';
 }

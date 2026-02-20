@@ -575,5 +575,11 @@
   "backupCloudDeleteConfirm": "Supprimer du cloud",
   "backupCloudDeleteConfirmMessage": "Êtes-vous sûr de vouloir supprimer cette sauvegarde du stockage cloud ?",
   "backupCloudDeleted": "Sauvegarde supprimée du cloud",
-  "backupCloudNoBackups": "Aucune sauvegarde cloud trouvée"
+  "backupCloudNoBackups": "Aucune sauvegarde cloud trouvée",
+  "backupLocation": "Emplacement des sauvegardes",
+  "backupLocationDescription": "Choisissez où les sauvegardes locales sont stockées sur cet appareil",
+  "backupLocationDefault": "Par défaut ({path})",
+  "backupLocationCustom": "Personnalisé : {path}",
+  "backupLocationChange": "Modifier",
+  "backupLocationReset": "Réinitialiser par défaut"
 }

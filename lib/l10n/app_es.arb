@@ -575,5 +575,11 @@
   "backupCloudDeleteConfirm": "Eliminar de la nube",
   "backupCloudDeleteConfirmMessage": "¿Estás seguro de que quieres eliminar esta copia de seguridad del almacenamiento en la nube?",
   "backupCloudDeleted": "Copia de seguridad eliminada de la nube",
-  "backupCloudNoBackups": "No se encontraron copias en la nube"
+  "backupCloudNoBackups": "No se encontraron copias en la nube",
+  "backupLocation": "Ubicación de copia",
+  "backupLocationDescription": "Elige dónde se almacenan las copias de seguridad locales en este dispositivo",
+  "backupLocationDefault": "Predeterminado ({path})",
+  "backupLocationCustom": "Personalizado: {path}",
+  "backupLocationChange": "Cambiar",
+  "backupLocationReset": "Restablecer a predeterminado"
 }
