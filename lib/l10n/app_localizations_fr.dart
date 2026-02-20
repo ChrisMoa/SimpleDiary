@@ -1514,4 +1514,151 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get biometricEnrollFailed =>
       'Impossible d\'activer la connexion biométrique';
+
+  @override
+  String get backupSettings => 'Sauvegardes automatiques';
+
+  @override
+  String get backupSettingsDescription =>
+      'Configurez les sauvegardes automatiques pour protéger vos données de journal.';
+
+  @override
+  String get enableAutoBackup => 'Activer les sauvegardes automatiques';
+
+  @override
+  String get enableAutoBackupDescription =>
+      'Sauvegardez automatiquement vos données selon un calendrier régulier';
+
+  @override
+  String get backupFrequency => 'Fréquence de sauvegarde';
+
+  @override
+  String get backupFrequencyDescription =>
+      'À quelle fréquence les sauvegardes automatiques doivent-elles s\'exécuter';
+
+  @override
+  String get backupFrequencyDaily => 'Quotidien';
+
+  @override
+  String get backupFrequencyWeekly => 'Hebdomadaire';
+
+  @override
+  String get backupFrequencyMonthly => 'Mensuel';
+
+  @override
+  String get backupPreferredTime => 'Heure préférée';
+
+  @override
+  String get backupPreferredTimeDescription =>
+      'Quand exécuter la sauvegarde automatique';
+
+  @override
+  String get backupWifiOnly => 'WiFi uniquement';
+
+  @override
+  String get backupWifiOnlyDescription =>
+      'Exécuter les sauvegardes uniquement en WiFi (Android)';
+
+  @override
+  String get backupMaxCount => 'Conserver les sauvegardes';
+
+  @override
+  String get backupMaxCountDescription =>
+      'Nombre maximum de sauvegardes à conserver';
+
+  @override
+  String backupMaxCountValue(int count) {
+    return '$count sauvegardes';
+  }
+
+  @override
+  String get backupNow => 'Sauvegarder maintenant';
+
+  @override
+  String get backupNowDescription =>
+      'Créer une sauvegarde manuelle immédiatement';
+
+  @override
+  String get backupHistory => 'Historique des sauvegardes';
+
+  @override
+  String get backupHistoryDescription => 'Voir et gérer vos sauvegardes';
+
+  @override
+  String lastBackup(String time) {
+    return 'Dernière sauvegarde : $time';
+  }
+
+  @override
+  String get lastBackupNever => 'Dernière sauvegarde : Jamais';
+
+  @override
+  String get backupCreating => 'Création de la sauvegarde...';
+
+  @override
+  String get backupSuccess => 'Sauvegarde créée avec succès';
+
+  @override
+  String backupFailed(String error) {
+    return 'Sauvegarde échouée : $error';
+  }
+
+  @override
+  String get backupRestoring => 'Restauration de la sauvegarde...';
+
+  @override
+  String get backupRestoreSuccess =>
+      'Sauvegarde restaurée avec succès. Veuillez redémarrer l\'application.';
+
+  @override
+  String backupRestoreFailed(String error) {
+    return 'Restauration échouée : $error';
+  }
+
+  @override
+  String get backupRestoreConfirm => 'Restaurer la sauvegarde';
+
+  @override
+  String backupRestoreConfirmMessage(String date) {
+    return 'Ceci remplacera toutes les données actuelles par la sauvegarde du $date. Une sauvegarde de sécurité sera créée d\'abord. Continuer ?';
+  }
+
+  @override
+  String get backupDeleteConfirm => 'Supprimer la sauvegarde';
+
+  @override
+  String get backupDeleteConfirmMessage =>
+      'Êtes-vous sûr de vouloir supprimer cette sauvegarde ?';
+
+  @override
+  String get backupDeleted => 'Sauvegarde supprimée';
+
+  @override
+  String backupStorageUsed(String size) {
+    return 'Stockage utilisé : $size';
+  }
+
+  @override
+  String backupEntries(int days, int notes, int habits) {
+    return '$days jours, $notes notes, $habits habitudes';
+  }
+
+  @override
+  String get backupTypeManual => 'Manuel';
+
+  @override
+  String get backupTypeScheduled => 'Programmé';
+
+  @override
+  String get backupTypePreRestore => 'Pré-restauration';
+
+  @override
+  String get backupNoBackups => 'Pas encore de sauvegardes';
+
+  @override
+  String get backupNoBackupsDescription =>
+      'Activez les sauvegardes automatiques ou créez une sauvegarde manuelle pour protéger vos données';
+
+  @override
+  String get backupOverdue => 'Sauvegarde en retard';
 }

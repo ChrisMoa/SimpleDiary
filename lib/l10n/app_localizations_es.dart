@@ -1503,4 +1503,152 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get biometricEnrollFailed => 'No se pudo activar el inicio biométrico';
+
+  @override
+  String get backupSettings => 'Copias de seguridad automáticas';
+
+  @override
+  String get backupSettingsDescription =>
+      'Configura copias de seguridad automáticas para proteger tus datos del diario.';
+
+  @override
+  String get enableAutoBackup => 'Activar copias de seguridad automáticas';
+
+  @override
+  String get enableAutoBackupDescription =>
+      'Respalda tus datos automáticamente de forma regular';
+
+  @override
+  String get backupFrequency => 'Frecuencia de respaldo';
+
+  @override
+  String get backupFrequencyDescription =>
+      'Con qué frecuencia se deben ejecutar las copias de seguridad';
+
+  @override
+  String get backupFrequencyDaily => 'Diario';
+
+  @override
+  String get backupFrequencyWeekly => 'Semanal';
+
+  @override
+  String get backupFrequencyMonthly => 'Mensual';
+
+  @override
+  String get backupPreferredTime => 'Hora preferida';
+
+  @override
+  String get backupPreferredTimeDescription =>
+      'Cuándo ejecutar la copia de seguridad automática';
+
+  @override
+  String get backupWifiOnly => 'Solo WiFi';
+
+  @override
+  String get backupWifiOnlyDescription =>
+      'Solo ejecutar copias de seguridad con conexión WiFi (Android)';
+
+  @override
+  String get backupMaxCount => 'Mantener copias';
+
+  @override
+  String get backupMaxCountDescription =>
+      'Número máximo de copias de seguridad a conservar';
+
+  @override
+  String backupMaxCountValue(int count) {
+    return '$count copias';
+  }
+
+  @override
+  String get backupNow => 'Respaldar ahora';
+
+  @override
+  String get backupNowDescription =>
+      'Crear una copia de seguridad manual inmediatamente';
+
+  @override
+  String get backupHistory => 'Historial de copias';
+
+  @override
+  String get backupHistoryDescription =>
+      'Ver y gestionar tus copias de seguridad';
+
+  @override
+  String lastBackup(String time) {
+    return 'Última copia: $time';
+  }
+
+  @override
+  String get lastBackupNever => 'Última copia: Nunca';
+
+  @override
+  String get backupCreating => 'Creando copia de seguridad...';
+
+  @override
+  String get backupSuccess => 'Copia de seguridad creada exitosamente';
+
+  @override
+  String backupFailed(String error) {
+    return 'Copia de seguridad fallida: $error';
+  }
+
+  @override
+  String get backupRestoring => 'Restaurando copia de seguridad...';
+
+  @override
+  String get backupRestoreSuccess =>
+      'Copia de seguridad restaurada exitosamente. Por favor reinicia la app.';
+
+  @override
+  String backupRestoreFailed(String error) {
+    return 'Restauración fallida: $error';
+  }
+
+  @override
+  String get backupRestoreConfirm => 'Restaurar copia';
+
+  @override
+  String backupRestoreConfirmMessage(String date) {
+    return 'Esto reemplazará todos los datos actuales con la copia del $date. Se creará una copia de seguridad primero. ¿Continuar?';
+  }
+
+  @override
+  String get backupDeleteConfirm => 'Eliminar copia';
+
+  @override
+  String get backupDeleteConfirmMessage =>
+      '¿Estás seguro de que quieres eliminar esta copia de seguridad?';
+
+  @override
+  String get backupDeleted => 'Copia de seguridad eliminada';
+
+  @override
+  String backupStorageUsed(String size) {
+    return 'Almacenamiento usado: $size';
+  }
+
+  @override
+  String backupEntries(int days, int notes, int habits) {
+    return '$days días, $notes notas, $habits hábitos';
+  }
+
+  @override
+  String get backupTypeManual => 'Manual';
+
+  @override
+  String get backupTypeScheduled => 'Programado';
+
+  @override
+  String get backupTypePreRestore => 'Pre-restauración';
+
+  @override
+  String get backupNoBackups => 'Aún no hay copias de seguridad';
+
+  @override
+  String get backupNoBackupsDescription =>
+      'Activa las copias automáticas o crea una manual para proteger tus datos';
+
+  @override
+  String get backupOverdue => 'Copia de seguridad atrasada';
 }

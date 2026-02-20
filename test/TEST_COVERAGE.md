@@ -1,6 +1,6 @@
 # Test Coverage
 
-**Total: 631 passing tests** across 39 test files (+ 11 optional Supabase integration tests)
+**Total: 666 passing tests** across 41 test files (+ 11 optional Supabase integration tests)
 
 Run all tests with:
 ```bash
@@ -41,8 +41,17 @@ flutter test test/core/ test/features/ test/l10n/
 |------|-------|--------|
 | `notification_settings_test.dart` | 11 | NotificationSettings defaults (`fromEmpty`), `toMap`/`fromMap` (all fields, missing fields with defaults), JSON round-trip, `copyWith` (partial/full/no-args), `toString` (time format), list independence, map key completeness |
 | `biometric_settings_test.dart` | 10 | BiometricSettings defaults (`fromEmpty`), `toMap`/`fromMap` (all fields, missing fields with defaults), JSON round-trip, `copyWith` (partial/no-args), `toString`, map key completeness, zero timeout (immediate lock) |
+| `backup_settings_test.dart` | 21 | BackupSettings defaults (`fromEmpty`), `toMap`/`fromMap` (all fields, missing fields with defaults), JSON round-trip, `copyWith` (partial/no-args), `preferredTime` getter/setter (minutes↔TimeOfDay), `lastBackupDateTime` parsing (valid/null), `isBackupOverdue` (never/disabled/daily/weekly/monthly thresholds), `toString`, BackupFrequency enum (toJson/fromJson/unknown fallback) |
 
-**Sources:** `lib/core/settings/notification_settings.dart`, `lib/core/settings/biometric_settings.dart`
+**Sources:** `lib/core/settings/notification_settings.dart`, `lib/core/settings/biometric_settings.dart`, `lib/core/settings/backup_settings.dart`
+
+### Backup (`test/core/backup/`)
+
+| File | Tests | Covers |
+|------|-------|--------|
+| `backup_metadata_test.dart` | 14 | BackupMetadata `isSuccessful` (no error/with error), `formattedSize` (bytes/KB/MB), `toMap`/`fromMap` (all fields, missing optional fields), JSON round-trip (success/error), `toString`, BackupType enum (toJson/fromJson/unknown fallback) |
+
+**Source:** `lib/core/backup/backup_metadata.dart`
 
 ### Utils (`test/core/utils/`)
 
@@ -170,6 +179,7 @@ flutter test test/core/ test/features/ test/l10n/
 | Localization (ARB) | Covered | JSON validity, completeness, placeholders, ICU format |
 | Supabase settings | Covered | Model serialization |
 | Biometric settings | Covered | Settings model serialization, defaults, backwards compat |
+| Backup settings & metadata | Covered | Settings model, metadata model, overdue detection, frequency enum |
 | Supabase sync state | Covered | SyncStatus enum, SyncState construction/copyWith |
 | Supabase API (optional) | Covered | Requires `test/.env` with credentials; skipped otherwise |
 

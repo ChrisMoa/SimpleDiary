@@ -691,5 +691,102 @@
   "usePasswordInstead": "Use password instead",
   "biometricRetry": "Try again",
   "biometricEnrollSuccess": "Biometric login enabled successfully",
-  "biometricEnrollFailed": "Could not enable biometric login"
+  "biometricEnrollFailed": "Could not enable biometric login",
+
+  "backupSettings": "Automatic Backups",
+  "backupSettingsDescription": "Configure automatic backups to protect your diary data.",
+  "enableAutoBackup": "Enable Automatic Backups",
+  "enableAutoBackupDescription": "Automatically back up your data on a regular schedule",
+  "backupFrequency": "Backup Frequency",
+  "backupFrequencyDescription": "How often should automatic backups run",
+  "backupFrequencyDaily": "Daily",
+  "backupFrequencyWeekly": "Weekly",
+  "backupFrequencyMonthly": "Monthly",
+  "backupPreferredTime": "Preferred Time",
+  "backupPreferredTimeDescription": "When to run the automatic backup",
+  "backupWifiOnly": "WiFi Only",
+  "backupWifiOnlyDescription": "Only run backups when connected to WiFi (Android)",
+  "backupMaxCount": "Keep Backups",
+  "backupMaxCountDescription": "Maximum number of backups to keep",
+  "backupMaxCountValue": "{count} backups",
+  "@backupMaxCountValue": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "backupNow": "Backup Now",
+  "backupNowDescription": "Create a manual backup immediately",
+  "backupHistory": "Backup History",
+  "backupHistoryDescription": "View and manage your backups",
+  "lastBackup": "Last backup: {time}",
+  "@lastBackup": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "lastBackupNever": "Last backup: Never",
+  "backupCreating": "Creating backup...",
+  "backupSuccess": "Backup created successfully",
+  "backupFailed": "Backup failed: {error}",
+  "@backupFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "backupRestoring": "Restoring backup...",
+  "backupRestoreSuccess": "Backup restored successfully. Please restart the app.",
+  "backupRestoreFailed": "Restore failed: {error}",
+  "@backupRestoreFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "backupRestoreConfirm": "Restore Backup",
+  "backupRestoreConfirmMessage": "This will replace all current data with the backup from {date}. A safety backup will be created first. Continue?",
+  "@backupRestoreConfirmMessage": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "backupDeleteConfirm": "Delete Backup",
+  "backupDeleteConfirmMessage": "Are you sure you want to delete this backup?",
+  "backupDeleted": "Backup deleted",
+  "backupStorageUsed": "Storage used: {size}",
+  "@backupStorageUsed": {
+    "placeholders": {
+      "size": {
+        "type": "String"
+      }
+    }
+  },
+  "backupEntries": "{days} days, {notes} notes, {habits} habits",
+  "@backupEntries": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      },
+      "notes": {
+        "type": "int"
+      },
+      "habits": {
+        "type": "int"
+      }
+    }
+  },
+  "backupTypeManual": "Manual",
+  "backupTypeScheduled": "Scheduled",
+  "backupTypePreRestore": "Pre-restore",
+  "backupNoBackups": "No backups yet",
+  "backupNoBackupsDescription": "Enable automatic backups or create a manual backup to protect your data",
+  "backupOverdue": "Backup overdue"
 }

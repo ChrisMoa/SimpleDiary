@@ -1508,4 +1508,150 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get biometricEnrollFailed =>
       'Biometrische Anmeldung konnte nicht aktiviert werden';
+
+  @override
+  String get backupSettings => 'Automatische Backups';
+
+  @override
+  String get backupSettingsDescription =>
+      'Konfiguriere automatische Backups zum Schutz deiner Tagebuchdaten.';
+
+  @override
+  String get enableAutoBackup => 'Automatische Backups aktivieren';
+
+  @override
+  String get enableAutoBackupDescription =>
+      'Sichere deine Daten automatisch nach einem regelmäßigen Zeitplan';
+
+  @override
+  String get backupFrequency => 'Backup-Häufigkeit';
+
+  @override
+  String get backupFrequencyDescription =>
+      'Wie oft sollen automatische Backups erstellt werden';
+
+  @override
+  String get backupFrequencyDaily => 'Täglich';
+
+  @override
+  String get backupFrequencyWeekly => 'Wöchentlich';
+
+  @override
+  String get backupFrequencyMonthly => 'Monatlich';
+
+  @override
+  String get backupPreferredTime => 'Bevorzugte Zeit';
+
+  @override
+  String get backupPreferredTimeDescription =>
+      'Wann das automatische Backup ausgeführt werden soll';
+
+  @override
+  String get backupWifiOnly => 'Nur WLAN';
+
+  @override
+  String get backupWifiOnlyDescription =>
+      'Backups nur bei WLAN-Verbindung erstellen (Android)';
+
+  @override
+  String get backupMaxCount => 'Backups behalten';
+
+  @override
+  String get backupMaxCountDescription =>
+      'Maximale Anzahl aufzubewahrender Backups';
+
+  @override
+  String backupMaxCountValue(int count) {
+    return '$count Backups';
+  }
+
+  @override
+  String get backupNow => 'Jetzt sichern';
+
+  @override
+  String get backupNowDescription => 'Sofort ein manuelles Backup erstellen';
+
+  @override
+  String get backupHistory => 'Backup-Verlauf';
+
+  @override
+  String get backupHistoryDescription => 'Backups anzeigen und verwalten';
+
+  @override
+  String lastBackup(String time) {
+    return 'Letztes Backup: $time';
+  }
+
+  @override
+  String get lastBackupNever => 'Letztes Backup: Nie';
+
+  @override
+  String get backupCreating => 'Backup wird erstellt...';
+
+  @override
+  String get backupSuccess => 'Backup erfolgreich erstellt';
+
+  @override
+  String backupFailed(String error) {
+    return 'Backup fehlgeschlagen: $error';
+  }
+
+  @override
+  String get backupRestoring => 'Backup wird wiederhergestellt...';
+
+  @override
+  String get backupRestoreSuccess =>
+      'Backup erfolgreich wiederhergestellt. Bitte starte die App neu.';
+
+  @override
+  String backupRestoreFailed(String error) {
+    return 'Wiederherstellung fehlgeschlagen: $error';
+  }
+
+  @override
+  String get backupRestoreConfirm => 'Backup wiederherstellen';
+
+  @override
+  String backupRestoreConfirmMessage(String date) {
+    return 'Dies ersetzt alle aktuellen Daten mit dem Backup vom $date. Vorher wird ein Sicherheits-Backup erstellt. Fortfahren?';
+  }
+
+  @override
+  String get backupDeleteConfirm => 'Backup löschen';
+
+  @override
+  String get backupDeleteConfirmMessage =>
+      'Bist du sicher, dass du dieses Backup löschen möchtest?';
+
+  @override
+  String get backupDeleted => 'Backup gelöscht';
+
+  @override
+  String backupStorageUsed(String size) {
+    return 'Speicherverbrauch: $size';
+  }
+
+  @override
+  String backupEntries(int days, int notes, int habits) {
+    return '$days Tage, $notes Notizen, $habits Gewohnheiten';
+  }
+
+  @override
+  String get backupTypeManual => 'Manuell';
+
+  @override
+  String get backupTypeScheduled => 'Geplant';
+
+  @override
+  String get backupTypePreRestore => 'Vor Wiederherstellung';
+
+  @override
+  String get backupNoBackups => 'Noch keine Backups';
+
+  @override
+  String get backupNoBackupsDescription =>
+      'Aktiviere automatische Backups oder erstelle ein manuelles Backup zum Schutz deiner Daten';
+
+  @override
+  String get backupOverdue => 'Backup überfällig';
 }

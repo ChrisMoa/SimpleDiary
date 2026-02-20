@@ -461,5 +461,102 @@
   "usePasswordInstead": "Usar contraseña en su lugar",
   "biometricRetry": "Intentar de nuevo",
   "biometricEnrollSuccess": "Inicio biométrico activado exitosamente",
-  "biometricEnrollFailed": "No se pudo activar el inicio biométrico"
+  "biometricEnrollFailed": "No se pudo activar el inicio biométrico",
+
+  "backupSettings": "Copias de seguridad automáticas",
+  "backupSettingsDescription": "Configura copias de seguridad automáticas para proteger tus datos del diario.",
+  "enableAutoBackup": "Activar copias de seguridad automáticas",
+  "enableAutoBackupDescription": "Respalda tus datos automáticamente de forma regular",
+  "backupFrequency": "Frecuencia de respaldo",
+  "backupFrequencyDescription": "Con qué frecuencia se deben ejecutar las copias de seguridad",
+  "backupFrequencyDaily": "Diario",
+  "backupFrequencyWeekly": "Semanal",
+  "backupFrequencyMonthly": "Mensual",
+  "backupPreferredTime": "Hora preferida",
+  "backupPreferredTimeDescription": "Cuándo ejecutar la copia de seguridad automática",
+  "backupWifiOnly": "Solo WiFi",
+  "backupWifiOnlyDescription": "Solo ejecutar copias de seguridad con conexión WiFi (Android)",
+  "backupMaxCount": "Mantener copias",
+  "backupMaxCountDescription": "Número máximo de copias de seguridad a conservar",
+  "backupMaxCountValue": "{count} copias",
+  "@backupMaxCountValue": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "backupNow": "Respaldar ahora",
+  "backupNowDescription": "Crear una copia de seguridad manual inmediatamente",
+  "backupHistory": "Historial de copias",
+  "backupHistoryDescription": "Ver y gestionar tus copias de seguridad",
+  "lastBackup": "Última copia: {time}",
+  "@lastBackup": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "lastBackupNever": "Última copia: Nunca",
+  "backupCreating": "Creando copia de seguridad...",
+  "backupSuccess": "Copia de seguridad creada exitosamente",
+  "backupFailed": "Copia de seguridad fallida: {error}",
+  "@backupFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "backupRestoring": "Restaurando copia de seguridad...",
+  "backupRestoreSuccess": "Copia de seguridad restaurada exitosamente. Por favor reinicia la app.",
+  "backupRestoreFailed": "Restauración fallida: {error}",
+  "@backupRestoreFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "backupRestoreConfirm": "Restaurar copia",
+  "backupRestoreConfirmMessage": "Esto reemplazará todos los datos actuales con la copia del {date}. Se creará una copia de seguridad primero. ¿Continuar?",
+  "@backupRestoreConfirmMessage": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "backupDeleteConfirm": "Eliminar copia",
+  "backupDeleteConfirmMessage": "¿Estás seguro de que quieres eliminar esta copia de seguridad?",
+  "backupDeleted": "Copia de seguridad eliminada",
+  "backupStorageUsed": "Almacenamiento usado: {size}",
+  "@backupStorageUsed": {
+    "placeholders": {
+      "size": {
+        "type": "String"
+      }
+    }
+  },
+  "backupEntries": "{days} días, {notes} notas, {habits} hábitos",
+  "@backupEntries": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      },
+      "notes": {
+        "type": "int"
+      },
+      "habits": {
+        "type": "int"
+      }
+    }
+  },
+  "backupTypeManual": "Manual",
+  "backupTypeScheduled": "Programado",
+  "backupTypePreRestore": "Pre-restauración",
+  "backupNoBackups": "Aún no hay copias de seguridad",
+  "backupNoBackupsDescription": "Activa las copias automáticas o crea una manual para proteger tus datos",
+  "backupOverdue": "Copia de seguridad atrasada"
 }

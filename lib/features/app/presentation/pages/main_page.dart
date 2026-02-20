@@ -4,6 +4,7 @@ import 'dart:ui';
 import 'package:day_tracker/core/authentication/password_auth_service.dart';
 import 'package:day_tracker/core/encryption/aes_encryptor.dart';
 import 'package:day_tracker/core/log/logger_instance.dart';
+import 'package:day_tracker/core/services/backup_scheduler.dart';
 import 'package:day_tracker/core/navigation/drawer_item_builder.dart';
 import 'package:day_tracker/core/settings/settings_container.dart';
 import 'package:day_tracker/core/utils/debug_auto_login.dart';
@@ -213,6 +214,9 @@ class _MainPageState extends ConsumerState<MainPage> {
       setState(() {
         dbRead = true;
       });
+
+      // Check for overdue backups after all data is loaded
+      _checkOverdueBackup();
     } on AssertionError catch (e) {
       showDialog<String>(
         context: context,
@@ -223,6 +227,25 @@ class _MainPageState extends ConsumerState<MainPage> {
         context: context,
         builder: (BuildContext context) => AlertDialog(actions: const [], title: Text('unknown exception : $e')),
       );
+    }
+  }
+
+  /// Run an overdue backup check in the background (non-blocking)
+  Future<void> _checkOverdueBackup() async {
+    try {
+      final diaryDays = ref.read(diaryDayLocalDbDataProvider);
+      final notes = ref.read(notesLocalDataProvider);
+      final habits = ref.read(habitsLocalDbDataProvider);
+      final habitEntries = ref.read(habitEntriesLocalDbDataProvider);
+
+      await BackupScheduler().checkAndRunOverdueBackup(
+        diaryDays: diaryDays,
+        notes: notes,
+        habits: habits,
+        habitEntries: habitEntries,
+      );
+    } catch (e) {
+      LogWrapper.logger.e('Overdue backup check failed: $e');
     }
   }
 

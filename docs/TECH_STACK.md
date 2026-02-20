@@ -115,12 +115,14 @@ intl: any                             # Internationalization utilities
 lib/
 ├── core/                          # Shared infrastructure
 │   ├── authentication/            # Password auth service
+│   ├── backup/                    # BackupMetadata model
 │   ├── database/                  # LocalDbHelper, LocalDbElement interface
 │   ├── encryption/                # AES encryptor
 │   ├── log/                       # Logger configuration
 │   ├── navigation/                # Drawer items
 │   ├── provider/                  # Global providers (theme, keyboard)
-│   ├── settings/                  # SettingsContainer singleton
+│   ├── services/                  # BackupService, BackupScheduler, NotificationService
+│   ├── settings/                  # SettingsContainer, BackupSettings, etc.
 │   ├── theme/                     # Theme definitions
 │   ├── utils/                     # Utilities, platform detection
 │   └── widgets/                   # Shared widgets
@@ -505,6 +507,25 @@ assets/
 - Can export notes as iCalendar (.ics) format
 - Uses `enough_icalendar` package
 
+### Automatic Scheduled Backups
+- Local JSON backups with versioned format (`version: 2.0`)
+- Includes diary days, notes, habits, and habit entries
+- Configurable frequency (daily/weekly/monthly), preferred time, WiFi-only
+- **Android:** Uses `workmanager` for periodic background tasks
+- **Desktop (Linux/Windows):** Checks on app startup if backup is overdue
+- Backup history stored in `backup_index.json` alongside backup files
+- Automatic pruning of old backups based on `maxBackups` setting
+- Pre-restore safety backup created before any restore operation
+- Settings stored in `BackupSettings` within `UserSettings`
+
+**Key files:**
+- `lib/core/settings/backup_settings.dart` — Settings model
+- `lib/core/backup/backup_metadata.dart` — Backup metadata model
+- `lib/core/services/backup_service.dart` — Create/restore/prune backups
+- `lib/core/services/backup_scheduler.dart` — Schedule management
+- `lib/features/app/presentation/widgets/backup_settings_widget.dart` — Settings UI
+- `lib/features/app/presentation/pages/backup_history_page.dart` — History/restore UI
+
 ---
 
 ## Quick Reference Commands
@@ -556,4 +577,4 @@ flutter clean
 
 ---
 
-*Last updated: 2026-02-14*
+*Last updated: 2026-02-20*

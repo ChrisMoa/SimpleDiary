@@ -2,6 +2,7 @@
 import 'dart:convert';
 import 'dart:ui';
 
+import 'package:day_tracker/core/settings/backup_settings.dart';
 import 'package:day_tracker/core/settings/biometric_settings.dart';
 import 'package:day_tracker/core/settings/notification_settings.dart';
 import 'package:day_tracker/core/theme/themes.dart';
@@ -16,6 +17,7 @@ class UserSettings {
   String languageCode;
   NotificationSettings notificationSettings;
   BiometricSettings biometricSettings;
+  BackupSettings backupSettings;
 
   UserSettings(
     this.darkThemeMode,
@@ -25,6 +27,7 @@ class UserSettings {
     this.languageCode,
     this.notificationSettings,
     this.biometricSettings,
+    this.backupSettings,
   );
 
   Map<String, dynamic> toMap() {
@@ -36,6 +39,7 @@ class UserSettings {
       'languageCode': languageCode,
       'notificationSettings': notificationSettings.toMap(),
       'biometricSettings': biometricSettings.toMap(),
+      'backupSettings': backupSettings.toMap(),
     };
   }
 
@@ -48,6 +52,7 @@ class UserSettings {
       (map['languageCode'] as String?) ?? 'en',
       NotificationSettings.fromMap(map['notificationSettings'] ?? {}),
       BiometricSettings.fromMap(map['biometricSettings'] ?? {}),
+      BackupSettings.fromMap(map['backupSettings'] ?? {}),
     );
   }
 
@@ -59,6 +64,7 @@ class UserSettings {
         'en',
         NotificationSettings.fromEmpty(),
         BiometricSettings.fromEmpty(),
+        BackupSettings.fromEmpty(),
       );
 
   String get name => 'UserSettings';

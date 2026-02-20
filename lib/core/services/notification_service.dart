@@ -256,16 +256,29 @@ void _callbackDispatcher() {
     try {
       LogWrapper.logger.d('Background task executed: $task');
 
-      // Check if smart reminders are enabled
-      final settings = settingsContainer.activeUserSettings.notificationSettings;
-      if (!settings.smartRemindersEnabled) {
-        return Future.value(true);
-      }
+      switch (task) {
+        case 'diary_reminder_check':
+          final settings = settingsContainer.activeUserSettings.notificationSettings;
+          if (!settings.smartRemindersEnabled) {
+            return Future.value(true);
+          }
+          // TODO: Check if today's entry exists
+          // If no entry exists, show notification
+          LogWrapper.logger.i('Smart reminder check completed');
+          break;
 
-      // TODO: Check if today's entry exists
-      // If no entry exists, show notification
-      // For now, just log
-      LogWrapper.logger.i('Smart reminder check completed');
+        case 'scheduled_backup':
+          LogWrapper.logger.i('Background scheduled backup triggered');
+          // Background backup runs with limited context on Android.
+          // The actual backup with full data is performed on next app open
+          // via BackupScheduler.checkAndRunOverdueBackup().
+          // Here we just mark that the scheduler fired so the app knows.
+          LogWrapper.logger.i('Scheduled backup task completed (will run on next app open)');
+          break;
+
+        default:
+          LogWrapper.logger.w('Unknown background task: $task');
+      }
 
       return Future.value(true);
     } catch (e) {

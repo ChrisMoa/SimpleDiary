@@ -2825,6 +2825,252 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Could not enable biometric login'**
   String get biometricEnrollFailed;
+
+  /// No description provided for @backupSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Automatic Backups'**
+  String get backupSettings;
+
+  /// No description provided for @backupSettingsDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Configure automatic backups to protect your diary data.'**
+  String get backupSettingsDescription;
+
+  /// No description provided for @enableAutoBackup.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable Automatic Backups'**
+  String get enableAutoBackup;
+
+  /// No description provided for @enableAutoBackupDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Automatically back up your data on a regular schedule'**
+  String get enableAutoBackupDescription;
+
+  /// No description provided for @backupFrequency.
+  ///
+  /// In en, this message translates to:
+  /// **'Backup Frequency'**
+  String get backupFrequency;
+
+  /// No description provided for @backupFrequencyDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'How often should automatic backups run'**
+  String get backupFrequencyDescription;
+
+  /// No description provided for @backupFrequencyDaily.
+  ///
+  /// In en, this message translates to:
+  /// **'Daily'**
+  String get backupFrequencyDaily;
+
+  /// No description provided for @backupFrequencyWeekly.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly'**
+  String get backupFrequencyWeekly;
+
+  /// No description provided for @backupFrequencyMonthly.
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly'**
+  String get backupFrequencyMonthly;
+
+  /// No description provided for @backupPreferredTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Preferred Time'**
+  String get backupPreferredTime;
+
+  /// No description provided for @backupPreferredTimeDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'When to run the automatic backup'**
+  String get backupPreferredTimeDescription;
+
+  /// No description provided for @backupWifiOnly.
+  ///
+  /// In en, this message translates to:
+  /// **'WiFi Only'**
+  String get backupWifiOnly;
+
+  /// No description provided for @backupWifiOnlyDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Only run backups when connected to WiFi (Android)'**
+  String get backupWifiOnlyDescription;
+
+  /// No description provided for @backupMaxCount.
+  ///
+  /// In en, this message translates to:
+  /// **'Keep Backups'**
+  String get backupMaxCount;
+
+  /// No description provided for @backupMaxCountDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Maximum number of backups to keep'**
+  String get backupMaxCountDescription;
+
+  /// No description provided for @backupMaxCountValue.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} backups'**
+  String backupMaxCountValue(int count);
+
+  /// No description provided for @backupNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Backup Now'**
+  String get backupNow;
+
+  /// No description provided for @backupNowDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Create a manual backup immediately'**
+  String get backupNowDescription;
+
+  /// No description provided for @backupHistory.
+  ///
+  /// In en, this message translates to:
+  /// **'Backup History'**
+  String get backupHistory;
+
+  /// No description provided for @backupHistoryDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'View and manage your backups'**
+  String get backupHistoryDescription;
+
+  /// No description provided for @lastBackup.
+  ///
+  /// In en, this message translates to:
+  /// **'Last backup: {time}'**
+  String lastBackup(String time);
+
+  /// No description provided for @lastBackupNever.
+  ///
+  /// In en, this message translates to:
+  /// **'Last backup: Never'**
+  String get lastBackupNever;
+
+  /// No description provided for @backupCreating.
+  ///
+  /// In en, this message translates to:
+  /// **'Creating backup...'**
+  String get backupCreating;
+
+  /// No description provided for @backupSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Backup created successfully'**
+  String get backupSuccess;
+
+  /// No description provided for @backupFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Backup failed: {error}'**
+  String backupFailed(String error);
+
+  /// No description provided for @backupRestoring.
+  ///
+  /// In en, this message translates to:
+  /// **'Restoring backup...'**
+  String get backupRestoring;
+
+  /// No description provided for @backupRestoreSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Backup restored successfully. Please restart the app.'**
+  String get backupRestoreSuccess;
+
+  /// No description provided for @backupRestoreFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore failed: {error}'**
+  String backupRestoreFailed(String error);
+
+  /// No description provided for @backupRestoreConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Restore Backup'**
+  String get backupRestoreConfirm;
+
+  /// No description provided for @backupRestoreConfirmMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This will replace all current data with the backup from {date}. A safety backup will be created first. Continue?'**
+  String backupRestoreConfirmMessage(String date);
+
+  /// No description provided for @backupDeleteConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Backup'**
+  String get backupDeleteConfirm;
+
+  /// No description provided for @backupDeleteConfirmMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete this backup?'**
+  String get backupDeleteConfirmMessage;
+
+  /// No description provided for @backupDeleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Backup deleted'**
+  String get backupDeleted;
+
+  /// No description provided for @backupStorageUsed.
+  ///
+  /// In en, this message translates to:
+  /// **'Storage used: {size}'**
+  String backupStorageUsed(String size);
+
+  /// No description provided for @backupEntries.
+  ///
+  /// In en, this message translates to:
+  /// **'{days} days, {notes} notes, {habits} habits'**
+  String backupEntries(int days, int notes, int habits);
+
+  /// No description provided for @backupTypeManual.
+  ///
+  /// In en, this message translates to:
+  /// **'Manual'**
+  String get backupTypeManual;
+
+  /// No description provided for @backupTypeScheduled.
+  ///
+  /// In en, this message translates to:
+  /// **'Scheduled'**
+  String get backupTypeScheduled;
+
+  /// No description provided for @backupTypePreRestore.
+  ///
+  /// In en, this message translates to:
+  /// **'Pre-restore'**
+  String get backupTypePreRestore;
+
+  /// No description provided for @backupNoBackups.
+  ///
+  /// In en, this message translates to:
+  /// **'No backups yet'**
+  String get backupNoBackups;
+
+  /// No description provided for @backupNoBackupsDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable automatic backups or create a manual backup to protect your data'**
+  String get backupNoBackupsDescription;
+
+  /// No description provided for @backupOverdue.
+  ///
+  /// In en, this message translates to:
+  /// **'Backup overdue'**
+  String get backupOverdue;
 }
 
 class _AppLocalizationsDelegate

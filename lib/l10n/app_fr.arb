@@ -461,5 +461,102 @@
   "usePasswordInstead": "Utiliser le mot de passe à la place",
   "biometricRetry": "Réessayer",
   "biometricEnrollSuccess": "Connexion biométrique activée avec succès",
-  "biometricEnrollFailed": "Impossible d'activer la connexion biométrique"
+  "biometricEnrollFailed": "Impossible d'activer la connexion biométrique",
+
+  "backupSettings": "Sauvegardes automatiques",
+  "backupSettingsDescription": "Configurez les sauvegardes automatiques pour protéger vos données de journal.",
+  "enableAutoBackup": "Activer les sauvegardes automatiques",
+  "enableAutoBackupDescription": "Sauvegardez automatiquement vos données selon un calendrier régulier",
+  "backupFrequency": "Fréquence de sauvegarde",
+  "backupFrequencyDescription": "À quelle fréquence les sauvegardes automatiques doivent-elles s'exécuter",
+  "backupFrequencyDaily": "Quotidien",
+  "backupFrequencyWeekly": "Hebdomadaire",
+  "backupFrequencyMonthly": "Mensuel",
+  "backupPreferredTime": "Heure préférée",
+  "backupPreferredTimeDescription": "Quand exécuter la sauvegarde automatique",
+  "backupWifiOnly": "WiFi uniquement",
+  "backupWifiOnlyDescription": "Exécuter les sauvegardes uniquement en WiFi (Android)",
+  "backupMaxCount": "Conserver les sauvegardes",
+  "backupMaxCountDescription": "Nombre maximum de sauvegardes à conserver",
+  "backupMaxCountValue": "{count} sauvegardes",
+  "@backupMaxCountValue": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "backupNow": "Sauvegarder maintenant",
+  "backupNowDescription": "Créer une sauvegarde manuelle immédiatement",
+  "backupHistory": "Historique des sauvegardes",
+  "backupHistoryDescription": "Voir et gérer vos sauvegardes",
+  "lastBackup": "Dernière sauvegarde : {time}",
+  "@lastBackup": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "lastBackupNever": "Dernière sauvegarde : Jamais",
+  "backupCreating": "Création de la sauvegarde...",
+  "backupSuccess": "Sauvegarde créée avec succès",
+  "backupFailed": "Sauvegarde échouée : {error}",
+  "@backupFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "backupRestoring": "Restauration de la sauvegarde...",
+  "backupRestoreSuccess": "Sauvegarde restaurée avec succès. Veuillez redémarrer l'application.",
+  "backupRestoreFailed": "Restauration échouée : {error}",
+  "@backupRestoreFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "backupRestoreConfirm": "Restaurer la sauvegarde",
+  "backupRestoreConfirmMessage": "Ceci remplacera toutes les données actuelles par la sauvegarde du {date}. Une sauvegarde de sécurité sera créée d'abord. Continuer ?",
+  "@backupRestoreConfirmMessage": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "backupDeleteConfirm": "Supprimer la sauvegarde",
+  "backupDeleteConfirmMessage": "Êtes-vous sûr de vouloir supprimer cette sauvegarde ?",
+  "backupDeleted": "Sauvegarde supprimée",
+  "backupStorageUsed": "Stockage utilisé : {size}",
+  "@backupStorageUsed": {
+    "placeholders": {
+      "size": {
+        "type": "String"
+      }
+    }
+  },
+  "backupEntries": "{days} jours, {notes} notes, {habits} habitudes",
+  "@backupEntries": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      },
+      "notes": {
+        "type": "int"
+      },
+      "habits": {
+        "type": "int"
+      }
+    }
+  },
+  "backupTypeManual": "Manuel",
+  "backupTypeScheduled": "Programmé",
+  "backupTypePreRestore": "Pré-restauration",
+  "backupNoBackups": "Pas encore de sauvegardes",
+  "backupNoBackupsDescription": "Activez les sauvegardes automatiques ou créez une sauvegarde manuelle pour protéger vos données",
+  "backupOverdue": "Sauvegarde en retard"
 }
