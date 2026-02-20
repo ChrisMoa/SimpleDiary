@@ -281,3 +281,63 @@ GRANT ALL ON public.test_notes TO authenticated;
 GRANT ALL ON public.test_notes TO service_role;
 GRANT ALL ON public.test_note_templates TO authenticated;
 GRANT ALL ON public.test_note_templates TO service_role;
+
+
+-- ============================================================
+-- STORAGE BUCKETS (for cloud backup sync)
+-- ============================================================
+
+-- Production backup bucket (private)
+INSERT INTO storage.buckets (id, name, public)
+VALUES ('backups', 'backups', false)
+ON CONFLICT (id) DO NOTHING;
+
+-- Test backup bucket (private, used by debug builds)
+INSERT INTO storage.buckets (id, name, public)
+VALUES ('test_backups', 'test_backups', false)
+ON CONFLICT (id) DO NOTHING;
+
+-- RLS policies for backups bucket
+-- Each user can only access files in their own folder: {userId}/
+
+CREATE POLICY "Users can upload own backups"
+ON storage.objects FOR INSERT
+TO authenticated
+WITH CHECK (bucket_id = 'backups' AND (storage.foldername(name))[1] = auth.uid()::text);
+
+CREATE POLICY "Users can read own backups"
+ON storage.objects FOR SELECT
+TO authenticated
+USING (bucket_id = 'backups' AND (storage.foldername(name))[1] = auth.uid()::text);
+
+CREATE POLICY "Users can update own backups"
+ON storage.objects FOR UPDATE
+TO authenticated
+USING (bucket_id = 'backups' AND (storage.foldername(name))[1] = auth.uid()::text);
+
+CREATE POLICY "Users can delete own backups"
+ON storage.objects FOR DELETE
+TO authenticated
+USING (bucket_id = 'backups' AND (storage.foldername(name))[1] = auth.uid()::text);
+
+-- RLS policies for test_backups bucket
+
+CREATE POLICY "Users can upload own test backups"
+ON storage.objects FOR INSERT
+TO authenticated
+WITH CHECK (bucket_id = 'test_backups' AND (storage.foldername(name))[1] = auth.uid()::text);
+
+CREATE POLICY "Users can read own test backups"
+ON storage.objects FOR SELECT
+TO authenticated
+USING (bucket_id = 'test_backups' AND (storage.foldername(name))[1] = auth.uid()::text);
+
+CREATE POLICY "Users can update own test backups"
+ON storage.objects FOR UPDATE
+TO authenticated
+USING (bucket_id = 'test_backups' AND (storage.foldername(name))[1] = auth.uid()::text);
+
+CREATE POLICY "Users can delete own test backups"
+ON storage.objects FOR DELETE
+TO authenticated
+USING (bucket_id = 'test_backups' AND (storage.foldername(name))[1] = auth.uid()::text);

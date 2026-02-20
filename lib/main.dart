@@ -2,6 +2,7 @@ import 'package:day_tracker/core/log/custom_log_printer.dart';
 import 'package:day_tracker/core/log/logger_instance.dart';
 import 'package:day_tracker/core/provider/locale_provider.dart';
 import 'package:day_tracker/core/provider/theme_provider.dart';
+import 'package:day_tracker/core/services/backup_scheduler.dart';
 import 'package:day_tracker/core/services/notification_service.dart';
 import 'package:day_tracker/core/settings/settings_container.dart';
 import 'package:day_tracker/core/utils/platform_utils.dart';
@@ -55,6 +56,13 @@ void main() async {
     if (notificationSettings.enabled) {
       LogWrapper.logger.d('Scheduling notifications (enabled in settings)');
       await NotificationService().scheduleDailyReminder(notificationSettings);
+    }
+
+    //* init backup scheduler
+    final backupSettings = settingsContainer.activeUserSettings.backupSettings;
+    if (backupSettings.enabled) {
+      LogWrapper.logger.d('Updating backup schedule (enabled in settings)');
+      await BackupScheduler().updateSchedule(backupSettings);
     }
 
     LogWrapper.logger.i('Initialization complete, starting application');

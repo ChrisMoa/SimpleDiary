@@ -38,6 +38,7 @@ class UserDataProvider extends StateNotifier<UserData> {
     settingsContainer.userSettings.add(newUserSettings);
     settingsContainer.lastLoggedInUsername = userData.username;
     settingsContainer.activeUserSettings = newUserSettings;
+    settingsContainer.activeUserSettings.savedUserData.clearPassword = originalPassword;
     settingsContainer.saveSettings();
 
     // Create a new UserData for state with clearPassword
@@ -86,6 +87,7 @@ class UserDataProvider extends StateNotifier<UserData> {
     state = stateUserData;
     settingsContainer.lastLoggedInUsername = stateUserData.username;
     settingsContainer.activeUserSettings = settingsContainer.getUserSettings();
+    settingsContainer.activeUserSettings.savedUserData.clearPassword = password;
     settingsContainer.saveSettings();
     LogWrapper.logger.i('logged in as ${state.username}');
     return true;
@@ -124,6 +126,7 @@ class UserDataProvider extends StateNotifier<UserData> {
 
     // update saved user
     settingsContainer.activeUserSettings.savedUserData = savedUserData;
+    settingsContainer.activeUserSettings.savedUserData.clearPassword = originalPassword;
     settingsContainer.lastLoggedInUsername = userData.username;
     var existingUserIndex = settingsContainer.userSettings.indexWhere(
         (userSetting) => userSetting == settingsContainer.activeUserSettings);

@@ -461,5 +461,125 @@
   "usePasswordInstead": "Stattdessen Passwort verwenden",
   "biometricRetry": "Erneut versuchen",
   "biometricEnrollSuccess": "Biometrische Anmeldung erfolgreich aktiviert",
-  "biometricEnrollFailed": "Biometrische Anmeldung konnte nicht aktiviert werden"
+  "biometricEnrollFailed": "Biometrische Anmeldung konnte nicht aktiviert werden",
+
+  "backupSettings": "Automatische Backups",
+  "backupSettingsDescription": "Konfiguriere automatische Backups zum Schutz deiner Tagebuchdaten.",
+  "enableAutoBackup": "Automatische Backups aktivieren",
+  "enableAutoBackupDescription": "Sichere deine Daten automatisch nach einem regelmäßigen Zeitplan",
+  "backupFrequency": "Backup-Häufigkeit",
+  "backupFrequencyDescription": "Wie oft sollen automatische Backups erstellt werden",
+  "backupFrequencyDaily": "Täglich",
+  "backupFrequencyWeekly": "Wöchentlich",
+  "backupFrequencyMonthly": "Monatlich",
+  "backupPreferredTime": "Bevorzugte Zeit",
+  "backupPreferredTimeDescription": "Wann das automatische Backup ausgeführt werden soll",
+  "backupWifiOnly": "Nur WLAN",
+  "backupWifiOnlyDescription": "Backups nur bei WLAN-Verbindung erstellen (Android)",
+  "backupMaxCount": "Backups behalten",
+  "backupMaxCountDescription": "Maximale Anzahl aufzubewahrender Backups",
+  "backupMaxCountValue": "{count} Backups",
+  "@backupMaxCountValue": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "backupNow": "Jetzt sichern",
+  "backupNowDescription": "Sofort ein manuelles Backup erstellen",
+  "backupHistory": "Backup-Verlauf",
+  "backupHistoryDescription": "Backups anzeigen und verwalten",
+  "lastBackup": "Letztes Backup: {time}",
+  "@lastBackup": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "lastBackupNever": "Letztes Backup: Nie",
+  "backupCreating": "Backup wird erstellt...",
+  "backupSuccess": "Backup erfolgreich erstellt",
+  "backupFailed": "Backup fehlgeschlagen: {error}",
+  "@backupFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "backupRestoring": "Backup wird wiederhergestellt...",
+  "backupRestoreSuccess": "Backup erfolgreich wiederhergestellt. Bitte starte die App neu.",
+  "backupRestoreFailed": "Wiederherstellung fehlgeschlagen: {error}",
+  "@backupRestoreFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "backupRestoreConfirm": "Backup wiederherstellen",
+  "backupRestoreConfirmMessage": "Dies ersetzt alle aktuellen Daten mit dem Backup vom {date}. Vorher wird ein Sicherheits-Backup erstellt. Fortfahren?",
+  "@backupRestoreConfirmMessage": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "backupDeleteConfirm": "Backup löschen",
+  "backupDeleteConfirmMessage": "Bist du sicher, dass du dieses Backup löschen möchtest?",
+  "backupDeleted": "Backup gelöscht",
+  "backupStorageUsed": "Speicherverbrauch: {size}",
+  "@backupStorageUsed": {
+    "placeholders": {
+      "size": {
+        "type": "String"
+      }
+    }
+  },
+  "backupEntries": "{days} Tage, {notes} Notizen, {habits} Gewohnheiten",
+  "@backupEntries": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      },
+      "notes": {
+        "type": "int"
+      },
+      "habits": {
+        "type": "int"
+      }
+    }
+  },
+  "backupTypeManual": "Manuell",
+  "backupTypeScheduled": "Geplant",
+  "backupTypePreRestore": "Vor Wiederherstellung",
+  "backupNoBackups": "Noch keine Backups",
+  "backupNoBackupsDescription": "Aktiviere automatische Backups oder erstelle ein manuelles Backup zum Schutz deiner Daten",
+  "backupOverdue": "Backup überfällig",
+  "backupDestination": "Backup-Speicherort",
+  "backupDestinationDescription": "Wähle, wo deine Backups gespeichert werden sollen",
+  "backupDestinationRequiresSupabase": "Konfiguriere zuerst die Supabase-Einstellungen, um den Cloud-Speicher zu aktivieren",
+  "backupDestinationLocal": "Lokal",
+  "backupDestinationCloud": "Cloud",
+  "backupDestinationBoth": "Beides",
+  "backupUploadToCloud": "Hochladen",
+  "backupUploadSuccess": "Backup in die Cloud hochgeladen",
+  "backupUploadFailed": "Cloud-Upload fehlgeschlagen: {error}",
+  "backupCloudBackups": "Cloud-Backups",
+  "backupDownloadFromCloud": "Herunterladen",
+  "backupDownloadSuccess": "Backup aus der Cloud heruntergeladen",
+  "backupDownloadFailed": "Cloud-Download fehlgeschlagen: {error}",
+  "backupCloudDeleteConfirm": "Aus Cloud löschen",
+  "backupCloudDeleteConfirmMessage": "Möchtest du dieses Backup wirklich aus dem Cloud-Speicher löschen?",
+  "backupCloudDeleted": "Backup aus der Cloud gelöscht",
+  "backupCloudNoBackups": "Keine Cloud-Backups gefunden",
+  "backupLocation": "Speicherort",
+  "backupLocationDescription": "Wähle, wo lokale Backups auf diesem Gerät gespeichert werden",
+  "backupLocationDefault": "Standard ({path})",
+  "backupLocationCustom": "Benutzerdefiniert: {path}",
+  "backupLocationChange": "Ändern",
+  "backupLocationReset": "Auf Standard zurücksetzen"
 }
