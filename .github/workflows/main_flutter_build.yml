@@ -41,6 +41,13 @@ jobs:
       - run: flutter clean || true
       - run: flutter pub get
       - run: flutter pub outdated || true
+      - name: Fix speech_to_text_windows include guard collision with local_auth_windows
+        shell: pwsh
+        run: |
+          $header = "windows/flutter/ephemeral/.plugin_symlinks/speech_to_text_windows/windows/include/speech_to_text_windows/speech_to_text_windows.h"
+          if (Test-Path $header) {
+            (Get-Content $header) -replace 'FLUTTER_PLUGIN_LOCAL_AUTH_WINDOWS_PLUGIN_H_', 'FLUTTER_PLUGIN_SPEECH_TO_TEXT_WINDOWS_H_' | Set-Content $header
+          }
       - run: flutter build windows --release --no-tree-shake-icons
       - name: Upload Windows build
         uses: actions/upload-artifact@v4
