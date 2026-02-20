@@ -3072,23 +3072,41 @@ abstract class AppLocalizations {
   /// **'Backup overdue'**
   String get backupOverdue;
 
-  /// No description provided for @backupCloudSync.
+  /// No description provided for @backupDestination.
   ///
   /// In en, this message translates to:
-  /// **'Cloud Sync'**
-  String get backupCloudSync;
+  /// **'Backup Destination'**
+  String get backupDestination;
 
-  /// No description provided for @backupCloudSyncDescription.
+  /// No description provided for @backupDestinationDescription.
   ///
   /// In en, this message translates to:
-  /// **'Upload backups to Supabase cloud storage after creation'**
-  String get backupCloudSyncDescription;
+  /// **'Choose where your backups should be stored'**
+  String get backupDestinationDescription;
 
-  /// No description provided for @backupCloudSyncRequiresSupabase.
+  /// No description provided for @backupDestinationRequiresSupabase.
   ///
   /// In en, this message translates to:
-  /// **'Configure Supabase settings first to enable cloud sync'**
-  String get backupCloudSyncRequiresSupabase;
+  /// **'Configure Supabase settings first to enable cloud storage'**
+  String get backupDestinationRequiresSupabase;
+
+  /// No description provided for @backupDestinationLocal.
+  ///
+  /// In en, this message translates to:
+  /// **'Local'**
+  String get backupDestinationLocal;
+
+  /// No description provided for @backupDestinationCloud.
+  ///
+  /// In en, this message translates to:
+  /// **'Cloud'**
+  String get backupDestinationCloud;
+
+  /// No description provided for @backupDestinationBoth.
+  ///
+  /// In en, this message translates to:
+  /// **'Both'**
+  String get backupDestinationBoth;
 
   /// No description provided for @backupUploadToCloud.
   ///

@@ -530,7 +530,7 @@ class _BackupHistoryPageState extends ConsumerState<BackupHistoryPage> {
   // -- Cloud sync helpers --
 
   bool get _isCloudSyncEnabled =>
-      settingsContainer.activeUserSettings.backupSettings.cloudSyncEnabled;
+      settingsContainer.activeUserSettings.backupSettings.isCloudEnabled;
 
   Future<void> _uploadToCloud(
     BackupMetadata backup,

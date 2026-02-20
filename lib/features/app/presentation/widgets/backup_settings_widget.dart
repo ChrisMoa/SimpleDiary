@@ -27,7 +27,7 @@ class _BackupSettingsWidgetState extends ConsumerState<BackupSettingsWidget> {
   late TimeOfDay _preferredTime;
   late bool _wifiOnly;
   late int _maxBackups;
-  late bool _cloudSyncEnabled;
+  late BackupDestination _destination;
   bool _isBackingUp = false;
 
   @override
@@ -39,7 +39,7 @@ class _BackupSettingsWidgetState extends ConsumerState<BackupSettingsWidget> {
     _preferredTime = settings.preferredTime;
     _wifiOnly = settings.wifiOnly;
     _maxBackups = settings.maxBackups;
-    _cloudSyncEnabled = settings.cloudSyncEnabled;
+    _destination = settings.destination;
   }
 
   bool get _isSupabaseConfigured {
@@ -209,33 +209,47 @@ class _BackupSettingsWidgetState extends ConsumerState<BackupSettingsWidget> {
 
                 SizedBox(height: isSmallScreen ? 16 : 20),
 
-                // Cloud sync toggle
+                // Backup destination selector
                 _buildSettingContainer(
                   theme,
                   isSmallScreen,
-                  l10n.backupCloudSync,
+                  l10n.backupDestination,
                   _isSupabaseConfigured
-                      ? l10n.backupCloudSyncDescription
-                      : l10n.backupCloudSyncRequiresSupabase,
-                  Switch(
-                    value: _cloudSyncEnabled,
-                    onChanged: _isSupabaseConfigured
-                        ? (value) {
-                            setState(() {
-                              _cloudSyncEnabled = value;
-                              settingsContainer.activeUserSettings.backupSettings
-                                  .cloudSyncEnabled = value;
-                            });
-                            BackupScheduler().updateSchedule(
-                              settingsContainer.activeUserSettings.backupSettings,
-                            );
-                          }
-                        : null,
+                      ? l10n.backupDestinationDescription
+                      : l10n.backupDestinationRequiresSupabase,
+                  SegmentedButton<BackupDestination>(
+                    segments: [
+                      ButtonSegment(
+                        value: BackupDestination.localOnly,
+                        label: Text(l10n.backupDestinationLocal),
+                      ),
+                      ButtonSegment(
+                        value: BackupDestination.cloudOnly,
+                        label: Text(l10n.backupDestinationCloud),
+                        enabled: _isSupabaseConfigured,
+                      ),
+                      ButtonSegment(
+                        value: BackupDestination.both,
+                        label: Text(l10n.backupDestinationBoth),
+                        enabled: _isSupabaseConfigured,
+                      ),
+                    ],
+                    selected: {_destination},
+                    onSelectionChanged: (selected) {
+                      setState(() {
+                        _destination = selected.first;
+                        settingsContainer.activeUserSettings.backupSettings
+                            .destination = _destination;
+                      });
+                      BackupScheduler().updateSchedule(
+                        settingsContainer.activeUserSettings.backupSettings,
+                      );
+                    },
                   ),
                 ),
 
-                // WiFi only (only relevant when cloud sync is enabled)
-                if (_cloudSyncEnabled) ...[
+                // WiFi only (only relevant when cloud is enabled)
+                if (_destination != BackupDestination.localOnly) ...[
                   SizedBox(height: isSmallScreen ? 16 : 20),
 
                   _buildSettingContainer(

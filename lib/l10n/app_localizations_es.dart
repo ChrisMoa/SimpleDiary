@@ -1653,15 +1653,24 @@ class AppLocalizationsEs extends AppLocalizations {
   String get backupOverdue => 'Copia de seguridad atrasada';
 
   @override
-  String get backupCloudSync => 'Sincronización en la nube';
+  String get backupDestination => 'Destino de respaldo';
 
   @override
-  String get backupCloudSyncDescription =>
-      'Subir copias de seguridad al almacenamiento en la nube de Supabase después de su creación';
+  String get backupDestinationDescription =>
+      'Elige dónde se deben almacenar tus copias de seguridad';
 
   @override
-  String get backupCloudSyncRequiresSupabase =>
-      'Configura primero los ajustes de Supabase para activar la sincronización en la nube';
+  String get backupDestinationRequiresSupabase =>
+      'Configura primero los ajustes de Supabase para activar el almacenamiento en la nube';
+
+  @override
+  String get backupDestinationLocal => 'Local';
+
+  @override
+  String get backupDestinationCloud => 'Nube';
+
+  @override
+  String get backupDestinationBoth => 'Ambos';
 
   @override
   String get backupUploadToCloud => 'Subir';

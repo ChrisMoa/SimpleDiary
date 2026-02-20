@@ -14,7 +14,8 @@ void main() {
       expect(settings.maxBackups, 10);
       expect(settings.lastBackupTimestamp, isNull);
       expect(settings.backupDirectoryPath, isNull);
-      expect(settings.cloudSyncEnabled, false);
+      expect(settings.destination, BackupDestination.localOnly);
+      expect(settings.isCloudEnabled, false);
     });
 
     test('toMap serializes all fields', () {
@@ -26,7 +27,7 @@ void main() {
         maxBackups: 5,
         lastBackupTimestamp: '2026-02-20T10:00:00.000Z',
         backupDirectoryPath: '/tmp/backups',
-        cloudSyncEnabled: true,
+        destination: BackupDestination.both,
       );
 
       final map = settings.toMap();
@@ -38,7 +39,7 @@ void main() {
       expect(map['maxBackups'], 5);
       expect(map['lastBackupTimestamp'], '2026-02-20T10:00:00.000Z');
       expect(map['backupDirectoryPath'], '/tmp/backups');
-      expect(map['cloudSyncEnabled'], true);
+      expect(map['destination'], 'both');
     });
 
     test('fromMap deserializes all fields', () {
@@ -50,7 +51,7 @@ void main() {
         'maxBackups': 20,
         'lastBackupTimestamp': '2026-01-15T08:00:00.000Z',
         'backupDirectoryPath': '/custom/path',
-        'cloudSyncEnabled': true,
+        'destination': 'cloudOnly',
       };
 
       final settings = BackupSettings.fromMap(map);
@@ -62,7 +63,7 @@ void main() {
       expect(settings.maxBackups, 20);
       expect(settings.lastBackupTimestamp, '2026-01-15T08:00:00.000Z');
       expect(settings.backupDirectoryPath, '/custom/path');
-      expect(settings.cloudSyncEnabled, true);
+      expect(settings.destination, BackupDestination.cloudOnly);
     });
 
     test('fromMap handles missing fields with defaults', () {
@@ -77,7 +78,40 @@ void main() {
       expect(settings.maxBackups, 10);
       expect(settings.lastBackupTimestamp, isNull);
       expect(settings.backupDirectoryPath, isNull);
-      expect(settings.cloudSyncEnabled, false);
+      expect(settings.destination, BackupDestination.localOnly);
+    });
+
+    test('fromMap backward compat: cloudSyncEnabled true maps to both', () {
+      final map = {
+        'enabled': true,
+        'frequency': 'daily',
+        'preferredTimeMinutes': 120,
+        'wifiOnly': true,
+        'maxBackups': 10,
+        'cloudSyncEnabled': true,
+      };
+
+      final settings = BackupSettings.fromMap(map);
+      expect(settings.destination, BackupDestination.both);
+    });
+
+    test('fromMap backward compat: cloudSyncEnabled false maps to localOnly', () {
+      final map = {
+        'cloudSyncEnabled': false,
+      };
+
+      final settings = BackupSettings.fromMap(map);
+      expect(settings.destination, BackupDestination.localOnly);
+    });
+
+    test('fromMap prefers destination over cloudSyncEnabled', () {
+      final map = {
+        'destination': 'cloudOnly',
+        'cloudSyncEnabled': false,
+      };
+
+      final settings = BackupSettings.fromMap(map);
+      expect(settings.destination, BackupDestination.cloudOnly);
     });
 
     test('round-trip through JSON preserves data', () {
@@ -89,7 +123,7 @@ void main() {
         maxBackups: 15,
         lastBackupTimestamp: '2026-02-20T10:00:00.000Z',
         backupDirectoryPath: '/test/path',
-        cloudSyncEnabled: true,
+        destination: BackupDestination.both,
       );
 
       final json = original.toJson();
@@ -102,7 +136,7 @@ void main() {
       expect(restored.maxBackups, original.maxBackups);
       expect(restored.lastBackupTimestamp, original.lastBackupTimestamp);
       expect(restored.backupDirectoryPath, original.backupDirectoryPath);
-      expect(restored.cloudSyncEnabled, original.cloudSyncEnabled);
+      expect(restored.destination, original.destination);
     });
 
     test('copyWith creates new instance with updated fields', () {
@@ -266,26 +300,37 @@ void main() {
       expect(str, contains('maxBackups: 10'));
     });
 
-    test('copyWith updates cloudSyncEnabled', () {
+    test('copyWith updates destination', () {
       final original = BackupSettings.fromEmpty();
-      expect(original.cloudSyncEnabled, false);
+      expect(original.destination, BackupDestination.localOnly);
 
-      final updated = original.copyWith(cloudSyncEnabled: true);
-      expect(updated.cloudSyncEnabled, true);
+      final updated = original.copyWith(destination: BackupDestination.both);
+      expect(updated.destination, BackupDestination.both);
       expect(updated.enabled, original.enabled);
     });
 
-    test('toString contains cloudSync field', () {
+    test('toString contains destination field', () {
       final settings = BackupSettings(
         enabled: true,
         frequency: BackupFrequency.weekly,
         preferredTimeMinutes: 120,
         wifiOnly: true,
         maxBackups: 10,
-        cloudSyncEnabled: true,
+        destination: BackupDestination.cloudOnly,
       );
 
-      expect(settings.toString(), contains('cloudSync: true'));
+      expect(settings.toString(), contains('destination: cloudOnly'));
+    });
+
+    test('isCloudEnabled returns correct values for each destination', () {
+      final local = BackupSettings.fromEmpty();
+      expect(local.isCloudEnabled, false);
+
+      final cloud = local.copyWith(destination: BackupDestination.cloudOnly);
+      expect(cloud.isCloudEnabled, true);
+
+      final both = local.copyWith(destination: BackupDestination.both);
+      expect(both.isCloudEnabled, true);
     });
   });
 
@@ -305,6 +350,25 @@ void main() {
     test('fromJson falls back to weekly for unknown values', () {
       expect(BackupFrequency.fromJson('unknown'), BackupFrequency.weekly);
       expect(BackupFrequency.fromJson(''), BackupFrequency.weekly);
+    });
+  });
+
+  group('BackupDestination', () {
+    test('toJson returns name string', () {
+      expect(BackupDestination.localOnly.toJson(), 'localOnly');
+      expect(BackupDestination.cloudOnly.toJson(), 'cloudOnly');
+      expect(BackupDestination.both.toJson(), 'both');
+    });
+
+    test('fromJson parses valid names', () {
+      expect(BackupDestination.fromJson('localOnly'), BackupDestination.localOnly);
+      expect(BackupDestination.fromJson('cloudOnly'), BackupDestination.cloudOnly);
+      expect(BackupDestination.fromJson('both'), BackupDestination.both);
+    });
+
+    test('fromJson falls back to localOnly for unknown values', () {
+      expect(BackupDestination.fromJson('unknown'), BackupDestination.localOnly);
+      expect(BackupDestination.fromJson(''), BackupDestination.localOnly);
     });
   });
 }

@@ -96,17 +96,25 @@ class BackupScheduler {
     return metadata;
   }
 
-  /// Attempt to upload a backup to cloud storage if cloud sync is enabled.
+  /// Attempt to upload a backup to cloud storage if cloud is enabled.
   /// Returns updated metadata with cloudSynced flag on success.
+  /// For cloudOnly destination, deletes the local file after successful upload.
   Future<BackupMetadata> _tryCloudUpload(BackupMetadata metadata) async {
     final settings = settingsContainer.activeUserSettings.backupSettings;
-    if (!settings.cloudSyncEnabled) return metadata;
+    if (!settings.isCloudEnabled) return metadata;
 
     final success = await CloudBackupService().uploadBackup(metadata);
     if (success) {
-      final updated = metadata.copyWith(cloudSynced: true);
+      var updated = metadata.copyWith(cloudSynced: true);
       await BackupService().updateMetadataInIndex(updated);
       LogWrapper.logger.i('Backup ${metadata.id} synced to cloud');
+
+      // For cloud-only mode, remove the local file after successful upload
+      if (settings.destination == BackupDestination.cloudOnly) {
+        await BackupService().deleteBackup(metadata.id);
+        LogWrapper.logger.i('Backup ${metadata.id} local copy removed (cloud-only mode)');
+      }
+
       return updated;
     } else {
       LogWrapper.logger.w('Backup ${metadata.id} cloud sync failed (non-fatal)');
@@ -128,9 +136,9 @@ class BackupScheduler {
 
       final frequency = _frequencyToDuration(settings.frequency);
 
-      // When cloud sync is enabled, require network connectivity
+      // When cloud is enabled, require network connectivity
       final NetworkType networkType;
-      if (settings.cloudSyncEnabled) {
+      if (settings.isCloudEnabled) {
         networkType = settings.wifiOnly
             ? NetworkType.unmetered
             : NetworkType.connected;
@@ -150,7 +158,7 @@ class BackupScheduler {
 
       LogWrapper.logger.i(
         'Scheduled backup registered: ${settings.frequency.name} '
-        '(every ${frequency.inHours}h, cloudSync: ${settings.cloudSyncEnabled}, '
+        '(every ${frequency.inHours}h, destination: ${settings.destination.name}, '
         'wifiOnly: ${settings.wifiOnly})',
       );
     } catch (e) {

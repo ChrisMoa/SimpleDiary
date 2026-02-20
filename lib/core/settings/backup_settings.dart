@@ -18,6 +18,22 @@ enum BackupFrequency {
   }
 }
 
+/// Where backups should be stored
+enum BackupDestination {
+  localOnly,
+  cloudOnly,
+  both;
+
+  String toJson() => name;
+
+  static BackupDestination fromJson(String json) {
+    return BackupDestination.values.firstWhere(
+      (e) => e.name == json,
+      orElse: () => BackupDestination.localOnly,
+    );
+  }
+}
+
 /// Settings for automatic scheduled backups
 class BackupSettings {
   /// Master toggle for automatic backups
@@ -41,8 +57,11 @@ class BackupSettings {
   /// Directory path for storing local backups (null = default app documents path)
   String? backupDirectoryPath;
 
-  /// Whether to sync backups to Supabase cloud storage
-  bool cloudSyncEnabled;
+  /// Where backups should be stored (local, cloud, or both)
+  BackupDestination destination;
+
+  /// Whether cloud storage is enabled (destination includes cloud)
+  bool get isCloudEnabled => destination != BackupDestination.localOnly;
 
   BackupSettings({
     required this.enabled,
@@ -52,7 +71,7 @@ class BackupSettings {
     required this.maxBackups,
     this.lastBackupTimestamp,
     this.backupDirectoryPath,
-    this.cloudSyncEnabled = false,
+    this.destination = BackupDestination.localOnly,
   });
 
   /// Convert minutes since midnight to TimeOfDay
@@ -109,7 +128,7 @@ class BackupSettings {
       'maxBackups': maxBackups,
       'lastBackupTimestamp': lastBackupTimestamp,
       'backupDirectoryPath': backupDirectoryPath,
-      'cloudSyncEnabled': cloudSyncEnabled,
+      'destination': destination.toJson(),
     };
   }
 
@@ -123,7 +142,11 @@ class BackupSettings {
       maxBackups: map['maxBackups'] as int? ?? 10,
       lastBackupTimestamp: map['lastBackupTimestamp'] as String?,
       backupDirectoryPath: map['backupDirectoryPath'] as String?,
-      cloudSyncEnabled: map['cloudSyncEnabled'] as bool? ?? false,
+      destination: map['destination'] != null
+          ? BackupDestination.fromJson(map['destination'] as String)
+          : (map['cloudSyncEnabled'] as bool? ?? false)
+              ? BackupDestination.both
+              : BackupDestination.localOnly,
     );
   }
 
@@ -141,7 +164,7 @@ class BackupSettings {
     int? maxBackups,
     String? lastBackupTimestamp,
     String? backupDirectoryPath,
-    bool? cloudSyncEnabled,
+    BackupDestination? destination,
   }) {
     return BackupSettings(
       enabled: enabled ?? this.enabled,
@@ -151,7 +174,7 @@ class BackupSettings {
       maxBackups: maxBackups ?? this.maxBackups,
       lastBackupTimestamp: lastBackupTimestamp ?? this.lastBackupTimestamp,
       backupDirectoryPath: backupDirectoryPath ?? this.backupDirectoryPath,
-      cloudSyncEnabled: cloudSyncEnabled ?? this.cloudSyncEnabled,
+      destination: destination ?? this.destination,
     );
   }
 
@@ -159,6 +182,6 @@ class BackupSettings {
   String toString() {
     final time = preferredTime;
     final timeStr = '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}';
-    return 'BackupSettings(enabled: $enabled, frequency: ${frequency.name}, time: $timeStr, wifiOnly: $wifiOnly, maxBackups: $maxBackups, cloudSync: $cloudSyncEnabled, lastBackup: $lastBackupTimestamp)';
+    return 'BackupSettings(enabled: $enabled, frequency: ${frequency.name}, time: $timeStr, wifiOnly: $wifiOnly, maxBackups: $maxBackups, destination: ${destination.name}, lastBackup: $lastBackupTimestamp)';
   }
 }
