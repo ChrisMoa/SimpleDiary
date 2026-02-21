@@ -5,6 +5,7 @@ import 'package:day_tracker/features/notes/domain/providers/note_editing_page_pr
 import 'package:day_tracker/features/notes/domain/providers/note_local_db_provider.dart';
 import 'package:day_tracker/features/notes/presentation/pages/note_editing_page.dart';
 import 'package:day_tracker/features/notes/presentation/widgets/image_picker_widget.dart';
+import 'package:day_tracker/core/widgets/app_ui_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -28,7 +29,7 @@ class _NoteViewingPageState extends ConsumerState<NoteViewingPage> {
         actions: buildViewingActions(context, note),
       ),
       body: ListView(
-          padding: const EdgeInsets.all(32),
+          padding: AppSpacing.paddingAllXxl,
           children: <Widget>[
             Text(
               note.title,
@@ -37,11 +38,11 @@ class _NoteViewingPageState extends ConsumerState<NoteViewingPage> {
                   .headlineMedium!
                   .copyWith(color: Theme.of(context).colorScheme.primary),
             ),
-            const SizedBox(height: 32),
+            AppSpacing.verticalXxl,
             buildDateTime(note),
-            const SizedBox(height: 24),
+            AppSpacing.verticalXl,
             buildCategory(note),
-            const SizedBox(height: 24),
+            AppSpacing.verticalXl,
             Text(
               note.description,
               style: Theme.of(context)
@@ -49,7 +50,7 @@ class _NoteViewingPageState extends ConsumerState<NoteViewingPage> {
                   .titleMedium!
                   .copyWith(color: Theme.of(context).colorScheme.secondary),
             ),
-            const SizedBox(height: 24),
+            AppSpacing.verticalXl,
             ImagePickerWidget(noteId: note.id!, readOnly: true),
           ],
       ),

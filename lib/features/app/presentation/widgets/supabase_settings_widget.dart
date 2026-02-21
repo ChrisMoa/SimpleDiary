@@ -1,5 +1,6 @@
 import 'package:day_tracker/core/provider/theme_provider.dart';
 import 'package:day_tracker/core/settings/settings_container.dart';
+import 'package:day_tracker/core/widgets/app_ui_kit.dart';
 import 'package:day_tracker/features/synchronization/domain/providers/supabase_provider.dart';
 import 'package:day_tracker/features/synchronization/data/repositories/supabase_api.dart';
 import 'package:flutter/foundation.dart' show kDebugMode;
@@ -52,11 +53,7 @@ class _SupabaseSettingsWidgetState extends ConsumerState<SupabaseSettingsWidget>
     final screenWidth = mediaQuery.size.width;
     final isSmallScreen = screenWidth < 600;
 
-    return Card(
-      elevation: 4,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
+    return AppCard.elevated(
       child: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
@@ -67,7 +64,7 @@ class _SupabaseSettingsWidgetState extends ConsumerState<SupabaseSettingsWidget>
               theme.colorScheme.surface,
             ],
           ),
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: AppRadius.borderRadiusLg,
         ),
         child: Padding(
           padding: const EdgeInsets.all(20.0),
@@ -83,7 +80,7 @@ class _SupabaseSettingsWidgetState extends ConsumerState<SupabaseSettingsWidget>
                     color: theme.colorScheme.primary,
                     size: isSmallScreen ? 24 : 28,
                   ),
-                  const SizedBox(width: 8),
+                  AppSpacing.horizontalXs,
                   Text(
                     l10n.supabaseSettings,
                     style: theme.textTheme.titleLarge?.copyWith(
@@ -95,7 +92,7 @@ class _SupabaseSettingsWidgetState extends ConsumerState<SupabaseSettingsWidget>
                 ],
               ),
 
-              const SizedBox(height: 16),
+              AppSpacing.verticalMd,
 
               Text(
                 l10n.supabaseDescription,
@@ -104,7 +101,7 @@ class _SupabaseSettingsWidgetState extends ConsumerState<SupabaseSettingsWidget>
                 ),
               ),
 
-              const SizedBox(height: 24),
+              AppSpacing.verticalXl,
 
               // Settings Form
               _buildTextField(
@@ -192,11 +189,11 @@ class _SupabaseSettingsWidgetState extends ConsumerState<SupabaseSettingsWidget>
       width: double.infinity,
       height: isSmallScreen ? 48 : 52,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: AppRadius.borderRadiusMd,
         gradient: LinearGradient(
           colors: [
             theme.colorScheme.primary,
-            theme.colorScheme.primary.withOpacity(0.8),
+            theme.colorScheme.primary.withValues(alpha:0.8),
           ],
         ),
       ),
@@ -206,7 +203,7 @@ class _SupabaseSettingsWidgetState extends ConsumerState<SupabaseSettingsWidget>
           backgroundColor: Colors.transparent,
           shadowColor: Colors.transparent,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: AppRadius.borderRadiusMd,
           ),
         ),
         icon: Icon(
@@ -236,12 +233,7 @@ class _SupabaseSettingsWidgetState extends ConsumerState<SupabaseSettingsWidget>
         settings.password.isEmpty) {
       if (mounted) {
         final l10n = AppLocalizations.of(context);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(l10n.pleaseEnterAllFields),
-            backgroundColor: Theme.of(context).colorScheme.error,
-          ),
-        );
+        AppSnackBar.error(context, message: l10n.pleaseEnterAllFields);
       }
       return;
     }
@@ -250,12 +242,7 @@ class _SupabaseSettingsWidgetState extends ConsumerState<SupabaseSettingsWidget>
       // Show loading indicator
       if (mounted) {
         final l10n = AppLocalizations.of(context);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(l10n.testingConnection),
-            duration: const Duration(seconds: 1),
-          ),
-        );
+        AppSnackBar.info(context, message: l10n.testingConnection, duration: const Duration(seconds: 1));
       }
 
       final supabaseApi = SupabaseApi(tablePrefix: kDebugMode ? 'test_' : '');
@@ -269,30 +256,15 @@ class _SupabaseSettingsWidgetState extends ConsumerState<SupabaseSettingsWidget>
       if (mounted) {
         final l10n = AppLocalizations.of(context);
         if (success) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(l10n.connectionSuccessful),
-              backgroundColor: Theme.of(context).colorScheme.primary,
-            ),
-          );
+          AppSnackBar.success(context, message: l10n.connectionSuccessful);
         } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(l10n.connectionFailedAuth),
-              backgroundColor: Theme.of(context).colorScheme.error,
-            ),
-          );
+          AppSnackBar.error(context, message: l10n.connectionFailedAuth);
         }
       }
     } catch (e) {
       if (mounted) {
         final l10n = AppLocalizations.of(context);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(l10n.connectionFailed(e.toString())),
-            backgroundColor: Theme.of(context).colorScheme.error,
-          ),
-        );
+        AppSnackBar.error(context, message: l10n.connectionFailed(e.toString()));
       }
     }
   }
@@ -309,51 +281,23 @@ class _SupabaseSettingsWidgetState extends ConsumerState<SupabaseSettingsWidget>
     required ThemeData theme,
     required bool isSmallScreen,
   }) {
-    return TextFormField(
+    return AppTextField(
       controller: controller,
       obscureText: isPassword,
       keyboardType: keyboardType,
       onChanged: onChanged,
-      style: theme.textTheme.bodyMedium?.copyWith(
-        fontSize: isSmallScreen ? 14 : 16,
-        color: theme.colorScheme.onSurface,
-      ),
-      decoration: InputDecoration(
-        labelText: label,
-        hintText: hint,
-        prefixIcon: Icon(icon, size: isSmallScreen ? 20 : 24),
-        suffixIcon: toggleVisibility != null
-            ? IconButton(
-                icon: Icon(
-                  isPassword ? Icons.visibility : Icons.visibility_off,
-                  size: isSmallScreen ? 20 : 24,
-                ),
-                onPressed: toggleVisibility,
-              )
-            : null,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: theme.colorScheme.outline),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: theme.colorScheme.outline),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: theme.colorScheme.primary),
-        ),
-        filled: true,
-        fillColor: theme.colorScheme.surface,
-        labelStyle: TextStyle(
-          color: theme.colorScheme.onSurface,
-          fontSize: isSmallScreen ? 14 : 16,
-        ),
-        hintStyle: TextStyle(
-          color: theme.colorScheme.onSurface.withOpacity(0.5),
-          fontSize: isSmallScreen ? 14 : 16,
-        ),
-      ),
+      label: label,
+      hint: hint,
+      prefixIcon: Icon(icon, size: isSmallScreen ? 20 : 24),
+      suffixIcon: toggleVisibility != null
+          ? IconButton(
+              icon: Icon(
+                isPassword ? Icons.visibility : Icons.visibility_off,
+                size: isSmallScreen ? 20 : 24,
+              ),
+              onPressed: toggleVisibility,
+            )
+          : null,
     );
   }
 }

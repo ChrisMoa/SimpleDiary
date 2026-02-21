@@ -12,6 +12,7 @@ import 'package:day_tracker/features/habits/data/models/habit_entry.dart';
 import 'package:day_tracker/features/habits/domain/providers/habit_providers.dart';
 import 'package:day_tracker/features/notes/data/models/note.dart';
 import 'package:day_tracker/features/notes/domain/providers/note_local_db_provider.dart';
+import 'package:day_tracker/core/widgets/app_ui_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:day_tracker/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -103,7 +104,7 @@ class _BackupHistoryPageState extends ConsumerState<BackupHistoryPage> {
   Widget _buildEmptyState(ThemeData theme, AppLocalizations l10n) {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(32),
+        padding: AppSpacing.paddingAllXxl,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -112,14 +113,14 @@ class _BackupHistoryPageState extends ConsumerState<BackupHistoryPage> {
               size: 64,
               color: theme.colorScheme.onSurface.withValues(alpha: .3),
             ),
-            const SizedBox(height: 16),
+            AppSpacing.verticalMd,
             Text(
               l10n.backupNoBackups,
               style: theme.textTheme.titleLarge?.copyWith(
                 color: theme.colorScheme.onSurface.withValues(alpha: .7),
               ),
             ),
-            const SizedBox(height: 8),
+            AppSpacing.verticalXs,
             Text(
               l10n.backupNoBackupsDescription,
               textAlign: TextAlign.center,
@@ -141,7 +142,7 @@ class _BackupHistoryPageState extends ConsumerState<BackupHistoryPage> {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
         color: theme.colorScheme.primaryContainer.withValues(alpha: .3),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: AppRadius.borderRadiusMd,
       ),
       child: Row(
         children: [
@@ -150,7 +151,7 @@ class _BackupHistoryPageState extends ConsumerState<BackupHistoryPage> {
             color: theme.colorScheme.primary,
             size: 20,
           ),
-          const SizedBox(width: 8),
+          AppSpacing.horizontalXs,
           Text(
             l10n.backupStorageUsed(formattedSize),
             style: theme.textTheme.bodyMedium?.copyWith(
@@ -184,14 +185,11 @@ class _BackupHistoryPageState extends ConsumerState<BackupHistoryPage> {
   ) {
     final isSuccess = backup.isSuccessful;
 
-    return Card(
+    return AppCard.elevated(
       margin: const EdgeInsets.symmetric(vertical: 4),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
+      padding: AppSpacing.paddingAllMd,
+      borderRadius: AppRadius.borderRadiusMd,
+      child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Header row: type badge + date + size
@@ -199,7 +197,7 @@ class _BackupHistoryPageState extends ConsumerState<BackupHistoryPage> {
               children: [
                 _buildTypeBadge(theme, l10n, backup.type),
                 if (backup.encrypted) ...[
-                  const SizedBox(width: 4),
+                  AppSpacing.horizontalXxs,
                   Icon(
                     Icons.lock,
                     size: 14,
@@ -207,14 +205,14 @@ class _BackupHistoryPageState extends ConsumerState<BackupHistoryPage> {
                   ),
                 ],
                 if (backup.cloudSynced) ...[
-                  const SizedBox(width: 4),
+                  AppSpacing.horizontalXxs,
                   Icon(
                     Icons.cloud_done,
                     size: 14,
                     color: theme.colorScheme.primary,
                   ),
                 ],
-                const SizedBox(width: 8),
+                AppSpacing.horizontalXs,
                 Expanded(
                   child: Text(
                     _formatDateTime(backup.createdAt),
@@ -233,7 +231,7 @@ class _BackupHistoryPageState extends ConsumerState<BackupHistoryPage> {
               ],
             ),
 
-            const SizedBox(height: 8),
+            AppSpacing.verticalXs,
 
             // Content summary
             if (isSuccess)
@@ -251,10 +249,10 @@ class _BackupHistoryPageState extends ConsumerState<BackupHistoryPage> {
             // Error message
             if (!isSuccess)
               Container(
-                padding: const EdgeInsets.all(8),
+                padding: AppSpacing.paddingAllXs,
                 decoration: BoxDecoration(
                   color: theme.colorScheme.errorContainer.withValues(alpha: .3),
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: AppRadius.borderRadiusSm,
                 ),
                 child: Row(
                   children: [
@@ -263,7 +261,7 @@ class _BackupHistoryPageState extends ConsumerState<BackupHistoryPage> {
                       color: theme.colorScheme.error,
                       size: 16,
                     ),
-                    const SizedBox(width: 8),
+                    AppSpacing.horizontalXs,
                     Expanded(
                       child: Text(
                         backup.error ?? '',
@@ -276,7 +274,7 @@ class _BackupHistoryPageState extends ConsumerState<BackupHistoryPage> {
                 ),
               ),
 
-            const SizedBox(height: 12),
+            AppSpacing.verticalSm,
 
             // Action buttons
             Row(
@@ -309,7 +307,6 @@ class _BackupHistoryPageState extends ConsumerState<BackupHistoryPage> {
             ),
           ],
         ),
-      ),
     );
   }
 
@@ -345,7 +342,7 @@ class _BackupHistoryPageState extends ConsumerState<BackupHistoryPage> {
         mainAxisSize: MainAxisSize.min,
         children: [
           Icon(icon, size: 14, color: theme.colorScheme.onSecondaryContainer),
-          const SizedBox(width: 4),
+          AppSpacing.horizontalXxs,
           Text(
             label,
             style: theme.textTheme.labelSmall?.copyWith(
@@ -362,27 +359,17 @@ class _BackupHistoryPageState extends ConsumerState<BackupHistoryPage> {
     BackupMetadata backup,
     AppLocalizations l10n,
   ) async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(l10n.backupRestoreConfirm),
-        content: Text(l10n.backupRestoreConfirmMessage(
-          _formatDateTime(backup.createdAt),
-        )),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: Text(l10n.cancel),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: Text(l10n.backupRestoreConfirm),
-          ),
-        ],
+    final confirmed = await AppDialog.confirm(
+      context,
+      title: l10n.backupRestoreConfirm,
+      content: l10n.backupRestoreConfirmMessage(
+        _formatDateTime(backup.createdAt),
       ),
+      confirmLabel: l10n.backupRestoreConfirm,
+      cancelLabel: l10n.cancel,
     );
 
-    if (confirmed == true && mounted) {
+    if (confirmed && mounted) {
       await _restoreBackup(backup, l10n);
     }
   }
@@ -455,32 +442,14 @@ class _BackupHistoryPageState extends ConsumerState<BackupHistoryPage> {
 
       if (mounted) {
         setState(() => _isRestoring = false);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(l10n.backupRestoreSuccess),
-            backgroundColor: Theme.of(context).colorScheme.primary,
-            behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
-          ),
-        );
+        AppSnackBar.success(context, message: l10n.backupRestoreSuccess);
         await _loadBackups();
       }
     } catch (e) {
       LogWrapper.logger.e('Restore failed: $e');
       if (mounted) {
         setState(() => _isRestoring = false);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(l10n.backupRestoreFailed(e.toString())),
-            backgroundColor: Theme.of(context).colorScheme.error,
-            behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
-          ),
-        );
+        AppSnackBar.error(context, message: l10n.backupRestoreFailed(e.toString()));
       }
     }
   }
@@ -489,39 +458,19 @@ class _BackupHistoryPageState extends ConsumerState<BackupHistoryPage> {
     BackupMetadata backup,
     AppLocalizations l10n,
   ) async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(l10n.backupDeleteConfirm),
-        content: Text(l10n.backupDeleteConfirmMessage),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: Text(l10n.cancel),
-          ),
-          FilledButton(
-            style: FilledButton.styleFrom(
-              backgroundColor: Theme.of(context).colorScheme.error,
-            ),
-            onPressed: () => Navigator.pop(context, true),
-            child: Text(l10n.delete),
-          ),
-        ],
-      ),
+    final confirmed = await AppDialog.confirm(
+      context,
+      title: l10n.backupDeleteConfirm,
+      content: l10n.backupDeleteConfirmMessage,
+      confirmLabel: l10n.delete,
+      cancelLabel: l10n.cancel,
+      isDestructive: true,
     );
 
-    if (confirmed == true) {
+    if (confirmed) {
       await BackupService().deleteBackup(backup.id);
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(l10n.backupDeleted),
-            behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
-          ),
-        );
+        AppSnackBar.info(context, message: l10n.backupDeleted);
         await _loadBackups();
       }
     }
@@ -541,29 +490,11 @@ class _BackupHistoryPageState extends ConsumerState<BackupHistoryPage> {
       final updated = backup.copyWith(cloudSynced: true);
       await BackupService().updateMetadataInIndex(updated);
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(l10n.backupUploadSuccess),
-            backgroundColor: Theme.of(context).colorScheme.primary,
-            behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
-          ),
-        );
+        AppSnackBar.success(context, message: l10n.backupUploadSuccess);
         await _loadBackups();
       }
     } else if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(l10n.backupUploadFailed('')),
-          backgroundColor: Theme.of(context).colorScheme.error,
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
-        ),
-      );
+      AppSnackBar.error(context, message: l10n.backupUploadFailed(''));
     }
   }
 
@@ -593,11 +524,11 @@ class _BackupHistoryPageState extends ConsumerState<BackupHistoryPage> {
         builder: (context, scrollController) => Column(
           children: [
             Padding(
-              padding: const EdgeInsets.all(16),
+              padding: AppSpacing.paddingAllMd,
               child: Row(
                 children: [
                   Icon(Icons.cloud, color: theme.colorScheme.primary),
-                  const SizedBox(width: 8),
+                  AppSpacing.horizontalXs,
                   Text(
                     l10n.backupCloudBackups,
                     style: theme.textTheme.titleMedium?.copyWith(
@@ -660,28 +591,10 @@ class _BackupHistoryPageState extends ConsumerState<BackupHistoryPage> {
   ) async {
     final metadata = await CloudBackupService().downloadBackup(backupId);
     if (metadata != null && mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(l10n.backupDownloadSuccess),
-          backgroundColor: Theme.of(context).colorScheme.primary,
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
-        ),
-      );
+      AppSnackBar.success(context, message: l10n.backupDownloadSuccess);
       await _loadBackups();
     } else if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(l10n.backupDownloadFailed('')),
-          backgroundColor: Theme.of(context).colorScheme.error,
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
-          ),
-        ),
-      );
+      AppSnackBar.error(context, message: l10n.backupDownloadFailed(''));
     }
   }
 

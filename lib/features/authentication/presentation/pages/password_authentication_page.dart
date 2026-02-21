@@ -1,6 +1,7 @@
 import 'package:day_tracker/features/authentication/domain/providers/user_data_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:day_tracker/l10n/app_localizations.dart';
+import 'package:day_tracker/core/widgets/app_ui_kit.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class PasswordAuthenticationPage extends ConsumerStatefulWidget {
@@ -60,7 +61,7 @@ class _PasswordAuthenticationPageState
                       color: theme.colorScheme.onPrimaryContainer,
                     ),
                   ),
-                  const SizedBox(height: 32),
+                  AppSpacing.verticalXxl,
 
                   // Welcome text
                   Text(
@@ -70,7 +71,7 @@ class _PasswordAuthenticationPageState
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  const SizedBox(height: 8),
+                  AppSpacing.verticalXs,
                   Text(
                     userData.username,
                     style: theme.textTheme.titleMedium?.copyWith(
@@ -78,7 +79,7 @@ class _PasswordAuthenticationPageState
                       fontWeight: FontWeight.w600,
                     ),
                   ),
-                  const SizedBox(height: 8),
+                  AppSpacing.verticalXs,
                   Text(
                     l10n.enterPasswordToContinue,
                     style: theme.textTheme.bodyMedium?.copyWith(
@@ -88,60 +89,29 @@ class _PasswordAuthenticationPageState
                   const SizedBox(height: 40),
 
                   // Password card
-                  Card(
-                    elevation: 2,
+                  AppCard.outlined(
                     color: theme.colorScheme.secondaryContainer,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                      side: BorderSide(
-                        color: theme.colorScheme.outline.withValues(alpha: 0.1),
-                      ),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(24),
-                      child: Column(
+                    borderColor: theme.colorScheme.outline.withValues(alpha: 0.1),
+                    padding: AppSpacing.paddingAllXl,
+                    child: Column(
                         children: [
                           // Password field
-                          TextFormField(
+                          AppTextField(
                             controller: _passwordController,
                             obscureText: !_isPasswordVisible,
-                            style: TextStyle(color: theme.colorScheme.onSurface),
-                            decoration: InputDecoration(
-                              labelText: l10n.password,
-                              labelStyle: TextStyle(
-                                color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                            label: l10n.password,
+                            prefixIcon: const Icon(Icons.lock_outline),
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                _isPasswordVisible
+                                    ? Icons.visibility_off
+                                    : Icons.visibility,
                               ),
-                              prefixIcon: Icon(
-                                Icons.lock_outline,
-                                color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
-                              ),
-                              suffixIcon: IconButton(
-                                icon: Icon(
-                                  _isPasswordVisible
-                                      ? Icons.visibility_off
-                                      : Icons.visibility,
-                                  color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
-                                ),
-                                onPressed: () {
-                                  setState(() {
-                                    _isPasswordVisible = !_isPasswordVisible;
-                                  });
-                                },
-                              ),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: BorderSide(color: theme.colorScheme.outline),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: BorderSide(color: theme.colorScheme.outline),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(12),
-                                borderSide: BorderSide(color: theme.colorScheme.primary, width: 2),
-                              ),
-                              filled: true,
-                              fillColor: theme.colorScheme.surface,
+                              onPressed: () {
+                                setState(() {
+                                  _isPasswordVisible = !_isPasswordVisible;
+                                });
+                              },
                             ),
                             validator: (value) {
                               if (value == null || value.isEmpty) {
@@ -150,7 +120,7 @@ class _PasswordAuthenticationPageState
                               return null;
                             },
                           ),
-                          const SizedBox(height: 24),
+                          AppSpacing.verticalXl,
 
                           // Sign in button
                           SizedBox(
@@ -162,7 +132,7 @@ class _PasswordAuthenticationPageState
                                 backgroundColor: theme.colorScheme.primary,
                                 foregroundColor: theme.colorScheme.onPrimary,
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12),
+                                  borderRadius: AppRadius.borderRadiusMd,
                                 ),
                                 elevation: 0,
                               ),
@@ -177,9 +147,8 @@ class _PasswordAuthenticationPageState
                           ),
                         ],
                       ),
-                    ),
                   ),
-                  const SizedBox(height: 16),
+                  AppSpacing.verticalMd,
 
                   // Switch user
                   TextButton.icon(
@@ -214,13 +183,7 @@ class _PasswordAuthenticationPageState
           .login(userData.username, _passwordController.text);
 
       if (!success) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(l10n.incorrectPassword,
-                style: TextStyle(color: Theme.of(context).colorScheme.onError)),
-            backgroundColor: Theme.of(context).colorScheme.error,
-          ),
-        );
+        AppSnackBar.error(context, message: l10n.incorrectPassword);
       }
     }
   }

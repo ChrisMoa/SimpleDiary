@@ -1,6 +1,7 @@
 import 'package:day_tracker/core/settings/settings_container.dart';
 import 'package:day_tracker/features/authentication/data/models/user_data.dart';
 import 'package:day_tracker/features/authentication/domain/providers/user_data_provider.dart';
+import 'package:day_tracker/core/widgets/app_ui_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:day_tracker/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -53,24 +54,24 @@ class _AuthUserDataPageState extends ConsumerState<AuthUserDataPage> {
                 width: 200,
                 child: Image.asset('assets/images/chat.png'),
               ),
-              Card(
-                margin: const EdgeInsets.all(20),
+              AppCard.elevated(
+                margin: AppSpacing.paddingAllLg,
                 child: SingleChildScrollView(
                   child: Padding(
-                    padding: const EdgeInsets.all(16),
+                    padding: AppSpacing.paddingAllMd,
                     child: Form(
                       key: _formKey,
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           _buildUsernameField(),
-                          const SizedBox(height: 12),
+                          AppSpacing.verticalSm,
                           _buildPasswordField(),
-                          const SizedBox(height: 12),
+                          AppSpacing.verticalSm,
                           if (!_isLogin) _buildEmailField(),
-                          if (!_isLogin) const SizedBox(height: 12),
+                          if (!_isLogin) AppSpacing.verticalSm,
                           if (!_isLogin) _buildRemoteAccCheckbox(),
-                          const SizedBox(height: 12),
+                          AppSpacing.verticalSm,
                           if (_isAuthenticating)
                             const SizedBox(
                               height: 20,
@@ -95,30 +96,11 @@ class _AuthUserDataPageState extends ConsumerState<AuthUserDataPage> {
   //? builds -------------------------------------------------------------------
 
   Widget _buildUsernameField() {
-    final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context);
-    return TextFormField(
+    return AppTextField(
       controller: _usernameController,
-      style: TextStyle(color: theme.colorScheme.onSurface),
-      decoration: InputDecoration(
-        labelText: l10n.username,
-        labelStyle: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.7)),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: theme.colorScheme.outline),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: theme.colorScheme.outline),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: theme.colorScheme.primary),
-        ),
-        filled: true,
-        fillColor: theme.colorScheme.surface,
-        prefixIcon: Icon(Icons.person, color: theme.colorScheme.onSurface.withValues(alpha: 0.7)),
-      ),
+      label: l10n.username,
+      prefixIcon: const Icon(Icons.person),
       validator: (value) {
         if (value == null || value.isEmpty) {
           return l10n.pleaseEnterUsername;
@@ -129,41 +111,21 @@ class _AuthUserDataPageState extends ConsumerState<AuthUserDataPage> {
   }
 
   Widget _buildPasswordField() {
-    final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context);
-    return TextFormField(
+    return AppTextField(
       controller: _passwordController,
       obscureText: !_isPasswordVisible,
-      style: TextStyle(color: theme.colorScheme.onSurface),
-      decoration: InputDecoration(
-        labelText: l10n.password,
-        labelStyle: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.7)),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: theme.colorScheme.outline),
+      label: l10n.password,
+      prefixIcon: const Icon(Icons.lock),
+      suffixIcon: IconButton(
+        icon: Icon(
+          _isPasswordVisible ? Icons.visibility_off : Icons.visibility,
         ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: theme.colorScheme.outline),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: theme.colorScheme.primary),
-        ),
-        filled: true,
-        fillColor: theme.colorScheme.surface,
-        prefixIcon: Icon(Icons.lock, color: theme.colorScheme.onSurface.withValues(alpha: 0.7)),
-        suffixIcon: IconButton(
-          icon: Icon(
-            _isPasswordVisible ? Icons.visibility_off : Icons.visibility,
-            color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
-          ),
-          onPressed: () {
-            setState(() {
-              _isPasswordVisible = !_isPasswordVisible;
-            });
-          },
-        ),
+        onPressed: () {
+          setState(() {
+            _isPasswordVisible = !_isPasswordVisible;
+          });
+        },
       ),
       validator: (value) {
         if (value == null || value.isEmpty) {
@@ -178,31 +140,12 @@ class _AuthUserDataPageState extends ConsumerState<AuthUserDataPage> {
   }
 
   Widget _buildEmailField() {
-    final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context);
-    return TextFormField(
+    return AppTextField(
       controller: _emailController,
       keyboardType: TextInputType.emailAddress,
-      style: TextStyle(color: theme.colorScheme.onSurface),
-      decoration: InputDecoration(
-        labelText: l10n.emailOptional,
-        labelStyle: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.7)),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: theme.colorScheme.outline),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: theme.colorScheme.outline),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: theme.colorScheme.primary),
-        ),
-        filled: true,
-        fillColor: theme.colorScheme.surface,
-        prefixIcon: Icon(Icons.email, color: theme.colorScheme.onSurface.withValues(alpha: 0.7)),
-      ),
+      label: l10n.emailOptional,
+      prefixIcon: const Icon(Icons.email),
       validator: (value) {
         if (value != null && value.isNotEmpty) {
           final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');

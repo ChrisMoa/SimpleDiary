@@ -1,3 +1,4 @@
+import 'package:day_tracker/core/widgets/app_ui_kit.dart';
 import 'package:day_tracker/features/notes/data/models/note_data_source.dart';
 import 'package:day_tracker/features/notes/domain/providers/note_editing_page_provider.dart';
 import 'package:day_tracker/features/notes/domain/providers/note_local_db_provider.dart';
@@ -64,7 +65,7 @@ class _NotesWidgetState extends ConsumerState<NotesWidget> {
       height: calendarAppointmentDetails.bounds.height,
       decoration: BoxDecoration(
         color: note.noteCategory.color.withValues(alpha: 0.5),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: AppRadius.borderRadiusMd,
       ),
       child: Center(
         child: Text(

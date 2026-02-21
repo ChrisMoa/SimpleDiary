@@ -1,6 +1,7 @@
 import 'package:day_tracker/core/provider/theme_provider.dart';
 import 'package:day_tracker/features/notes/data/models/note.dart';
 import 'package:day_tracker/features/notes/domain/providers/note_local_db_provider.dart';
+import 'package:day_tracker/core/widgets/app_ui_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -21,7 +22,7 @@ class DiaryDayNotesOverviewListItem extends ConsumerWidget {
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
         color: theme.colorScheme.secondaryContainer,
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: AppRadius.borderRadiusSm,
         border:
             Border.all(color: theme.colorScheme.outline.withValues(alpha: 0.1)),
       ),
@@ -35,7 +36,7 @@ class DiaryDayNotesOverviewListItem extends ConsumerWidget {
               shape: BoxShape.circle,
             ),
           ),
-          const SizedBox(width: 8),
+          AppSpacing.horizontalXs,
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -61,7 +62,7 @@ class DiaryDayNotesOverviewListItem extends ConsumerWidget {
               ],
             ),
           ),
-          const SizedBox(width: 8),
+          AppSpacing.horizontalXs,
           // Favorite toggle
           GestureDetector(
             onTap: () {
@@ -76,7 +77,7 @@ class DiaryDayNotesOverviewListItem extends ConsumerWidget {
                   : theme.colorScheme.onSecondaryContainer,
             ),
           ),
-          const SizedBox(width: 8),
+          AppSpacing.horizontalXs,
           Text(
             _getTimeRangeText(note),
             style: theme.textTheme.bodySmall?.copyWith(

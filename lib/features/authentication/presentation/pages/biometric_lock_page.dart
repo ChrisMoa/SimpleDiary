@@ -3,6 +3,7 @@ import 'package:day_tracker/core/log/logger_instance.dart';
 import 'package:day_tracker/core/services/biometric_service.dart';
 import 'package:day_tracker/features/authentication/domain/providers/biometric_provider.dart';
 import 'package:day_tracker/features/authentication/domain/providers/user_data_provider.dart';
+import 'package:day_tracker/core/widgets/app_ui_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:day_tracker/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -125,7 +126,7 @@ class _BiometricLockPageState extends ConsumerState<BiometricLockPage> {
                     color: theme.colorScheme.onPrimaryContainer,
                   ),
                 ),
-                const SizedBox(height: 32),
+                AppSpacing.verticalXxl,
 
                 // Welcome text
                 Text(
@@ -135,7 +136,7 @@ class _BiometricLockPageState extends ConsumerState<BiometricLockPage> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                const SizedBox(height: 8),
+                AppSpacing.verticalXs,
                 Text(
                   userData.username,
                   style: theme.textTheme.titleMedium?.copyWith(
@@ -143,7 +144,7 @@ class _BiometricLockPageState extends ConsumerState<BiometricLockPage> {
                     fontWeight: FontWeight.w600,
                   ),
                 ),
-                const SizedBox(height: 8),
+                AppSpacing.verticalXs,
                 Text(
                   l10n.biometricTapToUnlock,
                   style: theme.textTheme.bodyMedium?.copyWith(
@@ -153,18 +154,11 @@ class _BiometricLockPageState extends ConsumerState<BiometricLockPage> {
                 const SizedBox(height: 40),
 
                 // Biometric button
-                Card(
-                  elevation: 2,
+                AppCard.outlined(
                   color: theme.colorScheme.secondaryContainer,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                    side: BorderSide(
-                      color: theme.colorScheme.outline.withValues(alpha: 0.1),
-                    ),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(24),
-                    child: Column(
+                  borderColor: theme.colorScheme.outline.withValues(alpha: 0.1),
+                  padding: AppSpacing.paddingAllXl,
+                  child: Column(
                       children: [
                         // Fingerprint icon button
                         IconButton(
@@ -177,7 +171,7 @@ class _BiometricLockPageState extends ConsumerState<BiometricLockPage> {
                                 : theme.colorScheme.primary,
                           ),
                         ),
-                        const SizedBox(height: 16),
+                        AppSpacing.verticalMd,
 
                         // Error message
                         if (_errorMessage != null) ...[
@@ -188,7 +182,7 @@ class _BiometricLockPageState extends ConsumerState<BiometricLockPage> {
                             ),
                             textAlign: TextAlign.center,
                           ),
-                          const SizedBox(height: 16),
+                          AppSpacing.verticalMd,
                         ],
 
                         // Retry button
@@ -204,7 +198,7 @@ class _BiometricLockPageState extends ConsumerState<BiometricLockPage> {
                                 backgroundColor: theme.colorScheme.primary,
                                 foregroundColor: theme.colorScheme.onPrimary,
                                 shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12),
+                                  borderRadius: AppRadius.borderRadiusMd,
                                 ),
                               ),
                             ),
@@ -212,16 +206,15 @@ class _BiometricLockPageState extends ConsumerState<BiometricLockPage> {
 
                         if (_isAuthenticating)
                           Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 8),
+                            padding: AppSpacing.paddingVerticalXs,
                             child: CircularProgressIndicator(
                               color: theme.colorScheme.primary,
                             ),
                           ),
                       ],
                     ),
-                  ),
                 ),
-                const SizedBox(height: 16),
+                AppSpacing.verticalMd,
 
                 // Use password instead
                 TextButton.icon(

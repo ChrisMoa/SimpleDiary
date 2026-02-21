@@ -1,5 +1,6 @@
 import 'package:day_tracker/features/habits/domain/providers/habit_providers.dart';
 import 'package:day_tracker/l10n/app_localizations.dart';
+import 'package:day_tracker/core/widgets/app_ui_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -31,7 +32,7 @@ class HabitsSummarySection extends ConsumerWidget {
             children: [
               Icon(Icons.check_circle_outline,
                   color: theme.colorScheme.primary, size: 20),
-              const SizedBox(width: 8),
+              AppSpacing.horizontalXs,
               Text(
                 l10n.habitsTitle,
                 style: theme.textTheme.titleMedium?.copyWith(
@@ -48,7 +49,7 @@ class HabitsSummarySection extends ConsumerWidget {
               ),
             ],
           ),
-          const SizedBox(height: 8),
+          AppSpacing.verticalXs,
           ClipRRect(
             borderRadius: BorderRadius.circular(6),
             child: LinearProgressIndicator(

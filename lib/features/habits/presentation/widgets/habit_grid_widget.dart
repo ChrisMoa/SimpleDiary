@@ -1,6 +1,7 @@
 import 'package:day_tracker/features/habits/data/repositories/habits_repository.dart';
 import 'package:day_tracker/features/habits/domain/providers/habit_providers.dart';
 import 'package:day_tracker/l10n/app_localizations.dart';
+import 'package:day_tracker/core/widgets/app_ui_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -22,7 +23,7 @@ class HabitGridWidget extends ConsumerWidget {
     }
 
     return Padding(
-      padding: const EdgeInsets.all(16),
+      padding: AppSpacing.paddingAllMd,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -33,10 +34,10 @@ class HabitGridWidget extends ConsumerWidget {
               color: theme.colorScheme.onSurface,
             ),
           ),
-          const SizedBox(height: 16),
+          AppSpacing.verticalMd,
           // Month labels
           _buildMonthLabels(context, theme, gridData),
-          const SizedBox(height: 4),
+          AppSpacing.verticalXxs,
           // Grid
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
@@ -46,13 +47,13 @@ class HabitGridWidget extends ConsumerWidget {
               children: [
                 // Day-of-week labels
                 _buildDayLabels(theme, l10n),
-                const SizedBox(width: 4),
+                AppSpacing.horizontalXxs,
                 // Grid cells
                 _buildGrid(theme, gridData),
               ],
             ),
           ),
-          const SizedBox(height: 12),
+          AppSpacing.verticalSm,
           // Legend
           _buildLegend(theme, l10n),
         ],
@@ -62,12 +63,12 @@ class HabitGridWidget extends ConsumerWidget {
 
   Widget _buildEmptyState(ThemeData theme, AppLocalizations l10n) {
     return Padding(
-      padding: const EdgeInsets.all(16),
+      padding: AppSpacing.paddingAllMd,
       child: Column(
         children: [
           Icon(Icons.grid_on,
               size: 48, color: theme.colorScheme.onSurfaceVariant),
-          const SizedBox(height: 8),
+          AppSpacing.verticalXs,
           Text(
             l10n.habitNoHabits,
             style: theme.textTheme.bodyMedium?.copyWith(
@@ -198,7 +199,7 @@ class HabitGridWidget extends ConsumerWidget {
             fontSize: 10,
           ),
         ),
-        const SizedBox(width: 4),
+        AppSpacing.horizontalXxs,
         ...levels.map((level) {
           return Padding(
             padding: const EdgeInsets.symmetric(horizontal: 1),
@@ -214,7 +215,7 @@ class HabitGridWidget extends ConsumerWidget {
             ),
           );
         }),
-        const SizedBox(width: 4),
+        AppSpacing.horizontalXxs,
         Text(
           l10n.habitMore,
           style: theme.textTheme.labelSmall?.copyWith(

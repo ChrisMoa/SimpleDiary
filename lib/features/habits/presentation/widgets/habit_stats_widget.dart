@@ -1,5 +1,6 @@
 import 'package:day_tracker/features/habits/domain/providers/habit_providers.dart';
 import 'package:day_tracker/l10n/app_localizations.dart';
+import 'package:day_tracker/core/widgets/app_ui_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -14,7 +15,7 @@ class HabitStatsWidget extends ConsumerWidget {
 
     if (activeHabits.isEmpty) {
       return Padding(
-        padding: const EdgeInsets.all(16),
+        padding: AppSpacing.paddingAllMd,
         child: Center(
           child: Text(
             l10n.habitNoHabits,
@@ -33,17 +34,10 @@ class HabitStatsWidget extends ConsumerWidget {
         final habit = activeHabits[index];
         final stats = ref.watch(habitStatsProvider(habit.id));
 
-        return Card(
+        return AppCard.outlined(
           margin: const EdgeInsets.only(bottom: 12),
-          elevation: 0,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-            side: BorderSide(color: theme.colorScheme.outlineVariant),
-          ),
-          color: theme.colorScheme.surface,
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
+          padding: AppSpacing.paddingAllMd,
+          child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Habit header
@@ -58,7 +52,7 @@ class HabitStatsWidget extends ConsumerWidget {
                       ),
                       child: Icon(habit.icon, color: habit.color, size: 22),
                     ),
-                    const SizedBox(width: 12),
+                    AppSpacing.horizontalSm,
                     Expanded(
                       child: Text(
                         habit.name,
@@ -70,7 +64,7 @@ class HabitStatsWidget extends ConsumerWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: 16),
+                AppSpacing.verticalMd,
 
                 // Streak row
                 Row(
@@ -82,7 +76,7 @@ class HabitStatsWidget extends ConsumerWidget {
                       Icons.local_fire_department,
                       Colors.orange.shade700,
                     ),
-                    const SizedBox(width: 12),
+                    AppSpacing.horizontalSm,
                     _buildStatBox(
                       theme,
                       l10n.habitBestStreak,
@@ -90,7 +84,7 @@ class HabitStatsWidget extends ConsumerWidget {
                       Icons.emoji_events,
                       Colors.amber.shade700,
                     ),
-                    const SizedBox(width: 12),
+                    AppSpacing.horizontalSm,
                     _buildStatBox(
                       theme,
                       l10n.habitTotalCompletions,
@@ -100,7 +94,7 @@ class HabitStatsWidget extends ConsumerWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: 16),
+                AppSpacing.verticalMd,
 
                 // Completion rates
                 Text(
@@ -110,7 +104,7 @@ class HabitStatsWidget extends ConsumerWidget {
                     color: theme.colorScheme.onSurface,
                   ),
                 ),
-                const SizedBox(height: 8),
+                AppSpacing.verticalXs,
                 _buildCompletionBar(
                     theme, l10n.habitLast7Days, stats.completionRate7d, habit.color),
                 const SizedBox(height: 6),
@@ -121,7 +115,6 @@ class HabitStatsWidget extends ConsumerWidget {
                     theme, l10n.habitAllTime, stats.completionRateAll, habit.color),
               ],
             ),
-          ),
         );
       },
     );
@@ -134,12 +127,12 @@ class HabitStatsWidget extends ConsumerWidget {
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
         decoration: BoxDecoration(
           color: color.withValues(alpha: theme.brightness == Brightness.dark ? 0.2 : 0.08),
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: AppRadius.borderRadiusMd,
         ),
         child: Column(
           children: [
             Icon(icon, color: color, size: 20),
-            const SizedBox(height: 4),
+            AppSpacing.verticalXxs,
             Text(
               value,
               style: theme.textTheme.titleLarge?.copyWith(
@@ -186,7 +179,7 @@ class HabitStatsWidget extends ConsumerWidget {
             ),
           ),
         ),
-        const SizedBox(width: 8),
+        AppSpacing.horizontalXs,
         SizedBox(
           width: 40,
           child: Text(

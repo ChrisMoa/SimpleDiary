@@ -8,6 +8,7 @@ import 'package:day_tracker/features/notes/domain/providers/note_editing_page_pr
 import 'package:day_tracker/features/notes/presentation/pages/note_viewing_page.dart';
 import 'package:day_tracker/features/notes/presentation/widgets/note_search_result_item.dart';
 import 'package:day_tracker/l10n/app_localizations.dart';
+import 'package:day_tracker/core/widgets/app_ui_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -43,7 +44,7 @@ class FavoritesOverviewPage extends ConsumerWidget {
                     size: 64,
                     color: theme.colorScheme.primary.withValues(alpha: 0.5),
                   ),
-                  const SizedBox(height: 16),
+                  AppSpacing.verticalMd,
                   Text(
                     l10n.noFavorites,
                     style: theme.textTheme.titleMedium,

@@ -1,3 +1,4 @@
+import 'package:day_tracker/core/widgets/app_ui_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:day_tracker/features/day_rating/data/models/day_rating.dart';
 import 'package:day_tracker/features/goals/data/models/goal.dart';
@@ -20,29 +21,19 @@ class GoalProgressCard extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
     final goal = progress.goal;
 
-    return Card(
+    return AppCard.outlined(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-        side: BorderSide(
-          color: _getStatusColor(progress.status, theme).withValues(alpha: 0.3),
-          width: 1,
-        ),
-      ),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(16),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Header row
-              Row(
+      borderColor: _getStatusColor(progress.status, theme).withValues(alpha: 0.3),
+      onTap: onTap,
+      padding: AppSpacing.paddingAllMd,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Header row
+          Row(
                 children: [
                   _buildCategoryIcon(context, goal.category),
-                  const SizedBox(width: 12),
+                  AppSpacing.horizontalSm,
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -66,11 +57,11 @@ class GoalProgressCard extends StatelessWidget {
                   _buildStatusBadge(context, progress),
                 ],
               ),
-              const SizedBox(height: 16),
+              AppSpacing.verticalMd,
 
               // Progress bar with endowed progress effect
               _buildProgressBar(context, progress),
-              const SizedBox(height: 8),
+              AppSpacing.verticalXs,
 
               // Stats row
               Row(
@@ -98,8 +89,6 @@ class GoalProgressCard extends StatelessWidget {
               ),
             ],
           ),
-        ),
-      ),
     );
   }
 
@@ -129,7 +118,7 @@ class GoalProgressCard extends StatelessWidget {
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.15),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: AppRadius.borderRadiusMd,
       ),
       child: Icon(icon, color: color, size: 24),
     );
@@ -143,7 +132,7 @@ class GoalProgressCard extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.15),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: AppRadius.borderRadiusMd,
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -153,7 +142,7 @@ class GoalProgressCard extends StatelessWidget {
             size: 14,
             color: color,
           ),
-          const SizedBox(width: 4),
+          AppSpacing.horizontalXxs,
           Text(
             progress.statusMessage,
             style: theme.textTheme.labelSmall?.copyWith(

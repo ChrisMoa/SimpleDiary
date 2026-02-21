@@ -1,7 +1,8 @@
+import 'package:day_tracker/core/widgets/app_ui_kit.dart';
 import 'package:day_tracker/features/dashboard/presentation/widgets/diary_day_overview_list_item.dart';
 import 'package:day_tracker/features/day_rating/data/models/diary_day.dart';
 import 'package:day_tracker/features/day_rating/domain/providers/diary_day_local_db_provider.dart';
-import 'package:day_tracker/features/day_rating/presentation/pages/diary_day_wizard_page.dart';
+import 'package:day_tracker/core/navigation/drawer_index_provider.dart';
 import 'package:day_tracker/features/notes/domain/providers/note_local_db_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -33,25 +34,21 @@ class _DiaryDayOverviewListState extends ConsumerState<DiaryDayOverviewList> {
             size: 64,
             color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.5),
           ),
-          const SizedBox(height: 16),
+          AppSpacing.verticalMd,
           Text(
             'No diary entries yet',
             style: Theme.of(context).textTheme.titleLarge,
           ),
-          const SizedBox(height: 8),
+          AppSpacing.verticalXs,
           Text(
             'Start tracking your day by adding notes\nand completing daily evaluations',
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.bodyMedium,
           ),
-          const SizedBox(height: 24),
+          AppSpacing.verticalXl,
           ElevatedButton.icon(
             onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => const DiaryDayWizardPage(),
-                ),
-              );
+              ref.read(selectedDrawerIndexProvider.notifier).state = 3;
             },
             icon: const Icon(Icons.add),
             label: const Text('Start Today\'s Journal'),
@@ -77,24 +74,13 @@ class _DiaryDayOverviewListState extends ConsumerState<DiaryDayOverviewList> {
         ),
         direction: DismissDirection.endToStart,
         confirmDismiss: (direction) async {
-          return await showDialog(
-            context: context,
-            builder: (context) => AlertDialog(
-              title: const Text('Confirm Deletion'),
-              content: const Text(
-                'Are you sure you want to delete this diary entry?',
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.of(context).pop(false),
-                  child: const Text('Cancel'),
-                ),
-                TextButton(
-                  onPressed: () => Navigator.of(context).pop(true),
-                  child: const Text('Delete'),
-                ),
-              ],
-            ),
+          return await AppDialog.confirm(
+            context,
+            title: 'Confirm Deletion',
+            content: 'Are you sure you want to delete this diary entry?',
+            confirmLabel: 'Delete',
+            cancelLabel: 'Cancel',
+            isDestructive: true,
           );
         },
         onDismissed: (direction) {
@@ -122,19 +108,16 @@ class _DiaryDayOverviewListState extends ConsumerState<DiaryDayOverviewList> {
         .read(diaryDayLocalDbDataProvider.notifier)
         .deleteElement(removedDiaryDay);
 
-    ScaffoldMessenger.of(context).clearSnackBars();
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        duration: const Duration(seconds: 3),
-        content: const Text('Diary entry deleted'),
-        action: SnackBarAction(
-          label: 'Undo',
-          onPressed: () {
-            ref
-                .read(diaryDayLocalDbDataProvider.notifier)
-                .addElement(removedDiaryDay);
-          },
-        ),
+    AppSnackBar.info(
+      context,
+      message: 'Diary entry deleted',
+      action: SnackBarAction(
+        label: 'Undo',
+        onPressed: () {
+          ref
+              .read(diaryDayLocalDbDataProvider.notifier)
+              .addElement(removedDiaryDay);
+        },
       ),
     );
   }

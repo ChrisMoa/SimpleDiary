@@ -7,6 +7,7 @@ import 'package:day_tracker/features/notes/domain/providers/category_local_db_pr
 import 'package:day_tracker/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:day_tracker/core/widgets/app_ui_kit.dart';
 
 class TemplateEditingWidget extends ConsumerStatefulWidget {
   const TemplateEditingWidget({
@@ -59,7 +60,7 @@ class _TemplateEditingWidgetState extends ConsumerState<TemplateEditingWidget> {
 
     return Dialog(
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: AppRadius.borderRadiusLg,
       ),
       child: Container(
         padding: EdgeInsets.all(isSmallScreen ? 16 : 24),
@@ -93,24 +94,20 @@ class _TemplateEditingWidgetState extends ConsumerState<TemplateEditingWidget> {
                     ),
                   ],
                 ),
-                const SizedBox(height: 24),
+                AppSpacing.verticalXl,
 
                 // Title field
-                TextFormField(
+                AppTextField(
                   controller: _titleController,
-                  decoration: _buildInputDecoration(theme, l10n.templateName),
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    color: theme.colorScheme.onSurface,
-                  ),
+                  label: l10n.templateName,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return l10n.pleaseEnterTemplateName;
                     }
                     return null;
                   },
-                  onSaved: (value) => _template.title = value!,
                 ),
-                const SizedBox(height: 16),
+                AppSpacing.verticalMd,
 
                 // Duration field
                 TextFormField(
@@ -132,30 +129,26 @@ class _TemplateEditingWidgetState extends ConsumerState<TemplateEditingWidget> {
                   },
                   onSaved: (value) => _template.durationMinutes = int.parse(value!),
                 ),
-                const SizedBox(height: 16),
+                AppSpacing.verticalMd,
 
                 // Category dropdown
                 _buildCategoryDropdown(theme, l10n),
-                const SizedBox(height: 20),
+                AppSpacing.verticalLg,
 
                 // Description mode toggle
                 _buildDescriptionModeToggle(theme),
-                const SizedBox(height: 12),
+                AppSpacing.verticalSm,
 
                 // Description content (simple or sections)
                 if (_useDescriptionSections)
                   _buildSectionsEditor(theme, isSmallScreen)
                 else
-                  TextFormField(
+                  AppTextField(
                     controller: _descriptionController,
-                    decoration: _buildInputDecoration(theme, l10n.description),
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: theme.colorScheme.onSurface,
-                    ),
+                    label: l10n.description,
                     maxLines: 3,
-                    onSaved: (value) => _template.description = value ?? '',
                   ),
-                const SizedBox(height: 24),
+                AppSpacing.verticalXl,
 
                 // Action buttons
                 Row(
@@ -168,7 +161,7 @@ class _TemplateEditingWidgetState extends ConsumerState<TemplateEditingWidget> {
                         style: TextStyle(color: theme.colorScheme.primary),
                       ),
                     ),
-                    const SizedBox(width: 16),
+                    AppSpacing.horizontalMd,
                     ElevatedButton(
                       onPressed: _saveTemplate,
                       style: ElevatedButton.styleFrom(
@@ -195,15 +188,15 @@ class _TemplateEditingWidgetState extends ConsumerState<TemplateEditingWidget> {
       labelStyle: TextStyle(color: theme.colorScheme.primary),
       border: OutlineInputBorder(
         borderSide: BorderSide(color: theme.colorScheme.outline),
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: AppRadius.borderRadiusSm,
       ),
       enabledBorder: OutlineInputBorder(
         borderSide: BorderSide(color: theme.colorScheme.outline),
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: AppRadius.borderRadiusSm,
       ),
       focusedBorder: OutlineInputBorder(
         borderSide: BorderSide(color: theme.colorScheme.primary),
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: AppRadius.borderRadiusSm,
       ),
       filled: true,
       fillColor: theme.colorScheme.surface,
@@ -240,7 +233,7 @@ class _TemplateEditingWidgetState extends ConsumerState<TemplateEditingWidget> {
                   shape: BoxShape.circle,
                 ),
               ),
-              const SizedBox(width: 8),
+              AppSpacing.horizontalXs,
               Text(category.title),
             ],
           ),
@@ -302,7 +295,7 @@ class _TemplateEditingWidgetState extends ConsumerState<TemplateEditingWidget> {
           final section = entry.value;
           return _buildSectionCard(index, section, theme, isSmallScreen);
         }),
-        const SizedBox(height: 8),
+        AppSpacing.verticalXs,
         Center(
           child: OutlinedButton.icon(
             onPressed: () {
@@ -325,20 +318,12 @@ class _TemplateEditingWidgetState extends ConsumerState<TemplateEditingWidget> {
 
   Widget _buildSectionCard(int index, DescriptionSection section, ThemeData theme, bool isSmallScreen) {
     final l10n = AppLocalizations.of(context);
-    return Card(
+    return AppCard.outlined(
       margin: const EdgeInsets.only(bottom: 8),
       color: theme.colorScheme.secondaryContainer,
-      elevation: 0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10),
-        side: BorderSide(
-          color: theme.colorScheme.outline.withValues(alpha: 0.2),
-          width: 1,
-        ),
-      ),
-      child: Padding(
-        padding: EdgeInsets.all(isSmallScreen ? 10 : 12),
-        child: Row(
+      borderColor: theme.colorScheme.outline.withValues(alpha: 0.2),
+      padding: EdgeInsets.all(isSmallScreen ? 10 : 12),
+      child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Section number indicator
@@ -375,15 +360,15 @@ class _TemplateEditingWidgetState extends ConsumerState<TemplateEditingWidget> {
                         fontSize: 13,
                       ),
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: AppRadius.borderRadiusSm,
                         borderSide: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.3)),
                       ),
                       enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: AppRadius.borderRadiusSm,
                         borderSide: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.3)),
                       ),
                       focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: AppRadius.borderRadiusSm,
                         borderSide: BorderSide(color: theme.colorScheme.primary),
                       ),
                       filled: true,
@@ -399,7 +384,7 @@ class _TemplateEditingWidgetState extends ConsumerState<TemplateEditingWidget> {
                       _sections[index] = _sections[index].copyWith(title: value);
                     },
                   ),
-                  const SizedBox(height: 8),
+                  AppSpacing.verticalXs,
                   TextFormField(
                     initialValue: section.hint,
                     decoration: InputDecoration(
@@ -409,15 +394,15 @@ class _TemplateEditingWidgetState extends ConsumerState<TemplateEditingWidget> {
                         fontSize: 13,
                       ),
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: AppRadius.borderRadiusSm,
                         borderSide: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.2)),
                       ),
                       enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: AppRadius.borderRadiusSm,
                         borderSide: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.2)),
                       ),
                       focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: AppRadius.borderRadiusSm,
                         borderSide: BorderSide(color: theme.colorScheme.primary),
                       ),
                       filled: true,
@@ -435,7 +420,7 @@ class _TemplateEditingWidgetState extends ConsumerState<TemplateEditingWidget> {
                 ],
               ),
             ),
-            const SizedBox(width: 4),
+            AppSpacing.horizontalXxs,
             // Remove button
             IconButton(
               onPressed: () {
@@ -453,7 +438,6 @@ class _TemplateEditingWidgetState extends ConsumerState<TemplateEditingWidget> {
             ),
           ],
         ),
-      ),
     );
   }
 
@@ -461,11 +445,15 @@ class _TemplateEditingWidgetState extends ConsumerState<TemplateEditingWidget> {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
 
+      // Read from controllers for fields migrated to AppTextField
+      _template.title = _titleController.text;
+
       if (_useDescriptionSections) {
         _template.description = '';
         _template.descriptionSections =
             _sections.where((s) => s.title.isNotEmpty).toList();
       } else {
+        _template.description = _descriptionController.text;
         _template.descriptionSections = [];
       }
 
@@ -483,14 +471,7 @@ class _TemplateEditingWidgetState extends ConsumerState<TemplateEditingWidget> {
       Navigator.of(context).pop();
 
       final l10n = AppLocalizations.of(context);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            widget.template != null ? l10n.templateUpdatedSuccessfully : l10n.templateCreatedSuccessfully,
-          ),
-          duration: const Duration(seconds: 2),
-        ),
-      );
+      AppSnackBar.success(context, message: widget.template != null ? l10n.templateUpdatedSuccessfully : l10n.templateCreatedSuccessfully);
     }
   }
 }

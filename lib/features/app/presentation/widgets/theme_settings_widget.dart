@@ -1,6 +1,7 @@
 import 'package:day_tracker/core/provider/theme_provider.dart';
 import 'package:day_tracker/core/settings/settings_container.dart';
 import 'package:flex_color_picker/flex_color_picker.dart';
+import 'package:day_tracker/core/widgets/app_ui_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:day_tracker/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -24,11 +25,7 @@ class _ThemeSettingsWidgetState extends ConsumerState<ThemeSettingsWidget> {
     final screenWidth = mediaQuery.size.width;
     final isSmallScreen = screenWidth < 600;
 
-    return Card(
-      elevation: 4,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
+    return AppCard.elevated(
       child: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
@@ -39,7 +36,7 @@ class _ThemeSettingsWidgetState extends ConsumerState<ThemeSettingsWidget> {
               theme.colorScheme.surface,
             ],
           ),
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: AppRadius.borderRadiusLg,
         ),
         child: Padding(
           padding: const EdgeInsets.all(20.0),
@@ -55,7 +52,7 @@ class _ThemeSettingsWidgetState extends ConsumerState<ThemeSettingsWidget> {
                     color: theme.colorScheme.primary,
                     size: isSmallScreen ? 24 : 28,
                   ),
-                  const SizedBox(width: 8),
+                  AppSpacing.horizontalXs,
                   Text(
                     l10n.themeSettings,
                     style: theme.textTheme.titleLarge?.copyWith(
@@ -67,7 +64,7 @@ class _ThemeSettingsWidgetState extends ConsumerState<ThemeSettingsWidget> {
                 ],
               ),
 
-              const SizedBox(height: 16),
+              AppSpacing.verticalMd,
 
               Text(
                 l10n.customizeAppearance,
@@ -76,14 +73,14 @@ class _ThemeSettingsWidgetState extends ConsumerState<ThemeSettingsWidget> {
                 ),
               ),
 
-              const SizedBox(height: 24),
+              AppSpacing.verticalXl,
 
               // Theme Color
               Container(
                 padding: EdgeInsets.all(isSmallScreen ? 12 : 16),
                 decoration: BoxDecoration(
                   color: theme.colorScheme.surfaceContainer,
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: AppRadius.borderRadiusMd,
                   border: Border.all(
                     color: theme.colorScheme.outline.withValues(alpha: .2),
                   ),
@@ -98,14 +95,14 @@ class _ThemeSettingsWidgetState extends ConsumerState<ThemeSettingsWidget> {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    const SizedBox(height: 8),
+                    AppSpacing.verticalXs,
                     Text(
                       l10n.clickColorToChange,
                       style: theme.textTheme.bodyMedium?.copyWith(
                         color: theme.colorScheme.onSurface.withValues(alpha: .7),
                       ),
                     ),
-                    const SizedBox(height: 16),
+                    AppSpacing.verticalMd,
                     ColorIndicator(
                       width: 44,
                       height: 44,
@@ -132,7 +129,7 @@ class _ThemeSettingsWidgetState extends ConsumerState<ThemeSettingsWidget> {
                 padding: EdgeInsets.all(isSmallScreen ? 12 : 16),
                 decoration: BoxDecoration(
                   color: theme.colorScheme.surfaceContainer,
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: AppRadius.borderRadiusMd,
                   border: Border.all(
                     color: theme.colorScheme.outline.withValues(alpha: .2),
                   ),
@@ -147,14 +144,14 @@ class _ThemeSettingsWidgetState extends ConsumerState<ThemeSettingsWidget> {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    const SizedBox(height: 8),
+                    AppSpacing.verticalXs,
                     Text(
                       l10n.toggleDarkMode,
                       style: theme.textTheme.bodyMedium?.copyWith(
                         color: theme.colorScheme.onSurface.withValues(alpha: .7),
                       ),
                     ),
-                    const SizedBox(height: 16),
+                    AppSpacing.verticalMd,
                     Switch(
                       value: _darkModeSwitch,
                       onChanged: _onSwitchDarkModeClicked,
@@ -213,7 +210,7 @@ class _ThemeSettingsWidgetState extends ConsumerState<ThemeSettingsWidget> {
       },
     ).showPickerDialog(
       context,
-      actionsPadding: const EdgeInsets.all(16),
+      actionsPadding: AppSpacing.paddingAllMd,
       constraints: const BoxConstraints(minHeight: 480, minWidth: 300, maxWidth: 320),
     );
   }

@@ -1,3 +1,4 @@
+import 'package:day_tracker/core/widgets/app_ui_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -69,41 +70,33 @@ class DiaryDayDetailPage extends ConsumerWidget {
     final overallScore = diaryDay.overallScore;
 
     return ListView(
-      padding: const EdgeInsets.all(16),
+      padding: AppSpacing.paddingAllMd,
       children: [
         // Day summary card
-        Card(
-          elevation: 2,
+        AppCard.outlined(
           color: theme.colorScheme.secondaryContainer,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-            side: BorderSide(
-              color: theme.colorScheme.outline.withValues(alpha: 0.1),
-              width: 1,
-            ),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Day Summary',
-                  style: theme.textTheme.titleLarge?.copyWith(
-                    color: theme.colorScheme.onSecondaryContainer,
-                    fontWeight: FontWeight.bold,
-                  ),
+          borderColor: theme.colorScheme.outline.withValues(alpha: 0.1),
+          borderRadius: AppRadius.borderRadiusMd,
+          padding: AppSpacing.paddingAllMd,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Day Summary',
+                style: theme.textTheme.titleLarge?.copyWith(
+                  color: theme.colorScheme.onSecondaryContainer,
+                  fontWeight: FontWeight.bold,
                 ),
-                const SizedBox(height: 16),
-                _buildRatingsSummary(context, diaryDay),
-                const SizedBox(height: 16),
-                _buildOverallMood(context, overallScore),
-              ],
-            ),
+              ),
+              AppSpacing.verticalMd,
+              _buildRatingsSummary(context, diaryDay),
+              AppSpacing.verticalMd,
+              _buildOverallMood(context, overallScore),
+            ],
           ),
         ),
 
-        const SizedBox(height: 24),
+        AppSpacing.verticalXl,
 
         // Notes section
         Row(
@@ -125,7 +118,7 @@ class DiaryDayDetailPage extends ConsumerWidget {
               ),
           ],
         ),
-        const SizedBox(height: 8),
+        AppSpacing.verticalXs,
         notes.isEmpty
             ? _buildEmptyNotesMessage(context)
             : _buildNotesList(context, notes),
@@ -195,7 +188,7 @@ class DiaryDayDetailPage extends ConsumerWidget {
             ),
           ),
         ),
-        const SizedBox(width: 16),
+        AppSpacing.horizontalMd,
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -207,7 +200,7 @@ class DiaryDayDetailPage extends ConsumerWidget {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              const SizedBox(height: 4),
+              AppSpacing.verticalXxs,
               LinearProgressIndicator(
                 value: percentage,
                 backgroundColor: theme.colorScheme.surfaceContainerHighest,
@@ -224,26 +217,19 @@ class DiaryDayDetailPage extends ConsumerWidget {
 
   Widget _buildEmptyNotesMessage(BuildContext context) {
     final theme = Theme.of(context);
-    return Card(
-      elevation: 1,
+    return AppCard.outlined(
       color: theme.colorScheme.secondaryContainer,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-        side: BorderSide(
-          color: theme.colorScheme.outline.withValues(alpha: 0.1),
-          width: 1,
-        ),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            Icon(
-              Icons.note_add_outlined,
-              size: 48,
+      borderColor: theme.colorScheme.outline.withValues(alpha: 0.1),
+      borderRadius: AppRadius.borderRadiusMd,
+      padding: AppSpacing.paddingAllMd,
+      child: Column(
+        children: [
+          Icon(
+            Icons.note_add_outlined,
+            size: 48,
               color: theme.colorScheme.primary.withValues(alpha: 0.5),
             ),
-            const SizedBox(height: 16),
+            AppSpacing.verticalMd,
             Text(
               'No notes for this day',
               textAlign: TextAlign.center,
@@ -251,7 +237,7 @@ class DiaryDayDetailPage extends ConsumerWidget {
                 color: theme.colorScheme.onSecondaryContainer,
               ),
             ),
-            const SizedBox(height: 8),
+            AppSpacing.verticalXs,
             Text(
               'Add your thoughts, activities or memories',
               textAlign: TextAlign.center,
@@ -263,7 +249,6 @@ class DiaryDayDetailPage extends ConsumerWidget {
             ),
           ],
         ),
-      ),
     );
   }
 
@@ -285,83 +270,72 @@ class DiaryDayDetailPage extends ConsumerWidget {
 
   Widget _buildNoteItem(BuildContext context, dynamic note) {
     final theme = Theme.of(context);
-    return Card(
-      elevation: 1,
+    return AppCard.outlined(
       margin: const EdgeInsets.symmetric(vertical: 4),
       color: theme.colorScheme.secondaryContainer,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8),
-        side: BorderSide(
-          color: theme.colorScheme.outline.withValues(alpha: 0.1),
-          width: 1,
-        ),
-      ),
-      child: InkWell(
-        onTap: () => _viewNote(context, note),
-        borderRadius: BorderRadius.circular(8),
-        child: Padding(
-          padding: const EdgeInsets.all(12),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+      borderColor: theme.colorScheme.outline.withValues(alpha: 0.1),
+      borderRadius: AppRadius.borderRadiusSm,
+      onTap: () => _viewNote(context, note),
+      padding: AppSpacing.paddingAllSm,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
             children: [
-              Row(
-                children: [
-                  _getCategoryIcon(context, note.noteCategory),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      note.title,
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: theme.colorScheme.onSecondaryContainer,
-                      ),
-                    ),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.edit_outlined, size: 20),
-                    onPressed: () => _editNote(context, note),
-                    tooltip: 'Edit note',
-                    color: theme.colorScheme.primary,
-                  ),
-                ],
-              ),
-              if (note.description.isNotEmpty) ...[
-                const SizedBox(height: 8),
-                Text(
-                  note.description,
-                  maxLines: 3,
-                  overflow: TextOverflow.ellipsis,
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    color: theme.colorScheme.onSecondaryContainer
-                        .withValues(alpha: 0.9),
+              _getCategoryIcon(context, note.noteCategory),
+              AppSpacing.horizontalXs,
+              Expanded(
+                child: Text(
+                  note.title,
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: theme.colorScheme.onSecondaryContainer,
                   ),
                 ),
-              ],
-              const SizedBox(height: 8),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Icon(
-                    Icons.access_time,
-                    size: 16,
-                    color: theme.colorScheme.onSecondaryContainer
-                        .withValues(alpha: 0.7),
-                  ),
-                  const SizedBox(width: 4),
-                  Text(
-                    note.isAllDay
-                        ? 'All day'
-                        : '${_formatTime(note.from)} - ${_formatTime(note.to)}',
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: theme.colorScheme.onSecondaryContainer
-                          .withValues(alpha: 0.7),
-                    ),
-                  ),
-                ],
+              ),
+              IconButton(
+                icon: const Icon(Icons.edit_outlined, size: 20),
+                onPressed: () => _editNote(context, note),
+                tooltip: 'Edit note',
+                color: theme.colorScheme.primary,
               ),
             ],
           ),
-        ),
+          if (note.description.isNotEmpty) ...[
+            AppSpacing.verticalXs,
+            Text(
+              note.description,
+              maxLines: 3,
+              overflow: TextOverflow.ellipsis,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: theme.colorScheme.onSecondaryContainer
+                    .withValues(alpha: 0.9),
+              ),
+            ),
+          ],
+          AppSpacing.verticalXs,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Icon(
+                Icons.access_time,
+                size: 16,
+                color: theme.colorScheme.onSecondaryContainer
+                    .withValues(alpha: 0.7),
+              ),
+              AppSpacing.horizontalXxs,
+              Text(
+                note.isAllDay
+                    ? 'All day'
+                    : '${_formatTime(note.from)} - ${_formatTime(note.to)}',
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: theme.colorScheme.onSecondaryContainer
+                      .withValues(alpha: 0.7),
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }

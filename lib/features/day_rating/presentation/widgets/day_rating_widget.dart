@@ -5,6 +5,7 @@ import 'package:day_tracker/features/day_rating/domain/providers/diary_day_local
 import 'package:day_tracker/features/day_rating/domain/providers/diary_wizard_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:day_tracker/l10n/app_localizations.dart';
+import 'package:day_tracker/core/widgets/app_ui_kit.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -24,14 +25,10 @@ class DayRatingWidget extends ConsumerWidget {
     final isLandscape = mediaQuery.orientation == Orientation.landscape;
 
     // Create a scrollable layout that adapts to different screen sizes
-    return Card(
-      margin: const EdgeInsets.all(8),
+    return AppCard.elevated(
+      margin: AppSpacing.paddingAllXs,
       color: theme.colorScheme.secondaryContainer,
-      elevation: 2,
-      shadowColor: theme.colorScheme.shadow.withValues(alpha: 0.3),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
+      borderRadius: AppRadius.borderRadiusMd,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -58,7 +55,7 @@ class DayRatingWidget extends ConsumerWidget {
             ),
           ),
 
-          const SizedBox(height: 8),
+          AppSpacing.verticalXs,
 
           // Rating cards - scrollable area
           Expanded(
@@ -174,21 +171,13 @@ class DayRatingWidget extends ConsumerWidget {
     final double descriptionFontSize = isSmallScreen ? 12.0 : 14.0;
     final double ratingLabelFontSize = isSmallScreen ? 12.0 : 14.0;
 
-    return Card(
+    return AppCard.outlined(
       margin: EdgeInsets.only(bottom: isSmallScreen ? 12 : 16),
       color: theme.colorScheme.secondaryContainer,
-      elevation: 4,
-      shadowColor: theme.colorScheme.shadow.withValues(alpha: 0.3),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-        side: BorderSide(
-          color: theme.colorScheme.outline.withValues(alpha: 0.3),
-          width: 1,
-        ),
-      ),
-      child: Padding(
-        padding: EdgeInsets.all(cardPadding),
-        child: SingleChildScrollView(
+      borderColor: theme.colorScheme.outline.withValues(alpha: 0.3),
+      borderRadius: AppRadius.borderRadiusMd,
+      padding: EdgeInsets.all(cardPadding),
+      child: SingleChildScrollView(
           child: ConstrainedBox(
             constraints: BoxConstraints(
               minHeight: isSmallScreen ? 120 : 150,
@@ -323,7 +312,6 @@ class DayRatingWidget extends ConsumerWidget {
             ),
           ),
         ),
-      ),
     );
   }
 
@@ -396,7 +384,6 @@ class DayRatingWidget extends ConsumerWidget {
   void _saveDiaryDay(BuildContext context, WidgetRef ref, DateTime selectedDate) {
     final ratings = ref.read(dayRatingsProvider);
     final allNotes = ref.read(wizardDayNotesProvider);
-    final theme = ref.read(themeProvider);
 
     // Filter out dummy notes (empty title and description)
     final validNotes = allNotes.where((note) => note.title.isNotEmpty || note.description.isNotEmpty).toList();
@@ -414,17 +401,7 @@ class DayRatingWidget extends ConsumerWidget {
     ref.read(diaryDayLocalDbDataProvider.notifier).addElement(diaryDay);
 
     // Show success message
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          'Day rating saved successfully!',
-          style: TextStyle(color: theme.colorScheme.onPrimary),
-        ),
-        backgroundColor: theme.colorScheme.primary,
-        duration: const Duration(seconds: 2),
-        behavior: SnackBarBehavior.floating,
-      ),
-    );
+    AppSnackBar.success(context, message: 'Day rating saved successfully!');
 
     // Reset ratings for next day
     ref.read(dayRatingsProvider.notifier).resetRatings();

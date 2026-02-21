@@ -1,4 +1,5 @@
 import 'package:day_tracker/core/utils/utils.dart';
+import 'package:day_tracker/core/widgets/app_ui_kit.dart';
 import 'package:day_tracker/features/notes/data/models/note.dart';
 import 'package:day_tracker/features/notes/domain/providers/note_local_db_provider.dart';
 import 'package:flutter/material.dart';
@@ -77,10 +78,10 @@ class NoteSearchResultItem extends ConsumerWidget {
     final highlightTextColor = theme.colorScheme.onPrimaryContainer;
 
     return Card(
-      margin: const EdgeInsets.all(8),
+      margin: AppSpacing.paddingAllXs,
       color: theme.colorScheme.secondaryContainer,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: AppRadius.borderRadiusSm,
       ),
       clipBehavior: Clip.hardEdge,
       elevation: 2,

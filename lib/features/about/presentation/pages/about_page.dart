@@ -1,3 +1,4 @@
+import 'package:day_tracker/core/widgets/app_ui_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:day_tracker/l10n/app_localizations.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -39,26 +40,19 @@ class _AboutPageState extends State<AboutPage> {
       ),
       backgroundColor: colorScheme.surface,
       body: ListView(
-        padding: const EdgeInsets.all(16),
+        padding: AppSpacing.paddingAllMd,
         children: [
-          Card(
-            elevation: 2,
+          AppCard.outlined(
             color: colorScheme.secondaryContainer,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-              side: BorderSide(
-                color: colorScheme.outline.withValues(alpha: 0.1),
-                width: 1,
-              ),
-            ),
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
+            borderColor: colorScheme.outline.withValues(alpha: 0.1),
+            borderRadius: AppRadius.borderRadiusMd,
+            padding: AppSpacing.paddingAllMd,
+            child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Center(
                     child: Container(
-                      padding: const EdgeInsets.all(12),
+                      padding: AppSpacing.paddingAllSm,
                       decoration: BoxDecoration(
                         color: colorScheme.surface,
                         shape: BoxShape.circle,
@@ -77,7 +71,7 @@ class _AboutPageState extends State<AboutPage> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 16),
+                  AppSpacing.verticalMd,
                   Center(
                     child: Text(
                       l10n.dayTracker,
@@ -96,11 +90,11 @@ class _AboutPageState extends State<AboutPage> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 24),
+                  AppSpacing.verticalXl,
                   _buildInfoRow(context, l10n.developer, 'Your Name'),
                   _buildInfoRow(context, l10n.contact, 'your.email@example.com'),
                   Divider(color: colorScheme.outline.withValues(alpha: 0.2)),
-                  const SizedBox(height: 8),
+                  AppSpacing.verticalXs,
                   Text(
                     l10n.description,
                     style: theme.textTheme.titleMedium?.copyWith(
@@ -108,14 +102,14 @@ class _AboutPageState extends State<AboutPage> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  const SizedBox(height: 8),
+                  AppSpacing.verticalXs,
                   Text(
                     l10n.appDescription,
                     style: theme.textTheme.bodyMedium?.copyWith(
                       color: colorScheme.onSecondaryContainer,
                     ),
                   ),
-                  const SizedBox(height: 16),
+                  AppSpacing.verticalMd,
                   Text(
                     l10n.features,
                     style: theme.textTheme.titleMedium?.copyWith(
@@ -123,7 +117,7 @@ class _AboutPageState extends State<AboutPage> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  const SizedBox(height: 8),
+                  AppSpacing.verticalXs,
                   _buildFeatureItem(
                     context,
                     l10n.featureTrackActivities,
@@ -142,7 +136,7 @@ class _AboutPageState extends State<AboutPage> {
                     l10n.featureSync,
                   ),
                   _buildFeatureItem(context, l10n.featureExportImport),
-                  const SizedBox(height: 16),
+                  AppSpacing.verticalMd,
                   Text(
                     l10n.licenses,
                     style: theme.textTheme.titleMedium?.copyWith(
@@ -150,7 +144,7 @@ class _AboutPageState extends State<AboutPage> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  const SizedBox(height: 8),
+                  AppSpacing.verticalXs,
                   TextButton(
                     onPressed: () {
                       showLicensePage(
@@ -177,10 +171,9 @@ class _AboutPageState extends State<AboutPage> {
                   ),
                 ],
               ),
-            ),
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: 16),
+            padding: AppSpacing.paddingVerticalMd,
             child: Center(
               child: Text(
                 l10n.copyright(DateTime.now().year),
@@ -235,7 +228,7 @@ class _AboutPageState extends State<AboutPage> {
             size: 18,
             color: colorScheme.primary,
           ),
-          const SizedBox(width: 8),
+          AppSpacing.horizontalXs,
           Expanded(
             child: Text(
               feature,

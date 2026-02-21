@@ -97,7 +97,7 @@ class _DiaryDayEditingWizardWidgetState extends ConsumerState<DiaryDayEditingWiz
                 ),
               ],
               labelColor: theme.colorScheme.primary,
-              unselectedLabelColor: theme.colorScheme.onSurface.withOpacity(0.7),
+              unselectedLabelColor: theme.colorScheme.onSurface.withValues(alpha:0.7),
               indicatorColor: theme.colorScheme.primary,
             ),
 

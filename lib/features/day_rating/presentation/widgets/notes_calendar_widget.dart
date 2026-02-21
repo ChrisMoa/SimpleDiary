@@ -11,6 +11,7 @@ import 'package:day_tracker/features/notes/data/models/note_data_source.dart';
 import 'package:day_tracker/features/notes/domain/providers/category_local_db_provider.dart';
 import 'package:day_tracker/features/notes/domain/providers/note_local_db_provider.dart';
 import 'package:day_tracker/l10n/app_localizations.dart';
+import 'package:day_tracker/core/widgets/app_ui_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
@@ -57,21 +58,17 @@ class _NotesCalendarWidgetState extends ConsumerState<NotesCalendarWidget> {
     // Create appointments from notes
     final dataSource = NoteDataSource(notes);
 
-    return Card(
-      margin: const EdgeInsets.all(8),
+    return AppCard.elevated(
+      margin: AppSpacing.paddingAllXs,
       color: theme.colorScheme.secondaryContainer,
-      elevation: 2,
-      shadowColor: theme.colorScheme.shadow.withValues(alpha: 0.3),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
+      borderRadius: AppRadius.borderRadiusMd,
       child: Stack(
         children: [
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
-                padding: const EdgeInsets.all(8.0),
+                padding: AppSpacing.paddingAllXs,
                 child: const DateSelectorWidget(),
               ),
 
@@ -105,7 +102,7 @@ class _NotesCalendarWidgetState extends ConsumerState<NotesCalendarWidget> {
                               color: theme.colorScheme.primary,
                               size: 16,
                             ),
-                            const SizedBox(width: 4),
+                            AppSpacing.horizontalXxs,
                             Text(
                               l10n.scheduleComplete,
                               style: theme.textTheme.bodySmall?.copyWith(
@@ -126,7 +123,7 @@ class _NotesCalendarWidgetState extends ConsumerState<NotesCalendarWidget> {
                               color: theme.colorScheme.error,
                               size: 16,
                             ),
-                            const SizedBox(width: 4),
+                            AppSpacing.horizontalXxs,
                             Text(
                               l10n.fillInYourCompleteDay,
                               style: theme.textTheme.bodySmall?.copyWith(
@@ -183,7 +180,7 @@ class _NotesCalendarWidgetState extends ConsumerState<NotesCalendarWidget> {
 
               // Legend for categories - Wrap it for small screens
               Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: AppSpacing.paddingAllXs,
                 child: Wrap(
                   spacing: 8,
                   runSpacing: 8,
@@ -208,7 +205,7 @@ class _NotesCalendarWidgetState extends ConsumerState<NotesCalendarWidget> {
       padding: EdgeInsets.symmetric(horizontal: isSmallScreen ? 4 : 8, vertical: isSmallScreen ? 2 : 4),
       decoration: BoxDecoration(
         color: category.color.withValues(alpha: 0.2),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: AppRadius.borderRadiusMd,
         border: Border.all(
           color: category.color.withValues(alpha: 0.5),
           width: 1,

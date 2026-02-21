@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:path/path.dart' as p;
 import 'package:filesystem_picker/src/actions/action.dart';
 import 'package:filesystem_picker/src/actions/shakeable_dialogs.dart';
+import 'package:day_tracker/core/widgets/app_ui_kit.dart';
 import 'package:flutter/material.dart';
 
 /// The signature of the error message string interpolator when the folder being created already exists.
@@ -90,17 +91,10 @@ class FilesystemPickerNewFileContextAction extends FilesystemPickerContextAction
   }
 
   Future<void> _showError(BuildContext context, String message) async {
-    return showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        content: Text(message),
-        actions: [
-          TextButton(
-            child: const Text('OK'),
-            onPressed: () => Navigator.maybeOf(context)?.pop(),
-          ),
-        ],
-      ),
+    return AppDialog.info(
+      context,
+      title: 'Error',
+      content: message,
     );
   }
 

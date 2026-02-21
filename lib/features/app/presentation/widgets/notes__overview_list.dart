@@ -3,6 +3,7 @@ import 'package:day_tracker/features/notes/domain/providers/note_editing_page_pr
 import 'package:day_tracker/features/notes/domain/providers/note_search_provider.dart';
 import 'package:day_tracker/features/notes/presentation/pages/note_viewing_page.dart';
 import 'package:day_tracker/features/notes/presentation/widgets/note_search_result_item.dart';
+import 'package:day_tracker/core/widgets/app_ui_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:day_tracker/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -37,13 +38,13 @@ class _NotesOverviewListState extends ConsumerState<NotesOverviewList> {
             size: 64,
             color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.5),
           ),
-          const SizedBox(height: 16),
+          AppSpacing.verticalMd,
           Text(
             isSearchActive ? l10n.noNotesMatchSearch : l10n.noDiaryEntriesYet,
             style: Theme.of(context).textTheme.titleMedium,
           ),
           if (isSearchActive) ...[
-            const SizedBox(height: 8),
+            AppSpacing.verticalXs,
             Text(
               l10n.tryDifferentSearch,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(

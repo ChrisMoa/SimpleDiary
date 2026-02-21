@@ -1,4 +1,5 @@
 import 'package:day_tracker/features/day_rating/data/models/day_rating.dart';
+import 'package:day_tracker/core/widgets/app_ui_kit.dart';
 import 'package:flutter/material.dart';
 
 class DiaryDayOverviewRatingListItem extends StatelessWidget {
@@ -19,7 +20,7 @@ class DiaryDayOverviewRatingListItem extends StatelessWidget {
                 fontWeight: FontWeight.bold,
               ),
         ),
-        const SizedBox(width: 20),
+        AppSpacing.horizontalLg,
         Text(
           diaryDayRating.score.toString(),
           style: Theme.of(context).textTheme.titleMedium!.copyWith(
@@ -27,7 +28,7 @@ class DiaryDayOverviewRatingListItem extends StatelessWidget {
                 fontWeight: FontWeight.bold,
               ),
         ),
-        const SizedBox(width: 20),
+        AppSpacing.horizontalLg,
       ]),
     );
   }

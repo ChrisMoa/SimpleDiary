@@ -2,6 +2,7 @@ import 'package:day_tracker/core/utils/utils.dart';
 import 'package:day_tracker/features/dashboard/presentation/widgets/diary_day_notes_overview_list_item.dart';
 import 'package:day_tracker/features/day_rating/data/models/diary_day.dart';
 import 'package:day_tracker/features/day_rating/domain/providers/diary_day_local_db_provider.dart';
+import 'package:day_tracker/core/widgets/app_ui_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -20,35 +21,22 @@ class DiaryDayOverviewListItem extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
 
-    return Card(
+    return AppCard.outlined(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      // Use the secondaryContainer color from theme to match other UI elements
       color: theme.colorScheme.secondaryContainer,
-      elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-        // Optional subtle border
-        side: BorderSide(
-          color: theme.colorScheme.outline.withValues(alpha: 0.1),
-          width: 1,
-        ),
-      ),
-      child: InkWell(
-        onTap: () => onSelectDiaryDay(diaryDay),
-        borderRadius: BorderRadius.circular(12),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildHeader(context, ref),
-              Divider(color: theme.colorScheme.outline.withValues(alpha: 0.2)),
-              _buildRatingsSection(context),
-              const SizedBox(height: 16),
-              _buildNotesSection(context),
-            ],
-          ),
-        ),
+      borderColor: theme.colorScheme.outline.withValues(alpha: 0.1),
+      borderRadius: AppRadius.borderRadiusMd,
+      onTap: () => onSelectDiaryDay(diaryDay),
+      padding: AppSpacing.paddingAllMd,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildHeader(context, ref),
+          Divider(color: theme.colorScheme.outline.withValues(alpha: 0.2)),
+          _buildRatingsSection(context),
+          AppSpacing.verticalMd,
+          _buildNotesSection(context),
+        ],
       ),
     );
   }
@@ -67,7 +55,7 @@ class DiaryDayOverviewListItem extends ConsumerWidget {
             fontWeight: FontWeight.bold,
           ),
         ),
-        const SizedBox(width: 8),
+        AppSpacing.horizontalXs,
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -117,7 +105,7 @@ class DiaryDayOverviewListItem extends ConsumerWidget {
             // Use semantically meaningful colors but apply theme-aware opacity
             color: _getScoreColor(diaryDay.overallScore).withValues(
                 alpha: theme.brightness == Brightness.dark ? 0.7 : 1.0),
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: AppRadius.borderRadiusLg,
           ),
           child: Text(
             'Score: ${diaryDay.overallScore}',
@@ -152,7 +140,7 @@ class DiaryDayOverviewListItem extends ConsumerWidget {
             color: theme.colorScheme.onSecondaryContainer,
           ),
         ),
-        const SizedBox(height: 4),
+        AppSpacing.verticalXxs,
         Container(
           width: 36,
           height: 36,
@@ -204,7 +192,7 @@ class DiaryDayOverviewListItem extends ConsumerWidget {
             fontWeight: FontWeight.bold,
           ),
         ),
-        const SizedBox(height: 8),
+        AppSpacing.verticalXs,
         // Display up to 3 notes with a "more" indicator if needed
         ...diaryDay.notes.take(3).map((note) => DiaryDayNotesOverviewListItem(
               note: note,

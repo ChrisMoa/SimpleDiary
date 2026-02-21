@@ -4,6 +4,7 @@ import 'package:day_tracker/core/services/biometric_service.dart';
 import 'package:day_tracker/core/settings/settings_container.dart';
 import 'package:day_tracker/features/authentication/domain/providers/biometric_provider.dart';
 import 'package:day_tracker/features/authentication/domain/providers/user_data_provider.dart';
+import 'package:day_tracker/core/widgets/app_ui_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:day_tracker/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -44,11 +45,7 @@ class _BiometricSettingsWidgetState
     final isSmallScreen = screenWidth < 600;
     final biometricAvailable = ref.watch(biometricAvailableProvider);
 
-    return Card(
-      elevation: 4,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
+    return AppCard.elevated(
       child: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
@@ -59,7 +56,7 @@ class _BiometricSettingsWidgetState
               theme.colorScheme.surface,
             ],
           ),
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: AppRadius.borderRadiusLg,
         ),
         child: Padding(
           padding: const EdgeInsets.all(20.0),
@@ -75,7 +72,7 @@ class _BiometricSettingsWidgetState
                     color: theme.colorScheme.primary,
                     size: isSmallScreen ? 24 : 28,
                   ),
-                  const SizedBox(width: 8),
+                  AppSpacing.horizontalXs,
                   Text(
                     l10n.biometricSettings,
                     style: theme.textTheme.titleLarge?.copyWith(
@@ -87,7 +84,7 @@ class _BiometricSettingsWidgetState
                 ],
               ),
 
-              const SizedBox(height: 16),
+              AppSpacing.verticalMd,
 
               Text(
                 l10n.biometricSettingsDescription,
@@ -96,7 +93,7 @@ class _BiometricSettingsWidgetState
                 ),
               ),
 
-              const SizedBox(height: 24),
+              AppSpacing.verticalXl,
 
               biometricAvailable.when(
                 data: (isAvailable) {
@@ -180,7 +177,7 @@ class _BiometricSettingsWidgetState
                   decoration: BoxDecoration(
                     color: theme.colorScheme.primaryContainer
                         .withValues(alpha: 0.3),
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: AppRadius.borderRadiusMd,
                   ),
                   child: Row(
                     children: [
@@ -188,7 +185,7 @@ class _BiometricSettingsWidgetState
                         Icons.check_circle_outline,
                         color: theme.colorScheme.primary,
                       ),
-                      const SizedBox(width: 12),
+                      AppSpacing.horizontalSm,
                       Text(
                         typeNames,
                         style: theme.textTheme.bodyMedium?.copyWith(
@@ -277,7 +274,7 @@ class _BiometricSettingsWidgetState
                   vertical: isSmallScreen ? 12 : 14,
                 ),
                 shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
+                  borderRadius: AppRadius.borderRadiusSm,
                 ),
               ),
             ),
@@ -298,7 +295,7 @@ class _BiometricSettingsWidgetState
       padding: EdgeInsets.all(isSmallScreen ? 12 : 16),
       decoration: BoxDecoration(
         color: theme.colorScheme.surfaceContainer,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: AppRadius.borderRadiusMd,
         border: Border.all(
           color: theme.colorScheme.outline.withValues(alpha: .2),
         ),
@@ -313,14 +310,14 @@ class _BiometricSettingsWidgetState
               fontWeight: FontWeight.bold,
             ),
           ),
-          const SizedBox(height: 8),
+          AppSpacing.verticalXs,
           Text(
             description,
             style: theme.textTheme.bodyMedium?.copyWith(
               color: theme.colorScheme.onSurface.withValues(alpha: .7),
             ),
           ),
-          const SizedBox(height: 16),
+          AppSpacing.verticalMd,
           control,
         ],
       ),
@@ -338,12 +335,7 @@ class _BiometricSettingsWidgetState
 
       if (!success) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(l10n.biometricEnrollFailed),
-              backgroundColor: Theme.of(context).colorScheme.error,
-            ),
-          );
+          AppSnackBar.error(context, message: l10n.biometricEnrollFailed);
         }
         return;
       }
@@ -359,23 +351,13 @@ class _BiometricSettingsWidgetState
         LogWrapper.logger
             .e('Cannot store biometric credentials: no clear password');
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(l10n.biometricEnrollFailed),
-              backgroundColor: Theme.of(context).colorScheme.error,
-            ),
-          );
+          AppSnackBar.error(context, message: l10n.biometricEnrollFailed);
         }
         return;
       }
 
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(l10n.biometricEnrollSuccess),
-            backgroundColor: Theme.of(context).colorScheme.primary,
-          ),
-        );
+        AppSnackBar.success(context, message: l10n.biometricEnrollSuccess);
       }
     } else {
       // Clear stored credentials
@@ -398,15 +380,10 @@ class _BiometricSettingsWidgetState
 
     if (!mounted) return;
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          success ? l10n.biometricTestSuccess : l10n.biometricTestFailed,
-        ),
-        backgroundColor: success
-            ? Theme.of(context).colorScheme.primary
-            : Theme.of(context).colorScheme.error,
-      ),
-    );
+    if (success) {
+      AppSnackBar.success(context, message: l10n.biometricTestSuccess);
+    } else {
+      AppSnackBar.error(context, message: l10n.biometricTestFailed);
+    }
   }
 }

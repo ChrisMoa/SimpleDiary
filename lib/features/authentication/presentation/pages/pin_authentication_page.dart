@@ -1,3 +1,4 @@
+import 'package:day_tracker/core/widgets/app_ui_kit.dart';
 import 'package:day_tracker/features/authentication/domain/providers/user_data_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -51,23 +52,9 @@ class _PinAuthenticationPageState extends ConsumerState<PinAuthenticationPage> {
           children: [
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: TextFormField(
+              child: AppTextField(
                 controller: _pinController,
-                decoration: InputDecoration(
-                  labelText: 'Pin',
-                  labelStyle:
-                      TextStyle(color: Theme.of(context).colorScheme.primary),
-                  border: const OutlineInputBorder(),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                        color: Theme.of(context).colorScheme.primary),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(
-                        color: Theme.of(context).colorScheme.primaryContainer),
-                  ),
-                ),
-                style: TextStyle(color: Theme.of(context).colorScheme.primary),
+                label: 'Pin',
                 obscureText: true,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -88,14 +75,7 @@ class _PinAuthenticationPageState extends ConsumerState<PinAuthenticationPage> {
                     // Pin is correct, proceed to next page or action
                   } else {
                     // Incorrect pin, show error
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                          content: Text('Incorrect pin',
-                              style: TextStyle(
-                                  color:
-                                      Theme.of(context).colorScheme.onError)),
-                          backgroundColor: Theme.of(context).colorScheme.error),
-                    );
+                    AppSnackBar.error(context, message: 'Incorrect pin');
                   }
                 }
               },

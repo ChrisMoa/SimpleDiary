@@ -1,4 +1,5 @@
 import 'package:day_tracker/core/provider/theme_provider.dart';
+import 'package:day_tracker/core/widgets/app_ui_kit.dart';
 import 'package:day_tracker/features/day_rating/domain/providers/diary_wizard_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -21,16 +22,12 @@ class DateSelectorWidget extends ConsumerWidget {
         ? DateFormat('EEE, MMM d') // Compact format for very small screens
         : DateFormat('EEEE, MMMM d, yyyy'); // Full format for larger screens
 
-    return Card(
+    return AppCard.elevated(
       margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
       color: theme.colorScheme.secondaryContainer,
-      elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(12.0),
-        child: Row(
+      borderRadius: AppRadius.borderRadiusMd,
+      padding: AppSpacing.paddingAllSm,
+      child: Row(
           children: [
             // Date display with detailed format
             Expanded(
@@ -86,7 +83,6 @@ class DateSelectorWidget extends ConsumerWidget {
             ),
           ],
         ),
-      ),
     );
   }
 
@@ -108,7 +104,7 @@ class DateSelectorWidget extends ConsumerWidget {
         icon: Icon(icon, size: 20),
         onPressed: onPressed,
         tooltip: tooltip,
-        padding: const EdgeInsets.all(12),
+        padding: AppSpacing.paddingAllSm,
         constraints: const BoxConstraints(
           minWidth: 48,
           minHeight: 48,

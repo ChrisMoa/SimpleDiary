@@ -1,4 +1,5 @@
 import 'package:day_tracker/core/provider/theme_provider.dart';
+import 'package:day_tracker/core/widgets/app_ui_kit.dart';
 import 'package:day_tracker/features/day_rating/domain/providers/diary_wizard_providers.dart';
 import 'package:day_tracker/features/notes/data/models/note.dart';
 import 'package:day_tracker/features/notes/domain/providers/note_local_db_provider.dart';
@@ -37,7 +38,7 @@ class FloatingTemplateButton extends ConsumerWidget {
                   theme,
                   template,
                 )),
-          const SizedBox(height: 8),
+          AppSpacing.verticalXs,
 
           // Main template selector button
           FloatingActionButton(
@@ -110,22 +111,10 @@ class FloatingTemplateButton extends ConsumerWidget {
       // Show feedback to user
       final l10n = AppLocalizations.of(context);
       final timeStr = '${newNote.from.hour.toString().padLeft(2, '0')}:${newNote.from.minute.toString().padLeft(2, '0')}';
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(l10n.addedTemplateAtTime(template.title, timeStr)),
-          duration: const Duration(seconds: 2),
-          backgroundColor: Theme.of(context).colorScheme.primary,
-        ),
-      );
+      AppSnackBar.success(context, message: l10n.addedTemplateAtTime(template.title, timeStr));
     } catch (e) {
       final l10n = AppLocalizations.of(context);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(l10n.errorCreatingNote('$e')),
-          duration: const Duration(seconds: 2),
-          backgroundColor: Theme.of(context).colorScheme.error,
-        ),
-      );
+      AppSnackBar.error(context, message: l10n.errorCreatingNote('$e'));
     }
   }
 }

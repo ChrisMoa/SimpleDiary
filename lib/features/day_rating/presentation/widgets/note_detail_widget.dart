@@ -18,6 +18,7 @@ import 'package:speech_to_text/speech_to_text.dart';
 import 'package:uuid/uuid.dart';
 import 'package:day_tracker/core/log/logger_instance.dart';
 import 'package:day_tracker/l10n/app_localizations.dart';
+import 'package:day_tracker/core/widgets/app_ui_kit.dart';
 
 class NoteDetailWidget extends ConsumerStatefulWidget {
   const NoteDetailWidget({super.key});
@@ -106,18 +107,14 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
     }
 
     // Show the note details when a note is selected
-    return Card(
-      margin: const EdgeInsets.all(8),
+    return AppCard.elevated(
+      margin: AppSpacing.paddingAllXs,
       color: theme.colorScheme.secondaryContainer,
-      elevation: 2,
-      shadowColor: theme.colorScheme.shadow.withValues(alpha: 0.3),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
+      borderRadius: AppRadius.borderRadiusMd,
       child: SingleChildScrollView(
         controller: _scrollController,
         child: Padding(
-          padding: const EdgeInsets.all(20.0),
+          padding: AppSpacing.paddingAllLg,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -137,7 +134,7 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
                             borderRadius: BorderRadius.circular(2),
                           ),
                         ),
-                        const SizedBox(width: 12),
+                        AppSpacing.horizontalSm,
                         Expanded(
                           child: Text(
                             l10n.noteDetails,
@@ -162,7 +159,7 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
                           selectedNote.noteCategory.color.withValues(alpha: 0.08),
                         ],
                       ),
-                      borderRadius: BorderRadius.circular(20),
+                      borderRadius: AppRadius.borderRadiusXl,
                       border: Border.all(
                         color: selectedNote.noteCategory.color.withValues(alpha: 0.3),
                         width: 1.5,
@@ -176,7 +173,7 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
                           size: 14,
                           color: selectedNote.noteCategory.color,
                         ),
-                        const SizedBox(width: 4),
+                        AppSpacing.horizontalXxs,
                         Text(
                           '${Utils.toTime(selectedNote.from)} - ${Utils.toTime(selectedNote.to)}',
                           style: theme.textTheme.bodySmall!.copyWith(
@@ -190,7 +187,7 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
                   ),
                 ],
               ),
-              const SizedBox(height: 20),
+              AppSpacing.verticalLg,
 
               // Title field
               TextFormField(
@@ -206,21 +203,21 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
                       color: theme.colorScheme.outline.withValues(alpha: 0.2),
                       width: 1.5,
                     ),
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: AppRadius.borderRadiusMd,
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderSide: BorderSide(
                       color: theme.colorScheme.outline.withValues(alpha: 0.2),
                       width: 1.5,
                     ),
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: AppRadius.borderRadiusMd,
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderSide: BorderSide(
                       color: theme.colorScheme.primary,
                       width: 2,
                     ),
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: AppRadius.borderRadiusMd,
                   ),
                   filled: true,
                   fillColor: theme.colorScheme.surface,
@@ -246,7 +243,7 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
                   }
                 },
               ),
-              const SizedBox(height: 12),
+              AppSpacing.verticalSm,
 
               // Time and category row - Adaptive layout based on screen size and keyboard visibility
               if (!isKeyboardVisible || !isSmallScreen) // Hide on small screens when keyboard is visible
@@ -273,7 +270,7 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
                         color: _isListening
                             ? theme.colorScheme.primaryContainer
                             : theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: AppRadius.borderRadiusMd,
                       ),
                       child: IconButton(
                         onPressed: _isListening ? _stopListening : _startListening,
@@ -288,7 +285,7 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
                     ),
                 ],
               ),
-              const SizedBox(height: 12),
+              AppSpacing.verticalSm,
 
               // Description text field - Larger height for better visibility on small screens
               SizedBox(
@@ -309,25 +306,25 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
                             color: theme.colorScheme.outline.withValues(alpha: 0.2),
                             width: 1.5,
                           ),
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: AppRadius.borderRadiusMd,
                         ),
                         enabledBorder: OutlineInputBorder(
                           borderSide: BorderSide(
                             color: theme.colorScheme.outline.withValues(alpha: 0.2),
                             width: 1.5,
                           ),
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: AppRadius.borderRadiusMd,
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderSide: BorderSide(
                             color: theme.colorScheme.primary,
                             width: 2,
                           ),
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: AppRadius.borderRadiusMd,
                         ),
                         filled: true,
                         fillColor: theme.colorScheme.surface,
-                        contentPadding: const EdgeInsets.all(16),
+                        contentPadding: AppSpacing.paddingAllMd,
                       ),
                       style: theme.textTheme.bodyMedium?.copyWith(
                         color: theme.colorScheme.onSurface,
@@ -368,10 +365,10 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
                         bottom: 16,
                         right: 16,
                         child: Container(
-                          padding: const EdgeInsets.all(8),
+                          padding: AppSpacing.paddingAllXs,
                           decoration: BoxDecoration(
                             color: theme.colorScheme.primaryContainer,
-                            borderRadius: BorderRadius.circular(8),
+                            borderRadius: AppRadius.borderRadiusSm,
                           ),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
@@ -380,7 +377,7 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
                                 color: theme.colorScheme.onPrimaryContainer,
                                 size: 20,
                               ),
-                              const SizedBox(width: 8),
+                              AppSpacing.horizontalXs,
                               Text(
                                 l10n.listening,
                                 style: theme.textTheme.bodySmall!.copyWith(
@@ -396,7 +393,7 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
               ),
 
               // Photo attachments
-              const SizedBox(height: 16),
+              AppSpacing.verticalMd,
               ImagePickerWidget(noteId: selectedNote.id!),
 
               // Action buttons for notes - show only when keyboard is not visible on small screens
@@ -447,7 +444,7 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
                             theme: theme,
                             isSmallScreen: isSmallScreen,
                           ),
-                          const SizedBox(width: 8),
+                          AppSpacing.horizontalXs,
                           _buildTimeButton(
                             icon: Icons.add_rounded,
                             label: '+30m',
@@ -505,12 +502,7 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
       ref.read(selectedWizardNoteProvider.notifier).selectNote(newNote);
 
       // Show feedback to user
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(l10n.addedTemplateAtTime(template.title, Utils.toTime(newNote.from))),
-          duration: const Duration(seconds: 2),
-        ),
-      );
+      AppSnackBar.success(context, message: l10n.addedTemplateAtTime(template.title, Utils.toTime(newNote.from)));
     } catch (e) {
       LogWrapper.logger.e('Error creating note from template: $e');
     }
@@ -537,15 +529,15 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
             labelStyle: TextStyle(color: theme.colorScheme.primary),
             border: OutlineInputBorder(
               borderSide: BorderSide(color: theme.colorScheme.outline),
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: AppRadius.borderRadiusSm,
             ),
             enabledBorder: OutlineInputBorder(
               borderSide: BorderSide(color: theme.colorScheme.outline),
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: AppRadius.borderRadiusSm,
             ),
             focusedBorder: OutlineInputBorder(
               borderSide: BorderSide(color: theme.colorScheme.primary),
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: AppRadius.borderRadiusSm,
             ),
             filled: true,
             fillColor: theme.colorScheme.surface,
@@ -568,7 +560,7 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
                       shape: BoxShape.circle,
                     ),
                   ),
-                  const SizedBox(width: 8),
+                  AppSpacing.horizontalXs,
                   Text(category.title),
                 ],
               ),
@@ -590,7 +582,7 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
             }
           },
         ),
-        const SizedBox(height: 12),
+        AppSpacing.verticalSm,
 
         // Time buttons in a row
         Row(
@@ -604,12 +596,12 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
                   style: const TextStyle(fontSize: 12),
                 ),
                 style: OutlinedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  padding: AppSpacing.paddingVerticalXs,
                   side: BorderSide(color: theme.colorScheme.outline),
                 ),
               ),
             ),
-            const SizedBox(width: 8),
+            AppSpacing.horizontalXs,
             Expanded(
               child: OutlinedButton.icon(
                 onPressed: () => _selectTime(context, note, false),
@@ -619,14 +611,14 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
                   style: const TextStyle(fontSize: 12),
                 ),
                 style: OutlinedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  padding: AppSpacing.paddingVerticalXs,
                   side: BorderSide(color: theme.colorScheme.outline),
                 ),
               ),
             ),
           ],
         ),
-        const SizedBox(height: 12),
+        AppSpacing.verticalSm,
       ],
     );
   }
@@ -651,15 +643,15 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
             labelStyle: TextStyle(color: theme.colorScheme.primary),
             border: OutlineInputBorder(
               borderSide: BorderSide(color: theme.colorScheme.outline),
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: AppRadius.borderRadiusSm,
             ),
             enabledBorder: OutlineInputBorder(
               borderSide: BorderSide(color: theme.colorScheme.outline),
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: AppRadius.borderRadiusSm,
             ),
             focusedBorder: OutlineInputBorder(
               borderSide: BorderSide(color: theme.colorScheme.primary),
-              borderRadius: BorderRadius.circular(8),
+              borderRadius: AppRadius.borderRadiusSm,
             ),
             filled: true,
             fillColor: theme.colorScheme.surface,
@@ -681,7 +673,7 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
                       shape: BoxShape.circle,
                     ),
                   ),
-                  const SizedBox(width: 8),
+                  AppSpacing.horizontalXs,
                   Text(category.title),
                 ],
               ),
@@ -703,7 +695,7 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
             }
           },
         ),
-        const SizedBox(height: 12),
+        AppSpacing.verticalSm,
 
         // Time pickers row
         Row(
@@ -719,7 +711,7 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
                 ),
               ),
             ),
-            const SizedBox(width: 8),
+            AppSpacing.horizontalXs,
             Expanded(
               child: OutlinedButton.icon(
                 onPressed: () => _selectTime(context, note, false),
@@ -733,7 +725,7 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
             ),
           ],
         ),
-        const SizedBox(height: 12),
+        AppSpacing.verticalSm,
       ],
     );
   }
@@ -745,16 +737,13 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
     final screenWidth = mediaQuery.size.width;
     final isSmallScreen = screenWidth < 600;
 
-    return Card(
-      margin: const EdgeInsets.all(8),
+    return AppCard.elevated(
+      margin: AppSpacing.paddingAllXs,
       color: theme.colorScheme.secondaryContainer,
-      elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
+      borderRadius: AppRadius.borderRadiusMd,
       child: Center(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16.0),
+          padding: AppSpacing.paddingAllMd,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -763,7 +752,7 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
                 size: isSmallScreen ? 36 : 48,
                 color: theme.colorScheme.primary,
               ),
-              const SizedBox(height: 16),
+              AppSpacing.verticalMd,
               Text(
                 l10n.noNoteSelected,
                 style: theme.textTheme.titleLarge!.copyWith(
@@ -772,7 +761,7 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
                 ),
                 textAlign: TextAlign.center,
               ),
-              const SizedBox(height: 8),
+              AppSpacing.verticalXs,
               Text(
                 l10n.clickExistingOrCreateNew,
                 textAlign: TextAlign.center,
@@ -780,7 +769,7 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
                   color: theme.colorScheme.onSecondaryContainer,
                 ),
               ),
-              const SizedBox(height: 24),
+              AppSpacing.verticalXl,
               Wrap(
                 spacing: 8,
                 alignment: WrapAlignment.center,
@@ -874,12 +863,7 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
             ),
           );
         } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(AppLocalizations.of(context).endTimeAfterStartTime),
-              duration: const Duration(seconds: 2),
-            ),
-          );
+          AppSnackBar.error(context, message: AppLocalizations.of(context).endTimeAfterStartTime);
         }
       }
     }
@@ -941,12 +925,7 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
       ref.read(selectedWizardNoteProvider.notifier).selectNote(newNote);
 
       // Show feedback to user
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(AppLocalizations.of(context).addedNoteAtTime(Utils.toTime(newNote.from))),
-          duration: const Duration(seconds: 2),
-        ),
-      );
+      AppSnackBar.success(context, message: AppLocalizations.of(context).addedNoteAtTime(Utils.toTime(newNote.from)));
     } catch (e) {
       LogWrapper.logger.e('Error adding new note: $e');
     }
@@ -1044,12 +1023,7 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
     );
 
     if (newDateTime.isAfter(note.to) || newDateTime.isAtSameMomentAs(note.to)) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(AppLocalizations.of(context).endTimeAfterStartTime),
-          duration: const Duration(seconds: 2),
-        ),
-      );
+      AppSnackBar.error(context, message: AppLocalizations.of(context).endTimeAfterStartTime);
       return;
     }
 
@@ -1078,7 +1052,7 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
     return Container(
       decoration: BoxDecoration(
         color: backgroundColor,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: AppRadius.borderRadiusMd,
         border: Border.all(
           color: foregroundColor.withValues(alpha: 0.2),
           width: 1,
@@ -1088,7 +1062,7 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
         color: Colors.transparent,
         child: InkWell(
           onTap: onPressed,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: AppRadius.borderRadiusMd,
           child: Padding(
             padding: isSmallScreen
                 ? const EdgeInsets.symmetric(horizontal: 12, vertical: 8)
@@ -1136,7 +1110,7 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: AppRadius.borderRadiusMd,
         border: Border.all(
           color: theme.colorScheme.primary.withValues(alpha: 0.2),
           width: 1,
@@ -1146,7 +1120,7 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
         color: Colors.transparent,
         child: InkWell(
           onTap: onPressed,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: AppRadius.borderRadiusMd,
           child: Padding(
             padding: isSmallScreen
                 ? const EdgeInsets.symmetric(horizontal: 10, vertical: 8)
@@ -1159,7 +1133,7 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
                   size: isSmallScreen ? 16 : 18,
                   color: theme.colorScheme.primary,
                 ),
-                const SizedBox(width: 4),
+                AppSpacing.horizontalXxs,
                 Text(
                   label,
                   style: TextStyle(

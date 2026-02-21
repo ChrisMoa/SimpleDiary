@@ -1,6 +1,7 @@
 import 'package:day_tracker/core/log/logger_instance.dart';
 import 'package:day_tracker/core/services/notification_service.dart';
 import 'package:day_tracker/core/settings/settings_container.dart';
+import 'package:day_tracker/core/widgets/app_ui_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:day_tracker/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -42,11 +43,7 @@ class _NotificationSettingsWidgetState
     final screenWidth = mediaQuery.size.width;
     final isSmallScreen = screenWidth < 600;
 
-    return Card(
-      elevation: 4,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
+    return AppCard.elevated(
       child: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
@@ -57,7 +54,7 @@ class _NotificationSettingsWidgetState
               theme.colorScheme.surface,
             ],
           ),
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: AppRadius.borderRadiusLg,
         ),
         child: Padding(
           padding: const EdgeInsets.all(20.0),
@@ -73,7 +70,7 @@ class _NotificationSettingsWidgetState
                     color: theme.colorScheme.primary,
                     size: isSmallScreen ? 24 : 28,
                   ),
-                  const SizedBox(width: 8),
+                  AppSpacing.horizontalXs,
                   Text(
                     l10n.notificationSettings,
                     style: theme.textTheme.titleLarge?.copyWith(
@@ -85,7 +82,7 @@ class _NotificationSettingsWidgetState
                 ],
               ),
 
-              const SizedBox(height: 16),
+              AppSpacing.verticalMd,
 
               Text(
                 l10n.notificationSettingsDescription,
@@ -94,7 +91,7 @@ class _NotificationSettingsWidgetState
                 ),
               ),
 
-              const SizedBox(height: 24),
+              AppSpacing.verticalXl,
 
               // Enable/Disable Notifications
               _buildSettingContainer(
@@ -126,7 +123,7 @@ class _NotificationSettingsWidgetState
                       ),
                       decoration: BoxDecoration(
                         color: theme.colorScheme.primaryContainer,
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: AppRadius.borderRadiusSm,
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
@@ -135,7 +132,7 @@ class _NotificationSettingsWidgetState
                             Icons.access_time,
                             color: theme.colorScheme.onPrimaryContainer,
                           ),
-                          const SizedBox(width: 8),
+                          AppSpacing.horizontalXs,
                           Text(
                             _reminderTime.format(context),
                             style: theme.textTheme.titleMedium?.copyWith(
@@ -208,7 +205,7 @@ class _NotificationSettingsWidgetState
       padding: EdgeInsets.all(isSmallScreen ? 12 : 16),
       decoration: BoxDecoration(
         color: theme.colorScheme.surfaceContainer,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: AppRadius.borderRadiusMd,
         border: Border.all(
           color: theme.colorScheme.outline.withValues(alpha: .2),
         ),
@@ -223,14 +220,14 @@ class _NotificationSettingsWidgetState
               fontWeight: FontWeight.bold,
             ),
           ),
-          const SizedBox(height: 8),
+          AppSpacing.verticalXs,
           Text(
             description,
             style: theme.textTheme.bodyMedium?.copyWith(
               color: theme.colorScheme.onSurface.withValues(alpha: .7),
             ),
           ),
-          const SizedBox(height: 16),
+          AppSpacing.verticalMd,
           control,
         ],
       ),
@@ -244,12 +241,7 @@ class _NotificationSettingsWidgetState
       if (!hasPermission) {
         if (mounted) {
           final l10n = AppLocalizations.of(context);
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(l10n.notificationPermissionDenied),
-              backgroundColor: Theme.of(context).colorScheme.error,
-            ),
-          );
+          AppSnackBar.error(context, message: l10n.notificationPermissionDenied);
         }
         return;
       }

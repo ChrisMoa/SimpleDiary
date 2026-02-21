@@ -12,6 +12,7 @@ import 'package:day_tracker/features/day_rating/domain/providers/diary_day_local
 import 'package:day_tracker/l10n/app_localizations.dart';
 import 'package:day_tracker/core/provider/theme_provider.dart';
 import 'package:day_tracker/core/log/logger_instance.dart';
+import 'package:day_tracker/core/widgets/app_ui_kit.dart';
 
 class PdfExportWidget extends ConsumerStatefulWidget {
   const PdfExportWidget({super.key});
@@ -30,11 +31,7 @@ class _PdfExportWidgetState extends ConsumerState<PdfExportWidget> {
     final isSmallScreen = mediaQuery.size.width < 600;
     final l10n = AppLocalizations.of(context)!;
 
-    return Card(
-      elevation: 4,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
+    return AppCard.elevated(
       child: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
@@ -45,7 +42,7 @@ class _PdfExportWidgetState extends ConsumerState<PdfExportWidget> {
               theme.colorScheme.surface,
             ],
           ),
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: AppRadius.borderRadiusLg,
         ),
         child: Padding(
           padding: const EdgeInsets.all(20.0),
@@ -60,7 +57,7 @@ class _PdfExportWidgetState extends ConsumerState<PdfExportWidget> {
                     color: theme.colorScheme.error,
                     size: isSmallScreen ? 24 : 28,
                   ),
-                  const SizedBox(width: 8),
+                  AppSpacing.horizontalXs,
                   Expanded(
                     child: Text(
                       l10n.pdfExport,
@@ -74,7 +71,7 @@ class _PdfExportWidgetState extends ConsumerState<PdfExportWidget> {
                 ],
               ),
 
-              const SizedBox(height: 16),
+              AppSpacing.verticalMd,
 
               Text(
                 l10n.pdfExportDescription,
@@ -83,7 +80,7 @@ class _PdfExportWidgetState extends ConsumerState<PdfExportWidget> {
                 ),
               ),
 
-              const SizedBox(height: 24),
+              AppSpacing.verticalXl,
 
               // Quick export section
               Text(
@@ -93,7 +90,7 @@ class _PdfExportWidgetState extends ConsumerState<PdfExportWidget> {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              const SizedBox(height: 12),
+              AppSpacing.verticalSm,
 
               // Quick export chips
               Wrap(
@@ -124,7 +121,7 @@ class _PdfExportWidgetState extends ConsumerState<PdfExportWidget> {
                 ],
               ),
 
-              const SizedBox(height: 20),
+              AppSpacing.verticalLg,
 
               // Custom range button
               _buildExportButton(
@@ -137,7 +134,7 @@ class _PdfExportWidgetState extends ConsumerState<PdfExportWidget> {
                 isSmallScreen: isSmallScreen,
               ),
 
-              const SizedBox(height: 12),
+              AppSpacing.verticalSm,
 
               // Select month button
               _buildExportButton(
@@ -150,7 +147,7 @@ class _PdfExportWidgetState extends ConsumerState<PdfExportWidget> {
                 isSmallScreen: isSmallScreen,
               ),
 
-              const SizedBox(height: 12),
+              AppSpacing.verticalSm,
 
               // Export all button
               _buildExportButton(
@@ -201,19 +198,19 @@ class _PdfExportWidgetState extends ConsumerState<PdfExportWidget> {
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: AppRadius.borderRadiusMd,
         border: Border.all(
           color: isPrimary
               ? theme.colorScheme.primary
               : theme.colorScheme.outline,
         ),
         color: isPrimary
-            ? theme.colorScheme.primaryContainer.withOpacity(0.3)
+            ? theme.colorScheme.primaryContainer.withValues(alpha:0.3)
             : theme.colorScheme.surface,
       ),
       child: InkWell(
         onTap: onPressed,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: AppRadius.borderRadiusMd,
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Row(
@@ -225,7 +222,7 @@ class _PdfExportWidgetState extends ConsumerState<PdfExportWidget> {
                     : theme.colorScheme.onSurface,
                 size: isSmallScreen ? 24 : 28,
               ),
-              const SizedBox(width: 16),
+              AppSpacing.horizontalMd,
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -239,7 +236,7 @@ class _PdfExportWidgetState extends ConsumerState<PdfExportWidget> {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    const SizedBox(height: 4),
+                    AppSpacing.verticalXxs,
                     Text(
                       description,
                       style: theme.textTheme.bodySmall?.copyWith(
@@ -413,12 +410,7 @@ class _PdfExportWidgetState extends ConsumerState<PdfExportWidget> {
         LogWrapper.logger.i('PDF export saved to $outputPath');
 
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(AppLocalizations.of(context).pdfExportSuccess),
-              backgroundColor: Theme.of(context).colorScheme.primary,
-            ),
-          );
+          AppSnackBar.success(context, message: AppLocalizations.of(context).pdfExportSuccess);
         }
       } else {
         LogWrapper.logger.i('PDF export cancelled by user');
@@ -427,14 +419,7 @@ class _PdfExportWidgetState extends ConsumerState<PdfExportWidget> {
       LogWrapper.logger.e('Failed to generate PDF', error: e, stackTrace: stackTrace);
 
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              AppLocalizations.of(context).pdfExportError(e.toString()),
-            ),
-            backgroundColor: Theme.of(context).colorScheme.error,
-          ),
-        );
+        AppSnackBar.error(context, message: AppLocalizations.of(context).pdfExportError(e.toString()));
       }
     } finally {
       if (mounted) {

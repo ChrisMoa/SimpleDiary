@@ -5,9 +5,10 @@ import 'package:day_tracker/features/dashboard/presentation/sections/statistics_
 import 'package:day_tracker/features/dashboard/presentation/widgets/favorites_section_widget.dart';
 import 'package:day_tracker/features/dashboard/presentation/widgets/quick_stats_header.dart';
 import 'package:day_tracker/features/dashboard/presentation/widgets/week_overview_widget.dart';
-import 'package:day_tracker/features/day_rating/presentation/pages/diary_day_wizard_page.dart';
+import 'package:day_tracker/core/navigation/drawer_index_provider.dart';
 import 'package:day_tracker/features/goals/presentation/widgets/goals_section.dart';
 import 'package:day_tracker/features/habits/presentation/widgets/habits_summary_section.dart';
+import 'package:day_tracker/core/widgets/app_ui_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:day_tracker/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -56,11 +57,8 @@ class _NewDashboardPageState extends ConsumerState<NewDashboardPage> {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (context) => const DiaryDayWizardPage(),
-            ),
-          );
+          // Navigate to diary wizard via drawer index (index 3)
+          ref.read(selectedDrawerIndexProvider.notifier).state = 3;
         },
         icon: const Icon(Icons.add),
         label: Text(AppLocalizations.of(context)!.newEntry),
@@ -74,10 +72,10 @@ class _NewDashboardPageState extends ConsumerState<NewDashboardPage> {
         const SliverToBoxAdapter(child: QuickStatsHeader()),
         const SliverToBoxAdapter(child: GoalsSection()),
         const SliverToBoxAdapter(child: HabitsSummarySection()),
-        const SliverToBoxAdapter(child: SizedBox(height: 16)),
+        SliverToBoxAdapter(child: AppSpacing.verticalMd),
         const SliverToBoxAdapter(child: WeekOverviewWidget()),
         const SliverToBoxAdapter(child: FavoritesSectionWidget()),
-        const SliverToBoxAdapter(child: SizedBox(height: 16)),
+        SliverToBoxAdapter(child: AppSpacing.verticalMd),
         const SliverToBoxAdapter(child: StatisticsSection()),
         const SliverToBoxAdapter(child: InsightsSection()),
         const SliverToBoxAdapter(child: SizedBox(height: 80)), // Space for FAB
@@ -99,9 +97,9 @@ class _NewDashboardPageState extends ConsumerState<NewDashboardPage> {
         ),
         const SliverToBoxAdapter(child: GoalsSection()),
         const SliverToBoxAdapter(child: HabitsSummarySection()),
-        const SliverToBoxAdapter(child: SizedBox(height: 16)),
+        SliverToBoxAdapter(child: AppSpacing.verticalMd),
         const SliverToBoxAdapter(child: FavoritesSectionWidget()),
-        const SliverToBoxAdapter(child: SizedBox(height: 16)),
+        SliverToBoxAdapter(child: AppSpacing.verticalMd),
         const SliverToBoxAdapter(child: StatisticsSection()),
         const SliverToBoxAdapter(child: InsightsSection()),
         const SliverToBoxAdapter(child: SizedBox(height: 80)), // Space for FAB
@@ -128,10 +126,10 @@ class _NewDashboardPageState extends ConsumerState<NewDashboardPage> {
                   const SliverToBoxAdapter(child: QuickStatsHeader()),
                   const SliverToBoxAdapter(child: GoalsSection()),
                   const SliverToBoxAdapter(child: HabitsSummarySection()),
-                  const SliverToBoxAdapter(child: SizedBox(height: 16)),
+                  SliverToBoxAdapter(child: AppSpacing.verticalMd),
                   const SliverToBoxAdapter(child: WeekOverviewWidget()),
                   const SliverToBoxAdapter(child: FavoritesSectionWidget()),
-                  const SliverToBoxAdapter(child: SizedBox(height: 16)),
+                  SliverToBoxAdapter(child: AppSpacing.verticalMd),
                   const SliverToBoxAdapter(child: StatisticsSection()),
                   const SliverToBoxAdapter(child: SizedBox(height: 80)), // Space for FAB
                 ],
@@ -145,7 +143,7 @@ class _NewDashboardPageState extends ConsumerState<NewDashboardPage> {
                 color: theme.colorScheme.surfaceContainerHighest,
                 border: Border(
                   left: BorderSide(
-                    color: theme.colorScheme.outline.withOpacity(0.2),
+                    color: theme.colorScheme.outline.withValues(alpha:0.2),
                   ),
                 ),
               ),
