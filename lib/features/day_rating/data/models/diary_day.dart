@@ -77,11 +77,6 @@ class DiaryDay extends DbEntity {
   @override
   String get primaryKeyValue => day.toIso8601String().split('T')[0];
 
-  // ── LocalDbElement backward compat ─────────────────────────────
-
-  @override
-  DiaryDay fromLocalDbMap(Map<String, dynamic> map) => fromDbMap(map);
-
   // ── JSON export/import serialization (different format) ────────
 
   Map<String, dynamic> toMap() {
@@ -119,10 +114,6 @@ class DiaryDay extends DbEntity {
     diaryDay.notes = noteList;
     return diaryDay;
   }
-
-  /// Keep the named factory for backward compat with code that calls
-  /// `DiaryDay.fromLocalDbMap(map)` directly (e.g. tests).
-  factory DiaryDay.fromLocalDbMap(Map<String, dynamic> map) => fromDbMap(map);
 
   // ── Domain helpers ─────────────────────────────────────────────
 

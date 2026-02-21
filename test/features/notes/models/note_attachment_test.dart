@@ -142,7 +142,7 @@ void main() {
       test('round-trip preserves data', () {
         final original = createSample();
         final dbMap = original.toDbMap();
-        final restored = original.fromLocalDbMap(dbMap) as NoteAttachment;
+        final restored = NoteAttachment.fromDbMap(dbMap);
 
         expect(restored.id, original.id);
         expect(restored.noteId, original.noteId);
@@ -161,9 +161,9 @@ void main() {
       });
     });
 
-    group('getId', () {
+    group('primaryKeyValue', () {
       test('returns the attachment id', () {
-        expect(createSample().getId(), 'attachment-id-1');
+        expect(createSample().primaryKeyValue, 'attachment-id-1');
       });
     });
   });

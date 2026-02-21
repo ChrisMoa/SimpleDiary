@@ -70,7 +70,7 @@ flutter test test/core/ test/features/ test/l10n/
 
 | File | Tests | Covers |
 |------|-------|--------|
-| `models/user_data_test.dart` | 12 | UserData construction (all fields, auto-generated userId, fromEmpty, defaults), `clearPassword` not in serialized output, `toMap`/`fromMap` round-trip, backward compatibility (missing salt), `toJson`/`fromJson`, LocalDb interface (`getId`, `toLocalDbMap`/`fromLocalDbMap`) |
+| `models/user_data_test.dart` | 9 | UserData construction (all fields, auto-generated userId, fromEmpty, defaults), `clearPassword` not in serialized output, `toMap`/`fromMap` round-trip, backward compatibility (missing salt), `toJson`/`fromJson` |
 | `models/user_settings_test.dart` | 8 | UserSettings construction (all fields, fromEmpty defaults), `toMap`/`fromMap` round-trip, missing supabaseSettings handling, `toJson`/`fromJson` string serialization, `name` property |
 | `providers/debug_auto_login_provider_test.dart` | 7 | UserDataProvider debug auto-login: creating new debug users, logging in existing users, credential validation, enable/disable states |
 
@@ -91,7 +91,7 @@ flutter test test/core/ test/features/ test/l10n/
 | File | Tests | Covers |
 |------|-------|--------|
 | `models/day_rating_test.dart` | 12 | `DayRatings` enum `stringToEnum` (all valid values, invalid/empty/case-sensitive), `DayRating` default score (-1), custom score, `toMap`/`fromMap` round-trip for all types, Firestore map conversion (`toFirestoreMap` structure, `fromFirestoreMap` parsing), score mutation |
-| `models/diary_day_test.dart` | 11 | DiaryDay construction (required fields, `fromEmpty`), `overallScore` (sum, empty, single), `toMap`/`fromMap` (data, with notes, keys), LocalDb map (JSON-encoded ratings round-trip), `getId` (ISO date format, padding) |
+| `models/diary_day_test.dart` | 11 | DiaryDay construction (required fields, `fromEmpty`), `overallScore` (sum, empty, single), `toMap`/`fromMap` (data, with notes, keys), LocalDb map (JSON-encoded ratings round-trip), `primaryKeyValue` (ISO date format, padding) |
 | `wizard_logic_test.dart` | 22 | **isDayFullyScheduled:** empty, full coverage (7:00-22:00), gaps, contiguous, late start, early end, overlapping, unsorted input. **nextAvailableTimeSlot:** empty (7:00 default), gap at beginning/middle/end, fully booked (next day). **isDayFinished (15-min chunks):** empty, full, 30-min gap detection, contiguous, many small notes. **DayRatings:** default initialization (score 3), update preserves others, reset. **Note date filtering** |
 
 **Sources:** `lib/features/day_rating/data/models/day_rating.dart`, `diary_day.dart`, `lib/features/day_rating/domain/providers/diary_wizard_providers.dart`
@@ -100,7 +100,7 @@ flutter test test/core/ test/features/ test/l10n/
 
 | File | Tests | Covers |
 |------|-------|--------|
-| `models/note_test.dart` | 14 | Note construction (all fields, auto UUID, `fromEmpty`), `copyWith` (partial/full), `toMap`/`fromMap` round-trip, all-day note, `toJson`, LocalDb map (`isAllDay` int conversion, `fromDate`/`toDate` keys), `getId` |
+| `models/note_test.dart` | 14 | Note construction (all fields, auto UUID, `fromEmpty`), `copyWith` (partial/full), `toMap`/`fromMap` round-trip, all-day note, `toJson`, LocalDb map (`isAllDay` int conversion, `fromDate`/`toDate` keys), `primaryKeyValue` |
 | `models/note_category_test.dart` | 13 | `availableNoteCategories` (5 defaults, titles, colors), `fromString` (existing, all defaults, unknown fallback, case-sensitive), equality (title-based, hashCode), `copyWith`, LocalDb map (`colorValue`), auto-generated id |
 | `models/category_logic_test.dart` | 10 | `categoryNameExists` (existing, case-insensitive, non-existing, `excludeId` for rename, conflicts with others, empty list), `getCategoryById` (found/not found/empty), default category provider logic (first/null for empty) |
 | `providers/note_search_state_test.dart` | 11 | NoteSearchState immutable model: active state detection, `copyWith` operations, helper methods for clearing category and date filters |
@@ -114,7 +114,7 @@ flutter test test/core/ test/features/ test/l10n/
 
 | File | Tests | Covers |
 |------|-------|--------|
-| `note_template_test.dart` | 14 | NoteTemplate construction (all fields, auto UUID, `fromEmpty`), `hasDescriptionSections`, `generateDescription` (from sections, plain fallback), `copyWith` (partial/full), `toMap`/`fromMap` (with/without sections), `toJson`, LocalDb map round-trip, `getId` |
+| `note_template_test.dart` | 14 | NoteTemplate construction (all fields, auto UUID, `fromEmpty`), `hasDescriptionSections`, `generateDescription` (from sections, plain fallback), `copyWith` (partial/full), `toMap`/`fromMap` (with/without sections), `toJson`, LocalDb map round-trip, `primaryKeyValue` |
 | `description_section_test.dart` | 10 | DescriptionSection construction (title only, title+hint), `toMap`/`fromMap` (round-trip, missing keys), `copyWith`, `encode`/`decode` (list round-trip, empty list, empty string, invalid JSON, single section) |
 
 **Sources:** `lib/features/note_templates/data/models/note_template.dart`, `description_section.dart`
@@ -123,7 +123,7 @@ flutter test test/core/ test/features/ test/l10n/
 
 | File | Tests | Covers |
 |------|-------|--------|
-| `models/goal_test.dart` | 17 | Goal construction (required fields, auto UUID, status defaults), factory methods (weekly with correct 7-day range, monthly with correct month end date), calculated properties (daysRemaining/daysElapsed/timeProgress for active goals), `isInProgress` (active goal in period, completed goal excluded, past goals), `hasEnded` detection, database serialization (`toLocalDbMap`/`fromLocalDbMap` round-trip with all fields including nullable completedAt), `copyWith` (status update with completedAt), enum values (GoalTimeframe 2 values, GoalStatus 4 values) |
+| `models/goal_test.dart` | 17 | Goal construction (required fields, auto UUID, status defaults), factory methods (weekly with correct 7-day range, monthly with correct month end date), calculated properties (daysRemaining/daysElapsed/timeProgress for active goals), `isInProgress` (active goal in period, completed goal excluded, past goals), `hasEnded` detection, database serialization (`toDbMap`/`fromDbMap` round-trip with all fields including nullable completedAt), `copyWith` (status update with completedAt), enum values (GoalTimeframe 2 values, GoalStatus 4 values) |
 | `models/goal_progress_test.dart` | 17 | GoalProgress calculation (absolute progress percent, gap to target), achievement detection (`isAchieved` true/false), status determination (completed/ahead/onTrack/behind/failed with time-based progress tracking), status messages for each state, projection (final average from current/previous, success prediction), endowed progress effect (baseline from previous period, progress from 3.0→3.5 toward 4.0 = 50%), progress clamping (max 1.5), ProgressStatus enum (5 values) |
 | `repositories/goal_repository_test.dart` | 29 | **calculateProgress:** correct average for goal period (5 entries = 3.8 avg), ignores days outside period (only counts 3 of 6 days), previous period baseline calculation, empty data handling. **suggestTarget:** 15% improvement (3.2 avg → 3.68), clamps to max 5.0, default 3.0 for empty data, custom improvement factor (25% → 5.0). **checkGoalCompletions:** marks achieved goals as completed (with completedAt timestamp), marks unachieved as failed, skips goals not yet ended. **calculateGoalStreak:** counts consecutive completions (3 in a row), breaks on gap >7 days, returns 0 for empty/no completed goals. **getCategoryStats:** per-category totals/completion/success rate (50% for 1/2), handles empty list (0% success rate for all categories). **CategoryGoalStats:** failed goals calculation (10 total - 7 completed = 3 failed), success rate percentage formatting (80%) |
 

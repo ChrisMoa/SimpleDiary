@@ -60,11 +60,6 @@ class NoteTemplate extends DbEntity {
   @override
   String get primaryKeyValue => id!;
 
-  // ── LocalDbElement backward compat ─────────────────────────────
-
-  @override
-  NoteTemplate fromLocalDbMap(Map<String, dynamic> map) => fromDbMap(map);
-
   // ── JSON export/import ─────────────────────────────────────────
 
   Map<String, dynamic> toMap() {

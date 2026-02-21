@@ -87,9 +87,9 @@ void main() {
       expect(deserialized.isArchived, true);
     });
 
-    test('getId returns id', () {
+    test('primaryKeyValue returns id', () {
       final habit = Habit(id: 'my-id', name: 'Test');
-      expect(habit.getId(), 'my-id');
+      expect(habit.primaryKeyValue, 'my-id');
     });
 
     test('copyWith updates fields correctly', () {

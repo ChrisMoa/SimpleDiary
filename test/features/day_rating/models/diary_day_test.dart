@@ -128,13 +128,13 @@ void main() {
       });
     });
 
-    group('getId', () {
+    group('primaryKeyValue', () {
       test('returns ISO date string (YYYY-MM-DD)', () {
         final day = DiaryDay(
           day: DateTime(2024, 3, 15),
           ratings: [],
         );
-        expect(day.getId(), '2024-03-15');
+        expect(day.primaryKeyValue, '2024-03-15');
       });
 
       test('pads single-digit months and days', () {
@@ -142,7 +142,7 @@ void main() {
           day: DateTime(2024, 1, 5),
           ratings: [],
         );
-        expect(day.getId(), '2024-01-05');
+        expect(day.primaryKeyValue, '2024-01-05');
       });
     });
   });

@@ -186,10 +186,10 @@ void main() {
       });
     });
 
-    group('getId', () {
+    group('primaryKeyValue', () {
       test('returns template id', () {
         final template = createSampleTemplate();
-        expect(template.getId(), 'template-1');
+        expect(template.primaryKeyValue, 'template-1');
       });
     });
   });

@@ -64,11 +64,6 @@ class HabitEntry extends DbEntity {
   @override
   String get primaryKeyValue => id;
 
-  // ── LocalDbElement backward compat ─────────────────────────────
-
-  @override
-  HabitEntry fromLocalDbMap(Map<String, dynamic> map) => fromDbMap(map);
-
   // ── Domain helpers ─────────────────────────────────────────────
 
   /// Normalized date key (yyyy-MM-dd) for grouping

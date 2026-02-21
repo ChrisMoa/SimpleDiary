@@ -52,9 +52,9 @@ class BackupService {
   /// Create a backup from raw data maps.
   ///
   /// [diaryDaysJson] - List of diary day maps (from toMap())
-  /// [notesJson] - List of note maps (from toLocalDbMap())
-  /// [habitsJson] - List of habit maps (from toLocalDbMap())
-  /// [habitEntriesJson] - List of habit entry maps (from toLocalDbMap())
+  /// [notesJson] - List of note maps (from toDbMap())
+  /// [habitsJson] - List of habit maps (from toDbMap())
+  /// [habitEntriesJson] - List of habit entry maps (from toDbMap())
   /// [type] - What triggered this backup
   Future<BackupMetadata> createBackup({
     required List<Map<String, dynamic>> diaryDaysJson,

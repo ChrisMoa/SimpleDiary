@@ -10,8 +10,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sqflite/sqflite.dart';
 
-/// Unified repository that replaces both [LocalDbHelper] and
-/// [AbstractLocalDbProviderState].
+/// Unified repository for schema-driven database entities.
 ///
 /// A single class handles:
 /// - Schema-driven table creation via [columns]

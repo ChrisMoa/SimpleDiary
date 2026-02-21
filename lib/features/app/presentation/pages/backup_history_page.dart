@@ -686,7 +686,6 @@ class _BackupHistoryPageState extends ConsumerState<BackupHistoryPage> {
   }
 
   // -- Helper methods to reconstruct objects from backup maps --
-  // These use fromLocalDbMap via a temporary instance pattern
 
   dynamic _diaryDayFromMap(Map<String, dynamic> map) {
     try {

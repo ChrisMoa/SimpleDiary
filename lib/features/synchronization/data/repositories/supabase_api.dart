@@ -103,7 +103,7 @@ class SupabaseApi {
       LogWrapper.logger.i('Syncing ${diaryDays.length} diary days for user: $supabaseUserId');
       for (var diaryDay in diaryDays) {
         final data = {
-          'id': '${supabaseUserId}_${diaryDay.getId()}',
+          'id': '${supabaseUserId}_${diaryDay.primaryKeyValue}',
           'user_id': supabaseUserId,
           'day': diaryDay.day.toIso8601String().split('T')[0],
           'ratings': diaryDay.ratings.map((r) => r.toMap()).toList(),

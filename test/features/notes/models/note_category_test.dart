@@ -118,7 +118,7 @@ void main() {
         expect(localDbMap['title'], 'TestCategory');
         expect(localDbMap['colorValue'], isA<int>());
 
-        final restored = original.fromLocalDbMap(localDbMap) as NoteCategory;
+        final restored = NoteCategory.fromDbMap(localDbMap);
         expect(restored.id, original.id);
         expect(restored.title, original.title);
       });

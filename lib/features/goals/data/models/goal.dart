@@ -82,11 +82,6 @@ class Goal extends DbEntity {
   @override
   String get primaryKeyValue => id;
 
-  // ── LocalDbElement backward compat ─────────────────────────────
-
-  @override
-  Goal fromLocalDbMap(Map<String, dynamic> map) => fromDbMap(map);
-
   // ── Domain helpers ─────────────────────────────────────────────
 
   /// Factory for creating a weekly goal

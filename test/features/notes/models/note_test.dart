@@ -161,7 +161,7 @@ void main() {
         expect(localDbMap, contains('fromDate'));
         expect(localDbMap, contains('toDate'));
 
-        final restored = original.fromLocalDbMap(localDbMap) as Note;
+        final restored = Note.fromDbMap(localDbMap);
         expect(restored.id, original.id);
         expect(restored.title, original.title);
         expect(restored.isAllDay, false);
@@ -181,10 +181,10 @@ void main() {
       });
     });
 
-    group('getId', () {
+    group('primaryKeyValue', () {
       test('returns the note id', () {
         final note = createSampleNote();
-        expect(note.getId(), 'test-id-123');
+        expect(note.primaryKeyValue, 'test-id-123');
       });
     });
   });

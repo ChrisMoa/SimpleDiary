@@ -188,10 +188,10 @@ class MyWidget extends ConsumerWidget {
 
 ### Database: Schema-Driven DbEntity + DbRepository
 
-All database entities extend `DbEntity` (which implements `LocalDbElement` for backward compat):
+All database entities extend `DbEntity`:
 
 ```dart
-abstract class DbEntity implements LocalDbElement {
+abstract class DbEntity {
   Map<String, dynamic> toDbMap();        // No redundant self-parameter
   dynamic get primaryKeyValue;           // Typed primary key getter
 }
@@ -260,10 +260,8 @@ class CategoryLocalDataProvider extends DbRepository<NoteCategory> {
 | `db_column.dart` | Declarative column definitions, auto-generates `CREATE TABLE` SQL |
 | `db_entity.dart` | Clean base class for all persisted entities |
 | `db_migration.dart` | Version-ordered migrations (add column, add index) |
-| `db_repository.dart` | Unified CRUD + Riverpod `StateNotifier` (replaces `LocalDbHelper` + `AbstractLocalDbProviderState`) |
+| `db_repository.dart` | Unified CRUD + Riverpod `StateNotifier` |
 | `db_provider_factory.dart` | `createDbProvider()` one-liner |
-| `local_db_element.dart` | Legacy interface (kept for `UserData` backward compat) |
-| `local_db_helper.dart` | Legacy helper (kept for `UserData` backward compat) |
 
 ### Model Serialization
 

@@ -51,16 +51,6 @@ void main() {
       expect(entry.dateKey, '2026-01-05');
     });
 
-    test('getId returns id', () {
-      final entry = HabitEntry(
-        id: 'my-entry',
-        habitId: 'h1',
-        date: DateTime(2026, 2, 18),
-      );
-
-      expect(entry.getId(), 'my-entry');
-    });
-
     test('primaryKeyValue returns id', () {
       final entry = HabitEntry(
         id: 'my-entry',
@@ -90,23 +80,6 @@ void main() {
       expect(deserialized.isCompleted, entry.isCompleted);
       expect(deserialized.count, entry.count);
       expect(deserialized.note, entry.note);
-    });
-
-    test('backward compat: toLocalDbMap/fromLocalDbMap round-trip', () {
-      final entry = HabitEntry(
-        id: 'entry-1',
-        habitId: 'habit-1',
-        date: DateTime(2026, 2, 18),
-        isCompleted: true,
-        count: 2,
-        note: 'Good session',
-      );
-
-      final map = entry.toLocalDbMap(entry);
-      final deserialized = entry.fromLocalDbMap(map);
-
-      expect(deserialized.id, entry.id);
-      expect(deserialized.habitId, entry.habitId);
     });
 
     test('serializes boolean as integer in database map', () {

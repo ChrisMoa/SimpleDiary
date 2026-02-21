@@ -91,11 +91,6 @@ class Habit extends DbEntity {
   @override
   String get primaryKeyValue => id;
 
-  // ── LocalDbElement backward compat ─────────────────────────────
-
-  @override
-  Habit fromLocalDbMap(Map<String, dynamic> map) => fromDbMap(map);
-
   // ── Domain helpers ─────────────────────────────────────────────
 
   IconData get icon => IconData(iconCodePoint, fontFamily: 'MaterialIcons');

@@ -61,11 +61,6 @@ class NoteCategory extends DbEntity {
   @override
   String get primaryKeyValue => id;
 
-  // ── LocalDbElement backward compat ─────────────────────────────
-
-  @override
-  NoteCategory fromLocalDbMap(Map<String, dynamic> map) => fromDbMap(map);
-
   // ── Domain helpers ─────────────────────────────────────────────
 
   @override

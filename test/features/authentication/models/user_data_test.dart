@@ -127,21 +127,5 @@ void main() {
       });
     });
 
-    group('LocalDb interface', () {
-      test('getId returns username', () {
-        final user = createSampleUser();
-        expect(user.getId(), 'testuser');
-      });
-
-      test('toLocalDbMap / fromLocalDbMap round-trip', () {
-        final original = createSampleUser();
-        final localDbMap = original.toLocalDbMap(original);
-        final restored = original.fromLocalDbMap(localDbMap) as UserData;
-
-        expect(restored.username, original.username);
-        expect(restored.password, original.password);
-        expect(restored.email, original.email);
-      });
-    });
   });
 }

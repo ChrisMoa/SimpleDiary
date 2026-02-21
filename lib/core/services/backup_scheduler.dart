@@ -82,9 +82,9 @@ class BackupScheduler {
     // Step 1: Create local backup
     var metadata = await BackupService().createBackup(
       diaryDaysJson: diaryDays.map((d) => d.toMap()).toList(),
-      notesJson: notes.map((n) => n.toLocalDbMap(n)).toList(),
-      habitsJson: habits.map((h) => h.toLocalDbMap(h)).toList(),
-      habitEntriesJson: habitEntries.map((e) => e.toLocalDbMap(e)).toList(),
+      notesJson: notes.map((n) => n.toDbMap()).toList(),
+      habitsJson: habits.map((h) => h.toDbMap()).toList(),
+      habitEntriesJson: habitEntries.map((e) => e.toDbMap()).toList(),
       type: type,
     );
 

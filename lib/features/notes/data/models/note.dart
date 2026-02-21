@@ -92,11 +92,6 @@ class Note extends DbEntity {
   @override
   String get primaryKeyValue => id!;
 
-  // ── LocalDbElement backward compat ─────────────────────────────
-
-  @override
-  Note fromLocalDbMap(Map<String, dynamic> map) => fromDbMap(map);
-
   // ── JSON export/import serialization (different format) ────────
 
   Map<String, dynamic> toMap() {
