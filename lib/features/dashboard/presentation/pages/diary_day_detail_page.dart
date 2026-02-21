@@ -23,8 +23,13 @@ class DiaryDayDetailPage extends ConsumerWidget {
     final l10n = AppLocalizations.of(context);
     final locale = Localizations.localeOf(context).languageCode;
 
+    final theme = Theme.of(context);
+
     return Scaffold(
+      backgroundColor: theme.colorScheme.surface,
       appBar: AppBar(
+        backgroundColor: theme.colorScheme.surfaceContainer,
+        foregroundColor: theme.colorScheme.onSurface,
         title: Text(l10n.dayDetail(_formatDate(selectedDate, locale))),
       ),
       body: diaryDayAsync.when(
@@ -69,6 +74,7 @@ class DiaryDayDetailPage extends ConsumerWidget {
       children: [
         // Day summary card
         AppCard.elevated(
+          color: theme.colorScheme.surfaceContainer,
           borderRadius: AppRadius.borderRadiusMd,
           padding: AppSpacing.paddingAllMd,
           child: Column(
@@ -139,12 +145,12 @@ class DiaryDayDetailPage extends ConsumerWidget {
       label: Text(
         '$label: ${_getLocalizedRatingText(l10n, rating)}',
         style: theme.textTheme.bodySmall?.copyWith(
-          color: theme.colorScheme.onSurface,
+          color: color,
           fontWeight: FontWeight.bold,
         ),
       ),
       backgroundColor: color.withValues(
-          alpha: theme.brightness == Brightness.dark ? 0.3 : 0.2),
+          alpha: theme.colorScheme.brightness == Brightness.dark ? 0.15 : 0.1),
       side: BorderSide(color: color),
       avatar: Icon(
         _getRatingIcon(rating),
@@ -168,7 +174,7 @@ class DiaryDayDetailPage extends ConsumerWidget {
         CircleAvatar(
           radius: 32,
           backgroundColor: scoreColor.withValues(
-              alpha: theme.brightness == Brightness.dark ? 0.3 : 0.2),
+              alpha: theme.colorScheme.brightness == Brightness.dark ? 0.3 : 0.2),
           child: Text(
             '$score',
             style: TextStyle(
@@ -209,6 +215,7 @@ class DiaryDayDetailPage extends ConsumerWidget {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context);
     return AppCard.elevated(
+      color: theme.colorScheme.surfaceContainer,
       borderRadius: AppRadius.borderRadiusMd,
       padding: AppSpacing.paddingAllMd,
       child: Column(
@@ -258,6 +265,7 @@ class DiaryDayDetailPage extends ConsumerWidget {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context);
     return AppCard.flat(
+      color: theme.colorScheme.surfaceContainerHigh,
       margin: const EdgeInsets.symmetric(vertical: 4),
       borderRadius: AppRadius.borderRadiusSm,
       onTap: () => _viewNote(context, ref, note),

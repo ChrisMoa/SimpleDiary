@@ -28,7 +28,10 @@ class _NoteViewingPageState extends ConsumerState<NoteViewingPage> {
     final l10n = AppLocalizations.of(context);
 
     return Scaffold(
+      backgroundColor: theme.colorScheme.surface,
       appBar: AppBar(
+        backgroundColor: theme.colorScheme.surfaceContainer,
+        foregroundColor: theme.colorScheme.onSurface,
         leading: const CloseButton(),
         actions: _buildViewingActions(context, note),
       ),
@@ -70,6 +73,7 @@ class _NoteViewingPageState extends ConsumerState<NoteViewingPage> {
 
           // Date & Time card
           AppCard.flat(
+            color: theme.colorScheme.surfaceContainerHigh,
             padding: AppSpacing.paddingAllMd,
             borderRadius: AppRadius.borderRadiusMd,
             child: Column(
@@ -99,6 +103,7 @@ class _NoteViewingPageState extends ConsumerState<NoteViewingPage> {
           // Description
           if (note.description.isNotEmpty) ...[
             AppCard.flat(
+              color: theme.colorScheme.surfaceContainerHigh,
               padding: AppSpacing.paddingAllMd,
               borderRadius: AppRadius.borderRadiusMd,
               child: Column(
