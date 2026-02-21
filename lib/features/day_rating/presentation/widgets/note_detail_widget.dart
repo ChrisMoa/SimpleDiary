@@ -150,39 +150,46 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
                       ],
                     ),
                   ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                    decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [
-                          selectedNote.noteCategory.color.withValues(alpha: 0.15),
-                          selectedNote.noteCategory.color.withValues(alpha: 0.08),
+                  Flexible(
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            selectedNote.noteCategory.color.withValues(alpha: 0.15),
+                            selectedNote.noteCategory.color.withValues(alpha: 0.08),
+                          ],
+                        ),
+                        borderRadius: AppRadius.borderRadiusXl,
+                        border: Border.all(
+                          color: selectedNote.noteCategory.color.withValues(alpha: 0.3),
+                          width: 1.5,
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            selectedNote.isAllDay ? Icons.calendar_today_rounded : Icons.schedule_rounded,
+                            size: 14,
+                            color: selectedNote.noteCategory.color,
+                          ),
+                          AppSpacing.horizontalXxs,
+                          Flexible(
+                            child: Text(
+                              selectedNote.isAllDay
+                                  ? l10n.allDay
+                                  : '${Utils.toTime(selectedNote.from)} - ${Utils.toTime(selectedNote.to)}',
+                              style: theme.textTheme.bodySmall!.copyWith(
+                                color: theme.colorScheme.onSurface,
+                                fontWeight: FontWeight.w600,
+                                fontSize: 12,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
                         ],
                       ),
-                      borderRadius: AppRadius.borderRadiusXl,
-                      border: Border.all(
-                        color: selectedNote.noteCategory.color.withValues(alpha: 0.3),
-                        width: 1.5,
-                      ),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(
-                          Icons.schedule_rounded,
-                          size: 14,
-                          color: selectedNote.noteCategory.color,
-                        ),
-                        AppSpacing.horizontalXxs,
-                        Text(
-                          '${Utils.toTime(selectedNote.from)} - ${Utils.toTime(selectedNote.to)}',
-                          style: theme.textTheme.bodySmall!.copyWith(
-                            color: theme.colorScheme.onSurface,
-                            fontWeight: FontWeight.w600,
-                            fontSize: 12,
-                          ),
-                        ),
-                      ],
                     ),
                   ),
                 ],

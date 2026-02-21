@@ -74,7 +74,7 @@ class FavoritesSectionWidget extends ConsumerWidget {
 
         // Horizontal scroll with limited favorites
         SizedBox(
-          height: 100,
+          height: 115,
           child: ListView(
             scrollDirection: Axis.horizontal,
             padding: const EdgeInsets.symmetric(horizontal: 12),

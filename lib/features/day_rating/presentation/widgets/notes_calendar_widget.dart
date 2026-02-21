@@ -253,10 +253,12 @@ class _NotesCalendarWidgetState extends ConsumerState<NotesCalendarWidget> {
           width: isSelected ? 2 : 1,
         ),
       ),
+      clipBehavior: Clip.hardEdge,
       child: Padding(
         padding: const EdgeInsets.all(2.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
           children: [
             Row(
               children: [
@@ -272,12 +274,15 @@ class _NotesCalendarWidgetState extends ConsumerState<NotesCalendarWidget> {
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
-                if (!isSmallAppointment)
-                  Text(
-                    '${Utils.toTime(note.from)} - ${Utils.toTime(note.to)}',
-                    style: TextStyle(
-                      color: theme.colorScheme.surface,
-                      fontSize: 9,
+                if (!isSmallAppointment && !note.isAllDay)
+                  Flexible(
+                    child: Text(
+                      '${Utils.toTime(note.from)} - ${Utils.toTime(note.to)}',
+                      style: TextStyle(
+                        color: theme.colorScheme.surface,
+                        fontSize: 9,
+                      ),
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
               ],
