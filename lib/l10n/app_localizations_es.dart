@@ -380,6 +380,18 @@ class AppLocalizationsEs extends AppLocalizations {
   String get update => 'Actualizar';
 
   @override
+  String get ratingSocial => 'Social';
+
+  @override
+  String get ratingProductivity => 'Productividad';
+
+  @override
+  String get ratingSport => 'Deporte';
+
+  @override
+  String get ratingFood => 'Comida';
+
+  @override
   String get ratingPoor => 'Pobre';
 
   @override
