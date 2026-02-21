@@ -1,30 +1,19 @@
-import 'package:day_tracker/core/database/abstract_local_db_provider_state.dart';
-import 'package:day_tracker/core/database/local_db_helper.dart';
+import 'package:day_tracker/core/database/db_provider_factory.dart';
 import 'package:day_tracker/core/log/logger_instance.dart';
 import 'package:day_tracker/core/utils/utils.dart';
 import 'package:day_tracker/features/day_rating/data/models/day_rating.dart';
 import 'package:day_tracker/features/day_rating/data/models/diary_day.dart';
-import 'package:day_tracker/features/day_rating/data/repositories/diary_day_local_db.dart';
 import 'package:day_tracker/features/notes/domain/providers/note_local_db_provider.dart';
 import 'package:day_tracker/features/notes/domain/providers/note_selected_date_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class DiaryDayDataProvider extends AbstractLocalDbProviderState<DiaryDay> {
-  DiaryDayDataProvider() : super(tableName: 'diaryDays', primaryKey: 'day');
-
-  @override
-  LocalDbHelper createLocalDbHelper(String tableName, String primaryKey) {
-    return DiaryDayLocalDbHelper(
-        tableName: tableName, primaryKey: primaryKey, dbFile: dbFile);
-  }
-}
-
-//-----------------------------------------------------------------------------------------------------------------------------------
-
-final diaryDayLocalDbDataProvider =
-    StateNotifierProvider<DiaryDayDataProvider, List<DiaryDay>>((ref) {
-  return DiaryDayDataProvider();
-});
+/// DiaryDay provider — migrated to schema-driven DbRepository.
+final diaryDayLocalDbDataProvider = createDbProvider<DiaryDay>(
+  tableName: DiaryDay.tableName,
+  columns: DiaryDay.columns,
+  fromMap: DiaryDay.fromDbMap,
+  migrations: DiaryDay.migrations,
+);
 
 //-----------------------------------------------------------------------------------------------------------------------------------
 

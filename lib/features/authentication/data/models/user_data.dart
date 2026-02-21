@@ -1,10 +1,9 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
-import 'package:day_tracker/core/database/local_db_element.dart';
 import 'package:day_tracker/core/utils/utils.dart';
 
-class UserData implements LocalDbElement {
+class UserData {
   String username;
   String password; // Hashed password
   String salt; // Salt for password hashing
@@ -63,20 +62,4 @@ class UserData implements LocalDbElement {
 
   factory UserData.fromJson(String source) =>
       UserData.fromMap(json.decode(source) as Map<String, dynamic>);
-
-  @override
-  LocalDbElement fromLocalDbMap(Map<String, dynamic> map) {
-    return UserData.fromMap(map);
-  }
-
-  @override
-  getId() {
-    return username;
-  }
-
-  @override
-  Map<String, dynamic> toLocalDbMap(LocalDbElement map) {
-    assert(map is UserData, '${map.getId()} has no type "UserData"');
-    return (map as UserData).toMap();
-  }
 }

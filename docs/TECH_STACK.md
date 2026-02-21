@@ -9,7 +9,7 @@
 | Property | Value |
 |----------|-------|
 | **App Name** | SimpleDiary (package: `day_tracker`) |
-| **Version** | 1.0.12+1 |
+| **Version** | 1.0.13+1 |
 | **Platform Support** | Android, Linux, Windows |
 | **Dart SDK** | >=3.0.3 <4.0.0 |
 | **Flutter Version (CI)** | 3.29.3 stable |
@@ -116,7 +116,7 @@ lib/
 ├── core/                          # Shared infrastructure
 │   ├── authentication/            # Password auth service
 │   ├── backup/                    # BackupMetadata model
-│   ├── database/                  # LocalDbHelper, LocalDbElement interface
+│   ├── database/                  # DbRepository, DbEntity, DbColumn, DbMigration, createDbProvider
 │   ├── encryption/                # AES encryptor
 │   ├── log/                       # Logger configuration
 │   ├── navigation/                # Drawer items
@@ -148,8 +148,8 @@ Each feature follows a layered architecture:
 ```
 feature/
 ├── data/
-│   ├── models/           # Data classes (toMap, fromMap, copyWith)
-│   └── repositories/     # Database access (*_local_db.dart)
+│   ├── models/           # Data classes (extends DbEntity, toDbMap, fromDbMap, copyWith)
+│   └── repositories/     # Business-logic repositories (optional)
 ├── domain/
 │   └── providers/        # Riverpod providers
 └── presentation/
@@ -186,57 +186,98 @@ class MyWidget extends ConsumerWidget {
 }
 ```
 
-### Database: LocalDbHelper + LocalDbElement
+### Database: Schema-Driven DbEntity + DbRepository
 
-All database entities implement `LocalDbElement`:
+All database entities extend `DbEntity`:
 
 ```dart
-abstract class LocalDbElement {
-  Map<String, dynamic> toLocalDbMap(LocalDbElement element);
-  LocalDbElement fromLocalDbMap(Map<String, dynamic> map);
-  dynamic getId();
+abstract class DbEntity {
+  Map<String, dynamic> toDbMap();        // No redundant self-parameter
+  dynamic get primaryKeyValue;           // Typed primary key getter
 }
 ```
 
-Database tables extend `LocalDbHelper`:
+Each entity declares its schema, factory, and migrations as statics:
 
 ```dart
-class NotesLocalDb extends LocalDbHelper {
-  NotesLocalDb() : super(
-    tableName: 'notes',
-    primaryKey: 'id',
-    dbFile: File('$path/notes.db'),
+class HabitEntry extends DbEntity {
+  // ── Schema (single source of truth) ──
+  static const String tableName = 'habit_entries';
+
+  static const List<DbColumn> columns = [
+    DbColumn.textPrimaryKey('id'),
+    DbColumn.text('habitId'),
+    DbColumn.text('date'),
+    DbColumn.integer('isCompleted', defaultValue: '0'),
+  ];
+
+  static const List<DbMigration> migrations = [];
+
+  // ── Serialization (single source of truth) ──
+  @override
+  Map<String, dynamic> toDbMap() => { 'id': id, ... };
+
+  static HabitEntry fromDbMap(Map<String, dynamic> map) => HabitEntry(...);
+
+  @override
+  String get primaryKeyValue => id;
+}
+```
+
+**Simple entities** use the one-line `createDbProvider` factory:
+
+```dart
+final habitEntriesProvider = createDbProvider<HabitEntry>(
+  tableName: HabitEntry.tableName,
+  columns: HabitEntry.columns,
+  fromMap: HabitEntry.fromDbMap,
+  migrations: HabitEntry.migrations,
+);
+```
+
+**Entities with custom logic** subclass `DbRepository` directly:
+
+```dart
+class CategoryLocalDataProvider extends DbRepository<NoteCategory> {
+  CategoryLocalDataProvider() : super(
+    tableName: NoteCategory.tableName,
+    columns: NoteCategory.columns,
+    fromMap: NoteCategory.fromDbMap,
   );
 
   @override
-  Future<void> onCreateSqlTable() async {
-    await database!.execute('''
-      CREATE TABLE notes (
-        id TEXT PRIMARY KEY,
-        title TEXT,
-        ...
-      )
-    ''');
+  Future<void> readObjectsFromDatabase() async {
+    await super.readObjectsFromDatabase();
+    if (state.isEmpty) await _addDefaultCategories();
   }
 }
 ```
 
+### Core Database Files
+
+| File | Purpose |
+|------|---------|
+| `db_column.dart` | Declarative column definitions, auto-generates `CREATE TABLE` SQL |
+| `db_entity.dart` | Clean base class for all persisted entities |
+| `db_migration.dart` | Version-ordered migrations (add column, add index) |
+| `db_repository.dart` | Unified CRUD + Riverpod `StateNotifier` |
+| `db_provider_factory.dart` | `createDbProvider()` one-liner |
+
 ### Model Serialization
 
-Models implement multiple serialization methods:
+Models have a single source of truth for DB serialization (`toDbMap`/`fromDbMap`).
+Models that also need JSON export/import keep separate `toMap`/`fromMap`:
 
 ```dart
-class DiaryDay implements LocalDbElement {
-  // For JSON export/import
+class DiaryDay extends DbEntity {
+  // SQLite serialization (single source of truth)
+  @override
+  Map<String, dynamic> toDbMap() { ... }
+  static DiaryDay fromDbMap(Map<String, dynamic> map) { ... }
+
+  // JSON export/import (different format — ratings as List, not JSON string)
   Map<String, dynamic> toMap() { ... }
   factory DiaryDay.fromMap(Map<String, dynamic> map) { ... }
-
-  // For SQLite (may differ, e.g., nested JSON as strings)
-  Map<String, dynamic> toLocalDbMap(LocalDbElement element) { ... }
-  factory DiaryDay.fromLocalDbMap(Map<String, dynamic> map) { ... }
-
-  // Empty factory for initialization
-  factory DiaryDay.fromEmpty() { ... }
 }
 ```
 
@@ -562,9 +603,9 @@ flutter clean
 ## Adding New Features Checklist
 
 1. Create feature directory under `lib/features/<feature_name>/`
-2. Add models in `data/models/`
-3. Add database repository in `data/repositories/` (extend `LocalDbHelper`)
-4. Add Riverpod providers in `domain/providers/`
+2. Add models in `data/models/` (extend `DbEntity`, define `columns`, `fromDbMap`, `migrations`)
+3. Add provider in `domain/providers/` (use `createDbProvider()` or subclass `DbRepository`)
+4. Add business-logic repository in `data/repositories/` if needed
 5. Create pages in `presentation/pages/`
 6. Create widgets in `presentation/widgets/`
 7. Add navigation entry in `DrawerItemBuilder` if top-level

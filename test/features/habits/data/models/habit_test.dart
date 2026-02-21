@@ -56,8 +56,8 @@ void main() {
         isArchived: false,
       );
 
-      final map = habit.toLocalDbMap(habit);
-      final deserialized = habit.fromLocalDbMap(map);
+      final map = habit.toDbMap();
+      final deserialized = Habit.fromDbMap(map);
 
       expect(deserialized.id, habit.id);
       expect(deserialized.name, habit.name);
@@ -80,16 +80,16 @@ void main() {
         createdAt: DateTime(2026, 1, 1),
       );
 
-      final map = habit.toLocalDbMap(habit);
+      final map = habit.toDbMap();
       expect(map['isArchived'], 1);
 
-      final deserialized = habit.fromLocalDbMap(map);
+      final deserialized = Habit.fromDbMap(map);
       expect(deserialized.isArchived, true);
     });
 
-    test('getId returns id', () {
+    test('primaryKeyValue returns id', () {
       final habit = Habit(id: 'my-id', name: 'Test');
-      expect(habit.getId(), 'my-id');
+      expect(habit.primaryKeyValue, 'my-id');
     });
 
     test('copyWith updates fields correctly', () {

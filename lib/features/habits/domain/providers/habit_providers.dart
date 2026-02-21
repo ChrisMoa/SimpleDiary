@@ -1,52 +1,28 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:day_tracker/core/database/abstract_local_db_provider_state.dart';
-import 'package:day_tracker/core/database/local_db_helper.dart';
+import 'package:day_tracker/core/database/db_provider_factory.dart';
 import 'package:day_tracker/features/habits/data/models/habit.dart';
 import 'package:day_tracker/features/habits/data/models/habit_entry.dart';
-import 'package:day_tracker/features/habits/data/repositories/habits_local_db.dart';
-import 'package:day_tracker/features/habits/data/repositories/habit_entries_local_db.dart';
 import 'package:day_tracker/features/habits/data/repositories/habits_repository.dart';
-
-/// Database provider for habits
-class HabitDataProvider extends AbstractLocalDbProviderState<Habit> {
-  HabitDataProvider() : super(tableName: 'habits', primaryKey: 'id');
-
-  @override
-  LocalDbHelper createLocalDbHelper(String tableName, String primaryKey) {
-    return HabitsLocalDbHelper(
-      tableName: tableName,
-      primaryKey: primaryKey,
-      dbFile: dbFile,
-    );
-  }
-}
-
-/// Database provider for habit entries
-class HabitEntryDataProvider extends AbstractLocalDbProviderState<HabitEntry> {
-  HabitEntryDataProvider()
-      : super(tableName: 'habit_entries', primaryKey: 'id');
-
-  @override
-  LocalDbHelper createLocalDbHelper(String tableName, String primaryKey) {
-    return HabitEntriesLocalDbHelper(
-      tableName: tableName,
-      primaryKey: primaryKey,
-      dbFile: dbFile,
-    );
-  }
-}
 
 // -- StateNotifier providers --
 
-final habitsLocalDbDataProvider =
-    StateNotifierProvider<HabitDataProvider, List<Habit>>((ref) {
-  return HabitDataProvider();
-});
+/// Habit provider — migrated to schema-driven DbRepository.
+final habitsLocalDbDataProvider = createDbProvider<Habit>(
+  tableName: Habit.tableName,
+  columns: Habit.columns,
+  fromMap: Habit.fromDbMap,
+  migrations: Habit.migrations,
+);
 
+/// HabitEntry provider — migrated to schema-driven DbRepository.
 final habitEntriesLocalDbDataProvider =
-    StateNotifierProvider<HabitEntryDataProvider, List<HabitEntry>>((ref) {
-  return HabitEntryDataProvider();
-});
+    createDbProvider<HabitEntry>(
+  tableName: HabitEntry.tableName,
+  columns: HabitEntry.columns,
+  fromMap: HabitEntry.fromDbMap,
+  migrations: HabitEntry.migrations,
+  additionalSql: HabitEntry.additionalSql,
+);
 
 // -- Repository --
 

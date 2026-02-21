@@ -686,7 +686,6 @@ class _BackupHistoryPageState extends ConsumerState<BackupHistoryPage> {
   }
 
   // -- Helper methods to reconstruct objects from backup maps --
-  // These use fromLocalDbMap via a temporary instance pattern
 
   dynamic _diaryDayFromMap(Map<String, dynamic> map) {
     try {
@@ -699,7 +698,7 @@ class _BackupHistoryPageState extends ConsumerState<BackupHistoryPage> {
 
   dynamic _noteFromMap(Map<String, dynamic> map) {
     try {
-      return Note.fromEmpty().fromLocalDbMap(map);
+      return Note.fromDbMap(map);
     } catch (e) {
       LogWrapper.logger.w('Failed to parse note from backup: $e');
       return null;
@@ -708,7 +707,7 @@ class _BackupHistoryPageState extends ConsumerState<BackupHistoryPage> {
 
   dynamic _habitFromMap(Map<String, dynamic> map) {
     try {
-      return Habit(name: '').fromLocalDbMap(map);
+      return Habit.fromDbMap(map);
     } catch (e) {
       LogWrapper.logger.w('Failed to parse habit from backup: $e');
       return null;
@@ -717,7 +716,7 @@ class _BackupHistoryPageState extends ConsumerState<BackupHistoryPage> {
 
   dynamic _habitEntryFromMap(Map<String, dynamic> map) {
     try {
-      return HabitEntry(habitId: '', date: DateTime.now()).fromLocalDbMap(map);
+      return HabitEntry.fromDbMap(map);
     } catch (e) {
       LogWrapper.logger.w('Failed to parse habit entry from backup: $e');
       return null;

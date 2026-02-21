@@ -141,8 +141,8 @@ void main() {
     group('LocalDb map conversion', () {
       test('round-trip preserves data', () {
         final original = createSample();
-        final dbMap = original.toLocalDbMap(original);
-        final restored = original.fromLocalDbMap(dbMap) as NoteAttachment;
+        final dbMap = original.toDbMap();
+        final restored = NoteAttachment.fromDbMap(dbMap);
 
         expect(restored.id, original.id);
         expect(restored.noteId, original.noteId);
@@ -152,7 +152,7 @@ void main() {
 
       test('dbMap uses same keys as toMap', () {
         final a = createSample();
-        final dbMap = a.toLocalDbMap(a);
+        final dbMap = a.toDbMap();
         expect(dbMap, contains('id'));
         expect(dbMap, contains('noteId'));
         expect(dbMap, contains('filePath'));
@@ -161,9 +161,9 @@ void main() {
       });
     });
 
-    group('getId', () {
+    group('primaryKeyValue', () {
       test('returns the attachment id', () {
-        expect(createSample().getId(), 'attachment-id-1');
+        expect(createSample().primaryKeyValue, 'attachment-id-1');
       });
     });
   });

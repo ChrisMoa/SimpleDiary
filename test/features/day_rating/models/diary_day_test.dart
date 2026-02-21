@@ -108,7 +108,7 @@ void main() {
     group('LocalDb map conversion', () {
       test('round-trip with JSON-encoded ratings', () {
         final original = createSampleDiaryDay();
-        final localDbMap = original.toLocalDbMap(original);
+        final localDbMap = original.toDbMap();
 
         expect(localDbMap['day'], Utils.toDate(original.day));
         expect(localDbMap['ratings'], isA<String>());
@@ -118,8 +118,8 @@ void main() {
         expect(ratingsJson, isA<List>());
         expect(ratingsJson.length, original.ratings.length);
 
-        // Round-trip through fromLocalDbMap
-        final restored = DiaryDay.fromLocalDbMap(localDbMap);
+        // Round-trip through fromDbMap
+        final restored = DiaryDay.fromDbMap(localDbMap);
         expect(restored.ratings.length, original.ratings.length);
         for (var i = 0; i < original.ratings.length; i++) {
           expect(restored.ratings[i].dayRating, original.ratings[i].dayRating);
@@ -128,13 +128,13 @@ void main() {
       });
     });
 
-    group('getId', () {
+    group('primaryKeyValue', () {
       test('returns ISO date string (YYYY-MM-DD)', () {
         final day = DiaryDay(
           day: DateTime(2024, 3, 15),
           ratings: [],
         );
-        expect(day.getId(), '2024-03-15');
+        expect(day.primaryKeyValue, '2024-03-15');
       });
 
       test('pads single-digit months and days', () {
@@ -142,7 +142,7 @@ void main() {
           day: DateTime(2024, 1, 5),
           ratings: [],
         );
-        expect(day.getId(), '2024-01-05');
+        expect(day.primaryKeyValue, '2024-01-05');
       });
     });
   });

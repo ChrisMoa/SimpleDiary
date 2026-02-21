@@ -175,10 +175,10 @@ void main() {
     });
 
     group('LocalDb map conversion', () {
-      test('round-trip through fromLocalDbMap', () {
+      test('round-trip through toDbMap/fromDbMap', () {
         final original = createSampleTemplate();
-        final localDbMap = original.toLocalDbMap(original);
-        final restored = original.fromLocalDbMap(localDbMap) as NoteTemplate;
+        final localDbMap = original.toDbMap();
+        final restored = NoteTemplate.fromDbMap(localDbMap);
 
         expect(restored.id, original.id);
         expect(restored.title, original.title);
@@ -186,10 +186,10 @@ void main() {
       });
     });
 
-    group('getId', () {
+    group('primaryKeyValue', () {
       test('returns template id', () {
         final template = createSampleTemplate();
-        expect(template.getId(), 'template-1');
+        expect(template.primaryKeyValue, 'template-1');
       });
     });
   });

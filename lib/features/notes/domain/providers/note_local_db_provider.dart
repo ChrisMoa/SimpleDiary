@@ -1,31 +1,20 @@
-import 'package:day_tracker/core/database/abstract_local_db_provider_state.dart';
-import 'package:day_tracker/core/database/local_db_helper.dart';
+import 'package:day_tracker/core/database/db_provider_factory.dart';
 import 'package:day_tracker/core/log/logger_instance.dart';
 import 'package:day_tracker/core/utils/utils.dart';
 import 'package:day_tracker/features/notes/data/models/note.dart';
 import 'package:day_tracker/features/notes/data/models/note_category.dart';
-import 'package:day_tracker/features/notes/data/repositories/notes_local_db.dart';
 import 'package:day_tracker/features/notes/domain/providers/category_local_db_provider.dart';
 import 'package:day_tracker/features/notes/domain/providers/note_selected_date_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class NotesLocalDataProvider extends AbstractLocalDbProviderState<Note> {
-  NotesLocalDataProvider() : super(tableName: 'notes', primaryKey: 'id');
-
-  @override
-  LocalDbHelper createLocalDbHelper(String tableName, String primaryKey) {
-    return NotesLocalDbHelper(
-        tableName: tableName, primaryKey: primaryKey, dbFile: dbFile);
-  }
-}
-
-//-----------------------------------------------------------------------------------------------------------------------------------
-
-final notesLocalDataProvider =
-    StateNotifierProvider<NotesLocalDataProvider, List<Note>>((ref) {
-  return NotesLocalDataProvider();
-});
+/// Note provider — migrated to schema-driven DbRepository.
+final notesLocalDataProvider = createDbProvider<Note>(
+  tableName: Note.tableName,
+  columns: Note.columns,
+  fromMap: Note.fromDbMap,
+  migrations: Note.migrations,
+);
 
 //-----------------------------------------------------------------------------------------------------------------------------------
 

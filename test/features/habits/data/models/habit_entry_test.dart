@@ -51,14 +51,14 @@ void main() {
       expect(entry.dateKey, '2026-01-05');
     });
 
-    test('getId returns id', () {
+    test('primaryKeyValue returns id', () {
       final entry = HabitEntry(
         id: 'my-entry',
         habitId: 'h1',
         date: DateTime(2026, 2, 18),
       );
 
-      expect(entry.getId(), 'my-entry');
+      expect(entry.primaryKeyValue, 'my-entry');
     });
 
     test('serializes to and from database map correctly', () {
@@ -71,8 +71,8 @@ void main() {
         note: 'Good session',
       );
 
-      final map = entry.toLocalDbMap(entry);
-      final deserialized = entry.fromLocalDbMap(map);
+      final map = entry.toDbMap();
+      final deserialized = HabitEntry.fromDbMap(map);
 
       expect(deserialized.id, entry.id);
       expect(deserialized.habitId, entry.habitId);
@@ -94,9 +94,8 @@ void main() {
         isCompleted: false,
       );
 
-      expect(completedEntry.toLocalDbMap(completedEntry)['isCompleted'], 1);
-      expect(
-          notCompletedEntry.toLocalDbMap(notCompletedEntry)['isCompleted'], 0);
+      expect(completedEntry.toDbMap()['isCompleted'], 1);
+      expect(notCompletedEntry.toDbMap()['isCompleted'], 0);
     });
 
     test('copyWith updates fields correctly', () {
@@ -137,6 +136,14 @@ void main() {
       expect(updated.isCompleted, false);
       expect(updated.count, 5);
       expect(updated.note, 'Original note');
+    });
+
+    test('columns define correct schema', () {
+      expect(HabitEntry.columns.length, 6);
+      expect(
+        HabitEntry.columns.where((c) => c.isPrimaryKey).single.name,
+        'id',
+      );
     });
   });
 }
