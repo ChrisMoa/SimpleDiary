@@ -1,4 +1,3 @@
-// ignore_for_file: public_member_api_docs
 import 'package:day_tracker/core/backup/backup_metadata.dart';
 import 'package:day_tracker/core/log/logger_instance.dart';
 import 'package:day_tracker/core/services/backup_scheduler.dart';
@@ -14,7 +13,6 @@ import 'package:flutter/material.dart';
 import 'package:day_tracker/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-/// Widget for configuring automatic backup settings
 class BackupSettingsWidget extends ConsumerStatefulWidget {
   const BackupSettingsWidget({super.key});
 
@@ -44,6 +42,8 @@ class _BackupSettingsWidgetState extends ConsumerState<BackupSettingsWidget> {
     _destination = settings.destination;
   }
 
+  void _autoSave() => settingsContainer.saveSettings().ignore();
+
   bool get _isSupabaseConfigured {
     final s = settingsContainer.activeUserSettings.supabaseSettings;
     return s.supabaseUrl.isNotEmpty &&
@@ -56,229 +56,180 @@ class _BackupSettingsWidgetState extends ConsumerState<BackupSettingsWidget> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context);
-    final mediaQuery = MediaQuery.of(context);
-    final screenWidth = mediaQuery.size.width;
-    final isSmallScreen = screenWidth < 600;
     final backupSettings = settingsContainer.activeUserSettings.backupSettings;
+    final isOverdue = backupSettings.isBackupOverdue;
+    final lastBackup = backupSettings.lastBackupDateTime;
 
-    return AppCard.elevated(
-      child: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              theme.colorScheme.surfaceContainerHighest,
-              theme.colorScheme.surface,
-            ],
+    final customPath = backupSettings.backupDirectoryPath;
+    final defaultPath = settingsContainer.applicationDocumentsPath;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Overdue warning banner
+        if (isOverdue)
+          Padding(
+            padding: const EdgeInsets.only(top: 16),
+            child: SettingsStatusBanner.warning(
+              context: context,
+              text: lastBackup != null
+                  ? l10n.lastBackup(_formatDateTime(lastBackup))
+                  : l10n.lastBackupNever,
+              trailingText: l10n.backupOverdue,
+            ),
           ),
-          borderRadius: AppRadius.borderRadiusLg,
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // Header
-              Row(
-                children: [
-                  Icon(
-                    Icons.backup,
-                    color: theme.colorScheme.primary,
-                    size: isSmallScreen ? 24 : 28,
+
+        SettingsSection(
+          title: l10n.backupSettings,
+          icon: Icons.backup_outlined,
+          footer: _buildFooter(context, theme, l10n),
+          children: [
+            // Last backup status (when not overdue)
+            if (!isOverdue && lastBackup != null)
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 16, vertical: 10),
+                child: SettingsStatusBanner.success(
+                  context: context,
+                  text: l10n.lastBackup(_formatDateTime(lastBackup)),
+                ),
+              ),
+
+            // Enable toggle
+            SettingsTile(
+              icon: Icons.backup,
+              title: l10n.enableAutoBackup,
+              subtitle: l10n.enableAutoBackupDescription,
+              trailing: Switch(
+                value: _backupEnabled,
+                onChanged: _onBackupToggled,
+              ),
+            ),
+
+            if (_backupEnabled) ...[
+              // Frequency
+              SettingsExpandedTile(
+                icon: Icons.calendar_today_outlined,
+                title: l10n.backupFrequency,
+                subtitle: l10n.backupFrequencyDescription,
+                control: SegmentedButton<BackupFrequency>(
+                  segments: [
+                    ButtonSegment(
+                      value: BackupFrequency.daily,
+                      label: Text(l10n.backupFrequencyDaily),
+                    ),
+                    ButtonSegment(
+                      value: BackupFrequency.weekly,
+                      label: Text(l10n.backupFrequencyWeekly),
+                    ),
+                    ButtonSegment(
+                      value: BackupFrequency.monthly,
+                      label: Text(l10n.backupFrequencyMonthly),
+                    ),
+                  ],
+                  selected: {_frequency},
+                  onSelectionChanged: (selected) {
+                    setState(() {
+                      _frequency = selected.first;
+                      settingsContainer.activeUserSettings.backupSettings
+                          .frequency = _frequency;
+                    });
+                    _autoSave();
+                  },
+                ),
+              ),
+
+              // Preferred time
+              SettingsTile(
+                icon: Icons.schedule,
+                title: l10n.backupPreferredTime,
+                subtitle: l10n.backupPreferredTimeDescription,
+                trailing: Container(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: theme.colorScheme.primaryContainer
+                        .withValues(alpha: 0.4),
+                    borderRadius: AppRadius.borderRadiusSm,
                   ),
-                  AppSpacing.horizontalXs,
-                  Expanded(
-                    child: Text(
-                      l10n.backupSettings,
-                      style: theme.textTheme.titleLarge?.copyWith(
-                        color: theme.colorScheme.primary,
-                        fontWeight: FontWeight.bold,
-                        fontSize: isSmallScreen ? 18 : 22,
-                      ),
+                  child: Text(
+                    _preferredTime.format(context),
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: theme.colorScheme.primary,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
-                ],
+                ),
+                onTap: _selectPreferredTime,
               ),
 
-              AppSpacing.verticalMd,
-
-              Text(
-                l10n.backupSettingsDescription,
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: theme.colorScheme.onSurface,
+              // Destination
+              SettingsExpandedTile(
+                icon: Icons.storage_outlined,
+                title: l10n.backupDestination,
+                subtitle: _isSupabaseConfigured
+                    ? l10n.backupDestinationDescription
+                    : l10n.backupDestinationRequiresSupabase,
+                control: SegmentedButton<BackupDestination>(
+                  segments: [
+                    ButtonSegment(
+                      value: BackupDestination.localOnly,
+                      label: Text(l10n.backupDestinationLocal),
+                    ),
+                    ButtonSegment(
+                      value: BackupDestination.cloudOnly,
+                      label: Text(l10n.backupDestinationCloud),
+                      enabled: _isSupabaseConfigured,
+                    ),
+                    ButtonSegment(
+                      value: BackupDestination.both,
+                      label: Text(l10n.backupDestinationBoth),
+                      enabled: _isSupabaseConfigured,
+                    ),
+                  ],
+                  selected: {_destination},
+                  onSelectionChanged: (selected) {
+                    setState(() {
+                      _destination = selected.first;
+                      settingsContainer.activeUserSettings.backupSettings
+                          .destination = _destination;
+                    });
+                    BackupScheduler().updateSchedule(
+                      settingsContainer.activeUserSettings.backupSettings,
+                    );
+                    _autoSave();
+                  },
                 ),
               ),
 
-              AppSpacing.verticalXs,
-
-              // Last backup status
-              _buildLastBackupStatus(theme, l10n, backupSettings),
-
-              AppSpacing.verticalXl,
-
-              // Enable/Disable toggle
-              _buildSettingContainer(
-                theme,
-                isSmallScreen,
-                l10n.enableAutoBackup,
-                l10n.enableAutoBackupDescription,
-                Switch(
-                  value: _backupEnabled,
-                  onChanged: _onBackupToggled,
-                ),
-              ),
-
-              if (_backupEnabled) ...[
-                SizedBox(height: isSmallScreen ? 16 : 20),
-
-                // Frequency selector
-                _buildSettingContainer(
-                  theme,
-                  isSmallScreen,
-                  l10n.backupFrequency,
-                  l10n.backupFrequencyDescription,
-                  SegmentedButton<BackupFrequency>(
-                    segments: [
-                      ButtonSegment(
-                        value: BackupFrequency.daily,
-                        label: Text(l10n.backupFrequencyDaily),
-                      ),
-                      ButtonSegment(
-                        value: BackupFrequency.weekly,
-                        label: Text(l10n.backupFrequencyWeekly),
-                      ),
-                      ButtonSegment(
-                        value: BackupFrequency.monthly,
-                        label: Text(l10n.backupFrequencyMonthly),
-                      ),
-                    ],
-                    selected: {_frequency},
-                    onSelectionChanged: (selected) {
+              // WiFi only (cloud)
+              if (_destination != BackupDestination.localOnly)
+                SettingsTile(
+                  icon: Icons.wifi,
+                  title: l10n.backupWifiOnly,
+                  subtitle: l10n.backupWifiOnlyDescription,
+                  trailing: Switch(
+                    value: _wifiOnly,
+                    onChanged: (value) {
                       setState(() {
-                        _frequency = selected.first;
+                        _wifiOnly = value;
                         settingsContainer.activeUserSettings.backupSettings
-                            .frequency = _frequency;
+                            .wifiOnly = value;
                       });
+                      _autoSave();
                     },
                   ),
                 ),
 
-                SizedBox(height: isSmallScreen ? 16 : 20),
-
-                // Preferred time
-                _buildSettingContainer(
-                  theme,
-                  isSmallScreen,
-                  l10n.backupPreferredTime,
-                  l10n.backupPreferredTimeDescription,
-                  InkWell(
-                    onTap: _selectPreferredTime,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 12,
-                      ),
-                      decoration: BoxDecoration(
-                        color: theme.colorScheme.primaryContainer,
-                        borderRadius: AppRadius.borderRadiusSm,
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            Icons.access_time,
-                            color: theme.colorScheme.onPrimaryContainer,
-                          ),
-                          AppSpacing.horizontalXs,
-                          Text(
-                            _preferredTime.format(context),
-                            style: theme.textTheme.titleMedium?.copyWith(
-                              color: theme.colorScheme.onPrimaryContainer,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-
-                SizedBox(height: isSmallScreen ? 16 : 20),
-
-                // Backup destination selector
-                _buildSettingContainer(
-                  theme,
-                  isSmallScreen,
-                  l10n.backupDestination,
-                  _isSupabaseConfigured
-                      ? l10n.backupDestinationDescription
-                      : l10n.backupDestinationRequiresSupabase,
-                  SegmentedButton<BackupDestination>(
-                    segments: [
-                      ButtonSegment(
-                        value: BackupDestination.localOnly,
-                        label: Text(l10n.backupDestinationLocal),
-                      ),
-                      ButtonSegment(
-                        value: BackupDestination.cloudOnly,
-                        label: Text(l10n.backupDestinationCloud),
-                        enabled: _isSupabaseConfigured,
-                      ),
-                      ButtonSegment(
-                        value: BackupDestination.both,
-                        label: Text(l10n.backupDestinationBoth),
-                        enabled: _isSupabaseConfigured,
-                      ),
-                    ],
-                    selected: {_destination},
-                    onSelectionChanged: (selected) {
-                      setState(() {
-                        _destination = selected.first;
-                        settingsContainer.activeUserSettings.backupSettings
-                            .destination = _destination;
-                      });
-                      BackupScheduler().updateSchedule(
-                        settingsContainer.activeUserSettings.backupSettings,
-                      );
-                    },
-                  ),
-                ),
-
-                // WiFi only (only relevant when cloud is enabled)
-                if (_destination != BackupDestination.localOnly) ...[
-                  SizedBox(height: isSmallScreen ? 16 : 20),
-
-                  _buildSettingContainer(
-                    theme,
-                    isSmallScreen,
-                    l10n.backupWifiOnly,
-                    l10n.backupWifiOnlyDescription,
-                    Switch(
-                      value: _wifiOnly,
-                      onChanged: (value) {
-                        setState(() {
-                          _wifiOnly = value;
-                          settingsContainer.activeUserSettings.backupSettings
-                              .wifiOnly = value;
-                        });
-                      },
-                    ),
-                  ),
-                ],
-
-                SizedBox(height: isSmallScreen ? 16 : 20),
-
-                // Max backups slider
-                _buildSettingContainer(
-                  theme,
-                  isSmallScreen,
-                  l10n.backupMaxCount,
-                  l10n.backupMaxCountDescription,
-                  Column(
-                    children: [
-                      Slider(
+              // Max backups
+              SettingsExpandedTile(
+                icon: Icons.layers_outlined,
+                title: l10n.backupMaxCount,
+                subtitle: l10n.backupMaxCountDescription,
+                control: Row(
+                  children: [
+                    Expanded(
+                      child: Slider(
                         value: _maxBackups.toDouble(),
                         min: 1,
                         max: 30,
@@ -287,186 +238,110 @@ class _BackupSettingsWidgetState extends ConsumerState<BackupSettingsWidget> {
                         onChanged: (value) {
                           setState(() {
                             _maxBackups = value.round();
-                            settingsContainer.activeUserSettings.backupSettings
+                            settingsContainer
+                                .activeUserSettings.backupSettings
                                 .maxBackups = _maxBackups;
                           });
                         },
+                        onChangeEnd: (_) => _autoSave(),
                       ),
-                      Text(
-                        l10n.backupMaxCountValue(_maxBackups),
+                    ),
+                    SizedBox(
+                      width: 32,
+                      child: Text(
+                        '$_maxBackups',
                         style: theme.textTheme.bodySmall?.copyWith(
-                          color: theme.colorScheme.onSurface.withValues(alpha: .7),
+                          color: theme.colorScheme.onSurfaceVariant,
                         ),
+                        textAlign: TextAlign.end,
                       ),
-                    ],
+                    ),
+                  ],
+                ),
+              ),
+
+              // Backup location (local)
+              if (_destination != BackupDestination.cloudOnly) ...[
+                SettingsTile(
+                  icon: Icons.folder_open_outlined,
+                  title: l10n.backupLocation,
+                  subtitle: customPath != null
+                      ? l10n.backupLocationCustom(customPath)
+                      : l10n.backupLocationDefault(defaultPath),
+                  trailing: TextButton(
+                    onPressed: _selectBackupDirectory,
+                    child: Text(l10n.backupLocationChange),
                   ),
                 ),
-
-                // Only show location picker when destination includes local storage
-                if (_destination != BackupDestination.cloudOnly) ...[
-                  SizedBox(height: isSmallScreen ? 16 : 20),
-
-                  // Backup location
-                  _buildSettingContainer(
-                    theme,
-                    isSmallScreen,
-                    l10n.backupLocation,
-                    l10n.backupLocationDescription,
-                    _buildBackupLocationControl(theme, l10n),
+                if (customPath != null)
+                  Padding(
+                    padding: const EdgeInsets.only(
+                        left: 54, right: 16, bottom: 4),
+                    child: Align(
+                      alignment: Alignment.centerLeft,
+                      child: TextButton.icon(
+                        onPressed: () {
+                          setState(() {
+                            settingsContainer
+                                .activeUserSettings.backupSettings
+                                .backupDirectoryPath = null;
+                          });
+                          _autoSave();
+                        },
+                        icon: const Icon(Icons.restore, size: 16),
+                        label: Text(l10n.backupLocationReset),
+                        style: TextButton.styleFrom(
+                          foregroundColor:
+                              theme.colorScheme.onSurfaceVariant,
+                          textStyle: theme.textTheme.bodySmall,
+                        ),
+                      ),
+                    ),
                   ),
-                ],
               ],
-
-              SizedBox(height: isSmallScreen ? 16 : 20),
-
-              // Action buttons
-              Row(
-                children: [
-                  Expanded(
-                    child: ElevatedButton.icon(
-                      onPressed: _isBackingUp ? null : _backupNow,
-                      icon: _isBackingUp
-                          ? SizedBox(
-                              width: 16,
-                              height: 16,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                color: theme.colorScheme.onPrimary,
-                              ),
-                            )
-                          : const Icon(Icons.backup),
-                      label: Text(
-                        _isBackingUp ? l10n.backupCreating : l10n.backupNow,
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: theme.colorScheme.primary,
-                        foregroundColor: theme.colorScheme.onPrimary,
-                        padding: EdgeInsets.symmetric(
-                          vertical: isSmallScreen ? 12 : 14,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: AppRadius.borderRadiusSm,
-                        ),
-                      ),
-                    ),
-                  ),
-                  AppSpacing.horizontalSm,
-                  Expanded(
-                    child: OutlinedButton.icon(
-                      onPressed: () {
-                        Navigator.of(context).push(
-                          AppPageRoute(
-                            builder: (context) => const BackupHistoryPage(),
-                          ),
-                        );
-                      },
-                      icon: const Icon(Icons.history),
-                      label: Text(l10n.backupHistory),
-                      style: OutlinedButton.styleFrom(
-                        padding: EdgeInsets.symmetric(
-                          vertical: isSmallScreen ? 12 : 14,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: AppRadius.borderRadiusSm,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
             ],
-          ),
+          ],
         ),
-      ),
+      ],
     );
   }
 
-  Widget _buildLastBackupStatus(
-    ThemeData theme,
-    AppLocalizations l10n,
-    BackupSettings settings,
-  ) {
-    final lastBackup = settings.lastBackupDateTime;
-    final isOverdue = settings.isBackupOverdue;
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      decoration: BoxDecoration(
-        color: isOverdue
-            ? theme.colorScheme.errorContainer.withValues(alpha: .5)
-            : theme.colorScheme.surfaceContainer,
-        borderRadius: AppRadius.borderRadiusSm,
-      ),
+  Widget _buildFooter(
+      BuildContext context, ThemeData theme, AppLocalizations l10n) {
+    return Padding(
+      padding: const EdgeInsets.all(12),
       child: Row(
         children: [
-          Icon(
-            isOverdue ? Icons.warning_amber_rounded : Icons.check_circle_outline,
-            color: isOverdue
-                ? theme.colorScheme.error
-                : theme.colorScheme.primary,
-            size: 20,
-          ),
-          AppSpacing.horizontalXs,
-          Text(
-            lastBackup != null
-                ? l10n.lastBackup(_formatDateTime(lastBackup))
-                : l10n.lastBackupNever,
-            style: theme.textTheme.bodySmall?.copyWith(
-              color: isOverdue
-                  ? theme.colorScheme.error
-                  : theme.colorScheme.onSurface.withValues(alpha: .7),
-            ),
-          ),
-          if (isOverdue) ...[
-            const Spacer(),
-            Text(
-              l10n.backupOverdue,
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.error,
-                fontWeight: FontWeight.bold,
+          Expanded(
+            child: FilledButton.icon(
+              onPressed: _isBackingUp ? null : _backupNow,
+              icon: _isBackingUp
+                  ? SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: theme.colorScheme.onPrimary,
+                      ),
+                    )
+                  : const Icon(Icons.backup, size: 18),
+              label: Text(
+                _isBackingUp ? l10n.backupCreating : l10n.backupNow,
               ),
             ),
-          ],
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSettingContainer(
-    ThemeData theme,
-    bool isSmallScreen,
-    String title,
-    String description,
-    Widget control,
-  ) {
-    return Container(
-      padding: EdgeInsets.all(isSmallScreen ? 12 : 16),
-      decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceContainer,
-        borderRadius: AppRadius.borderRadiusMd,
-        border: Border.all(
-          color: theme.colorScheme.outline.withValues(alpha: .2),
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            title,
-            style: theme.textTheme.titleMedium?.copyWith(
-              color: theme.colorScheme.onSurface,
-              fontWeight: FontWeight.bold,
-            ),
           ),
-          AppSpacing.verticalXs,
-          Text(
-            description,
-            style: theme.textTheme.bodyMedium?.copyWith(
-              color: theme.colorScheme.onSurface.withValues(alpha: .7),
-            ),
+          const SizedBox(width: 8),
+          OutlinedButton.icon(
+            onPressed: () {
+              Navigator.of(context).push(
+                AppPageRoute(
+                  builder: (context) => const BackupHistoryPage(),
+                ),
+              );
+            },
+            icon: const Icon(Icons.history, size: 18),
+            label: Text(l10n.backupHistory),
           ),
-          AppSpacing.verticalMd,
-          control,
         ],
       ),
     );
@@ -477,8 +352,8 @@ class _BackupSettingsWidgetState extends ConsumerState<BackupSettingsWidget> {
       _backupEnabled = value;
       settingsContainer.activeUserSettings.backupSettings.enabled = value;
     });
+    _autoSave();
 
-    // Update the schedule
     BackupScheduler().updateSchedule(
       settingsContainer.activeUserSettings.backupSettings,
     );
@@ -490,69 +365,6 @@ class _BackupSettingsWidgetState extends ConsumerState<BackupSettingsWidget> {
     LogWrapper.logger.i('Auto-backup ${value ? 'enabled' : 'disabled'}');
   }
 
-  Widget _buildBackupLocationControl(ThemeData theme, AppLocalizations l10n) {
-    final customPath = settingsContainer
-        .activeUserSettings.backupSettings.backupDirectoryPath;
-    final defaultPath = settingsContainer.applicationDocumentsPath;
-    final isCustom = customPath != null;
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-          decoration: BoxDecoration(
-            color: theme.colorScheme.surfaceContainerHighest,
-            borderRadius: AppRadius.borderRadiusSm,
-          ),
-          child: Row(
-            children: [
-              Icon(
-                Icons.folder,
-                color: theme.colorScheme.primary,
-                size: 20,
-              ),
-              AppSpacing.horizontalXs,
-              Expanded(
-                child: Text(
-                  isCustom
-                      ? l10n.backupLocationCustom(customPath)
-                      : l10n.backupLocationDefault(defaultPath),
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.onSurface,
-                  ),
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 2,
-                ),
-              ),
-            ],
-          ),
-        ),
-        AppSpacing.verticalXs,
-        Row(
-          children: [
-            TextButton.icon(
-              onPressed: _selectBackupDirectory,
-              icon: const Icon(Icons.folder_open, size: 18),
-              label: Text(l10n.backupLocationChange),
-            ),
-            if (isCustom)
-              TextButton.icon(
-                onPressed: () {
-                  setState(() {
-                    settingsContainer.activeUserSettings.backupSettings
-                        .backupDirectoryPath = null;
-                  });
-                },
-                icon: const Icon(Icons.restore, size: 18),
-                label: Text(l10n.backupLocationReset),
-              ),
-          ],
-        ),
-      ],
-    );
-  }
-
   Future<void> _selectBackupDirectory() async {
     final selectedDirectory = await FilePicker.platform.getDirectoryPath();
     if (selectedDirectory != null && mounted) {
@@ -560,6 +372,7 @@ class _BackupSettingsWidgetState extends ConsumerState<BackupSettingsWidget> {
         settingsContainer.activeUserSettings.backupSettings
             .backupDirectoryPath = selectedDirectory;
       });
+      _autoSave();
     }
   }
 
@@ -577,6 +390,7 @@ class _BackupSettingsWidgetState extends ConsumerState<BackupSettingsWidget> {
         settingsContainer.activeUserSettings.backupSettings.preferredTime =
             picked;
       });
+      _autoSave();
     }
   }
 
@@ -606,7 +420,8 @@ class _BackupSettingsWidgetState extends ConsumerState<BackupSettingsWidget> {
               : l10n.backupSuccess;
           AppSnackBar.success(context, message: message);
         } else {
-          AppSnackBar.error(context, message: l10n.backupFailed(metadata.error ?? ''));
+          AppSnackBar.error(
+              context, message: l10n.backupFailed(metadata.error ?? ''));
         }
       }
     } catch (e) {

@@ -1,5 +1,3 @@
-import 'package:day_tracker/core/log/logger_instance.dart';
-import 'package:day_tracker/core/settings/settings_container.dart';
 import 'package:day_tracker/features/app/presentation/widgets/language_settings_widget.dart';
 import 'package:day_tracker/features/app/presentation/widgets/backup_settings_widget.dart';
 import 'package:day_tracker/features/app/presentation/widgets/biometric_settings_widget.dart';
@@ -12,185 +10,97 @@ import 'package:flutter/material.dart';
 import 'package:day_tracker/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class SettingsPage extends ConsumerStatefulWidget {
+class SettingsPage extends ConsumerWidget {
   const SettingsPage({super.key});
 
   @override
-  ConsumerState<SettingsPage> createState() => _SettingsPageState();
-}
-
-class _SettingsPageState extends ConsumerState<SettingsPage> {
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-    final mediaQuery = MediaQuery.of(context);
-    final screenWidth = mediaQuery.size.width;
-    final isSmallScreen = screenWidth < 600;
     final l10n = AppLocalizations.of(context);
 
-    return PageGradientBackground(
-      child: Container(
-        color: theme.colorScheme.surface,
-        child: SingleChildScrollView(
-        padding: EdgeInsets.all(isSmallScreen ? 16 : 24),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Page Title
-            Text(
-              l10n.settingsTitle,
-              style: theme.textTheme.headlineMedium?.copyWith(
-                color: theme.colorScheme.primary,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            AppSpacing.verticalXl,
+    final sections = <Widget>[
+      // Theme Settings
+      const ThemeSettingsWidget(),
 
-            // Theme Settings
-            const ThemeSettingsWidget(),
-            AppSpacing.verticalXl,
+      // Language Settings
+      const LanguageSettingsWidget(),
 
-            // Language Settings
-            const LanguageSettingsWidget(),
-            AppSpacing.verticalXl,
+      // Notification Settings
+      const NotificationSettingsWidget(),
 
-            // Notification Settings
-            const NotificationSettingsWidget(),
-            AppSpacing.verticalXl,
+      // Biometric Settings
+      const BiometricSettingsWidget(),
 
-            // Biometric Settings
-            const BiometricSettingsWidget(),
-            AppSpacing.verticalXl,
+      // Backup Settings
+      const BackupSettingsWidget(),
 
-            // Backup Settings
-            const BackupSettingsWidget(),
-            AppSpacing.verticalXl,
+      // Supabase / Cloud Sync Settings
+      const SupabaseSettingsWidget(),
 
-            // Supabase Settings
-            const SupabaseSettingsWidget(),
-            AppSpacing.verticalXl,
+      // Category Management
+      _buildCategorySection(context, theme, l10n),
+    ];
 
-            // Category Management
-            _buildCategoryManagementSection(theme, isSmallScreen, l10n),
-            AppSpacing.verticalXxl,
-
-            // Save Settings Button
-            Center(
-              child: ElevatedButton.icon(
-                onPressed: _saveSettings,
-                icon: const Icon(Icons.save),
-                label: Text(
-                  l10n.saveSettings,
-                  style: theme.textTheme.titleMedium?.copyWith(
-                    color: theme.colorScheme.onPrimary,
+    return ColoredBox(
+      color: theme.colorScheme.surface,
+      child: PageGradientBackground(
+        child: CustomScrollView(
+        slivers: [
+          SliverPadding(
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+            sliver: SliverToBoxAdapter(
+              child: AnimatedListItem(
+                index: 0,
+                child: Text(
+                  l10n.settingsTitle,
+                  style: theme.textTheme.headlineMedium?.copyWith(
+                    color: theme.colorScheme.primary,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: theme.colorScheme.primary,
-                  foregroundColor: theme.colorScheme.onPrimary,
-                  padding: EdgeInsets.symmetric(
-                    horizontal: isSmallScreen ? 24 : 32,
-                    vertical: isSmallScreen ? 12 : 16,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: AppRadius.borderRadiusMd,
-                  ),
-                ),
               ),
             ),
-          ],
+          ),
+          SliverPadding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            sliver: SliverList(
+              delegate: SliverChildBuilderDelegate(
+                (context, index) => AnimatedListItem(
+                  index: index + 1,
+                  child: sections[index],
+                ),
+                childCount: sections.length,
+              ),
+            ),
+          ),
+          const SliverPadding(
+            padding: EdgeInsets.only(bottom: 48),
+          ),
+        ],
         ),
-      ),
       ),
     );
   }
 
-  void _saveSettings() async {
-    try {
-      LogWrapper.logger.i('Saving settings from settings page');
-      await settingsContainer.saveSettings();
-
-      if (mounted) {
-        final l10n = AppLocalizations.of(context);
-        AppSnackBar.success(context, message: l10n.settingsSavedSuccessfully);
-      }
-    } catch (e) {
-      LogWrapper.logger.e('Error saving settings: $e');
-      if (mounted) {
-        final l10n = AppLocalizations.of(context);
-        AppSnackBar.error(context, message: l10n.errorSavingSettings(e.toString()));
-      }
-    }
-  }
-
-  //* build helper -----------------------------------------------------------------------------------------------------------------------------------
-
-  Widget _buildCategoryManagementSection(ThemeData theme, bool isSmallScreen, AppLocalizations l10n) {
-    return AppCard.elevated(
-      borderRadius: AppRadius.borderRadiusMd,
-      padding: EdgeInsets.all(isSmallScreen ? 16 : 20),
-      child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(
-                  Icons.label_outline,
-                  color: theme.colorScheme.primary,
-                  size: isSmallScreen ? 24 : 28,
-                ),
-                AppSpacing.horizontalSm,
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        l10n.noteCategories,
-                        style: theme.textTheme.titleLarge?.copyWith(
-                          color: theme.colorScheme.onSurface,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      AppSpacing.verticalXxs,
-                      Text(
-                        l10n.manageCategoriesAndTags,
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+  Widget _buildCategorySection(
+      BuildContext context, ThemeData theme, AppLocalizations l10n) {
+    return SettingsSection(
+      title: l10n.noteCategories,
+      icon: Icons.label_outline,
+      children: [
+        SettingsTile(
+          icon: Icons.label_outline,
+          title: l10n.manageCategories,
+          subtitle: l10n.manageCategoriesAndTags,
+          trailing: Icon(Icons.chevron_right,
+              color: theme.colorScheme.onSurfaceVariant),
+          onTap: () => Navigator.of(context).push(
+            AppPageRoute(
+              builder: (context) => const CategoryManagementPage(),
             ),
-            AppSpacing.verticalMd,
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton.icon(
-                onPressed: () {
-                  Navigator.of(context).push(
-                    AppPageRoute(
-                      builder: (context) => const CategoryManagementPage(),
-                    ),
-                  );
-                },
-                icon: const Icon(Icons.settings),
-                label: Text(l10n.manageCategories),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: theme.colorScheme.primaryContainer,
-                  foregroundColor: theme.colorScheme.onPrimaryContainer,
-                  padding: EdgeInsets.symmetric(
-                    vertical: isSmallScreen ? 12 : 14,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: AppRadius.borderRadiusSm,
-                  ),
-                ),
-              ),
-            ),
-          ],
+          ),
         ),
+      ],
     );
   }
 }

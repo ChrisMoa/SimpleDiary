@@ -10,159 +10,54 @@ class ThemeSettingsWidget extends ConsumerStatefulWidget {
   const ThemeSettingsWidget({super.key});
 
   @override
-  ConsumerState<ThemeSettingsWidget> createState() => _ThemeSettingsWidgetState();
+  ConsumerState<ThemeSettingsWidget> createState() =>
+      _ThemeSettingsWidgetState();
 }
 
 class _ThemeSettingsWidgetState extends ConsumerState<ThemeSettingsWidget> {
-  Color _dialogPickerColor = settingsContainer.activeUserSettings.themeSeedColor;
+  Color _dialogPickerColor =
+      settingsContainer.activeUserSettings.themeSeedColor;
   var _darkModeSwitch = settingsContainer.activeUserSettings.darkThemeMode;
+
+  void _autoSave() => settingsContainer.saveSettings().ignore();
 
   @override
   Widget build(BuildContext context) {
-    final theme = ref.watch(themeProvider);
+    ref.watch(themeProvider);
     final l10n = AppLocalizations.of(context);
-    final mediaQuery = MediaQuery.of(context);
-    final screenWidth = mediaQuery.size.width;
-    final isSmallScreen = screenWidth < 600;
 
-    return AppCard.elevated(
-      child: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              theme.colorScheme.surfaceContainerHighest,
-              theme.colorScheme.surface,
-            ],
-          ),
-          borderRadius: AppRadius.borderRadiusLg,
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // Header
-              Row(
-                children: [
-                  Icon(
-                    Icons.palette,
-                    color: theme.colorScheme.primary,
-                    size: isSmallScreen ? 24 : 28,
-                  ),
-                  AppSpacing.horizontalXs,
-                  Text(
-                    l10n.themeSettings,
-                    style: theme.textTheme.titleLarge?.copyWith(
-                      color: theme.colorScheme.primary,
-                      fontWeight: FontWeight.bold,
-                      fontSize: isSmallScreen ? 18 : 22,
-                    ),
-                  ),
-                ],
-              ),
-
-              AppSpacing.verticalMd,
-
-              Text(
-                l10n.customizeAppearance,
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: theme.colorScheme.onSurface,
-                ),
-              ),
-
-              AppSpacing.verticalXl,
-
-              // Theme Color
-              Container(
-                padding: EdgeInsets.all(isSmallScreen ? 12 : 16),
-                decoration: BoxDecoration(
-                  color: theme.colorScheme.surfaceContainer,
-                  borderRadius: AppRadius.borderRadiusMd,
-                  border: Border.all(
-                    color: theme.colorScheme.outline.withValues(alpha: .2),
-                  ),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      l10n.themeColor,
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        color: theme.colorScheme.onSurface,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    AppSpacing.verticalXs,
-                    Text(
-                      l10n.clickColorToChange,
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: theme.colorScheme.onSurface.withValues(alpha: .7),
-                      ),
-                    ),
-                    AppSpacing.verticalMd,
-                    ColorIndicator(
-                      width: 44,
-                      height: 44,
-                      borderRadius: 4,
-                      color: _dialogPickerColor,
-                      onSelectFocus: false,
-                      onSelect: () async {
-                        final Color colorBeforeDialog = _dialogPickerColor;
-                        if (!(await colorPickerDialog())) {
-                          setState(() {
-                            _dialogPickerColor = colorBeforeDialog;
-                          });
-                        }
-                      },
-                    ),
-                  ],
-                ),
-              ),
-
-              SizedBox(height: isSmallScreen ? 16 : 20),
-
-              // Theme Mode
-              Container(
-                padding: EdgeInsets.all(isSmallScreen ? 12 : 16),
-                decoration: BoxDecoration(
-                  color: theme.colorScheme.surfaceContainer,
-                  borderRadius: AppRadius.borderRadiusMd,
-                  border: Border.all(
-                    color: theme.colorScheme.outline.withValues(alpha: .2),
-                  ),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      l10n.themeMode,
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        color: theme.colorScheme.onSurface,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    AppSpacing.verticalXs,
-                    Text(
-                      l10n.toggleDarkMode,
-                      style: theme.textTheme.bodyMedium?.copyWith(
-                        color: theme.colorScheme.onSurface.withValues(alpha: .7),
-                      ),
-                    ),
-                    AppSpacing.verticalMd,
-                    Switch(
-                      value: _darkModeSwitch,
-                      onChanged: _onSwitchDarkModeClicked,
-                    ),
-                  ],
-                ),
-              ),
-            ],
+    return SettingsSection(
+      title: l10n.themeSettings,
+      icon: Icons.palette_outlined,
+      children: [
+        SettingsTile(
+          icon: Icons.palette,
+          title: l10n.themeColor,
+          subtitle: l10n.clickColorToChange,
+          trailing: ColorIndicator(
+            width: 32,
+            height: 32,
+            borderRadius: 8,
+            color: _dialogPickerColor,
+            onSelectFocus: false,
+            onSelect: () async {
+              final colorBefore = _dialogPickerColor;
+              if (!(await colorPickerDialog())) {
+                setState(() => _dialogPickerColor = colorBefore);
+              }
+            },
           ),
         ),
-      ),
+        SettingsTile(
+          icon: Icons.dark_mode_outlined,
+          title: l10n.themeMode,
+          subtitle: l10n.toggleDarkMode,
+          trailing: Switch(
+            value: _darkModeSwitch,
+            onChanged: _onSwitchDarkModeClicked,
+          ),
+        ),
+      ],
     );
   }
 
@@ -211,23 +106,22 @@ class _ThemeSettingsWidgetState extends ConsumerState<ThemeSettingsWidget> {
     ).showPickerDialog(
       context,
       actionsPadding: AppSpacing.paddingAllMd,
-      constraints: const BoxConstraints(minHeight: 480, minWidth: 300, maxWidth: 320),
+      constraints:
+          const BoxConstraints(minHeight: 480, minWidth: 300, maxWidth: 320),
     );
   }
 
   void _onColorPickerAcceptedClicked(Color color) {
-    setState(() {
-      _dialogPickerColor = color;
-    });
+    setState(() => _dialogPickerColor = color);
     ref.read(themeProvider.notifier).updateThemeFromSeedColor(color);
     settingsContainer.activeUserSettings.themeSeedColor = color;
+    _autoSave();
   }
 
   void _onSwitchDarkModeClicked(bool value) {
-    setState(() {
-      _darkModeSwitch = value;
-    });
+    setState(() => _darkModeSwitch = value);
     ref.read(themeProvider.notifier).toggleDarkMode(_darkModeSwitch);
     settingsContainer.activeUserSettings.darkThemeMode = value;
+    _autoSave();
   }
 }
