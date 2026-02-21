@@ -355,7 +355,7 @@ class _BackupSettingsWidgetState extends ConsumerState<BackupSettingsWidget> {
                     child: OutlinedButton.icon(
                       onPressed: () {
                         Navigator.of(context).push(
-                          MaterialPageRoute(
+                          AppPageRoute(
                             builder: (context) => const BackupHistoryPage(),
                           ),
                         );

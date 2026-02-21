@@ -97,7 +97,7 @@ class _DiaryDayOverviewListState extends ConsumerState<DiaryDayOverviewList> {
 
   void onSelectDiaryDay(DiaryDay diaryDay) {
     Navigator.of(context).push(
-      MaterialPageRoute(
+      AppPageRoute(
         builder: (context) => DiaryDayDetailPage(selectedDate: diaryDay.day),
       ),
     );

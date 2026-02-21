@@ -79,11 +79,17 @@ class FavoritesSectionWidget extends ConsumerWidget {
             scrollDirection: Axis.horizontal,
             padding: const EdgeInsets.symmetric(horizontal: 12),
             children: [
-              ...limitedDays.map(
-                (day) => _buildFavoriteDayCard(context, ref, day),
+              ...limitedDays.asMap().entries.map(
+                (entry) => AnimatedListItem(
+                  index: entry.key,
+                  child: _buildFavoriteDayCard(context, ref, entry.value),
+                ),
               ),
-              ...limitedNotes.map(
-                (note) => _buildFavoriteNoteCard(context, ref, note),
+              ...limitedNotes.asMap().entries.map(
+                (entry) => AnimatedListItem(
+                  index: limitedDays.length + entry.key,
+                  child: _buildFavoriteNoteCard(context, ref, entry.value),
+                ),
               ),
             ],
           ),
@@ -231,7 +237,7 @@ class FavoritesSectionWidget extends ConsumerWidget {
   void _navigateToFavoritesOverview(BuildContext context) {
     Navigator.push(
       context,
-      MaterialPageRoute(
+      AppPageRoute(
         builder: (context) => const FavoritesOverviewPage(),
       ),
     );
@@ -249,7 +255,7 @@ class FavoritesSectionWidget extends ConsumerWidget {
     ref.read(noteSelectedDateProvider.notifier).updateSelectedDate(note.from);
     Navigator.push(
       context,
-      MaterialPageRoute(
+      AppPageRoute(
         builder: (context) => const NoteEditingPage(editNote: true),
       ),
     );

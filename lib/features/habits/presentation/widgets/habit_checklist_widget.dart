@@ -32,14 +32,18 @@ class HabitChecklistWidget extends ConsumerWidget {
             context, theme, l10n, progress, completedIds.length, todayHabits.length),
         AppSpacing.verticalXs,
         // Habit list
-        ...todayHabits.map((habit) {
+        ...todayHabits.asMap().entries.map((entry) {
+          final habit = entry.value;
           final isCompleted = completedIds.contains(habit.id);
-          return _HabitChecklistItem(
-            habit: habit,
-            isCompleted: isCompleted,
-            onToggle: () => _toggleHabit(ref, habit, todayEntries, isCompleted),
-            onEdit: () => _showEditDialog(context, habit),
-            onDelete: () => _confirmDelete(context, ref, habit, l10n),
+          return AnimatedListItem(
+            index: entry.key,
+            child: _HabitChecklistItem(
+              habit: habit,
+              isCompleted: isCompleted,
+              onToggle: () => _toggleHabit(ref, habit, todayEntries, isCompleted),
+              onEdit: () => _showEditDialog(context, habit),
+              onDelete: () => _confirmDelete(context, ref, habit, l10n),
+            ),
           );
         }),
       ],

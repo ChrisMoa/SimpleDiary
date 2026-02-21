@@ -21,8 +21,15 @@ class MoodTrendChart extends ConsumerWidget {
     return statsAsync.when(
       loading: () => AppCard.elevated(
         margin: AppSpacing.paddingAllMd,
-        padding: AppSpacing.paddingAllXl,
-        child: const Center(child: CircularProgressIndicator()),
+        padding: AppSpacing.paddingAllMd,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const ShimmerPlaceholder(width: 140, height: 24),
+            AppSpacing.verticalMd,
+            ShimmerPlaceholder(height: 200, borderRadius: AppRadius.borderRadiusMd),
+          ],
+        ),
       ),
       error: (error, stack) => AppCard.elevated(
         margin: AppSpacing.paddingAllMd,

@@ -77,7 +77,7 @@ class FavoritesOverviewPage extends ConsumerWidget {
   void _navigateToDayDetail(BuildContext context, DiaryDay day) {
     Navigator.push(
       context,
-      MaterialPageRoute(
+      AppPageRoute(
         builder: (context) => DiaryDayDetailPage(selectedDate: day.day),
       ),
     );
@@ -88,7 +88,7 @@ class FavoritesOverviewPage extends ConsumerWidget {
     ref.read(noteEditingPageProvider.notifier).updateNote(note);
     Navigator.push(
       context,
-      MaterialPageRoute(
+      AppPageRoute(
         builder: (context) => const NoteViewingPage(),
       ),
     );

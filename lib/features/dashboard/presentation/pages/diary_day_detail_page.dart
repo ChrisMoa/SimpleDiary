@@ -32,7 +32,8 @@ class DiaryDayDetailPage extends ConsumerWidget {
         foregroundColor: theme.colorScheme.onSurface,
         title: Text(l10n.dayDetail(_formatDate(selectedDate, locale))),
       ),
-      body: diaryDayAsync.when(
+      body: PageGradientBackground(
+        child: diaryDayAsync.when(
         data: (diaryDay) {
           if (diaryDay == null) {
             return Center(
@@ -45,16 +46,35 @@ class DiaryDayDetailPage extends ConsumerWidget {
 
           return notesAsync.when(
             data: (notes) => _buildDiaryDayDetail(context, ref, diaryDay, notes),
-            loading: () => const Center(child: CircularProgressIndicator()),
+            loading: () => Padding(
+              padding: AppSpacing.paddingAllXl,
+              child: Column(
+                children: [
+                  ShimmerPlaceholder(height: 120, borderRadius: AppRadius.borderRadiusLg),
+                  AppSpacing.verticalMd,
+                  ShimmerPlaceholder(height: 80, borderRadius: AppRadius.borderRadiusLg),
+                ],
+              ),
+            ),
             error: (error, stack) => Center(
               child: Text(l10n.errorLoadingNotes(error.toString())),
             ),
           );
         },
-        loading: () => const Center(child: CircularProgressIndicator()),
+        loading: () => Padding(
+          padding: AppSpacing.paddingAllXl,
+          child: Column(
+            children: [
+              ShimmerPlaceholder(height: 120, borderRadius: AppRadius.borderRadiusLg),
+              AppSpacing.verticalMd,
+              ShimmerPlaceholder(height: 80, borderRadius: AppRadius.borderRadiusLg),
+            ],
+          ),
+        ),
         error: (error, stack) => Center(
           child: Text(l10n.errorLoadingDiaryDay(error.toString())),
         ),
+      ),
       ),
     );
   }
@@ -407,7 +427,7 @@ class DiaryDayDetailPage extends ConsumerWidget {
   void _viewNote(BuildContext context, WidgetRef ref, Note note) {
     ref.read(noteEditingPageProvider.notifier).updateNote(note);
     Navigator.of(context).push(
-      MaterialPageRoute(
+      AppPageRoute(
         builder: (context) => const NoteViewingPage(),
       ),
     );
@@ -416,7 +436,7 @@ class DiaryDayDetailPage extends ConsumerWidget {
   void _editNote(BuildContext context, WidgetRef ref, Note note) {
     ref.read(noteEditingPageProvider.notifier).updateNote(note);
     Navigator.of(context).push(
-      MaterialPageRoute(
+      AppPageRoute(
         builder: (context) => const NoteEditingPage(
           editNote: true,
           navigateBack: true,

@@ -8,6 +8,7 @@
 library;
 
 export 'design_tokens.dart';
+export 'app_animations.dart';
 export 'app_card.dart';
 export 'app_button.dart';
 export 'app_text_field.dart';

@@ -1,3 +1,4 @@
+import 'package:day_tracker/core/widgets/app_ui_kit.dart';
 import 'package:day_tracker/features/calendar/presentation/widgets/calendar_widget.dart';
 import 'package:day_tracker/features/notes/data/models/note.dart';
 import 'package:day_tracker/features/notes/domain/providers/note_editing_page_provider.dart';
@@ -30,7 +31,7 @@ class _CalendarPageState extends ConsumerState<CalendarPage> {
           note.to = note.from.add(const Duration(minutes: 30));
           ref.read(noteEditingPageProvider.notifier).updateNote(note);
           Navigator.of(context).push(
-            MaterialPageRoute(
+            AppPageRoute(
               builder: (context) => const NoteEditingPage(),
             ),
           );

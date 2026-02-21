@@ -229,26 +229,12 @@ class PatternInsightCard extends StatelessWidget {
           overflow: TextOverflow.ellipsis,
         ),
         AppSpacing.verticalXxs,
-        Stack(
-          children: [
-            Container(
-              height: 8,
-              decoration: BoxDecoration(
-                color: theme.colorScheme.surfaceContainerHighest,
-                borderRadius: BorderRadius.circular(4),
-              ),
-            ),
-            FractionallySizedBox(
-              widthFactor: percentage,
-              child: Container(
-                height: 8,
-                decoration: BoxDecoration(
-                  color: color,
-                  borderRadius: BorderRadius.circular(4),
-                ),
-              ),
-            ),
-          ],
+        AnimatedProgressBar(
+          value: percentage,
+          height: 8,
+          color: color,
+          backgroundColor: theme.colorScheme.surfaceContainerHighest,
+          borderRadius: BorderRadius.circular(4),
         ),
         const SizedBox(height: 2),
         Text(

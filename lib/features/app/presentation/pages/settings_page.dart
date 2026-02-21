@@ -28,9 +28,10 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
     final isSmallScreen = screenWidth < 600;
     final l10n = AppLocalizations.of(context);
 
-    return Container(
-      color: theme.colorScheme.surface,
-      child: SingleChildScrollView(
+    return PageGradientBackground(
+      child: Container(
+        color: theme.colorScheme.surface,
+        child: SingleChildScrollView(
         padding: EdgeInsets.all(isSmallScreen ? 16 : 24),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -101,6 +102,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
           ],
         ),
       ),
+      ),
     );
   }
 
@@ -168,7 +170,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
               child: ElevatedButton.icon(
                 onPressed: () {
                   Navigator.of(context).push(
-                    MaterialPageRoute(
+                    AppPageRoute(
                       builder: (context) => const CategoryManagementPage(),
                     ),
                   );
