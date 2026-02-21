@@ -94,7 +94,7 @@ class ImagePickerWidget extends ConsumerWidget {
 
         return GestureDetector(
           onTap: () {
-            Navigator.of(context).push(MaterialPageRoute(
+            Navigator.of(context).push(AppPageRoute(
               builder: (_) => ImageGalleryViewer(
                 attachments: attachments,
                 initialIndex: index,

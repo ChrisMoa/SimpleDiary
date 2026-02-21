@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:day_tracker/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-/// Widget for managing notification and reminder settings
 class NotificationSettingsWidget extends ConsumerStatefulWidget {
   const NotificationSettingsWidget({super.key});
 
@@ -35,213 +34,78 @@ class _NotificationSettingsWidgetState
     _reminderTime = settings.reminderTime;
   }
 
+  void _autoSave() => settingsContainer.saveSettings().ignore();
+
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context);
-    final mediaQuery = MediaQuery.of(context);
-    final screenWidth = mediaQuery.size.width;
-    final isSmallScreen = screenWidth < 600;
 
-    return AppCard.elevated(
-      child: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              theme.colorScheme.surfaceContainerHighest,
-              theme.colorScheme.surface,
-            ],
-          ),
-          borderRadius: AppRadius.borderRadiusLg,
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // Header
-              Row(
-                children: [
-                  Icon(
-                    Icons.notifications_active,
-                    color: theme.colorScheme.primary,
-                    size: isSmallScreen ? 24 : 28,
-                  ),
-                  AppSpacing.horizontalXs,
-                  Text(
-                    l10n.notificationSettings,
-                    style: theme.textTheme.titleLarge?.copyWith(
-                      color: theme.colorScheme.primary,
-                      fontWeight: FontWeight.bold,
-                      fontSize: isSmallScreen ? 18 : 22,
-                    ),
-                  ),
-                ],
-              ),
-
-              AppSpacing.verticalMd,
-
-              Text(
-                l10n.notificationSettingsDescription,
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: theme.colorScheme.onSurface,
-                ),
-              ),
-
-              AppSpacing.verticalXl,
-
-              // Enable/Disable Notifications
-              _buildSettingContainer(
-                theme,
-                isSmallScreen,
-                l10n.enableNotifications,
-                l10n.enableNotificationsDescription,
-                Switch(
-                  value: _notificationsEnabled,
-                  onChanged: _onNotificationsToggled,
-                ),
-              ),
-
-              SizedBox(height: isSmallScreen ? 16 : 20),
-
-              // Reminder Time
-              if (_notificationsEnabled)
-                _buildSettingContainer(
-                  theme,
-                  isSmallScreen,
-                  l10n.reminderTime,
-                  l10n.reminderTimeDescription,
-                  InkWell(
-                    onTap: _selectReminderTime,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 16,
-                        vertical: 12,
-                      ),
-                      decoration: BoxDecoration(
-                        color: theme.colorScheme.primaryContainer,
-                        borderRadius: AppRadius.borderRadiusSm,
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            Icons.access_time,
-                            color: theme.colorScheme.onPrimaryContainer,
-                          ),
-                          AppSpacing.horizontalXs,
-                          Text(
-                            _reminderTime.format(context),
-                            style: theme.textTheme.titleMedium?.copyWith(
-                              color: theme.colorScheme.onPrimaryContainer,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-
-              if (_notificationsEnabled) SizedBox(height: isSmallScreen ? 16 : 20),
-
-              // Smart Reminders
-              if (_notificationsEnabled)
-                _buildSettingContainer(
-                  theme,
-                  isSmallScreen,
-                  l10n.smartReminders,
-                  l10n.smartRemindersDescription,
-                  Switch(
-                    value: _smartRemindersEnabled,
-                    onChanged: (value) {
-                      setState(() {
-                        _smartRemindersEnabled = value;
-                        settingsContainer.activeUserSettings
-                            .notificationSettings.smartRemindersEnabled = value;
-                      });
-                    },
-                  ),
-                ),
-
-              if (_notificationsEnabled) SizedBox(height: isSmallScreen ? 16 : 20),
-
-              // Streak Warnings
-              if (_notificationsEnabled)
-                _buildSettingContainer(
-                  theme,
-                  isSmallScreen,
-                  l10n.streakWarnings,
-                  l10n.streakWarningsDescription,
-                  Switch(
-                    value: _streakWarningsEnabled,
-                    onChanged: (value) {
-                      setState(() {
-                        _streakWarningsEnabled = value;
-                        settingsContainer.activeUserSettings
-                            .notificationSettings.streakWarningsEnabled = value;
-                      });
-                    },
-                  ),
-                ),
-            ],
+    return SettingsSection(
+      title: l10n.notificationSettings,
+      icon: Icons.notifications_outlined,
+      children: [
+        SettingsTile(
+          icon: Icons.notifications_outlined,
+          title: l10n.enableNotifications,
+          subtitle: l10n.enableNotificationsDescription,
+          trailing: Switch(
+            value: _notificationsEnabled,
+            onChanged: _onNotificationsToggled,
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildSettingContainer(
-    ThemeData theme,
-    bool isSmallScreen,
-    String title,
-    String description,
-    Widget control,
-  ) {
-    return Container(
-      padding: EdgeInsets.all(isSmallScreen ? 12 : 16),
-      decoration: BoxDecoration(
-        color: theme.colorScheme.surfaceContainer,
-        borderRadius: AppRadius.borderRadiusMd,
-        border: Border.all(
-          color: theme.colorScheme.outline.withValues(alpha: .2),
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            title,
-            style: theme.textTheme.titleMedium?.copyWith(
-              color: theme.colorScheme.onSurface,
-              fontWeight: FontWeight.bold,
+        if (_notificationsEnabled) ...[
+          SettingsTile(
+            icon: Icons.alarm,
+            title: l10n.reminderTime,
+            subtitle: l10n.reminderTimeDescription,
+            trailing: _TimeChip(time: _reminderTime, context: context),
+            onTap: _selectReminderTime,
+          ),
+          SettingsTile(
+            icon: Icons.auto_awesome,
+            title: l10n.smartReminders,
+            subtitle: l10n.smartRemindersDescription,
+            trailing: Switch(
+              value: _smartRemindersEnabled,
+              onChanged: (value) {
+                setState(() {
+                  _smartRemindersEnabled = value;
+                  settingsContainer.activeUserSettings.notificationSettings
+                      .smartRemindersEnabled = value;
+                });
+                _autoSave();
+              },
             ),
           ),
-          AppSpacing.verticalXs,
-          Text(
-            description,
-            style: theme.textTheme.bodyMedium?.copyWith(
-              color: theme.colorScheme.onSurface.withValues(alpha: .7),
+          SettingsTile(
+            icon: Icons.local_fire_department_outlined,
+            title: l10n.streakWarnings,
+            subtitle: l10n.streakWarningsDescription,
+            trailing: Switch(
+              value: _streakWarningsEnabled,
+              onChanged: (value) {
+                setState(() {
+                  _streakWarningsEnabled = value;
+                  settingsContainer.activeUserSettings.notificationSettings
+                      .streakWarningsEnabled = value;
+                });
+                _autoSave();
+              },
             ),
           ),
-          AppSpacing.verticalMd,
-          control,
         ],
-      ),
+      ],
     );
   }
 
   Future<void> _onNotificationsToggled(bool value) async {
     if (value) {
-      // Request permissions first
       final hasPermission = await _notificationService.requestPermissions();
       if (!hasPermission) {
         if (mounted) {
           final l10n = AppLocalizations.of(context);
-          AppSnackBar.error(context, message: l10n.notificationPermissionDenied);
+          AppSnackBar.error(
+              context, message: l10n.notificationPermissionDenied);
         }
         return;
       }
@@ -251,8 +115,8 @@ class _NotificationSettingsWidgetState
       _notificationsEnabled = value;
       settingsContainer.activeUserSettings.notificationSettings.enabled = value;
     });
+    _autoSave();
 
-    // Schedule or cancel notifications
     if (value) {
       await _notificationService.scheduleDailyReminder(
         settingsContainer.activeUserSettings.notificationSettings,
@@ -278,13 +142,40 @@ class _NotificationSettingsWidgetState
         settingsContainer.activeUserSettings.notificationSettings.reminderTime =
             picked;
       });
+      _autoSave();
 
-      // Reschedule notifications with new time
       if (_notificationsEnabled) {
         await _notificationService.scheduleDailyReminder(
           settingsContainer.activeUserSettings.notificationSettings,
         );
       }
     }
+  }
+}
+
+/// A styled chip showing a formatted time value.
+class _TimeChip extends StatelessWidget {
+  const _TimeChip({required this.time, required this.context});
+
+  final TimeOfDay time;
+  final BuildContext context;
+
+  @override
+  Widget build(BuildContext buildContext) {
+    final theme = Theme.of(buildContext);
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.primaryContainer.withValues(alpha: 0.4),
+        borderRadius: AppRadius.borderRadiusSm,
+      ),
+      child: Text(
+        time.format(context),
+        style: theme.textTheme.bodyMedium?.copyWith(
+          color: theme.colorScheme.primary,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+    );
   }
 }

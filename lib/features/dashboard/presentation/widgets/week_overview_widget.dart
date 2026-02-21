@@ -19,8 +19,25 @@ class WeekOverviewWidget extends ConsumerWidget {
     return weekStatsAsync.when(
       loading: () => AppCard.elevated(
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        padding: AppSpacing.paddingAllXl,
-        child: const Center(child: CircularProgressIndicator()),
+        padding: AppSpacing.paddingAllMd,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const ShimmerPlaceholder(width: 160, height: 24),
+            AppSpacing.verticalMd,
+            SizedBox(
+              height: 180,
+              child: Row(
+                children: List.generate(4, (i) => Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.only(right: 12),
+                    child: ShimmerPlaceholder(height: 170, borderRadius: AppRadius.borderRadiusMd),
+                  ),
+                )),
+              ),
+            ),
+          ],
+        ),
       ),
       error: (error, stack) => AppCard.elevated(
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -49,7 +66,10 @@ class WeekOverviewWidget extends ConsumerWidget {
                     itemCount: weekStats.dailyScores.length,
                     itemBuilder: (context, index) {
                       final dayScore = weekStats.dailyScores[index];
-                      return _buildDayCard(context, dayScore, theme);
+                      return AnimatedListItem(
+                        index: index,
+                        child: _buildDayCard(context, dayScore, theme),
+                      );
                     },
                   ),
                 ),
@@ -85,7 +105,7 @@ class WeekOverviewWidget extends ConsumerWidget {
       onTap: () {
         if (isComplete) {
           Navigator.of(context).push(
-            MaterialPageRoute(
+            AppPageRoute(
               builder: (context) => DiaryDayDetailPage(selectedDate: date),
             ),
           );

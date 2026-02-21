@@ -50,16 +50,14 @@ class HabitsSummarySection extends ConsumerWidget {
             ],
           ),
           AppSpacing.verticalXs,
-          ClipRRect(
+          AnimatedProgressBar(
+            value: progress,
+            height: 8,
+            color: progress >= 1.0
+                ? Colors.green.shade600
+                : theme.colorScheme.primary,
+            backgroundColor: theme.colorScheme.surfaceContainerHighest,
             borderRadius: BorderRadius.circular(6),
-            child: LinearProgressIndicator(
-              value: progress,
-              minHeight: 8,
-              backgroundColor: theme.colorScheme.surfaceContainerHighest,
-              color: progress >= 1.0
-                  ? Colors.green.shade600
-                  : theme.colorScheme.primary,
-            ),
           ),
           if (progress >= 1.0)
             Padding(

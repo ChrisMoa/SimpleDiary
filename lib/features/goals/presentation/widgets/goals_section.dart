@@ -70,9 +70,12 @@ class GoalsSection extends ConsumerWidget {
         if (activeGoals.isEmpty)
           _buildEmptyState(context)
         else
-          ...activeGoals.map((progress) => GoalProgressCard(
-                progress: progress,
-                onTap: () => _showGoalDetails(context, progress),
+          ...activeGoals.asMap().entries.map((entry) => AnimatedListItem(
+                index: entry.key,
+                child: GoalProgressCard(
+                  progress: entry.value,
+                  onTap: () => _showGoalDetails(context, entry.value),
+                ),
               )),
       ],
     );

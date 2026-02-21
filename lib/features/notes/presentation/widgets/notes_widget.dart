@@ -49,7 +49,7 @@ class _NotesWidgetState extends ConsumerState<NotesWidget> {
           ref
               .read(noteEditingPageProvider.notifier)
               .updateNote(details.appointments!.first);
-          Navigator.of(context).push(MaterialPageRoute(
+          Navigator.of(context).push(AppPageRoute(
             builder: (context) => const NoteViewingPage(),
           ));
         },

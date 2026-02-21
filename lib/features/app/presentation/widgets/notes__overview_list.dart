@@ -89,7 +89,7 @@ class _NotesOverviewListState extends ConsumerState<NotesOverviewList> {
 
   void onSelectNote(Note note) {
     ref.read(noteEditingPageProvider.notifier).updateNote(note);
-    Navigator.of(context).push(MaterialPageRoute(
+    Navigator.of(context).push(AppPageRoute(
       builder: (context) => const NoteViewingPage(),
     ));
   }

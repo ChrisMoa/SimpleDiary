@@ -10,11 +10,20 @@ import 'package:day_tracker/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class FloatingTemplateButton extends ConsumerWidget {
+class FloatingTemplateButton extends ConsumerStatefulWidget {
   const FloatingTemplateButton({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<FloatingTemplateButton> createState() =>
+      _FloatingTemplateButtonState();
+}
+
+class _FloatingTemplateButtonState
+    extends ConsumerState<FloatingTemplateButton> {
+  bool _expanded = false;
+
+  @override
+  Widget build(BuildContext context) {
     final theme = ref.watch(themeProvider);
     final templates = ref.watch(noteTemplateLocalDataProvider);
 
@@ -30,23 +39,61 @@ class FloatingTemplateButton extends ConsumerWidget {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          // Quick template selection buttons for first 3 templates
-          if (templates.length >= 1)
-            ...templates.take(3).map((template) => _buildQuickAddButton(
-                  context,
-                  ref,
-                  theme,
-                  template,
-                )),
+          // Quick template selection buttons (animated)
+          AnimatedSwitcher(
+            duration: const Duration(milliseconds: 200),
+            transitionBuilder: (child, animation) {
+              return FadeTransition(
+                opacity: animation,
+                child: SizeTransition(
+                  sizeFactor: animation,
+                  axisAlignment: 1.0,
+                  child: child,
+                ),
+              );
+            },
+            child: _expanded
+                ? Column(
+                    key: const ValueKey('expanded'),
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: templates
+                        .take(3)
+                        .toList()
+                        .asMap()
+                        .entries
+                        .map((entry) => AnimatedListItem(
+                              index: entry.key,
+                              baseDelay: const Duration(milliseconds: 30),
+                              child: _buildQuickAddButton(
+                                context,
+                                ref,
+                                theme,
+                                entry.value,
+                              ),
+                            ))
+                        .toList(),
+                  )
+                : const SizedBox.shrink(key: ValueKey('collapsed')),
+          ),
           AppSpacing.verticalXs,
 
-          // Main template selector button
-          FloatingActionButton(
-            onPressed: () => _showTemplateSelector(context, ref),
-            backgroundColor: theme.colorScheme.primary,
-            foregroundColor: theme.colorScheme.onPrimary,
-            child: const Icon(Icons.note_alt),
-            heroTag: 'template_fab',
+          // Main template selector button with rotation animation
+          GestureDetector(
+            onLongPress: () => _showTemplateSelector(context, ref),
+            child: FloatingActionButton(
+              onPressed: () {
+                setState(() => _expanded = !_expanded);
+              },
+              backgroundColor: theme.colorScheme.primary,
+              foregroundColor: theme.colorScheme.onPrimary,
+              heroTag: 'template_fab',
+              child: AnimatedRotation(
+                turns: _expanded ? 0.125 : 0,
+                duration: const Duration(milliseconds: 200),
+                child: const Icon(Icons.note_alt),
+              ),
+            ),
           ),
         ],
       ),
@@ -62,7 +109,10 @@ class FloatingTemplateButton extends ConsumerWidget {
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
       child: FloatingActionButton.small(
-        onPressed: () => _createNoteFromTemplate(context, ref, template),
+        onPressed: () {
+          _createNoteFromTemplate(context, ref, template);
+          setState(() => _expanded = false);
+        },
         backgroundColor: template.noteCategory.color,
         foregroundColor: theme.colorScheme.onPrimary,
         heroTag: 'template_${template.id}',
@@ -78,10 +128,12 @@ class FloatingTemplateButton extends ConsumerWidget {
   }
 
   void _showTemplateSelector(BuildContext context, WidgetRef ref) {
+    setState(() => _expanded = false);
     showDialog(
       context: context,
       builder: (context) => TemplateSelectorWidget(
-        onTemplateSelected: (template) => _createNoteFromTemplate(context, ref, template),
+        onTemplateSelected: (template) =>
+            _createNoteFromTemplate(context, ref, template),
       ),
     );
   }
@@ -98,7 +150,8 @@ class FloatingTemplateButton extends ConsumerWidget {
         title: template.title,
         description: template.generateDescription(),
         from: nextAvailableTime,
-        to: nextAvailableTime.add(Duration(minutes: template.durationMinutes)),
+        to: nextAvailableTime
+            .add(Duration(minutes: template.durationMinutes)),
         noteCategory: template.noteCategory,
       );
 
@@ -110,8 +163,10 @@ class FloatingTemplateButton extends ConsumerWidget {
 
       // Show feedback to user
       final l10n = AppLocalizations.of(context);
-      final timeStr = '${newNote.from.hour.toString().padLeft(2, '0')}:${newNote.from.minute.toString().padLeft(2, '0')}';
-      AppSnackBar.success(context, message: l10n.addedTemplateAtTime(template.title, timeStr));
+      final timeStr =
+          '${newNote.from.hour.toString().padLeft(2, '0')}:${newNote.from.minute.toString().padLeft(2, '0')}';
+      AppSnackBar.success(context,
+          message: l10n.addedTemplateAtTime(template.title, timeStr));
     } catch (e) {
       final l10n = AppLocalizations.of(context);
       AppSnackBar.error(context, message: l10n.errorCreatingNote('$e'));

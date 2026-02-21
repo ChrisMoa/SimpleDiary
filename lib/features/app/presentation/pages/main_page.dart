@@ -76,10 +76,20 @@ class _MainPageState extends ConsumerState<MainPage> {
   @override
   Widget build(BuildContext context) {
     if (!_asyncInit) {
-      return const SizedBox(
-        height: 100,
-        width: 100,
-        child: CircularProgressIndicator(),
+      return Center(
+        child: Padding(
+          padding: AppSpacing.paddingAllXl,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ShimmerPlaceholder(height: 200, borderRadius: AppRadius.borderRadiusLg),
+              AppSpacing.verticalMd,
+              ShimmerPlaceholder(height: 120, borderRadius: AppRadius.borderRadiusLg),
+              AppSpacing.verticalMd,
+              ShimmerPlaceholder(height: 120, borderRadius: AppRadius.borderRadiusLg),
+            ],
+          ),
+        ),
       );
     }
 
@@ -112,7 +122,19 @@ class _MainPageState extends ConsumerState<MainPage> {
           _onUserChanged(userData);
         }
         if (!dbRead) {
-          return const CircularProgressIndicator();
+          return Center(
+            child: Padding(
+              padding: AppSpacing.paddingAllXl,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  ShimmerPlaceholder(height: 200, borderRadius: AppRadius.borderRadiusLg),
+                  AppSpacing.verticalMd,
+                  ShimmerPlaceholder(height: 120, borderRadius: AppRadius.borderRadiusLg),
+                ],
+              ),
+            ),
+          );
         }
 
         final selectedIndex = ref.watch(selectedDrawerIndexProvider);
@@ -150,7 +172,7 @@ class _MainPageState extends ConsumerState<MainPage> {
             ),
             onDetailsPressed: () {
               Navigator.of(context).push(
-                MaterialPageRoute(
+                AppPageRoute(
                   builder: (context) => const ShowUserDataPage(),
                 ),
               );

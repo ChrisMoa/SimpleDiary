@@ -36,24 +36,26 @@ class _NewDashboardPageState extends ConsumerState<NewDashboardPage> {
     
     return Scaffold(
       backgroundColor: theme.colorScheme.surface,
-      body: LayoutBuilder(
-        builder: (context, constraints) {
-          final isDesktop = constraints.maxWidth >= ResponsiveBreakpoints.tablet;
-          final isTablet = constraints.maxWidth >= ResponsiveBreakpoints.mobile &&
-              constraints.maxWidth < ResponsiveBreakpoints.tablet;
+      body: PageGradientBackground(
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final isDesktop = constraints.maxWidth >= ResponsiveBreakpoints.tablet;
+            final isTablet = constraints.maxWidth >= ResponsiveBreakpoints.mobile &&
+                constraints.maxWidth < ResponsiveBreakpoints.tablet;
 
-          return RefreshIndicator(
-            onRefresh: () async {
-              ref.invalidate(dashboardStatsProvider);
-              await Future.delayed(const Duration(milliseconds: 500));
-            },
-            child: isDesktop
-                ? _buildDesktopLayout()
-                : isTablet
-                    ? _buildTabletLayout()
-                    : _buildMobileLayout(),
-          );
-        },
+            return RefreshIndicator(
+              onRefresh: () async {
+                ref.invalidate(dashboardStatsProvider);
+                await Future.delayed(const Duration(milliseconds: 500));
+              },
+              child: isDesktop
+                  ? _buildDesktopLayout()
+                  : isTablet
+                      ? _buildTabletLayout()
+                      : _buildMobileLayout(),
+            );
+          },
+        ),
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
@@ -69,15 +71,15 @@ class _NewDashboardPageState extends ConsumerState<NewDashboardPage> {
   Widget _buildMobileLayout() {
     return CustomScrollView(
       slivers: [
-        const SliverToBoxAdapter(child: QuickStatsHeader()),
-        const SliverToBoxAdapter(child: GoalsSection()),
-        const SliverToBoxAdapter(child: HabitsSummarySection()),
+        SliverToBoxAdapter(child: AnimatedListItem(index: 0, child: const QuickStatsHeader())),
+        SliverToBoxAdapter(child: AnimatedListItem(index: 1, child: const GoalsSection())),
+        SliverToBoxAdapter(child: AnimatedListItem(index: 2, child: const HabitsSummarySection())),
         SliverToBoxAdapter(child: AppSpacing.verticalMd),
-        const SliverToBoxAdapter(child: WeekOverviewWidget()),
-        const SliverToBoxAdapter(child: FavoritesSectionWidget()),
+        SliverToBoxAdapter(child: AnimatedListItem(index: 3, child: const WeekOverviewWidget())),
+        SliverToBoxAdapter(child: AnimatedListItem(index: 4, child: const FavoritesSectionWidget())),
         SliverToBoxAdapter(child: AppSpacing.verticalMd),
-        const SliverToBoxAdapter(child: StatisticsSection()),
-        const SliverToBoxAdapter(child: InsightsSection()),
+        SliverToBoxAdapter(child: AnimatedListItem(index: 5, child: const StatisticsSection())),
+        SliverToBoxAdapter(child: AnimatedListItem(index: 6, child: const InsightsSection())),
         const SliverToBoxAdapter(child: SizedBox(height: 80)), // Space for FAB
       ],
     );

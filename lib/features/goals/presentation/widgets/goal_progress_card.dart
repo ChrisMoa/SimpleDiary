@@ -161,7 +161,6 @@ class GoalProgressCard extends StatelessWidget {
 
     // Use absolute progress for display
     final percent = progress.absoluteProgressPercent.clamp(0.0, 1.0);
-    final percentText = '${(percent * 100).toStringAsFixed(0)}%';
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -175,8 +174,9 @@ class GoalProgressCard extends StatelessWidget {
                 color: theme.colorScheme.onSurfaceVariant,
               ),
             ),
-            Text(
-              percentText,
+            AnimatedCounter(
+              value: percent * 100,
+              suffix: '%',
               style: theme.textTheme.bodySmall?.copyWith(
                 color: color,
                 fontWeight: FontWeight.bold,
@@ -185,33 +185,10 @@ class GoalProgressCard extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 6),
-        Stack(
-          children: [
-            // Background
-            Container(
-              height: 10,
-              decoration: BoxDecoration(
-                color: theme.colorScheme.surfaceContainerHighest,
-                borderRadius: BorderRadius.circular(5),
-              ),
-            ),
-            // Progress fill
-            FractionallySizedBox(
-              widthFactor: percent,
-              child: Container(
-                height: 10,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      color.withValues(alpha: 0.7),
-                      color,
-                    ],
-                  ),
-                  borderRadius: BorderRadius.circular(5),
-                ),
-              ),
-            ),
-          ],
+        AnimatedProgressBar(
+          value: percent,
+          color: color,
+          backgroundColor: theme.colorScheme.surfaceContainerHighest,
         ),
       ],
     );

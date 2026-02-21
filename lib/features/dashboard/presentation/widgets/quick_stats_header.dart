@@ -19,8 +19,25 @@ class QuickStatsHeader extends ConsumerWidget {
     return statsAsync.when(
       loading: () => AppCard.elevated(
         margin: AppSpacing.paddingAllMd,
-        padding: AppSpacing.paddingAllXl,
-        child: const Center(child: CircularProgressIndicator()),
+        padding: AppSpacing.paddingAllLg,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const ShimmerPlaceholder(width: 80, height: 28),
+                ShimmerPlaceholder(width: 32, height: 32, borderRadius: BorderRadius.circular(16)),
+              ],
+            ),
+            AppSpacing.verticalMd,
+            const ShimmerPlaceholder(height: 64),
+            AppSpacing.verticalSm,
+            const ShimmerPlaceholder(height: 64),
+            AppSpacing.verticalSm,
+            const ShimmerPlaceholder(height: 64),
+          ],
+        ),
       ),
       error: (error, stack) => AppCard.elevated(
         margin: AppSpacing.paddingAllMd,
@@ -116,8 +133,8 @@ class QuickStatsHeader extends ConsumerWidget {
             children: [
               const Text('🔥', style: TextStyle(fontSize: 24)),
               AppSpacing.horizontalXs,
-              Text(
-                '$streak',
+              AnimatedCounter(
+                value: streak.toDouble(),
                 style: theme.textTheme.headlineMedium?.copyWith(
                   fontWeight: FontWeight.bold,
                   color: theme.colorScheme.primary,
@@ -151,8 +168,9 @@ class QuickStatsHeader extends ConsumerWidget {
             children: [
               const Text('⭐', style: TextStyle(fontSize: 24)),
               AppSpacing.horizontalXs,
-              Text(
-                average.toStringAsFixed(1),
+              AnimatedCounter(
+                value: average,
+                decimalPlaces: 1,
                 style: theme.textTheme.headlineMedium?.copyWith(
                   fontWeight: FontWeight.bold,
                   color: theme.colorScheme.secondary,

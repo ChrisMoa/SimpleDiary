@@ -169,14 +169,12 @@ class HabitStatsWidget extends ConsumerWidget {
           ),
         ),
         Expanded(
-          child: ClipRRect(
+          child: AnimatedProgressBar(
+            value: rate,
+            height: 8,
+            color: color,
+            backgroundColor: theme.colorScheme.surfaceContainerHighest,
             borderRadius: BorderRadius.circular(4),
-            child: LinearProgressIndicator(
-              value: rate,
-              minHeight: 8,
-              backgroundColor: theme.colorScheme.surfaceContainerHighest,
-              color: color,
-            ),
           ),
         ),
         AppSpacing.horizontalXs,

@@ -5,7 +5,6 @@ import 'package:day_tracker/features/notes/domain/providers/note_local_db_provid
 import 'package:day_tracker/features/notes/domain/providers/note_selected_date_provider.dart';
 import 'package:day_tracker/core/widgets/app_ui_kit.dart';
 import 'package:flutter/material.dart';
-import 'package:day_tracker/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class DiaryDayWizardPage extends ConsumerStatefulWidget {
@@ -42,14 +41,16 @@ class _DiaryDayWizardPageState extends ConsumerState<DiaryDayWizardPage> {
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
-      final l10n = AppLocalizations.of(context)!;
-      return Center(
+      return Padding(
+        padding: AppSpacing.paddingAllXl,
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const CircularProgressIndicator(),
+            AppSpacing.verticalXxl,
+            ShimmerPlaceholder(height: 60, borderRadius: AppRadius.borderRadiusMd),
             AppSpacing.verticalMd,
-            Text(l10n.loadingDayData),
+            ShimmerPlaceholder(height: 160, borderRadius: AppRadius.borderRadiusLg),
+            AppSpacing.verticalMd,
+            ShimmerPlaceholder(height: 160, borderRadius: AppRadius.borderRadiusLg),
           ],
         ),
       );

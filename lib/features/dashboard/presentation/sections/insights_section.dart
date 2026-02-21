@@ -18,9 +18,15 @@ class InsightsSection extends ConsumerWidget {
     final l10n = AppLocalizations.of(context);
 
     return insightsAsync.when(
-      loading: () => const Padding(
+      loading: () => Padding(
         padding: AppSpacing.paddingAllMd,
-        child: Center(child: CircularProgressIndicator()),
+        child: Column(
+          children: [
+            ShimmerPlaceholder(height: 80, borderRadius: AppRadius.borderRadiusLg),
+            AppSpacing.verticalSm,
+            ShimmerPlaceholder(height: 80, borderRadius: AppRadius.borderRadiusLg),
+          ],
+        ),
       ),
       error: (error, stack) => Padding(
         padding: AppSpacing.paddingAllMd,

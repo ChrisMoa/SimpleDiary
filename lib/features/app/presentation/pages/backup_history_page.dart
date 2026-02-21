@@ -70,7 +70,15 @@ class _BackupHistoryPageState extends ConsumerState<BackupHistoryPage> {
       ),
       backgroundColor: theme.colorScheme.surface,
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? Padding(
+              padding: AppSpacing.paddingAllMd,
+              child: Column(
+                children: List.generate(4, (_) => Padding(
+                  padding: AppSpacing.paddingVerticalXs,
+                  child: ShimmerPlaceholder(height: 72, borderRadius: AppRadius.borderRadiusLg),
+                )),
+              ),
+            )
           : _buildBody(theme, l10n),
     );
   }

@@ -185,7 +185,7 @@ class _NoteViewingPageState extends ConsumerState<NoteViewingPage> {
         onPressed: () {
           ref.read(noteEditingPageProvider.notifier).updateNote(note);
           Navigator.of(context).pushReplacement(
-            MaterialPageRoute(
+            AppPageRoute(
               builder: (context) => const NoteEditingPage(
                 editNote: true,
                 navigateBack: true,

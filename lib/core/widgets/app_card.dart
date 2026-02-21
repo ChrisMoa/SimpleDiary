@@ -125,7 +125,7 @@ class AppCard extends StatelessWidget {
     );
 
     if (onTap != null || onLongPress != null) {
-      return card.copyWith(
+      final tappableCard = card.copyWith(
         child: InkWell(
           onTap: onTap,
           onLongPress: onLongPress,
@@ -135,9 +135,39 @@ class AppCard extends StatelessWidget {
               : child,
         ),
       );
+      return _CardScaleEffect(child: tappableCard);
     }
 
     return card;
+  }
+}
+
+/// Subtle press-down scale animation that listens to pointer events
+/// without intercepting gestures, so InkWell ripple still works.
+class _CardScaleEffect extends StatefulWidget {
+  const _CardScaleEffect({required this.child});
+  final Widget child;
+
+  @override
+  State<_CardScaleEffect> createState() => _CardScaleEffectState();
+}
+
+class _CardScaleEffectState extends State<_CardScaleEffect> {
+  bool _pressed = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Listener(
+      onPointerDown: (_) => setState(() => _pressed = true),
+      onPointerUp: (_) => setState(() => _pressed = false),
+      onPointerCancel: (_) => setState(() => _pressed = false),
+      child: AnimatedScale(
+        scale: _pressed ? 0.97 : 1.0,
+        duration: const Duration(milliseconds: 100),
+        curve: Curves.easeInOut,
+        child: widget.child,
+      ),
+    );
   }
 }
 
