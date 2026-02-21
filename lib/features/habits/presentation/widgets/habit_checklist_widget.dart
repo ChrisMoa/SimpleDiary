@@ -1,3 +1,4 @@
+import 'package:day_tracker/core/widgets/app_ui_kit.dart';
 import 'package:day_tracker/features/habits/data/models/habit.dart';
 import 'package:day_tracker/features/habits/data/models/habit_entry.dart';
 import 'package:day_tracker/features/habits/domain/providers/habit_providers.dart';
@@ -29,7 +30,7 @@ class HabitChecklistWidget extends ConsumerWidget {
         // Progress header
         _buildProgressHeader(
             context, theme, l10n, progress, completedIds.length, todayHabits.length),
-        const SizedBox(height: 8),
+        AppSpacing.verticalXs,
         // Habit list
         ...todayHabits.map((habit) {
           final isCompleted = completedIds.contains(habit.id);
@@ -76,7 +77,7 @@ class HabitChecklistWidget extends ConsumerWidget {
               ],
             ),
           ),
-          const SizedBox(width: 12),
+          AppSpacing.horizontalSm,
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -103,18 +104,18 @@ class HabitChecklistWidget extends ConsumerWidget {
   Widget _buildEmptyState(
       BuildContext context, AppLocalizations l10n, ThemeData theme) {
     return Container(
-      margin: const EdgeInsets.all(16),
-      padding: const EdgeInsets.all(24),
+      margin: AppSpacing.paddingAllMd,
+      padding: AppSpacing.paddingAllXl,
       decoration: BoxDecoration(
         color: theme.colorScheme.surfaceContainerLow,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: AppRadius.borderRadiusLg,
         border: Border.all(color: theme.colorScheme.outlineVariant),
       ),
       child: Column(
         children: [
           Icon(Icons.check_circle_outline,
               size: 48, color: theme.colorScheme.onSurfaceVariant),
-          const SizedBox(height: 12),
+          AppSpacing.verticalSm,
           Text(
             l10n.habitNoHabits,
             style: theme.textTheme.titleMedium?.copyWith(
@@ -122,7 +123,7 @@ class HabitChecklistWidget extends ConsumerWidget {
               color: theme.colorScheme.onSurface,
             ),
           ),
-          const SizedBox(height: 4),
+          AppSpacing.verticalXxs,
           Text(
             l10n.habitNoHabitsDescription,
             style: theme.textTheme.bodySmall?.copyWith(
@@ -130,7 +131,7 @@ class HabitChecklistWidget extends ConsumerWidget {
             ),
             textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 16),
+          AppSpacing.verticalMd,
           FilledButton.icon(
             onPressed: () => showDialog(
               context: context,
@@ -172,40 +173,29 @@ class HabitChecklistWidget extends ConsumerWidget {
   }
 
   void _confirmDelete(
-      BuildContext context, WidgetRef ref, Habit habit, AppLocalizations l10n) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(l10n.habitDeleteTitle),
-        content: Text(l10n.habitDeleteConfirm),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: Text(l10n.cancel),
-          ),
-          FilledButton(
-            onPressed: () {
-              // Delete all entries for this habit
-              final entries = ref.read(habitEntriesLocalDbDataProvider);
-              final habitEntries =
-                  entries.where((e) => e.habitId == habit.id).toList();
-              for (final entry in habitEntries) {
-                ref
-                    .read(habitEntriesLocalDbDataProvider.notifier)
-                    .deleteElement(entry);
-              }
-              // Delete the habit
-              ref.read(habitsLocalDbDataProvider.notifier).deleteElement(habit);
-              Navigator.of(context).pop();
-            },
-            style: FilledButton.styleFrom(
-              backgroundColor: Theme.of(context).colorScheme.error,
-            ),
-            child: Text(l10n.delete),
-          ),
-        ],
-      ),
+      BuildContext context, WidgetRef ref, Habit habit, AppLocalizations l10n) async {
+    final confirmed = await AppDialog.confirm(
+      context,
+      title: l10n.habitDeleteTitle,
+      content: l10n.habitDeleteConfirm,
+      confirmLabel: l10n.delete,
+      cancelLabel: l10n.cancel,
+      isDestructive: true,
     );
+
+    if (confirmed) {
+      // Delete all entries for this habit
+      final entries = ref.read(habitEntriesLocalDbDataProvider);
+      final habitEntries =
+          entries.where((e) => e.habitId == habit.id).toList();
+      for (final entry in habitEntries) {
+        ref
+            .read(habitEntriesLocalDbDataProvider.notifier)
+            .deleteElement(entry);
+      }
+      // Delete the habit
+      ref.read(habitsLocalDbDataProvider.notifier).deleteElement(habit);
+    }
   }
 }
 
@@ -228,26 +218,18 @@ class _HabitChecklistItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    return Card(
+    return AppCard.outlined(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       color: isCompleted
           ? habit.color.withValues(alpha: theme.brightness == Brightness.dark ? 0.2 : 0.08)
-          : theme.colorScheme.surface,
-      elevation: 0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-        side: BorderSide(
-          color: isCompleted
-              ? habit.color.withValues(alpha: 0.3)
-              : theme.colorScheme.outlineVariant,
-        ),
-      ),
-      child: InkWell(
-        onTap: onToggle,
-        borderRadius: BorderRadius.circular(12),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-          child: Row(
+          : null,
+      borderColor: isCompleted
+          ? habit.color.withValues(alpha: 0.3)
+          : null,
+      borderRadius: AppRadius.borderRadiusMd,
+      onTap: onToggle,
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      child: Row(
             children: [
               // Icon
               Container(
@@ -259,7 +241,7 @@ class _HabitChecklistItem extends StatelessWidget {
                 ),
                 child: Icon(habit.icon, color: habit.color, size: 22),
               ),
-              const SizedBox(width: 12),
+              AppSpacing.horizontalSm,
               // Name & description
               Expanded(
                 child: Column(
@@ -298,7 +280,7 @@ class _HabitChecklistItem extends StatelessWidget {
                     child: Row(
                       children: [
                         Icon(Icons.edit, size: 18, color: theme.colorScheme.onSurface),
-                        const SizedBox(width: 8),
+                        AppSpacing.horizontalXs,
                         Text(AppLocalizations.of(context).edit),
                       ],
                     ),
@@ -308,7 +290,7 @@ class _HabitChecklistItem extends StatelessWidget {
                     child: Row(
                       children: [
                         Icon(Icons.delete, size: 18, color: theme.colorScheme.error),
-                        const SizedBox(width: 8),
+                        AppSpacing.horizontalXs,
                         Text(
                           AppLocalizations.of(context).delete,
                           style: TextStyle(color: theme.colorScheme.error),
@@ -329,8 +311,6 @@ class _HabitChecklistItem extends StatelessWidget {
               ),
             ],
           ),
-        ),
-      ),
     );
   }
 }

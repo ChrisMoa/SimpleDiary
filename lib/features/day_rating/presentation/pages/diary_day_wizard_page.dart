@@ -3,6 +3,7 @@ import 'package:day_tracker/features/day_rating/presentation/widgets/diary_day_e
 import 'package:day_tracker/features/notes/domain/providers/note_attachments_provider.dart';
 import 'package:day_tracker/features/notes/domain/providers/note_local_db_provider.dart';
 import 'package:day_tracker/features/notes/domain/providers/note_selected_date_provider.dart';
+import 'package:day_tracker/core/widgets/app_ui_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:day_tracker/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -47,7 +48,7 @@ class _DiaryDayWizardPageState extends ConsumerState<DiaryDayWizardPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const CircularProgressIndicator(),
-            const SizedBox(height: 16),
+            AppSpacing.verticalMd,
             Text(l10n.loadingDayData),
           ],
         ),

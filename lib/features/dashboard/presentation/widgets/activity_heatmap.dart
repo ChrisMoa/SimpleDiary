@@ -1,5 +1,6 @@
 import 'package:day_tracker/core/utils/utils.dart';
 import 'package:day_tracker/features/day_rating/domain/providers/diary_day_local_db_provider.dart';
+import 'package:day_tracker/core/widgets/app_ui_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -18,11 +19,10 @@ class ActivityHeatmap extends ConsumerWidget {
     final now = DateTime.now();
     final startDate = now.subtract(const Duration(days: 84)); // 12 weeks
 
-    return Card(
-      margin: const EdgeInsets.all(16),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
+    return AppCard.elevated(
+      margin: AppSpacing.paddingAllMd,
+      padding: AppSpacing.paddingAllMd,
+      child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
@@ -32,7 +32,7 @@ class ActivityHeatmap extends ConsumerWidget {
                 color: theme.colorScheme.onSurface,
               ),
             ),
-            const SizedBox(height: 16),
+            AppSpacing.verticalMd,
             SizedBox(
               height: 150,
               child: GridView.builder(
@@ -54,13 +54,13 @@ class ActivityHeatmap extends ConsumerWidget {
                     final score = dayData.overallScore;
                     // Use subtle theme primary color with low opacity
                     if (score >= 16) {
-                      cellColor = colorScheme.primary.withOpacity(0.6);
+                      cellColor = colorScheme.primary.withValues(alpha:0.6);
                     } else if (score >= 12) {
-                      cellColor = colorScheme.primary.withOpacity(0.4);
+                      cellColor = colorScheme.primary.withValues(alpha:0.4);
                     } else if (score >= 8) {
-                      cellColor = colorScheme.primary.withOpacity(0.25);
+                      cellColor = colorScheme.primary.withValues(alpha:0.25);
                     } else {
-                      cellColor = colorScheme.primary.withOpacity(0.15);
+                      cellColor = colorScheme.primary.withValues(alpha:0.15);
                     }
                   }
 
@@ -76,24 +76,23 @@ class ActivityHeatmap extends ConsumerWidget {
                 },
               ),
             ),
-            const SizedBox(height: 12),
+            AppSpacing.verticalSm,
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text('Weniger', style: theme.textTheme.labelSmall),
-                const SizedBox(width: 8),
+                AppSpacing.horizontalXs,
                 _buildLegendBox(colorScheme.surfaceContainerHighest),
-                _buildLegendBox(colorScheme.primary.withOpacity(0.15)),
-                _buildLegendBox(colorScheme.primary.withOpacity(0.25)),
-                _buildLegendBox(colorScheme.primary.withOpacity(0.4)),
-                _buildLegendBox(colorScheme.primary.withOpacity(0.6)),
-                const SizedBox(width: 8),
+                _buildLegendBox(colorScheme.primary.withValues(alpha:0.15)),
+                _buildLegendBox(colorScheme.primary.withValues(alpha:0.25)),
+                _buildLegendBox(colorScheme.primary.withValues(alpha:0.4)),
+                _buildLegendBox(colorScheme.primary.withValues(alpha:0.6)),
+                AppSpacing.horizontalXs,
                 Text('Mehr', style: theme.textTheme.labelSmall),
               ],
             ),
           ],
         ),
-      ),
     );
   }
 

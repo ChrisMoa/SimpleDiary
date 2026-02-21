@@ -1,5 +1,6 @@
 import 'package:day_tracker/features/dashboard/domain/providers/dashboard_stats_provider.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:day_tracker/core/widgets/app_ui_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:day_tracker/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -18,43 +19,36 @@ class MoodTrendChart extends ConsumerWidget {
     final l10n = AppLocalizations.of(context)!;
 
     return statsAsync.when(
-      loading: () => const Card(
-        margin: EdgeInsets.all(16),
-        child: Padding(
-          padding: EdgeInsets.all(24),
-          child: Center(child: CircularProgressIndicator()),
-        ),
+      loading: () => AppCard.elevated(
+        margin: AppSpacing.paddingAllMd,
+        padding: AppSpacing.paddingAllXl,
+        child: const Center(child: CircularProgressIndicator()),
       ),
-      error: (error, stack) => Card(
-        margin: const EdgeInsets.all(16),
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: Text(l10n.errorWithMessage(error.toString())),
-        ),
+      error: (error, stack) => AppCard.elevated(
+        margin: AppSpacing.paddingAllMd,
+        padding: AppSpacing.paddingAllXl,
+        child: Text(l10n.errorWithMessage(error.toString())),
       ),
       data: (stats) {
         final dailyScores = stats.weekStats.dailyScores;
 
         if (dailyScores.isEmpty) {
-          return Card(
-            margin: const EdgeInsets.all(16),
-            child: Padding(
-              padding: const EdgeInsets.all(24),
-              child: Center(
-                child: Text(
-                  l10n.noDataAvailable,
-                  style: theme.textTheme.bodyLarge,
-                ),
+          return AppCard.elevated(
+            margin: AppSpacing.paddingAllMd,
+            padding: AppSpacing.paddingAllXl,
+            child: Center(
+              child: Text(
+                l10n.noDataAvailable,
+                style: theme.textTheme.bodyLarge,
               ),
             ),
           );
         }
 
-        return Card(
-          margin: const EdgeInsets.all(16),
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
+        return AppCard.elevated(
+          margin: AppSpacing.paddingAllMd,
+          padding: AppSpacing.paddingAllMd,
+          child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
@@ -64,7 +58,7 @@ class MoodTrendChart extends ConsumerWidget {
                     color: theme.colorScheme.onSurface,
                   ),
                 ),
-                const SizedBox(height: 24),
+                AppSpacing.verticalXl,
                 SizedBox(
                   height: 200,
                   child: LineChart(
@@ -75,7 +69,7 @@ class MoodTrendChart extends ConsumerWidget {
                         horizontalInterval: 5,
                         getDrawingHorizontalLine: (value) {
                           return FlLine(
-                            color: colorScheme.outline.withOpacity(0.2),
+                            color: colorScheme.outline.withValues(alpha:0.2),
                             strokeWidth: 1,
                           );
                         },
@@ -150,7 +144,7 @@ class MoodTrendChart extends ConsumerWidget {
                           ),
                           belowBarData: BarAreaData(
                             show: true,
-                            color: colorScheme.primary.withOpacity(0.1),
+                            color: colorScheme.primary.withValues(alpha:0.1),
                           ),
                         ),
                       ],
@@ -175,7 +169,6 @@ class MoodTrendChart extends ConsumerWidget {
                 ),
               ],
             ),
-          ),
         );
       },
     );

@@ -1,13 +1,14 @@
 import 'package:day_tracker/features/dashboard/presentation/pages/favorites_overview_page.dart';
 import 'package:day_tracker/features/day_rating/data/models/diary_day.dart';
 import 'package:day_tracker/features/day_rating/domain/providers/favorite_diary_days_provider.dart';
-import 'package:day_tracker/features/day_rating/presentation/pages/diary_day_wizard_page.dart';
+import 'package:day_tracker/core/navigation/drawer_index_provider.dart';
 import 'package:day_tracker/features/notes/data/models/note.dart';
 import 'package:day_tracker/features/notes/domain/providers/favorite_notes_provider.dart';
 import 'package:day_tracker/features/notes/domain/providers/note_editing_page_provider.dart';
 import 'package:day_tracker/features/notes/domain/providers/note_selected_date_provider.dart';
 import 'package:day_tracker/features/notes/presentation/pages/note_editing_page.dart';
 import 'package:day_tracker/l10n/app_localizations.dart';
+import 'package:day_tracker/core/widgets/app_ui_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -46,7 +47,7 @@ class FavoritesSectionWidget extends ConsumerWidget {
           child: Row(
             children: [
               const Icon(Icons.star, color: Colors.amber, size: 24),
-              const SizedBox(width: 8),
+              AppSpacing.horizontalXs,
               Text(
                 l10n.favorites,
                 style: theme.textTheme.titleLarge?.copyWith(
@@ -54,7 +55,7 @@ class FavoritesSectionWidget extends ConsumerWidget {
                   color: theme.colorScheme.onSurface,
                 ),
               ),
-              const SizedBox(width: 8),
+              AppSpacing.horizontalXs,
               Text(
                 '($totalCount)',
                 style: theme.textTheme.titleMedium?.copyWith(
@@ -73,7 +74,7 @@ class FavoritesSectionWidget extends ConsumerWidget {
 
         // Horizontal scroll with limited favorites
         SizedBox(
-          height: 100,
+          height: 115,
           child: ListView(
             scrollDirection: Axis.horizontal,
             padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -94,37 +95,35 @@ class FavoritesSectionWidget extends ConsumerWidget {
   Widget _buildFavoriteDayCard(
       BuildContext context, WidgetRef ref, DiaryDay day) {
     final theme = Theme.of(context);
-    return Card(
+    return AppCard.elevated(
       margin: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
-      child: InkWell(
-        onTap: () => _navigateToDayDetail(context, ref, day),
-        borderRadius: BorderRadius.circular(12),
-        child: Container(
-          width: 120,
-          padding: const EdgeInsets.all(12),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                DateFormat('MMM d').format(day.day),
-                style: theme.textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: theme.colorScheme.onSurface,
-                ),
+      borderRadius: AppRadius.borderRadiusMd,
+      onTap: () => _navigateToDayDetail(context, ref, day),
+      child: Container(
+        width: 120,
+        padding: AppSpacing.paddingAllSm,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              DateFormat('MMM d').format(day.day),
+              style: theme.textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: theme.colorScheme.onSurface,
               ),
-              const SizedBox(height: 4),
-              Text(
-                DateFormat('EEEE').format(day.day),
-                style: theme.textTheme.bodySmall?.copyWith(
-                  color: theme.colorScheme.onSurfaceVariant,
-                ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
+            ),
+            AppSpacing.verticalXxs,
+            Text(
+              DateFormat('EEEE').format(day.day),
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: theme.colorScheme.onSurfaceVariant,
               ),
-              const SizedBox(height: 8),
-              _buildScoreIndicator(context, day.overallScore),
-            ],
-          ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+            AppSpacing.verticalXs,
+            _buildScoreIndicator(context, day.overallScore),
+          ],
         ),
       ),
     );
@@ -133,17 +132,16 @@ class FavoritesSectionWidget extends ConsumerWidget {
   Widget _buildFavoriteNoteCard(
       BuildContext context, WidgetRef ref, Note note) {
     final theme = Theme.of(context);
-    return Card(
+    return AppCard.elevated(
       margin: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
-      child: InkWell(
-        onTap: () => _navigateToNoteDetail(context, ref, note),
-        borderRadius: BorderRadius.circular(12),
-        child: Container(
-          width: 160,
-          padding: const EdgeInsets.all(12),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.center,
+      borderRadius: AppRadius.borderRadiusMd,
+      onTap: () => _navigateToNoteDetail(context, ref, note),
+      child: Container(
+        width: 160,
+        padding: AppSpacing.paddingAllSm,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Row(
                 children: [
@@ -170,7 +168,7 @@ class FavoritesSectionWidget extends ConsumerWidget {
                   const Icon(Icons.star, color: Colors.amber, size: 16),
                 ],
               ),
-              const SizedBox(height: 4),
+              AppSpacing.verticalXxs,
               Text(
                 DateFormat('MMM d, yyyy').format(note.from),
                 style: theme.textTheme.bodySmall?.copyWith(
@@ -192,7 +190,6 @@ class FavoritesSectionWidget extends ConsumerWidget {
             ],
           ),
         ),
-      ),
     );
   }
 
@@ -219,7 +216,7 @@ class FavoritesSectionWidget extends ConsumerWidget {
       decoration: BoxDecoration(
         color: scoreColor.withValues(
             alpha: theme.brightness == Brightness.dark ? 0.7 : 1.0),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: AppRadius.borderRadiusMd,
       ),
       child: Text(
         '$score',
@@ -243,12 +240,7 @@ class FavoritesSectionWidget extends ConsumerWidget {
   void _navigateToDayDetail(
       BuildContext context, WidgetRef ref, DiaryDay day) {
     ref.read(noteSelectedDateProvider.notifier).updateSelectedDate(day.day);
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const DiaryDayWizardPage(),
-      ),
-    );
+    ref.read(selectedDrawerIndexProvider.notifier).state = 3;
   }
 
   void _navigateToNoteDetail(

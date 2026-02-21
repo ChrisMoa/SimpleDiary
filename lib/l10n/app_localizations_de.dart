@@ -382,6 +382,18 @@ class AppLocalizationsDe extends AppLocalizations {
   String get update => 'Aktualisieren';
 
   @override
+  String get ratingSocial => 'Soziales';
+
+  @override
+  String get ratingProductivity => 'Produktivität';
+
+  @override
+  String get ratingSport => 'Sport';
+
+  @override
+  String get ratingFood => 'Essen';
+
+  @override
   String get ratingPoor => 'Schlecht';
 
   @override

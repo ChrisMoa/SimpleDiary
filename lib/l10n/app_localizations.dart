@@ -774,6 +774,30 @@ abstract class AppLocalizations {
   /// **'Update'**
   String get update;
 
+  /// No description provided for @ratingSocial.
+  ///
+  /// In en, this message translates to:
+  /// **'Social'**
+  String get ratingSocial;
+
+  /// No description provided for @ratingProductivity.
+  ///
+  /// In en, this message translates to:
+  /// **'Productivity'**
+  String get ratingProductivity;
+
+  /// No description provided for @ratingSport.
+  ///
+  /// In en, this message translates to:
+  /// **'Sport'**
+  String get ratingSport;
+
+  /// No description provided for @ratingFood.
+  ///
+  /// In en, this message translates to:
+  /// **'Food'**
+  String get ratingFood;
+
   /// No description provided for @ratingPoor.
   ///
   /// In en, this message translates to:

@@ -4,6 +4,7 @@ import 'package:day_tracker/core/log/logger_instance.dart';
 import 'package:day_tracker/features/synchronization/data/models/supabase_settings.dart';
 import 'package:day_tracker/features/synchronization/domain/providers/supabase_provider.dart';
 import 'package:day_tracker/l10n/app_localizations.dart';
+import 'package:day_tracker/core/widgets/app_ui_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -27,11 +28,7 @@ class _SupabaseSyncWidgetState extends ConsumerState<SupabaseSyncWidget> {
     final screenWidth = mediaQuery.size.width;
     final isSmallScreen = screenWidth < 600;
 
-    return Card(
-      elevation: 4,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
+    return AppCard.elevated(
       child: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
@@ -42,7 +39,7 @@ class _SupabaseSyncWidgetState extends ConsumerState<SupabaseSyncWidget> {
               theme.colorScheme.surface,
             ],
           ),
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: AppRadius.borderRadiusLg,
         ),
         child: Padding(
           padding: const EdgeInsets.all(20.0),
@@ -58,7 +55,7 @@ class _SupabaseSyncWidgetState extends ConsumerState<SupabaseSyncWidget> {
                     color: theme.colorScheme.primary,
                     size: isSmallScreen ? 24 : 28,
                   ),
-                  const SizedBox(width: 8),
+                  AppSpacing.horizontalXs,
                   Text(
                     l10n.supabaseSynchronization,
                     style: theme.textTheme.titleLarge?.copyWith(
@@ -70,7 +67,7 @@ class _SupabaseSyncWidgetState extends ConsumerState<SupabaseSyncWidget> {
                 ],
               ),
 
-              const SizedBox(height: 16),
+              AppSpacing.verticalMd,
 
               Text(
                 l10n.supabaseSyncDescription,
@@ -79,7 +76,7 @@ class _SupabaseSyncWidgetState extends ConsumerState<SupabaseSyncWidget> {
                 ),
               ),
 
-              const SizedBox(height: 24),
+              AppSpacing.verticalXl,
 
               // Sync Status
               if (syncState.status != SyncStatus.idle) _buildSyncStatus(syncState, theme, isSmallScreen),
@@ -98,7 +95,7 @@ class _SupabaseSyncWidgetState extends ConsumerState<SupabaseSyncWidget> {
                     theme: theme,
                     isSmallScreen: isSmallScreen,
                   ),
-                  const SizedBox(height: 16),
+                  AppSpacing.verticalMd,
                   _buildSyncButton(
                     context: context,
                     icon: Icons.cloud_download,
@@ -128,12 +125,12 @@ class _SupabaseSyncWidgetState extends ConsumerState<SupabaseSyncWidget> {
   }) {
     return InkWell(
       onTap: onPressed,
-      borderRadius: BorderRadius.circular(12),
+      borderRadius: AppRadius.borderRadiusMd,
       child: Container(
         padding: EdgeInsets.all(isSmallScreen ? 16 : 20),
         decoration: BoxDecoration(
           color: onPressed != null ? theme.colorScheme.surfaceContainer : theme.colorScheme.onSurface.withValues(alpha: .12),
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: AppRadius.borderRadiusMd,
           border: Border.all(
             color: theme.colorScheme.outline.withValues(alpha: .2),
           ),
@@ -144,7 +141,7 @@ class _SupabaseSyncWidgetState extends ConsumerState<SupabaseSyncWidget> {
               padding: EdgeInsets.all(isSmallScreen ? 8 : 12),
               decoration: BoxDecoration(
                 color: onPressed != null ? theme.colorScheme.primaryContainer : theme.colorScheme.onSurface.withValues(alpha: .12),
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: AppRadius.borderRadiusSm,
               ),
               child: Icon(
                 icon,
@@ -152,7 +149,7 @@ class _SupabaseSyncWidgetState extends ConsumerState<SupabaseSyncWidget> {
                 size: isSmallScreen ? 20 : 24,
               ),
             ),
-            const SizedBox(width: 16),
+            AppSpacing.horizontalMd,
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -165,7 +162,7 @@ class _SupabaseSyncWidgetState extends ConsumerState<SupabaseSyncWidget> {
                       fontSize: isSmallScreen ? 14 : 16,
                     ),
                   ),
-                  const SizedBox(height: 4),
+                  AppSpacing.verticalXxs,
                   Text(
                     description,
                     style: theme.textTheme.bodySmall?.copyWith(
@@ -213,7 +210,7 @@ class _SupabaseSyncWidgetState extends ConsumerState<SupabaseSyncWidget> {
       padding: EdgeInsets.all(isSmallScreen ? 12 : 16),
       decoration: BoxDecoration(
         color: statusColor.withValues(alpha: .1),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: AppRadius.borderRadiusMd,
         border: Border.all(color: statusColor.withValues(alpha: .3)),
       ),
       child: Column(
@@ -221,7 +218,7 @@ class _SupabaseSyncWidgetState extends ConsumerState<SupabaseSyncWidget> {
           Row(
             children: [
               Icon(statusIcon, color: statusColor, size: isSmallScreen ? 18 : 20),
-              const SizedBox(width: 8),
+              AppSpacing.horizontalXs,
               Expanded(
                 child: Text(
                   syncState.message,

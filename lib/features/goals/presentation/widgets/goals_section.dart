@@ -1,3 +1,4 @@
+import 'package:day_tracker/core/widgets/app_ui_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:day_tracker/features/goals/domain/providers/goal_providers.dart';
@@ -22,7 +23,7 @@ class GoalsSection extends ConsumerWidget {
           child: Row(
             children: [
               Icon(Icons.flag, color: theme.colorScheme.primary, size: 20),
-              const SizedBox(width: 8),
+              AppSpacing.horizontalXs,
               Text(
                 'Goals',
                 style: theme.textTheme.titleMedium?.copyWith(
@@ -30,20 +31,20 @@ class GoalsSection extends ConsumerWidget {
                   color: theme.colorScheme.onSurface,
                 ),
               ),
-              const SizedBox(width: 8),
+              AppSpacing.horizontalXs,
               if (goalStreak > 0)
                 Container(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                   decoration: BoxDecoration(
                     color: Colors.amber.withValues(alpha: 0.2),
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: AppRadius.borderRadiusMd,
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       const Text('🔥', style: TextStyle(fontSize: 12)),
-                      const SizedBox(width: 4),
+                      AppSpacing.horizontalXxs,
                       Text(
                         '$goalStreak',
                         style: theme.textTheme.labelSmall?.copyWith(
@@ -81,11 +82,11 @@ class GoalsSection extends ConsumerWidget {
     final theme = Theme.of(context);
 
     return Container(
-      margin: const EdgeInsets.all(16),
-      padding: const EdgeInsets.all(24),
+      margin: AppSpacing.paddingAllMd,
+      padding: AppSpacing.paddingAllXl,
       decoration: BoxDecoration(
         color: theme.colorScheme.surfaceContainerLow,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: AppRadius.borderRadiusLg,
         border: Border.all(
           color: theme.colorScheme.outlineVariant,
           style: BorderStyle.solid,
@@ -98,7 +99,7 @@ class GoalsSection extends ConsumerWidget {
             size: 48,
             color: theme.colorScheme.onSurfaceVariant,
           ),
-          const SizedBox(height: 12),
+          AppSpacing.verticalSm,
           Text(
             'No active goals',
             style: theme.textTheme.titleMedium?.copyWith(
@@ -106,7 +107,7 @@ class GoalsSection extends ConsumerWidget {
               color: theme.colorScheme.onSurface,
             ),
           ),
-          const SizedBox(height: 4),
+          AppSpacing.verticalXxs,
           Text(
             'Set a goal to track your progress and stay motivated',
             style: theme.textTheme.bodySmall?.copyWith(
@@ -114,7 +115,7 @@ class GoalsSection extends ConsumerWidget {
             ),
             textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 16),
+          AppSpacing.verticalMd,
           FilledButton.icon(
             onPressed: () => _showCreateGoalDialog(context),
             icon: const Icon(Icons.add),

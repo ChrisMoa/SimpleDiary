@@ -1,3 +1,11 @@
+import 'package:day_tracker/core/widgets/app_ui_kit.dart';
+import 'package:day_tracker/features/day_rating/data/models/diary_day.dart';
+import 'package:day_tracker/features/day_rating/data/models/day_rating.dart';
+import 'package:day_tracker/features/notes/data/models/note.dart';
+import 'package:day_tracker/features/notes/domain/providers/note_editing_page_provider.dart';
+import 'package:day_tracker/features/notes/presentation/pages/note_editing_page.dart';
+import 'package:day_tracker/features/notes/presentation/pages/note_viewing_page.dart';
+import 'package:day_tracker/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -10,107 +18,91 @@ class DiaryDayDetailPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Get diary day data
     final diaryDayAsync = ref.watch(diaryDayForDateProvider(selectedDate));
-    // Get notes for this day
     final notesAsync = ref.watch(notesForDayProvider(selectedDate));
+    final l10n = AppLocalizations.of(context);
+    final locale = Localizations.localeOf(context).languageCode;
+
+    final theme = Theme.of(context);
 
     return Scaffold(
+      backgroundColor: theme.colorScheme.surface,
       appBar: AppBar(
-        title: Text('Day Detail: ${_formatDate(selectedDate)}'),
-        actions: [
-          diaryDayAsync.when(
-            data: (diaryDay) => diaryDay != null
-                ? IconButton(
-                    icon: const Icon(Icons.delete),
-                    onPressed: () => _confirmDelete(context, ref, diaryDay.id),
-                  )
-                : const SizedBox.shrink(),
-            loading: () => const SizedBox.shrink(),
-            error: (_, __) => const SizedBox.shrink(),
-          ),
-        ],
+        backgroundColor: theme.colorScheme.surfaceContainer,
+        foregroundColor: theme.colorScheme.onSurface,
+        title: Text(l10n.dayDetail(_formatDate(selectedDate, locale))),
       ),
       body: diaryDayAsync.when(
         data: (diaryDay) {
           if (diaryDay == null) {
-            return const Center(child: Text('No diary entry for this day'));
+            return Center(
+              child: Text(
+                l10n.noDiaryEntryForDay,
+                style: Theme.of(context).textTheme.bodyLarge,
+              ),
+            );
           }
 
           return notesAsync.when(
-            data: (notes) => _buildDiaryDayDetail(context, diaryDay, notes),
+            data: (notes) => _buildDiaryDayDetail(context, ref, diaryDay, notes),
             loading: () => const Center(child: CircularProgressIndicator()),
             error: (error, stack) => Center(
-              child: Text('Error loading notes: $error'),
+              child: Text(l10n.errorLoadingNotes(error.toString())),
             ),
           );
         },
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, stack) => Center(
-          child: Text('Error loading diary day: $error'),
+          child: Text(l10n.errorLoadingDiaryDay(error.toString())),
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => _addNewNote(context, selectedDate),
-        tooltip: 'Add a note',
-        child: const Icon(Icons.add),
       ),
     );
   }
 
   Widget _buildDiaryDayDetail(
     BuildContext context,
-    dynamic diaryDay,
-    List<dynamic> notes,
+    WidgetRef ref,
+    DiaryDay diaryDay,
+    List<Note> notes,
   ) {
     final theme = Theme.of(context);
-    // Calculate overall score based on the actual DiaryDay structure
-    // DiaryDay in simple_diary already has an overallScore getter
+    final l10n = AppLocalizations.of(context);
     final overallScore = diaryDay.overallScore;
 
     return ListView(
-      padding: const EdgeInsets.all(16),
+      padding: AppSpacing.paddingAllMd,
       children: [
         // Day summary card
-        Card(
-          elevation: 2,
-          color: theme.colorScheme.secondaryContainer,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-            side: BorderSide(
-              color: theme.colorScheme.outline.withValues(alpha: 0.1),
-              width: 1,
-            ),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Day Summary',
-                  style: theme.textTheme.titleLarge?.copyWith(
-                    color: theme.colorScheme.onSecondaryContainer,
-                    fontWeight: FontWeight.bold,
-                  ),
+        AppCard.elevated(
+          color: theme.colorScheme.surfaceContainer,
+          borderRadius: AppRadius.borderRadiusMd,
+          padding: AppSpacing.paddingAllMd,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                l10n.daySummary,
+                style: theme.textTheme.titleLarge?.copyWith(
+                  color: theme.colorScheme.onSurface,
+                  fontWeight: FontWeight.bold,
                 ),
-                const SizedBox(height: 16),
-                _buildRatingsSummary(context, diaryDay),
-                const SizedBox(height: 16),
-                _buildOverallMood(context, overallScore),
-              ],
-            ),
+              ),
+              AppSpacing.verticalMd,
+              _buildRatingsSummary(context, diaryDay),
+              AppSpacing.verticalMd,
+              _buildOverallMood(context, overallScore),
+            ],
           ),
         ),
 
-        const SizedBox(height: 24),
+        AppSpacing.verticalXl,
 
-        // Notes section
+        // Notes section header
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              'Notes & Activities',
+              l10n.notesAndActivities,
               style: theme.textTheme.titleMedium?.copyWith(
                 color: theme.colorScheme.onSurface,
                 fontWeight: FontWeight.bold,
@@ -118,49 +110,47 @@ class DiaryDayDetailPage extends ConsumerWidget {
             ),
             if (notes.isNotEmpty)
               Text(
-                '${notes.length} entries',
+                l10n.nEntries(notes.length),
                 style: theme.textTheme.bodyMedium?.copyWith(
                   color: theme.colorScheme.onSurfaceVariant,
                 ),
               ),
           ],
         ),
-        const SizedBox(height: 8),
+        AppSpacing.verticalXs,
         notes.isEmpty
             ? _buildEmptyNotesMessage(context)
-            : _buildNotesList(context, notes),
+            : _buildNotesList(context, ref, notes),
       ],
     );
   }
 
-  Widget _buildRatingsSummary(BuildContext context, dynamic diaryDay) {
+  Widget _buildRatingsSummary(BuildContext context, DiaryDay diaryDay) {
+    final l10n = AppLocalizations.of(context);
     return Wrap(
       spacing: 8,
       runSpacing: 8,
       children: diaryDay.ratings.map<Widget>((rating) {
-        // Convert enum to string and extract just the name part
-        String enumString = rating.dayRating.toString();
-        String ratingName = enumString.split('.').last;
-
-        return _buildRatingChip(context, ratingName, rating.score);
+        final ratingLabel = _getLocalizedRatingLabel(l10n, rating.dayRating);
+        return _buildRatingChip(context, l10n, ratingLabel, rating.score);
       }).toList(),
     );
   }
 
-  Widget _buildRatingChip(BuildContext context, String label, int rating) {
+  Widget _buildRatingChip(BuildContext context, AppLocalizations l10n, String label, int rating) {
     final theme = Theme.of(context);
     final color = _getRatingColor(rating);
 
     return Chip(
       label: Text(
-        '$label: ${_getRatingText(rating)}',
+        '$label: ${_getLocalizedRatingText(l10n, rating)}',
         style: theme.textTheme.bodySmall?.copyWith(
-          color: theme.colorScheme.onSurface,
+          color: color,
           fontWeight: FontWeight.bold,
         ),
       ),
       backgroundColor: color.withValues(
-          alpha: theme.brightness == Brightness.dark ? 0.3 : 0.2),
+          alpha: theme.colorScheme.brightness == Brightness.dark ? 0.15 : 0.1),
       side: BorderSide(color: color),
       avatar: Icon(
         _getRatingIcon(rating),
@@ -172,20 +162,19 @@ class DiaryDayDetailPage extends ConsumerWidget {
 
   Widget _buildOverallMood(BuildContext context, int score) {
     final theme = Theme.of(context);
-    // Maximum possible score (4 categories × 5 points per category)
+    final l10n = AppLocalizations.of(context);
     const maxScore = 20;
     final percentage = score / maxScore;
 
-    // Choose color based on score
     Color scoreColor = _getScoreColor(percentage);
-    String moodText = _getMoodText(percentage);
+    String moodText = _getLocalizedMoodText(l10n, percentage);
 
     return Row(
       children: [
         CircleAvatar(
           radius: 32,
           backgroundColor: scoreColor.withValues(
-              alpha: theme.brightness == Brightness.dark ? 0.3 : 0.2),
+              alpha: theme.colorScheme.brightness == Brightness.dark ? 0.3 : 0.2),
           child: Text(
             '$score',
             style: TextStyle(
@@ -195,19 +184,19 @@ class DiaryDayDetailPage extends ConsumerWidget {
             ),
           ),
         ),
-        const SizedBox(width: 16),
+        AppSpacing.horizontalMd,
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Overall Mood: $moodText',
+                l10n.overallMood(moodText),
                 style: theme.textTheme.titleMedium?.copyWith(
                   color: scoreColor,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              const SizedBox(height: 4),
+              AppSpacing.verticalXxs,
               LinearProgressIndicator(
                 value: percentage,
                 backgroundColor: theme.colorScheme.surfaceContainerHighest,
@@ -224,203 +213,131 @@ class DiaryDayDetailPage extends ConsumerWidget {
 
   Widget _buildEmptyNotesMessage(BuildContext context) {
     final theme = Theme.of(context);
-    return Card(
-      elevation: 1,
-      color: theme.colorScheme.secondaryContainer,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-        side: BorderSide(
-          color: theme.colorScheme.outline.withValues(alpha: 0.1),
-          width: 1,
-        ),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            Icon(
-              Icons.note_add_outlined,
-              size: 48,
-              color: theme.colorScheme.primary.withValues(alpha: 0.5),
+    final l10n = AppLocalizations.of(context);
+    return AppCard.elevated(
+      color: theme.colorScheme.surfaceContainer,
+      borderRadius: AppRadius.borderRadiusMd,
+      padding: AppSpacing.paddingAllMd,
+      child: Column(
+        children: [
+          Icon(
+            Icons.note_add_outlined,
+            size: 48,
+            color: theme.colorScheme.primary.withValues(alpha: 0.5),
+          ),
+          AppSpacing.verticalMd,
+          Text(
+            l10n.noNotesForDay,
+            textAlign: TextAlign.center,
+            style: theme.textTheme.bodyLarge?.copyWith(
+              color: theme.colorScheme.onSurface,
             ),
-            const SizedBox(height: 16),
-            Text(
-              'No notes for this day',
-              textAlign: TextAlign.center,
-              style: theme.textTheme.bodyLarge?.copyWith(
-                color: theme.colorScheme.onSecondaryContainer,
-              ),
+          ),
+          AppSpacing.verticalXs,
+          Text(
+            l10n.addThoughtsActivitiesMemories,
+            textAlign: TextAlign.center,
+            style: theme.textTheme.bodyMedium?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
+              fontStyle: FontStyle.italic,
             ),
-            const SizedBox(height: 8),
-            Text(
-              'Add your thoughts, activities or memories',
-              textAlign: TextAlign.center,
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.colorScheme.onSecondaryContainer
-                    .withValues(alpha: 0.7),
-                fontStyle: FontStyle.italic,
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 
-  Widget _buildNotesList(BuildContext context, List<dynamic> notes) {
-    // Sort notes by time
+  Widget _buildNotesList(BuildContext context, WidgetRef ref, List<Note> notes) {
     final sortedNotes = [...notes]..sort((a, b) => a.from.compareTo(b.from));
 
-    return ListView.separated(
+    return ListView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       itemCount: sortedNotes.length,
-      separatorBuilder: (context, index) => const Divider(),
       itemBuilder: (context, index) {
         final note = sortedNotes[index];
-        return _buildNoteItem(context, note);
+        return _buildNoteItem(context, ref, note);
       },
     );
   }
 
-  Widget _buildNoteItem(BuildContext context, dynamic note) {
+  Widget _buildNoteItem(BuildContext context, WidgetRef ref, Note note) {
     final theme = Theme.of(context);
-    return Card(
-      elevation: 1,
+    final l10n = AppLocalizations.of(context);
+    return AppCard.flat(
+      color: theme.colorScheme.surfaceContainerHigh,
       margin: const EdgeInsets.symmetric(vertical: 4),
-      color: theme.colorScheme.secondaryContainer,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8),
-        side: BorderSide(
-          color: theme.colorScheme.outline.withValues(alpha: 0.1),
-          width: 1,
-        ),
-      ),
-      child: InkWell(
-        onTap: () => _viewNote(context, note),
-        borderRadius: BorderRadius.circular(8),
-        child: Padding(
-          padding: const EdgeInsets.all(12),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+      borderRadius: AppRadius.borderRadiusSm,
+      onTap: () => _viewNote(context, ref, note),
+      padding: AppSpacing.paddingAllSm,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
             children: [
-              Row(
-                children: [
-                  _getCategoryIcon(context, note.noteCategory),
-                  const SizedBox(width: 8),
-                  Expanded(
-                    child: Text(
-                      note.title,
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: theme.colorScheme.onSecondaryContainer,
-                      ),
-                    ),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.edit_outlined, size: 20),
-                    onPressed: () => _editNote(context, note),
-                    tooltip: 'Edit note',
-                    color: theme.colorScheme.primary,
-                  ),
-                ],
+              Container(
+                width: 12,
+                height: 12,
+                decoration: BoxDecoration(
+                  color: note.noteCategory.color,
+                  shape: BoxShape.circle,
+                ),
               ),
-              if (note.description.isNotEmpty) ...[
-                const SizedBox(height: 8),
-                Text(
-                  note.description,
-                  maxLines: 3,
-                  overflow: TextOverflow.ellipsis,
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    color: theme.colorScheme.onSecondaryContainer
-                        .withValues(alpha: 0.9),
+              AppSpacing.horizontalXs,
+              Expanded(
+                child: Text(
+                  note.title,
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: theme.colorScheme.onSurface,
                   ),
                 ),
-              ],
-              const SizedBox(height: 8),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Icon(
-                    Icons.access_time,
-                    size: 16,
-                    color: theme.colorScheme.onSecondaryContainer
-                        .withValues(alpha: 0.7),
-                  ),
-                  const SizedBox(width: 4),
-                  Text(
-                    note.isAllDay
-                        ? 'All day'
-                        : '${_formatTime(note.from)} - ${_formatTime(note.to)}',
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: theme.colorScheme.onSecondaryContainer
-                          .withValues(alpha: 0.7),
-                    ),
-                  ),
-                ],
+              ),
+              IconButton(
+                icon: const Icon(Icons.edit_outlined, size: 20),
+                onPressed: () => _editNote(context, ref, note),
+                tooltip: l10n.editNote,
+                color: theme.colorScheme.primary,
               ),
             ],
           ),
-        ),
+          if (note.description.isNotEmpty) ...[
+            AppSpacing.verticalXs,
+            Text(
+              note.description,
+              maxLines: 3,
+              overflow: TextOverflow.ellipsis,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: theme.colorScheme.onSurfaceVariant,
+              ),
+            ),
+          ],
+          AppSpacing.verticalXs,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Icon(
+                Icons.access_time,
+                size: 16,
+                color: theme.colorScheme.onSurfaceVariant,
+              ),
+              AppSpacing.horizontalXxs,
+              Text(
+                note.isAllDay
+                    ? l10n.allDay
+                    : '${_formatTime(note.from)} - ${_formatTime(note.to)}',
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
 
-  Widget _getCategoryIcon(BuildContext context, dynamic category) {
-    final theme = Theme.of(context);
-    IconData iconData = Icons.note;
-    Color baseColor = Colors.blue;
-
-    // In simple_diary, Note has 'noteCategory' property which has a 'title' property
-    String categoryTitle = "";
-    Color? categoryColor;
-
-    if (category is String) {
-      categoryTitle = category;
-    } else if (category != null) {
-      // Try to access noteCategory.title and color
-      try {
-        categoryTitle = category.title;
-        // If the category has a color property, use it
-        if (category.color != null) {
-          categoryColor = category.color;
-        }
-      } catch (e) {
-        // If that fails, try toString()
-        categoryTitle = category.toString();
-      }
-    }
-
-    // Check the category title (case insensitive)
-    categoryTitle = categoryTitle.toLowerCase();
-
-    if (categoryTitle.contains('arbeit') || categoryTitle.contains('work')) {
-      iconData = Icons.work;
-      baseColor = categoryColor ?? Colors.blue;
-    } else if (categoryTitle.contains('freizeit') ||
-        categoryTitle.contains('leisure')) {
-      iconData = Icons.sports_esports;
-      baseColor = categoryColor ?? Colors.purple;
-    } else if (categoryTitle.contains('essen') ||
-        categoryTitle.contains('food')) {
-      iconData = Icons.restaurant;
-      baseColor = categoryColor ?? Colors.orange;
-    } else if (categoryTitle.contains('gym')) {
-      iconData = Icons.fitness_center;
-      baseColor = categoryColor ?? Colors.green;
-    } else if (categoryTitle.contains('schlafen') ||
-        categoryTitle.contains('sleep')) {
-      iconData = Icons.bedtime;
-      baseColor = categoryColor ?? Colors.indigo;
-    }
-
-    return CircleAvatar(
-      radius: 16,
-      backgroundColor: baseColor.withValues(
-          alpha: theme.brightness == Brightness.dark ? 0.3 : 0.2),
-      child: Icon(iconData, size: 16, color: baseColor),
-    );
-  }
+  // --- Rating helpers ---
 
   IconData _getRatingIcon(int rating) {
     if (rating <= 1) return Icons.sentiment_very_dissatisfied;
@@ -430,20 +347,33 @@ class DiaryDayDetailPage extends ConsumerWidget {
     return Icons.sentiment_very_satisfied;
   }
 
-  String _getRatingText(int rating) {
-    if (rating <= 1) return 'Poor';
-    if (rating == 2) return 'Fair';
-    if (rating == 3) return 'Good';
-    if (rating == 4) return 'Great';
-    return 'Excellent';
+  String _getLocalizedRatingText(AppLocalizations l10n, int rating) {
+    if (rating <= 1) return l10n.ratingPoor;
+    if (rating == 2) return l10n.ratingFair;
+    if (rating == 3) return l10n.ratingGood;
+    if (rating == 4) return l10n.ratingGreat;
+    return l10n.ratingExcellent;
   }
 
-  String _getMoodText(double percentage) {
-    if (percentage < 0.3) return 'Tough Day';
-    if (percentage < 0.5) return 'Could Be Better';
-    if (percentage < 0.7) return 'Pretty Good';
-    if (percentage < 0.9) return 'Great Day';
-    return 'Perfect Day';
+  String _getLocalizedRatingLabel(AppLocalizations l10n, DayRatings dayRating) {
+    switch (dayRating) {
+      case DayRatings.social:
+        return l10n.ratingSocial;
+      case DayRatings.productivity:
+        return l10n.ratingProductivity;
+      case DayRatings.sport:
+        return l10n.ratingSport;
+      case DayRatings.food:
+        return l10n.ratingFood;
+    }
+  }
+
+  String _getLocalizedMoodText(AppLocalizations l10n, double percentage) {
+    if (percentage < 0.3) return l10n.moodToughDay;
+    if (percentage < 0.5) return l10n.moodCouldBeBetter;
+    if (percentage < 0.7) return l10n.moodPrettyGood;
+    if (percentage < 0.9) return l10n.moodGreatDay;
+    return l10n.moodPerfectDay;
   }
 
   Color _getScoreColor(double percentage) {
@@ -462,63 +392,45 @@ class DiaryDayDetailPage extends ConsumerWidget {
     return Colors.green;
   }
 
-  String _formatDate(DateTime date) {
-    return DateFormat('EEEE, MMM d, y').format(date);
+  // --- Formatting helpers ---
+
+  String _formatDate(DateTime date, String locale) {
+    return DateFormat('EEEE, MMM d, y', locale).format(date);
   }
 
   String _formatTime(DateTime time) {
-    return DateFormat('h:mm a').format(time);
+    return DateFormat('HH:mm').format(time);
   }
 
-  void _confirmDelete(BuildContext context, WidgetRef ref, int diaryDayId) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Delete Diary Entry'),
-        content: const Text(
-          'Are you sure you want to delete this diary entry? This will remove both the day rating and all associated notes.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('CANCEL'),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-              // Delete the diary day
-              // Implementation will depend on the actual provider in the project
-              // ref.read(diaryDayProvider.notifier).delete(diaryDayId);
-              Navigator.of(context).pop(); // Go back to previous screen
-            },
-            child: const Text('DELETE'),
-          ),
-        ],
+  // --- Navigation ---
+
+  void _viewNote(BuildContext context, WidgetRef ref, Note note) {
+    ref.read(noteEditingPageProvider.notifier).updateNote(note);
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => const NoteViewingPage(),
       ),
     );
   }
 
-  void _addNewNote(BuildContext context, DateTime day) {
-    // Implementation will depend on the actual providers and pages in the project
-  }
-
-  void _viewNote(BuildContext context, dynamic note) {
-    // Implementation will depend on the actual providers and pages in the project
-  }
-
-  void _editNote(BuildContext context, dynamic note) {
-    // Implementation will depend on the actual providers and pages in the project
+  void _editNote(BuildContext context, WidgetRef ref, Note note) {
+    ref.read(noteEditingPageProvider.notifier).updateNote(note);
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => const NoteEditingPage(
+          editNote: true,
+          navigateBack: true,
+        ),
+      ),
+    );
   }
 }
 
-// Define providers for the specific data needed on this page
-final diaryDayForDateProvider = FutureProvider.family<dynamic, DateTime>(
+// Providers for loading diary day data on this page
+final diaryDayForDateProvider = FutureProvider.family<DiaryDay?, DateTime>(
   (ref, date) async {
-    // Get the diary days from the same data source used in the dashboard
     final diaryDays = ref.watch(diaryDayFullDataProvider);
 
-    // Find the diary day with the matching date
-    // Note: This might need adjustment based on how dates are compared in your app
     final found = diaryDays
         .where((diaryDay) =>
             diaryDay.day.year == date.year &&
@@ -533,17 +445,14 @@ final diaryDayForDateProvider = FutureProvider.family<dynamic, DateTime>(
   },
 );
 
-final notesForDayProvider = FutureProvider.family<List<dynamic>, DateTime>(
+final notesForDayProvider = FutureProvider.family<List<Note>, DateTime>(
   (ref, date) async {
-    // Get the diary day first
     final diaryDay = await ref.watch(diaryDayForDateProvider(date).future);
 
-    // If no diary day found, return empty list
     if (diaryDay == null) {
       return [];
     }
 
-    // Return the notes from the diary day
     return diaryDay.notes;
   },
 );

@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:day_tracker/core/widgets/app_ui_kit.dart';
 import 'package:day_tracker/features/notes/data/models/note_attachment.dart';
 import 'package:day_tracker/features/notes/domain/providers/note_attachments_provider.dart';
 import 'package:day_tracker/l10n/app_localizations.dart';
@@ -94,7 +95,7 @@ class _ImageGalleryViewerState extends ConsumerState<ImageGalleryViewer> {
                   children: [
                     const Icon(Icons.broken_image_outlined,
                         size: 64, color: Colors.white54),
-                    const SizedBox(height: 8),
+                    AppSpacing.verticalXs,
                     Text(
                       l10n.imageNotFound,
                       style: const TextStyle(color: Colors.white54),
@@ -123,28 +124,16 @@ class _ImageGalleryViewerState extends ConsumerState<ImageGalleryViewer> {
   }
 
   Future<void> _confirmDelete(BuildContext context, AppLocalizations l10n) async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(l10n.deletePhoto),
-        content: Text(l10n.deletePhotoConfirm),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(false),
-            child: Text(l10n.cancel),
-          ),
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(true),
-            child: Text(
-              l10n.delete,
-              style: TextStyle(color: Theme.of(context).colorScheme.error),
-            ),
-          ),
-        ],
-      ),
+    final confirmed = await AppDialog.confirm(
+      context,
+      title: l10n.deletePhoto,
+      content: l10n.deletePhotoConfirm,
+      confirmLabel: l10n.delete,
+      cancelLabel: l10n.cancel,
+      isDestructive: true,
     );
 
-    if (confirmed != true || !mounted) return;
+    if (!confirmed || !mounted) return;
 
     final toRemove = _attachments[_currentIndex];
     await ref

@@ -1,3 +1,4 @@
+import 'package:day_tracker/core/widgets/app_ui_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:day_tracker/features/day_rating/data/models/day_rating.dart';
@@ -24,10 +25,10 @@ class _CreateGoalDialogState extends ConsumerState<CreateGoalDialog> {
         ref.watch(targetSuggestionProvider(_selectedCategory));
 
     return Dialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      shape: RoundedRectangleBorder(borderRadius: AppRadius.borderRadiusXl),
       child: Container(
         constraints: const BoxConstraints(maxWidth: 400),
-        padding: const EdgeInsets.all(24),
+        padding: AppSpacing.paddingAllXl,
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -36,7 +37,7 @@ class _CreateGoalDialogState extends ConsumerState<CreateGoalDialog> {
             Row(
               children: [
                 Icon(Icons.flag, color: theme.colorScheme.primary),
-                const SizedBox(width: 8),
+                AppSpacing.horizontalXs,
                 Text(
                   'Create New Goal',
                   style: theme.textTheme.headlineSmall?.copyWith(
@@ -46,18 +47,18 @@ class _CreateGoalDialogState extends ConsumerState<CreateGoalDialog> {
                 ),
               ],
             ),
-            const SizedBox(height: 8),
+            AppSpacing.verticalXs,
 
             // Progress indicator
             _buildStepIndicator(context),
-            const SizedBox(height: 24),
+            AppSpacing.verticalXl,
 
             // Step content
             if (_currentStep == 0) _buildCategoryStep(context),
             if (_currentStep == 1) _buildTimeframeStep(context),
             if (_currentStep == 2) _buildTargetStep(context, suggestedTarget),
 
-            const SizedBox(height: 24),
+            AppSpacing.verticalXl,
 
             // Navigation buttons
             Row(
@@ -118,7 +119,7 @@ class _CreateGoalDialogState extends ConsumerState<CreateGoalDialog> {
             color: theme.colorScheme.onSurface,
           ),
         ),
-        const SizedBox(height: 16),
+        AppSpacing.verticalMd,
         ...DayRatings.values.map((category) => _buildCategoryOption(
               context,
               category,
@@ -144,21 +145,21 @@ class _CreateGoalDialogState extends ConsumerState<CreateGoalDialog> {
       margin: const EdgeInsets.only(bottom: 8),
       child: InkWell(
         onTap: () => setState(() => _selectedCategory = category),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: AppRadius.borderRadiusMd,
         child: Container(
-          padding: const EdgeInsets.all(12),
+          padding: AppSpacing.paddingAllSm,
           decoration: BoxDecoration(
             border: Border.all(
               color: isSelected ? color : theme.colorScheme.outline,
               width: isSelected ? 2 : 1,
             ),
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: AppRadius.borderRadiusMd,
             color: isSelected ? color.withValues(alpha: 0.1) : null,
           ),
           child: Row(
             children: [
               Icon(icon, color: color),
-              const SizedBox(width: 12),
+              AppSpacing.horizontalSm,
               Text(
                 name,
                 style: theme.textTheme.bodyLarge?.copyWith(
@@ -187,7 +188,7 @@ class _CreateGoalDialogState extends ConsumerState<CreateGoalDialog> {
             color: theme.colorScheme.onSurface,
           ),
         ),
-        const SizedBox(height: 16),
+        AppSpacing.verticalMd,
         Row(
           children: [
             Expanded(
@@ -199,7 +200,7 @@ class _CreateGoalDialogState extends ConsumerState<CreateGoalDialog> {
                 '7 days',
               ),
             ),
-            const SizedBox(width: 12),
+            AppSpacing.horizontalSm,
             Expanded(
               child: _buildTimeframeOption(
                 context,
@@ -227,9 +228,9 @@ class _CreateGoalDialogState extends ConsumerState<CreateGoalDialog> {
 
     return InkWell(
       onTap: () => setState(() => _selectedTimeframe = timeframe),
-      borderRadius: BorderRadius.circular(12),
+      borderRadius: AppRadius.borderRadiusMd,
       child: Container(
-        padding: const EdgeInsets.all(16),
+        padding: AppSpacing.paddingAllMd,
         decoration: BoxDecoration(
           border: Border.all(
             color: isSelected
@@ -237,7 +238,7 @@ class _CreateGoalDialogState extends ConsumerState<CreateGoalDialog> {
                 : theme.colorScheme.outline,
             width: isSelected ? 2 : 1,
           ),
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: AppRadius.borderRadiusMd,
           color: isSelected
               ? theme.colorScheme.primaryContainer.withValues(alpha: 0.3)
               : null,
@@ -251,7 +252,7 @@ class _CreateGoalDialogState extends ConsumerState<CreateGoalDialog> {
                   ? theme.colorScheme.primary
                   : theme.colorScheme.onSurfaceVariant,
             ),
-            const SizedBox(height: 8),
+            AppSpacing.verticalXs,
             Text(
               name,
               style: theme.textTheme.titleSmall?.copyWith(
@@ -284,21 +285,21 @@ class _CreateGoalDialogState extends ConsumerState<CreateGoalDialog> {
             color: theme.colorScheme.onSurface,
           ),
         ),
-        const SizedBox(height: 8),
+        AppSpacing.verticalXs,
         Text(
           'What average $categoryName score do you want to achieve?',
           style: theme.textTheme.bodySmall?.copyWith(
             color: theme.colorScheme.onSurfaceVariant,
           ),
         ),
-        const SizedBox(height: 24),
+        AppSpacing.verticalXl,
 
         // Suggested target banner (Endowed Progress Effect)
         Container(
-          padding: const EdgeInsets.all(12),
+          padding: AppSpacing.paddingAllSm,
           decoration: BoxDecoration(
             color: theme.colorScheme.primaryContainer.withValues(alpha: 0.3),
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: AppRadius.borderRadiusMd,
             border: Border.all(
               color: theme.colorScheme.primary.withValues(alpha: 0.3),
             ),
@@ -310,7 +311,7 @@ class _CreateGoalDialogState extends ConsumerState<CreateGoalDialog> {
                 color: theme.colorScheme.primary,
                 size: 20,
               ),
-              const SizedBox(width: 8),
+              AppSpacing.horizontalXs,
               Expanded(
                 child: Text(
                   'Based on your history, we suggest ${suggestedTarget.toStringAsFixed(1)}',
@@ -326,7 +327,7 @@ class _CreateGoalDialogState extends ConsumerState<CreateGoalDialog> {
             ],
           ),
         ),
-        const SizedBox(height: 24),
+        AppSpacing.verticalXl,
 
         // Target slider
         Center(

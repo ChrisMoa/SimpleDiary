@@ -2,6 +2,7 @@ import 'package:day_tracker/core/provider/theme_provider.dart';
 import 'package:day_tracker/features/note_templates/data/models/note_template.dart';
 import 'package:day_tracker/features/note_templates/domain/providers/note_template_local_db_provider.dart';
 import 'package:day_tracker/l10n/app_localizations.dart';
+import 'package:day_tracker/core/widgets/app_ui_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -35,7 +36,7 @@ class TemplateSelectorWidget extends ConsumerWidget {
 
     return Dialog(
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: AppRadius.borderRadiusLg,
       ),
       child: Container(
         padding: EdgeInsets.all(isSmallScreen ? 16 : 24),
@@ -66,7 +67,7 @@ class TemplateSelectorWidget extends ConsumerWidget {
                 ),
               ],
             ),
-            const SizedBox(height: 16),
+            AppSpacing.verticalMd,
 
             // Template list
             Expanded(
@@ -74,22 +75,16 @@ class TemplateSelectorWidget extends ConsumerWidget {
                 itemCount: templates.length,
                 itemBuilder: (context, index) {
                   final template = templates[index];
-                  return Card(
+                  return AppCard.elevated(
                     margin: const EdgeInsets.only(bottom: 8),
                     color: theme.colorScheme.secondaryContainer,
-                    elevation: 1,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: InkWell(
-                      onTap: () {
-                        Navigator.of(context).pop();
-                        onTemplateSelected(template);
-                      },
-                      borderRadius: BorderRadius.circular(8),
-                      child: Padding(
-                        padding: const EdgeInsets.all(12),
-                        child: Row(
+                    borderRadius: AppRadius.borderRadiusSm,
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      onTemplateSelected(template);
+                    },
+                    padding: AppSpacing.paddingAllSm,
+                    child: Row(
                           children: [
                             Container(
                               width: 16,
@@ -99,7 +94,7 @@ class TemplateSelectorWidget extends ConsumerWidget {
                                 shape: BoxShape.circle,
                               ),
                             ),
-                            const SizedBox(width: 12),
+                            AppSpacing.horizontalSm,
                             Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -141,8 +136,6 @@ class TemplateSelectorWidget extends ConsumerWidget {
                             ),
                           ],
                         ),
-                      ),
-                    ),
                   );
                 },
               ),

@@ -1,6 +1,7 @@
 import 'package:day_tracker/core/provider/theme_provider.dart';
 import 'package:day_tracker/features/note_templates/data/models/note_template.dart';
 import 'package:day_tracker/l10n/app_localizations.dart';
+import 'package:day_tracker/core/widgets/app_ui_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -26,24 +27,14 @@ class TemplateListItem extends ConsumerWidget {
     final screenWidth = mediaQuery.size.width;
     final isSmallScreen = screenWidth < 600;
 
-    return Card(
+    return AppCard.outlined(
       margin: EdgeInsets.symmetric(horizontal: isSmallScreen ? 8 : 16, vertical: 8),
       color: theme.colorScheme.secondaryContainer,
-      elevation: 2,
-      shadowColor: theme.colorScheme.shadow.withValues(alpha: 0.3),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-        side: BorderSide(
-          color: theme.colorScheme.outline.withValues(alpha: 0.1),
-          width: 1,
-        ),
-      ),
-      child: InkWell(
-        onTap: () => onTap(template),
-        borderRadius: BorderRadius.circular(12),
-        child: Padding(
-          padding: EdgeInsets.all(isSmallScreen ? 12 : 16),
-          child: Column(
+      borderColor: theme.colorScheme.outline.withValues(alpha: 0.1),
+      borderRadius: AppRadius.borderRadiusMd,
+      onTap: () => onTap(template),
+      padding: EdgeInsets.all(isSmallScreen ? 12 : 16),
+      child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
@@ -56,7 +47,7 @@ class TemplateListItem extends ConsumerWidget {
                       shape: BoxShape.circle,
                     ),
                   ),
-                  const SizedBox(width: 8),
+                  AppSpacing.horizontalXs,
                   Expanded(
                     child: Text(
                       template.title,
@@ -73,7 +64,7 @@ class TemplateListItem extends ConsumerWidget {
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
                       color: theme.colorScheme.primaryContainer,
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: AppRadius.borderRadiusMd,
                     ),
                     child: Text(
                       '${template.durationMinutes} min',
@@ -84,7 +75,7 @@ class TemplateListItem extends ConsumerWidget {
                       ),
                     ),
                   ),
-                  const SizedBox(width: 8),
+                  AppSpacing.horizontalXs,
                   PopupMenuButton<String>(
                     onSelected: (value) {
                       if (value == 'edit') {
@@ -99,7 +90,7 @@ class TemplateListItem extends ConsumerWidget {
                         child: Row(
                           children: [
                             Icon(Icons.edit, size: 18, color: theme.colorScheme.primary),
-                            const SizedBox(width: 8),
+                            AppSpacing.horizontalXs,
                             Text(l10n.edit),
                           ],
                         ),
@@ -109,7 +100,7 @@ class TemplateListItem extends ConsumerWidget {
                         child: Row(
                           children: [
                             Icon(Icons.delete, size: 18, color: theme.colorScheme.error),
-                            const SizedBox(width: 8),
+                            AppSpacing.horizontalXs,
                             Text(l10n.delete),
                           ],
                         ),
@@ -123,7 +114,7 @@ class TemplateListItem extends ConsumerWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: 8),
+              AppSpacing.verticalXs,
               if (template.hasDescriptionSections)
                 Wrap(
                   spacing: 6,
@@ -155,8 +146,6 @@ class TemplateListItem extends ConsumerWidget {
                 ),
             ],
           ),
-        ),
-      ),
     );
   }
 }

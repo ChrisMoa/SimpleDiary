@@ -381,6 +381,18 @@ class AppLocalizationsFr extends AppLocalizations {
   String get update => 'Mettre à jour';
 
   @override
+  String get ratingSocial => 'Social';
+
+  @override
+  String get ratingProductivity => 'Productivité';
+
+  @override
+  String get ratingSport => 'Sport';
+
+  @override
+  String get ratingFood => 'Nourriture';
+
+  @override
   String get ratingPoor => 'Faible';
 
   @override

@@ -1,3 +1,4 @@
+import 'package:day_tracker/core/widgets/app_ui_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:day_tracker/features/dashboard/data/models/insight.dart';
 
@@ -17,29 +18,19 @@ class PatternInsightCard extends StatelessWidget {
     final theme = Theme.of(context);
     final pattern = insight.patternData;
 
-    return Card(
+    return AppCard.outlined(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-        side: BorderSide(
-          color: _getTypeColor(insight.type, theme).withValues(alpha: 0.3),
-          width: 1,
-        ),
-      ),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(16),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
+      borderColor: _getTypeColor(insight.type, theme).withValues(alpha: 0.3),
+      onTap: onTap,
+      padding: AppSpacing.paddingAllMd,
+      child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Header with icon and type badge
               Row(
                 children: [
                   _buildTypeIcon(context),
-                  const SizedBox(width: 12),
+                  AppSpacing.horizontalSm,
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -60,7 +51,7 @@ class PatternInsightCard extends StatelessWidget {
                     _buildStrengthIndicator(context, pattern.strengthPercent),
                 ],
               ),
-              const SizedBox(height: 12),
+              AppSpacing.verticalSm,
 
               // Description
               Text(
@@ -75,8 +66,6 @@ class PatternInsightCard extends StatelessWidget {
                 _buildCorrelationVisualization(context, pattern),
             ],
           ),
-        ),
-      ),
     );
   }
 
@@ -109,7 +98,7 @@ class PatternInsightCard extends StatelessWidget {
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.15),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: AppRadius.borderRadiusMd,
       ),
       child: Icon(icon, color: color, size: 24),
     );
@@ -141,7 +130,7 @@ class PatternInsightCard extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.15),
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: AppRadius.borderRadiusSm,
       ),
       child: Text(
         label,
@@ -160,7 +149,7 @@ class PatternInsightCard extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
         color: theme.colorScheme.primaryContainer,
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: AppRadius.borderRadiusSm,
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -170,7 +159,7 @@ class PatternInsightCard extends StatelessWidget {
             size: 14,
             color: theme.colorScheme.onPrimaryContainer,
           ),
-          const SizedBox(width: 4),
+          AppSpacing.horizontalXxs,
           Text(
             '$strengthPercent%',
             style: theme.textTheme.labelSmall?.copyWith(
@@ -205,7 +194,7 @@ class PatternInsightCard extends StatelessWidget {
               theme.colorScheme.primary,
             ),
           ),
-          const SizedBox(width: 12),
+          AppSpacing.horizontalSm,
           Expanded(
             child: _buildComparisonBar(
               context,
@@ -239,7 +228,7 @@ class PatternInsightCard extends StatelessWidget {
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
         ),
-        const SizedBox(height: 4),
+        AppSpacing.verticalXxs,
         Stack(
           children: [
             Container(

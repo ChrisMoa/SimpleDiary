@@ -19,6 +19,7 @@ import 'package:day_tracker/features/synchronization/domain/providers/ics_file_p
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:day_tracker/l10n/app_localizations.dart';
+import 'package:day_tracker/core/widgets/app_ui_kit.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:path/path.dart' as path;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -61,11 +62,7 @@ class FileSyncWidget extends ConsumerWidget {
     final isSmallScreen = mediaQuery.size.width < 600;
     final l10n = AppLocalizations.of(context)!;
 
-    return Card(
-      elevation: 4,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
+    return AppCard.elevated(
       child: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
@@ -76,7 +73,7 @@ class FileSyncWidget extends ConsumerWidget {
               theme.colorScheme.surface,
             ],
           ),
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: AppRadius.borderRadiusLg,
         ),
         child: Padding(
           padding: const EdgeInsets.all(20.0),
@@ -91,7 +88,7 @@ class FileSyncWidget extends ConsumerWidget {
                     color: theme.colorScheme.primary,
                     size: isSmallScreen ? 24 : 28,
                   ),
-                  SizedBox(width: 8),
+                  AppSpacing.horizontalXs,
                   Text(
                     l10n.fileSynchronization,
                     style: theme.textTheme.titleLarge?.copyWith(
@@ -103,7 +100,7 @@ class FileSyncWidget extends ConsumerWidget {
                 ],
               ),
 
-              SizedBox(height: 16),
+              AppSpacing.verticalMd,
 
               Text(
                 l10n.fileSyncDescription,
@@ -112,7 +109,7 @@ class FileSyncWidget extends ConsumerWidget {
                 ),
               ),
 
-              SizedBox(height: 24),
+              AppSpacing.verticalXl,
 
               // Export Button
               _buildSyncButton(
@@ -126,7 +123,7 @@ class FileSyncWidget extends ConsumerWidget {
                 isSmallScreen: isSmallScreen,
               ),
 
-              SizedBox(height: 16),
+              AppSpacing.verticalMd,
 
               // Import Button
               _buildSyncButton(
@@ -140,7 +137,7 @@ class FileSyncWidget extends ConsumerWidget {
                 isSmallScreen: isSmallScreen,
               ),
 
-              SizedBox(height: 16),
+              AppSpacing.verticalMd,
 
               // Export to ICS Button
               _buildSyncButton(
@@ -154,7 +151,7 @@ class FileSyncWidget extends ConsumerWidget {
                 isSmallScreen: isSmallScreen,
               ),
 
-              SizedBox(height: 16),
+              AppSpacing.verticalMd,
 
               // Import from ICS Button
               _buildSyncButton(
@@ -186,14 +183,14 @@ class FileSyncWidget extends ConsumerWidget {
   }) {
     return InkWell(
       onTap: onPressed,
-      borderRadius: BorderRadius.circular(12),
+      borderRadius: AppRadius.borderRadiusMd,
       child: Container(
         padding: EdgeInsets.all(isSmallScreen ? 16 : 20),
         decoration: BoxDecoration(
           color: theme.colorScheme.surfaceContainer,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: AppRadius.borderRadiusMd,
           border: Border.all(
-            color: theme.colorScheme.outline.withOpacity(0.2),
+            color: theme.colorScheme.outline.withValues(alpha:0.2),
           ),
         ),
         child: Row(
@@ -202,7 +199,7 @@ class FileSyncWidget extends ConsumerWidget {
               padding: EdgeInsets.all(isSmallScreen ? 8 : 12),
               decoration: BoxDecoration(
                 color: theme.colorScheme.primaryContainer,
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: AppRadius.borderRadiusSm,
               ),
               child: Icon(
                 icon,
@@ -210,7 +207,7 @@ class FileSyncWidget extends ConsumerWidget {
                 size: isSmallScreen ? 20 : 24,
               ),
             ),
-            SizedBox(width: 16),
+            AppSpacing.horizontalMd,
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -223,11 +220,11 @@ class FileSyncWidget extends ConsumerWidget {
                       fontSize: isSmallScreen ? 14 : 16,
                     ),
                   ),
-                  SizedBox(height: 4),
+                  AppSpacing.verticalXxs,
                   Text(
                     description,
                     style: theme.textTheme.bodySmall?.copyWith(
-                      color: theme.colorScheme.onSurface.withOpacity(0.7),
+                      color: theme.colorScheme.onSurface.withValues(alpha:0.7),
                       fontSize: isSmallScreen ? 12 : 14,
                     ),
                   ),
@@ -236,7 +233,7 @@ class FileSyncWidget extends ConsumerWidget {
             ),
             Icon(
               Icons.arrow_forward_ios,
-              color: theme.colorScheme.onSurface.withOpacity(0.5),
+              color: theme.colorScheme.onSurface.withValues(alpha:0.5),
               size: isSmallScreen ? 16 : 18,
             ),
           ],
@@ -449,14 +446,7 @@ class FileSyncWidget extends ConsumerWidget {
             final notesInState = ref.read(notesLocalDataProvider).length;
             LogWrapper.logger.i('JSON import finished: $noteCount notes imported, $notesInState total notes in state');
 
-            ScaffoldMessenger.of(context).clearSnackBars();
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                duration: const Duration(seconds: 3),
-                content: Text(l10n.importedDaysWithNotes(importedDays.length, noteCount)),
-                backgroundColor: Theme.of(context).colorScheme.primary,
-              ),
-            );
+            AppSnackBar.success(context, message: l10n.importedDaysWithNotes(importedDays.length, noteCount), duration: const Duration(seconds: 3));
           } catch (e) {
             LogWrapper.logger.e('Error during JSON import: $e');
             _onError(context, l10n.errorPrefix('$e'));
@@ -476,19 +466,16 @@ class FileSyncWidget extends ConsumerWidget {
 
   void _onImportExportSuccessfully(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    ScaffoldMessenger.of(context).clearSnackBars();
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        duration: const Duration(seconds: 3),
-        content: Text(l10n.operationCompletedSuccessfully),
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        action: SnackBarAction(
-          label: l10n.ok,
-          textColor: Theme.of(context).colorScheme.onPrimary,
-          onPressed: () {
-            ScaffoldMessenger.of(context).clearSnackBars();
-          },
-        ),
+    AppSnackBar.success(
+      context,
+      message: l10n.operationCompletedSuccessfully,
+      duration: const Duration(seconds: 3),
+      action: SnackBarAction(
+        label: l10n.ok,
+        textColor: Theme.of(context).colorScheme.onPrimary,
+        onPressed: () {
+          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+        },
       ),
     );
   }
@@ -668,14 +655,7 @@ class FileSyncWidget extends ConsumerWidget {
             final notesInState = ref.read(notesLocalDataProvider).length;
             LogWrapper.logger.i('ICS import finished: ${importedNotes.length} notes imported, $notesInState total notes in state');
 
-            ScaffoldMessenger.of(context).clearSnackBars();
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                duration: const Duration(seconds: 3),
-                content: Text(l10n.importedNotesFromIcs(importedNotes.length)),
-                backgroundColor: Theme.of(context).colorScheme.primary,
-              ),
-            );
+            AppSnackBar.success(context, message: l10n.importedNotesFromIcs(importedNotes.length), duration: const Duration(seconds: 3));
           } catch (e) {
             LogWrapper.logger.e('Error during ICS import: $e');
             _onError(context, l10n.errorPrefix('$e'));
@@ -696,19 +676,16 @@ class FileSyncWidget extends ConsumerWidget {
   void _onError(BuildContext context, String errorMsg) {
     final l10n = AppLocalizations.of(context)!;
     if (errorMsg.isNotEmpty) {
-      ScaffoldMessenger.of(context).clearSnackBars();
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          duration: const Duration(seconds: 5),
-          content: Text(errorMsg),
-          backgroundColor: Theme.of(context).colorScheme.error,
-          action: SnackBarAction(
-            label: l10n.ok,
-            textColor: Theme.of(context).colorScheme.onError,
-            onPressed: () {
-              ScaffoldMessenger.of(context).clearSnackBars();
-            },
-          ),
+      AppSnackBar.error(
+        context,
+        message: errorMsg,
+        duration: const Duration(seconds: 5),
+        action: SnackBarAction(
+          label: l10n.ok,
+          textColor: Theme.of(context).colorScheme.onError,
+          onPressed: () {
+            ScaffoldMessenger.of(context).hideCurrentSnackBar();
+          },
         ),
       );
     }

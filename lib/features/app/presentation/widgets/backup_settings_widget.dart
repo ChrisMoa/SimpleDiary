@@ -9,6 +9,7 @@ import 'package:day_tracker/features/day_rating/domain/providers/diary_day_local
 import 'package:day_tracker/features/habits/domain/providers/habit_providers.dart';
 import 'package:day_tracker/features/notes/domain/providers/note_local_db_provider.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:day_tracker/core/widgets/app_ui_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:day_tracker/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -60,11 +61,7 @@ class _BackupSettingsWidgetState extends ConsumerState<BackupSettingsWidget> {
     final isSmallScreen = screenWidth < 600;
     final backupSettings = settingsContainer.activeUserSettings.backupSettings;
 
-    return Card(
-      elevation: 4,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
+    return AppCard.elevated(
       child: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
@@ -75,7 +72,7 @@ class _BackupSettingsWidgetState extends ConsumerState<BackupSettingsWidget> {
               theme.colorScheme.surface,
             ],
           ),
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: AppRadius.borderRadiusLg,
         ),
         child: Padding(
           padding: const EdgeInsets.all(20.0),
@@ -91,7 +88,7 @@ class _BackupSettingsWidgetState extends ConsumerState<BackupSettingsWidget> {
                     color: theme.colorScheme.primary,
                     size: isSmallScreen ? 24 : 28,
                   ),
-                  const SizedBox(width: 8),
+                  AppSpacing.horizontalXs,
                   Expanded(
                     child: Text(
                       l10n.backupSettings,
@@ -105,7 +102,7 @@ class _BackupSettingsWidgetState extends ConsumerState<BackupSettingsWidget> {
                 ],
               ),
 
-              const SizedBox(height: 16),
+              AppSpacing.verticalMd,
 
               Text(
                 l10n.backupSettingsDescription,
@@ -114,12 +111,12 @@ class _BackupSettingsWidgetState extends ConsumerState<BackupSettingsWidget> {
                 ),
               ),
 
-              const SizedBox(height: 8),
+              AppSpacing.verticalXs,
 
               // Last backup status
               _buildLastBackupStatus(theme, l10n, backupSettings),
 
-              const SizedBox(height: 24),
+              AppSpacing.verticalXl,
 
               // Enable/Disable toggle
               _buildSettingContainer(
@@ -185,7 +182,7 @@ class _BackupSettingsWidgetState extends ConsumerState<BackupSettingsWidget> {
                       ),
                       decoration: BoxDecoration(
                         color: theme.colorScheme.primaryContainer,
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: AppRadius.borderRadiusSm,
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
@@ -194,7 +191,7 @@ class _BackupSettingsWidgetState extends ConsumerState<BackupSettingsWidget> {
                             Icons.access_time,
                             color: theme.colorScheme.onPrimaryContainer,
                           ),
-                          const SizedBox(width: 8),
+                          AppSpacing.horizontalXs,
                           Text(
                             _preferredTime.format(context),
                             style: theme.textTheme.titleMedium?.copyWith(
@@ -348,12 +345,12 @@ class _BackupSettingsWidgetState extends ConsumerState<BackupSettingsWidget> {
                           vertical: isSmallScreen ? 12 : 14,
                         ),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
+                          borderRadius: AppRadius.borderRadiusSm,
                         ),
                       ),
                     ),
                   ),
-                  const SizedBox(width: 12),
+                  AppSpacing.horizontalSm,
                   Expanded(
                     child: OutlinedButton.icon(
                       onPressed: () {
@@ -370,7 +367,7 @@ class _BackupSettingsWidgetState extends ConsumerState<BackupSettingsWidget> {
                           vertical: isSmallScreen ? 12 : 14,
                         ),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
+                          borderRadius: AppRadius.borderRadiusSm,
                         ),
                       ),
                     ),
@@ -398,7 +395,7 @@ class _BackupSettingsWidgetState extends ConsumerState<BackupSettingsWidget> {
         color: isOverdue
             ? theme.colorScheme.errorContainer.withValues(alpha: .5)
             : theme.colorScheme.surfaceContainer,
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: AppRadius.borderRadiusSm,
       ),
       child: Row(
         children: [
@@ -409,7 +406,7 @@ class _BackupSettingsWidgetState extends ConsumerState<BackupSettingsWidget> {
                 : theme.colorScheme.primary,
             size: 20,
           ),
-          const SizedBox(width: 8),
+          AppSpacing.horizontalXs,
           Text(
             lastBackup != null
                 ? l10n.lastBackup(_formatDateTime(lastBackup))
@@ -446,7 +443,7 @@ class _BackupSettingsWidgetState extends ConsumerState<BackupSettingsWidget> {
       padding: EdgeInsets.all(isSmallScreen ? 12 : 16),
       decoration: BoxDecoration(
         color: theme.colorScheme.surfaceContainer,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: AppRadius.borderRadiusMd,
         border: Border.all(
           color: theme.colorScheme.outline.withValues(alpha: .2),
         ),
@@ -461,14 +458,14 @@ class _BackupSettingsWidgetState extends ConsumerState<BackupSettingsWidget> {
               fontWeight: FontWeight.bold,
             ),
           ),
-          const SizedBox(height: 8),
+          AppSpacing.verticalXs,
           Text(
             description,
             style: theme.textTheme.bodyMedium?.copyWith(
               color: theme.colorScheme.onSurface.withValues(alpha: .7),
             ),
           ),
-          const SizedBox(height: 16),
+          AppSpacing.verticalMd,
           control,
         ],
       ),
@@ -506,7 +503,7 @@ class _BackupSettingsWidgetState extends ConsumerState<BackupSettingsWidget> {
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
           decoration: BoxDecoration(
             color: theme.colorScheme.surfaceContainerHighest,
-            borderRadius: BorderRadius.circular(8),
+            borderRadius: AppRadius.borderRadiusSm,
           ),
           child: Row(
             children: [
@@ -515,7 +512,7 @@ class _BackupSettingsWidgetState extends ConsumerState<BackupSettingsWidget> {
                 color: theme.colorScheme.primary,
                 size: 20,
               ),
-              const SizedBox(width: 8),
+              AppSpacing.horizontalXs,
               Expanded(
                 child: Text(
                   isCustom
@@ -531,7 +528,7 @@ class _BackupSettingsWidgetState extends ConsumerState<BackupSettingsWidget> {
             ],
           ),
         ),
-        const SizedBox(height: 8),
+        AppSpacing.verticalXs,
         Row(
           children: [
             TextButton.icon(
@@ -603,40 +600,19 @@ class _BackupSettingsWidgetState extends ConsumerState<BackupSettingsWidget> {
 
       if (mounted) {
         setState(() => _isBackingUp = false);
-        String message;
         if (metadata.isSuccessful) {
-          message = metadata.cloudSynced
+          final message = metadata.cloudSynced
               ? '${l10n.backupSuccess} · ${l10n.backupUploadSuccess}'
               : l10n.backupSuccess;
+          AppSnackBar.success(context, message: message);
         } else {
-          message = l10n.backupFailed(metadata.error ?? '');
+          AppSnackBar.error(context, message: l10n.backupFailed(metadata.error ?? ''));
         }
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(message),
-            backgroundColor: metadata.isSuccessful
-                ? Theme.of(context).colorScheme.primary
-                : Theme.of(context).colorScheme.error,
-            behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
-          ),
-        );
       }
     } catch (e) {
       if (mounted) {
         setState(() => _isBackingUp = false);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(l10n.backupFailed(e.toString())),
-            backgroundColor: Theme.of(context).colorScheme.error,
-            behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
-          ),
-        );
+        AppSnackBar.error(context, message: l10n.backupFailed(e.toString()));
       }
     }
   }

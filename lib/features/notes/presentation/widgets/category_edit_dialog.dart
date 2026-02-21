@@ -1,4 +1,5 @@
 import 'package:day_tracker/core/provider/theme_provider.dart';
+import 'package:day_tracker/core/widgets/app_ui_kit.dart';
 import 'package:day_tracker/features/notes/data/models/note_category.dart';
 import 'package:day_tracker/features/notes/domain/providers/category_local_db_provider.dart';
 import 'package:flutter/material.dart';
@@ -73,7 +74,7 @@ class _CategoryEditDialogState extends ConsumerState<CategoryEditDialog> {
 
     return Dialog(
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: AppRadius.borderRadiusLg,
       ),
       child: Container(
         padding: EdgeInsets.all(isSmallScreen ? 16 : 24),
@@ -108,22 +109,12 @@ class _CategoryEditDialogState extends ConsumerState<CategoryEditDialog> {
                     ),
                   ],
                 ),
-                const SizedBox(height: 24),
+                AppSpacing.verticalXl,
 
                 // Title field
-                TextFormField(
+                AppTextField(
                   controller: _titleController,
-                  decoration: InputDecoration(
-                    labelText: 'Category Name',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    filled: true,
-                    fillColor: theme.colorScheme.surface,
-                  ),
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    color: theme.colorScheme.onSurface,
-                  ),
+                  label: 'Category Name',
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter a category name';
@@ -138,7 +129,7 @@ class _CategoryEditDialogState extends ConsumerState<CategoryEditDialog> {
                     return null;
                   },
                 ),
-                const SizedBox(height: 20),
+                AppSpacing.verticalLg,
 
                 // Color section
                 Text(
@@ -148,7 +139,7 @@ class _CategoryEditDialogState extends ConsumerState<CategoryEditDialog> {
                     fontWeight: FontWeight.w600,
                   ),
                 ),
-                const SizedBox(height: 12),
+                AppSpacing.verticalSm,
 
                 // Color preview
                 Container(
@@ -156,7 +147,7 @@ class _CategoryEditDialogState extends ConsumerState<CategoryEditDialog> {
                   height: 60,
                   decoration: BoxDecoration(
                     color: _selectedColor,
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: AppRadius.borderRadiusSm,
                     border: Border.all(
                       color: theme.colorScheme.outline.withValues(alpha: 0.3),
                       width: 1,
@@ -175,7 +166,7 @@ class _CategoryEditDialogState extends ConsumerState<CategoryEditDialog> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 16),
+                AppSpacing.verticalMd,
 
                 // Color palette
                 Wrap(
@@ -223,7 +214,7 @@ class _CategoryEditDialogState extends ConsumerState<CategoryEditDialog> {
                     );
                   }).toList(),
                 ),
-                const SizedBox(height: 24),
+                AppSpacing.verticalXl,
 
                 // Action buttons
                 Row(
@@ -233,7 +224,7 @@ class _CategoryEditDialogState extends ConsumerState<CategoryEditDialog> {
                       onPressed: () => Navigator.of(context).pop(),
                       child: const Text('Cancel'),
                     ),
-                    const SizedBox(width: 12),
+                    AppSpacing.horizontalSm,
                     ElevatedButton(
                       onPressed: _saveCategory,
                       style: ElevatedButton.styleFrom(
@@ -268,21 +259,11 @@ class _CategoryEditDialogState extends ConsumerState<CategoryEditDialog> {
     if (widget.category != null) {
       // Edit existing category
       provider.editElement(category, widget.category!);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Category updated'),
-          duration: Duration(seconds: 2),
-        ),
-      );
+      AppSnackBar.success(context, message: 'Category updated');
     } else {
       // Create new category
       provider.addElement(category);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Category created'),
-          duration: Duration(seconds: 2),
-        ),
-      );
+      AppSnackBar.success(context, message: 'Category created');
     }
 
     Navigator.of(context).pop();

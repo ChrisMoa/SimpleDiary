@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:day_tracker/core/widgets/app_ui_kit.dart';
 import 'package:day_tracker/features/notes/data/models/note_attachment.dart';
 import 'package:day_tracker/features/notes/domain/providers/note_attachments_provider.dart';
 import 'package:day_tracker/features/notes/presentation/widgets/image_gallery_viewer.dart';
@@ -57,7 +58,7 @@ class ImagePickerWidget extends ConsumerWidget {
         ),
         if (attachments.isEmpty && readOnly)
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8),
+            padding: AppSpacing.paddingVerticalXs,
             child: Text(
               l10n.noPhotos,
               style: Theme.of(context)

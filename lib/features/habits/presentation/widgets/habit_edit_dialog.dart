@@ -1,3 +1,4 @@
+import 'package:day_tracker/core/widgets/app_ui_kit.dart';
 import 'package:day_tracker/features/habits/data/models/habit.dart';
 import 'package:day_tracker/features/habits/data/models/habit_frequency.dart';
 import 'package:day_tracker/features/habits/domain/providers/habit_providers.dart';
@@ -72,27 +73,9 @@ class _HabitEditDialogState extends ConsumerState<HabitEditDialog> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Name
-                TextFormField(
+                AppTextField(
                   controller: _nameController,
-                  style: TextStyle(color: theme.colorScheme.onSurface),
-                  decoration: InputDecoration(
-                    labelText: l10n.habitName,
-                    labelStyle: TextStyle(
-                      color: theme.colorScheme.onSurfaceVariant,
-                    ),
-                    border: const OutlineInputBorder(),
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: theme.colorScheme.outline,
-                      ),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: theme.colorScheme.primary,
-                        width: 2,
-                      ),
-                    ),
-                  ),
+                  label: l10n.habitName,
                   validator: (value) {
                     if (value == null || value.trim().isEmpty) {
                       return l10n.habitNameRequired;
@@ -100,33 +83,15 @@ class _HabitEditDialogState extends ConsumerState<HabitEditDialog> {
                     return null;
                   },
                 ),
-                const SizedBox(height: 12),
+                AppSpacing.verticalSm,
 
                 // Description
-                TextFormField(
+                AppTextField(
                   controller: _descriptionController,
-                  style: TextStyle(color: theme.colorScheme.onSurface),
-                  decoration: InputDecoration(
-                    labelText: l10n.habitDescription,
-                    labelStyle: TextStyle(
-                      color: theme.colorScheme.onSurfaceVariant,
-                    ),
-                    border: const OutlineInputBorder(),
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: theme.colorScheme.outline,
-                      ),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: theme.colorScheme.primary,
-                        width: 2,
-                      ),
-                    ),
-                  ),
+                  label: l10n.habitDescription,
                   maxLines: 2,
                 ),
-                const SizedBox(height: 16),
+                AppSpacing.verticalMd,
 
                 // Icon & Color row
                 Row(
@@ -134,13 +99,13 @@ class _HabitEditDialogState extends ConsumerState<HabitEditDialog> {
                     // Icon picker button
                     InkWell(
                       onTap: () => _showIconPicker(context),
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: AppRadius.borderRadiusMd,
                       child: Container(
                         width: 56,
                         height: 56,
                         decoration: BoxDecoration(
                           color: _color.withValues(alpha: 0.15),
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: AppRadius.borderRadiusMd,
                           border: Border.all(
                             color: theme.colorScheme.outlineVariant,
                           ),
@@ -152,24 +117,24 @@ class _HabitEditDialogState extends ConsumerState<HabitEditDialog> {
                         ),
                       ),
                     ),
-                    const SizedBox(width: 12),
+                    AppSpacing.horizontalSm,
                     // Color picker button
                     InkWell(
                       onTap: () => _showColorPicker(context),
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: AppRadius.borderRadiusMd,
                       child: Container(
                         width: 56,
                         height: 56,
                         decoration: BoxDecoration(
                           color: _color,
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: AppRadius.borderRadiusMd,
                           border: Border.all(
                             color: theme.colorScheme.outlineVariant,
                           ),
                         ),
                       ),
                     ),
-                    const SizedBox(width: 12),
+                    AppSpacing.horizontalSm,
                     Expanded(
                       child: Text(
                         l10n.habitIconAndColor,
@@ -180,7 +145,7 @@ class _HabitEditDialogState extends ConsumerState<HabitEditDialog> {
                     ),
                   ],
                 ),
-                const SizedBox(height: 16),
+                AppSpacing.verticalMd,
 
                 // Frequency
                 Text(
@@ -189,9 +154,9 @@ class _HabitEditDialogState extends ConsumerState<HabitEditDialog> {
                     color: theme.colorScheme.onSurface,
                   ),
                 ),
-                const SizedBox(height: 8),
+                AppSpacing.verticalXs,
                 _buildFrequencySelector(theme, l10n),
-                const SizedBox(height: 12),
+                AppSpacing.verticalSm,
 
                 // Specific days selector (shown only for specificDays frequency)
                 if (_frequency == HabitFrequency.specificDays)
@@ -202,7 +167,7 @@ class _HabitEditDialogState extends ConsumerState<HabitEditDialog> {
                   _buildTimesPerWeekSelector(theme, l10n),
 
                 // Target count
-                const SizedBox(height: 12),
+                AppSpacing.verticalSm,
                 Row(
                   children: [
                     Text(
@@ -306,7 +271,7 @@ class _HabitEditDialogState extends ConsumerState<HabitEditDialog> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const SizedBox(height: 8),
+        AppSpacing.verticalXs,
         Wrap(
           spacing: 6,
           children: List.generate(7, (index) {
@@ -429,13 +394,13 @@ class _HabitEditDialogState extends ConsumerState<HabitEditDialog> {
                   setState(() => _iconCodePoint = iconData.codePoint);
                   Navigator.of(context).pop();
                 },
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: AppRadius.borderRadiusSm,
                 child: Container(
                   decoration: BoxDecoration(
                     color: isSelected
                         ? theme.colorScheme.primaryContainer
                         : theme.colorScheme.surfaceContainerLow,
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: AppRadius.borderRadiusSm,
                     border: isSelected
                         ? Border.all(color: theme.colorScheme.primary, width: 2)
                         : null,
@@ -498,11 +463,7 @@ class _HabitEditDialogState extends ConsumerState<HabitEditDialog> {
     if (!_formKey.currentState!.validate()) return;
 
     if (_frequency == HabitFrequency.specificDays && _specificDays.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(AppLocalizations.of(context).habitSelectAtLeastOneDay),
-        ),
-      );
+      AppSnackBar.error(context, message: AppLocalizations.of(context).habitSelectAtLeastOneDay);
       return;
     }
 

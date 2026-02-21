@@ -1,6 +1,7 @@
 import 'package:day_tracker/features/authentication/data/models/user_data.dart';
 import 'package:day_tracker/features/authentication/domain/providers/user_data_provider.dart';
 import 'package:day_tracker/features/authentication/presentation/widgets/simple_input_data_widget.dart';
+import 'package:day_tracker/core/widgets/app_ui_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:day_tracker/core/log/logger_instance.dart';
@@ -82,11 +83,11 @@ class _UserProfileWidgetState extends ConsumerState<UserProfileWidget> {
   }
 
   Widget _buildCredentials(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.all(20),
+    return AppCard.elevated(
+      margin: AppSpacing.paddingAllLg,
       child: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: AppSpacing.paddingAllMd,
           child: Form(
             key: widget.formKey,
             child: Column(

@@ -2,6 +2,7 @@ import 'package:day_tracker/features/dashboard/data/models/insight.dart';
 import 'package:day_tracker/features/dashboard/domain/providers/insights_provider.dart';
 import 'package:day_tracker/features/dashboard/presentation/widgets/insight_card.dart';
 import 'package:day_tracker/features/dashboard/presentation/widgets/pattern_insight_card.dart';
+import 'package:day_tracker/core/widgets/app_ui_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:day_tracker/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -18,11 +19,11 @@ class InsightsSection extends ConsumerWidget {
 
     return insightsAsync.when(
       loading: () => const Padding(
-        padding: EdgeInsets.all(16),
+        padding: AppSpacing.paddingAllMd,
         child: Center(child: CircularProgressIndicator()),
       ),
       error: (error, stack) => Padding(
-        padding: const EdgeInsets.all(16),
+        padding: AppSpacing.paddingAllMd,
         child: Text(l10n.errorLoadingInsights(error.toString())),
       ),
       data: (insights) {
@@ -56,7 +57,7 @@ class InsightsSection extends ConsumerWidget {
                       color: theme.colorScheme.primary,
                       size: 20,
                     ),
-                    const SizedBox(width: 8),
+                    AppSpacing.horizontalXs,
                     Text(
                       'Mood Patterns', // Will be localized
                       style: theme.textTheme.titleLarge?.copyWith(
@@ -70,7 +71,7 @@ class InsightsSection extends ConsumerWidget {
               ...patternInsights
                   .take(3)
                   .map((insight) => PatternInsightCard(insight: insight)),
-              const SizedBox(height: 16),
+              AppSpacing.verticalMd,
             ],
 
             // Other insights section

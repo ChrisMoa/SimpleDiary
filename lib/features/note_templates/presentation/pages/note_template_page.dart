@@ -1,4 +1,5 @@
 import 'package:day_tracker/core/provider/theme_provider.dart';
+import 'package:day_tracker/core/widgets/app_ui_kit.dart';
 import 'package:day_tracker/features/note_templates/data/models/note_template.dart';
 import 'package:day_tracker/features/note_templates/domain/providers/note_template_local_db_provider.dart';
 import 'package:day_tracker/features/note_templates/presentation/widgets/template_editing_widget.dart';
@@ -51,7 +52,7 @@ class _NoteTemplatePageState extends ConsumerState<NoteTemplatePage> {
                         color: theme.colorScheme.primary,
                         size: isSmallScreen ? 28 : 32,
                       ),
-                      const SizedBox(width: 8),
+                      AppSpacing.horizontalXs,
                       Expanded(
                         child: Text(
                           l10n.noteTemplates,
@@ -110,14 +111,14 @@ class _NoteTemplatePageState extends ConsumerState<NoteTemplatePage> {
             size: isSmallScreen ? 48 : 64,
             color: theme.colorScheme.primary.withValues(alpha: 0.5),
           ),
-          const SizedBox(height: 16),
+          AppSpacing.verticalMd,
           Text(
             l10n.noTemplatesYet,
             style: theme.textTheme.titleLarge?.copyWith(
               color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
             ),
           ),
-          const SizedBox(height: 8),
+          AppSpacing.verticalXs,
           Text(
             l10n.createTemplatesToQuicklyAdd,
             style: theme.textTheme.bodyMedium?.copyWith(
@@ -125,7 +126,7 @@ class _NoteTemplatePageState extends ConsumerState<NoteTemplatePage> {
             ),
             textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 24),
+          AppSpacing.verticalXl,
           ElevatedButton.icon(
             onPressed: _createNewTemplate,
             icon: const Icon(Icons.add),
@@ -154,38 +155,21 @@ class _NoteTemplatePageState extends ConsumerState<NoteTemplatePage> {
     );
   }
 
-  void _confirmDeleteTemplate(NoteTemplate template) {
+  void _confirmDeleteTemplate(NoteTemplate template) async {
     final l10n = AppLocalizations.of(context);
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(l10n.deleteTemplate),
-        content: Text(l10n.confirmDeleteTemplate(template.title)),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: Text(l10n.cancel),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              ref.read(noteTemplateLocalDataProvider.notifier).deleteElement(template);
-              Navigator.of(context).pop();
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(l10n.templateDeleted),
-                  duration: const Duration(seconds: 2),
-                ),
-              );
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Theme.of(context).colorScheme.error,
-              foregroundColor: Theme.of(context).colorScheme.onError,
-            ),
-            child: Text(l10n.delete),
-          ),
-        ],
-      ),
+    final confirmed = await AppDialog.confirm(
+      context,
+      title: l10n.deleteTemplate,
+      content: l10n.confirmDeleteTemplate(template.title),
+      confirmLabel: l10n.delete,
+      cancelLabel: l10n.cancel,
+      isDestructive: true,
     );
+
+    if (confirmed && mounted) {
+      ref.read(noteTemplateLocalDataProvider.notifier).deleteElement(template);
+      AppSnackBar.info(context, message: l10n.templateDeleted);
+    }
   }
 
   void _showTemplateInfo(NoteTemplate template) {
@@ -209,23 +193,23 @@ class _NoteTemplatePageState extends ConsumerState<NoteTemplatePage> {
                       shape: BoxShape.circle,
                     ),
                   ),
-                  const SizedBox(width: 8),
+                  AppSpacing.horizontalXs,
                   Text(template.noteCategory.title),
                 ],
               ),
-              const SizedBox(height: 8),
+              AppSpacing.verticalXs,
               Text(l10n.durationInMinutes(template.durationMinutes)),
               if (template.hasDescriptionSections) ...[
-                const SizedBox(height: 16),
+                AppSpacing.verticalMd,
                 Text(l10n.descriptionSections, style: const TextStyle(fontWeight: FontWeight.bold)),
-                const SizedBox(height: 4),
+                AppSpacing.verticalXxs,
                 ...template.descriptionSections.map((section) =>
                   Padding(
                     padding: const EdgeInsets.only(bottom: 4),
                     child: Row(
                       children: [
                         Icon(Icons.label_outline, size: 16, color: Theme.of(context).colorScheme.primary),
-                        const SizedBox(width: 8),
+                        AppSpacing.horizontalXs,
                         Text(section.title, style: const TextStyle(fontWeight: FontWeight.w500)),
                         if (section.hint.isNotEmpty)
                           Text(
@@ -239,9 +223,9 @@ class _NoteTemplatePageState extends ConsumerState<NoteTemplatePage> {
                   ),
                 ),
               ] else if (template.description.isNotEmpty) ...[
-                const SizedBox(height: 16),
+                AppSpacing.verticalMd,
                 Text(l10n.descriptionLabel, style: const TextStyle(fontWeight: FontWeight.bold)),
-                const SizedBox(height: 4),
+                AppSpacing.verticalXxs,
                 Text(template.description),
               ],
             ],

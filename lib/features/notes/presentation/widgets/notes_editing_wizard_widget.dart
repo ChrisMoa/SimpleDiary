@@ -11,6 +11,7 @@ import 'package:day_tracker/features/notes/domain/providers/note_selected_date_p
 import 'package:day_tracker/features/notes/presentation/widgets/image_picker_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:day_tracker/l10n/app_localizations.dart';
+import 'package:day_tracker/core/widgets/app_ui_kit.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
@@ -366,12 +367,7 @@ class _NoteEditingwizardWidgetState extends ConsumerState<NoteEditingWizardWidge
       }
     } catch (e) {
       final l10n = AppLocalizations.of(context)!;
-      ScaffoldMessenger.of(context).clearSnackBars();
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(l10n.noteUpdateError),
-        ),
-      );
+      AppSnackBar.error(context, message: l10n.noteUpdateError);
     }
 
     /// update ui

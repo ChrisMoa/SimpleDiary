@@ -1,6 +1,7 @@
 import 'package:day_tracker/features/synchronization/presentation/widgets/file_sync_widget.dart';
 import 'package:day_tracker/features/synchronization/presentation/widgets/pdf_export_widget.dart';
 import 'package:day_tracker/features/synchronization/presentation/widgets/supabase_sync_widget.dart';
+import 'package:day_tracker/core/widgets/app_ui_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:day_tracker/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -56,12 +57,12 @@ class SynchronizePage extends ConsumerWidget {
           // File Synchronization Card
           const FileSyncWidget(),
 
-          const SizedBox(height: 24),
+          AppSpacing.verticalXl,
 
           // PDF Export Card
           const PdfExportWidget(),
 
-          const SizedBox(height: 24),
+          AppSpacing.verticalXl,
 
           // Supabase Synchronization Card
           const SupabaseSyncWidget(),
@@ -100,7 +101,7 @@ class SynchronizePage extends ConsumerWidget {
                       child: FileSyncWidget(),
                     ),
 
-                    const SizedBox(width: 24),
+                    AppSpacing.horizontalXl,
 
                     // Supabase Synchronization Card
                     const Expanded(
@@ -108,7 +109,7 @@ class SynchronizePage extends ConsumerWidget {
                     ),
                   ],
                 ),
-                const SizedBox(height: 24),
+                AppSpacing.verticalXl,
 
                 // PDF Export Card (full width)
                 const PdfExportWidget(),
@@ -116,7 +117,7 @@ class SynchronizePage extends ConsumerWidget {
             ),
           ),
         ),
-        const SizedBox(height: 16),
+        AppSpacing.verticalMd,
       ],
     );
   }

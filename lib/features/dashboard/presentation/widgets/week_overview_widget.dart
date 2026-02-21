@@ -1,6 +1,7 @@
 import 'package:day_tracker/core/utils/utils.dart';
 import 'package:day_tracker/features/dashboard/domain/providers/week_overview_provider.dart';
 import 'package:day_tracker/features/dashboard/presentation/pages/diary_day_detail_page.dart';
+import 'package:day_tracker/core/widgets/app_ui_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:day_tracker/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -16,26 +17,21 @@ class WeekOverviewWidget extends ConsumerWidget {
     final theme = Theme.of(context);
 
     return weekStatsAsync.when(
-      loading: () => const Card(
-        margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        child: Padding(
-          padding: EdgeInsets.all(24),
-          child: Center(child: CircularProgressIndicator()),
-        ),
-      ),
-      error: (error, stack) => Card(
+      loading: () => AppCard.elevated(
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: Text(AppLocalizations.of(context)!.errorWithMessage(error.toString())),
-        ),
+        padding: AppSpacing.paddingAllXl,
+        child: const Center(child: CircularProgressIndicator()),
+      ),
+      error: (error, stack) => AppCard.elevated(
+        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        padding: AppSpacing.paddingAllXl,
+        child: Text(AppLocalizations.of(context)!.errorWithMessage(error.toString())),
       ),
       data: (weekStats) {
-        return Card(
+        return AppCard.elevated(
           margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
+          padding: AppSpacing.paddingAllMd,
+          child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
@@ -45,7 +41,7 @@ class WeekOverviewWidget extends ConsumerWidget {
                     color: theme.colorScheme.onSurface,
                   ),
                 ),
-                const SizedBox(height: 16),
+                AppSpacing.verticalMd,
                 SizedBox(
                   height: 180,
                   child: ListView.builder(
@@ -59,7 +55,6 @@ class WeekOverviewWidget extends ConsumerWidget {
                 ),
               ],
             ),
-          ),
         );
       },
     );
@@ -101,13 +96,13 @@ class WeekOverviewWidget extends ConsumerWidget {
         margin: const EdgeInsets.only(right: 12),
         decoration: BoxDecoration(
           color: cardColor,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: AppRadius.borderRadiusMd,
           border: isToday
               ? Border.all(color: colorScheme.primary, width: 2)
               : null,
         ),
         child: Padding(
-          padding: const EdgeInsets.all(12),
+          padding: AppSpacing.paddingAllSm,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -142,7 +137,7 @@ class WeekOverviewWidget extends ConsumerWidget {
                   height: 60,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: _getScoreColor(totalScore, colorScheme).withOpacity(0.3),
+                    color: _getScoreColor(totalScore, colorScheme).withValues(alpha:0.3),
                     border: Border.all(
                       color: _getScoreColor(totalScore, colorScheme),
                       width: 3,
@@ -168,7 +163,7 @@ class WeekOverviewWidget extends ConsumerWidget {
                   ),
                   child: Icon(
                     Icons.remove,
-                    color: colorScheme.onSurface.withOpacity(0.3),
+                    color: colorScheme.onSurface.withValues(alpha:0.3),
                   ),
                 ),
 
@@ -178,9 +173,9 @@ class WeekOverviewWidget extends ConsumerWidget {
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
                     color: colorScheme.surfaceContainerHighest,
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: AppRadius.borderRadiusMd,
                     border: Border.all(
-                      color: colorScheme.outline.withOpacity(0.3),
+                      color: colorScheme.outline.withValues(alpha:0.3),
                       width: 1,
                     ),
                   ),
@@ -192,7 +187,7 @@ class WeekOverviewWidget extends ConsumerWidget {
                         size: 14,
                         color: colorScheme.primary,
                       ),
-                      const SizedBox(width: 4),
+                      AppSpacing.horizontalXxs,
                       Text(
                         '$noteCount',
                         style: theme.textTheme.labelSmall?.copyWith(

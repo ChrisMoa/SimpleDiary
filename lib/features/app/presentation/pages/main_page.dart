@@ -5,6 +5,7 @@ import 'package:day_tracker/core/authentication/password_auth_service.dart';
 import 'package:day_tracker/core/encryption/aes_encryptor.dart';
 import 'package:day_tracker/core/log/logger_instance.dart';
 import 'package:day_tracker/core/services/backup_scheduler.dart';
+import 'package:day_tracker/core/navigation/drawer_index_provider.dart';
 import 'package:day_tracker/core/navigation/drawer_item_builder.dart';
 import 'package:day_tracker/core/settings/settings_container.dart';
 import 'package:day_tracker/core/utils/debug_auto_login.dart';
@@ -21,6 +22,7 @@ import 'package:day_tracker/features/notes/domain/providers/note_attachments_pro
 import 'package:day_tracker/features/notes/domain/providers/note_local_db_provider.dart';
 import 'package:day_tracker/features/habits/domain/providers/habit_providers.dart';
 import 'package:day_tracker/features/note_templates/domain/providers/note_template_local_db_provider.dart';
+import 'package:day_tracker/core/widgets/app_ui_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -35,7 +37,6 @@ class MainPage extends ConsumerStatefulWidget {
 
 class _MainPageState extends ConsumerState<MainPage> {
   //* parameters -------------------------------------------------------------------------------------------------------------------------------------
-  int _selectedDrawerIndex = 0;
   final DrawerItemProvider _drawerItemProvider = DrawerItemProvider();
   var _userData = UserData.fromEmpty();
   bool dbRead = false;
@@ -114,14 +115,21 @@ class _MainPageState extends ConsumerState<MainPage> {
           return const CircularProgressIndicator();
         }
 
+        final selectedIndex = ref.watch(selectedDrawerIndexProvider);
+        final theme = Theme.of(context);
+
         return Scaffold(
           appBar: AppBar(
-            backgroundColor: Theme.of(context).colorScheme.primary,
-            titleTextStyle: Theme.of(context).textTheme.headlineMedium!.copyWith(color: Theme.of(context).colorScheme.onPrimary, fontWeight: FontWeight.bold),
+            backgroundColor: theme.colorScheme.surfaceContainer,
+            foregroundColor: theme.colorScheme.onSurface,
+            titleTextStyle: theme.textTheme.titleLarge!.copyWith(
+              color: theme.colorScheme.onSurface,
+              fontWeight: FontWeight.bold,
+            ),
             title: Text(widget.title),
           ),
-          drawer: _buildDrawer(context),
-          body: _drawerItemProvider.getDrawerItemWidget(_selectedDrawerIndex, context),
+          drawer: _buildDrawer(context, theme, selectedIndex),
+          body: _drawerItemProvider.getDrawerItemWidget(selectedIndex, context),
         );
       },
     );
@@ -129,49 +137,69 @@ class _MainPageState extends ConsumerState<MainPage> {
 
   //* build helper -----------------------------------------------------------------------------------------------------------------------------------
 
-  Drawer _buildDrawer(BuildContext context) {
+  Drawer _buildDrawer(BuildContext context, ThemeData theme, int selectedIndex) {
+    final drawerItems = _drawerItemProvider.getDrawerItems(context);
+
     return Drawer(
+      backgroundColor: theme.colorScheme.surface,
       child: ListView(
         children: [
-          DrawerHeader(
-            child: UserAccountsDrawerHeader(
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.secondaryContainer,
-              ),
-              onDetailsPressed: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => const ShowUserDataPage(),
-                  ),
-                );
-              },
-              accountName: Text(
-                _userData.username,
-                style: Theme.of(context).textTheme.titleMedium!.copyWith(color: Theme.of(context).colorScheme.onSecondaryContainer),
-              ),
-              currentAccountPictureSize: const Size(50, 50),
-              accountEmail: Text(
-                _userData.email,
-                style: Theme.of(context).textTheme.titleMedium!.copyWith(color: Theme.of(context).colorScheme.onSecondaryContainer),
-              ),
-              currentAccountPicture: const CircleAvatar(
-                radius: 3,
-                backgroundImage: AssetImage('assets/images/User-icon-256-blue.png'),
+          UserAccountsDrawerHeader(
+            decoration: BoxDecoration(
+              color: theme.colorScheme.surfaceContainer,
+            ),
+            onDetailsPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => const ShowUserDataPage(),
+                ),
+              );
+            },
+            accountName: Text(
+              _userData.username,
+              style: theme.textTheme.titleMedium!.copyWith(
+                color: theme.colorScheme.onSurface,
+                fontWeight: FontWeight.bold,
               ),
             ),
-          ),
-          for (var index = 0; index < _drawerItemProvider.getDrawerItems(context).length; index++)
-            ListTile(
-              leading: Icon(_drawerItemProvider.getDrawerItems(context)[index].icon),
-              title: Text(
-                _drawerItemProvider.getDrawerItems(context)[index].title,
-                style: Theme.of(context).textTheme.titleLarge!.copyWith(color: Theme.of(context).colorScheme.onSecondaryContainer),
+            currentAccountPictureSize: const Size(50, 50),
+            accountEmail: Text(
+              _userData.email,
+              style: theme.textTheme.bodyMedium!.copyWith(
+                color: theme.colorScheme.onSurfaceVariant,
               ),
-              selected: index == _selectedDrawerIndex,
+            ),
+            currentAccountPicture: const CircleAvatar(
+              radius: 3,
+              backgroundImage: AssetImage('assets/images/User-icon-256-blue.png'),
+            ),
+          ),
+          for (var index = 0; index < drawerItems.length; index++)
+            ListTile(
+              leading: Icon(
+                drawerItems[index].icon,
+                color: index == selectedIndex
+                    ? theme.colorScheme.primary
+                    : theme.colorScheme.onSurfaceVariant,
+              ),
+              title: Text(
+                drawerItems[index].title,
+                style: theme.textTheme.titleMedium!.copyWith(
+                  color: index == selectedIndex
+                      ? theme.colorScheme.primary
+                      : theme.colorScheme.onSurface,
+                  fontWeight: index == selectedIndex
+                      ? FontWeight.bold
+                      : FontWeight.normal,
+                ),
+              ),
+              selected: index == selectedIndex,
+              selectedTileColor: theme.colorScheme.primaryContainer.withValues(alpha: 0.3),
+              shape: RoundedRectangleBorder(
+                borderRadius: AppRadius.borderRadiusSm,
+              ),
               onTap: () {
-                setState(() {
-                  _selectedDrawerIndex = index;
-                });
+                ref.read(selectedDrawerIndexProvider.notifier).state = index;
                 Navigator.pop(context); // close drawer
               },
             ),
@@ -218,15 +246,13 @@ class _MainPageState extends ConsumerState<MainPage> {
       // Check for overdue backups after all data is loaded
       _checkOverdueBackup();
     } on AssertionError catch (e) {
-      showDialog<String>(
-        context: context,
-        builder: (BuildContext context) => AlertDialog(actions: const [], title: Text('${e.message}')),
-      );
+      if (mounted) {
+        AppDialog.info(context, title: '${e.message}');
+      }
     } catch (e) {
-      showDialog<String>(
-        context: context,
-        builder: (BuildContext context) => AlertDialog(actions: const [], title: Text('unknown exception : $e')),
-      );
+      if (mounted) {
+        AppDialog.info(context, title: 'unknown exception : $e');
+      }
     }
   }
 

@@ -7,6 +7,7 @@ import 'package:day_tracker/features/app/presentation/widgets/notification_setti
 import 'package:day_tracker/features/app/presentation/widgets/supabase_settings_widget.dart';
 import 'package:day_tracker/features/app/presentation/widgets/theme_settings_widget.dart';
 import 'package:day_tracker/features/notes/presentation/pages/category_management_page.dart';
+import 'package:day_tracker/core/widgets/app_ui_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:day_tracker/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -42,35 +43,35 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            const SizedBox(height: 24),
+            AppSpacing.verticalXl,
 
             // Theme Settings
             const ThemeSettingsWidget(),
-            const SizedBox(height: 24),
+            AppSpacing.verticalXl,
 
             // Language Settings
             const LanguageSettingsWidget(),
-            const SizedBox(height: 24),
+            AppSpacing.verticalXl,
 
             // Notification Settings
             const NotificationSettingsWidget(),
-            const SizedBox(height: 24),
+            AppSpacing.verticalXl,
 
             // Biometric Settings
             const BiometricSettingsWidget(),
-            const SizedBox(height: 24),
+            AppSpacing.verticalXl,
 
             // Backup Settings
             const BackupSettingsWidget(),
-            const SizedBox(height: 24),
+            AppSpacing.verticalXl,
 
             // Supabase Settings
             const SupabaseSettingsWidget(),
-            const SizedBox(height: 24),
+            AppSpacing.verticalXl,
 
             // Category Management
             _buildCategoryManagementSection(theme, isSmallScreen, l10n),
-            const SizedBox(height: 32),
+            AppSpacing.verticalXxl,
 
             // Save Settings Button
             Center(
@@ -92,7 +93,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                     vertical: isSmallScreen ? 12 : 16,
                   ),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: AppRadius.borderRadiusMd,
                   ),
                 ),
               ),
@@ -110,33 +111,13 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
 
       if (mounted) {
         final l10n = AppLocalizations.of(context);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(l10n.settingsSavedSuccessfully),
-            backgroundColor: Theme.of(context).colorScheme.primary,
-            duration: const Duration(seconds: 2),
-            behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
-          ),
-        );
+        AppSnackBar.success(context, message: l10n.settingsSavedSuccessfully);
       }
     } catch (e) {
       LogWrapper.logger.e('Error saving settings: $e');
       if (mounted) {
         final l10n = AppLocalizations.of(context);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(l10n.errorSavingSettings(e.toString())),
-            backgroundColor: Theme.of(context).colorScheme.error,
-            duration: const Duration(seconds: 3),
-            behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
-          ),
-        );
+        AppSnackBar.error(context, message: l10n.errorSavingSettings(e.toString()));
       }
     }
   }
@@ -144,14 +125,10 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
   //* build helper -----------------------------------------------------------------------------------------------------------------------------------
 
   Widget _buildCategoryManagementSection(ThemeData theme, bool isSmallScreen, AppLocalizations l10n) {
-    return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Padding(
-        padding: EdgeInsets.all(isSmallScreen ? 16 : 20),
-        child: Column(
+    return AppCard.elevated(
+      borderRadius: AppRadius.borderRadiusMd,
+      padding: EdgeInsets.all(isSmallScreen ? 16 : 20),
+      child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
@@ -161,7 +138,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                   color: theme.colorScheme.primary,
                   size: isSmallScreen ? 24 : 28,
                 ),
-                const SizedBox(width: 12),
+                AppSpacing.horizontalSm,
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -173,7 +150,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      const SizedBox(height: 4),
+                      AppSpacing.verticalXxs,
                       Text(
                         l10n.manageCategoriesAndTags,
                         style: theme.textTheme.bodyMedium?.copyWith(
@@ -185,7 +162,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                 ),
               ],
             ),
-            const SizedBox(height: 16),
+            AppSpacing.verticalMd,
             SizedBox(
               width: double.infinity,
               child: ElevatedButton.icon(
@@ -205,14 +182,13 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                     vertical: isSmallScreen ? 12 : 14,
                   ),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: AppRadius.borderRadiusSm,
                   ),
                 ),
               ),
             ),
           ],
         ),
-      ),
     );
   }
 }

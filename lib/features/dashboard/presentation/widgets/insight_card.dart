@@ -1,4 +1,5 @@
 import 'package:day_tracker/features/dashboard/data/models/insight.dart';
+import 'package:day_tracker/core/widgets/app_ui_kit.dart';
 import 'package:flutter/material.dart';
 
 /// Card widget for displaying insights
@@ -15,11 +16,11 @@ class InsightCard extends StatelessWidget {
     final theme = Theme.of(context);
     final color = _getInsightColor(insight.type, theme);
 
-    return Card(
+    return AppCard.elevated(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Container(
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: AppRadius.borderRadiusMd,
           gradient: LinearGradient(
             colors: [
               color.withValues(alpha: 0.1),
@@ -30,7 +31,7 @@ class InsightCard extends StatelessWidget {
           ),
         ),
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: AppSpacing.paddingAllMd,
           child: Row(
             children: [
               // Icon
@@ -48,7 +49,7 @@ class InsightCard extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(width: 16),
+              AppSpacing.horizontalMd,
 
               // Content
               Expanded(
@@ -62,7 +63,7 @@ class InsightCard extends StatelessWidget {
                         color: color,
                       ),
                     ),
-                    const SizedBox(height: 4),
+                    AppSpacing.verticalXxs,
                     Text(
                       insight.description,
                       style: theme.textTheme.bodyMedium?.copyWith(

@@ -1,6 +1,7 @@
 import 'package:day_tracker/core/utils/responsive_breakpoints.dart';
 import 'package:day_tracker/features/dashboard/domain/providers/dashboard_stats_provider.dart';
-import 'package:day_tracker/features/day_rating/presentation/pages/diary_day_wizard_page.dart';
+import 'package:day_tracker/core/navigation/drawer_index_provider.dart';
+import 'package:day_tracker/core/widgets/app_ui_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:day_tracker/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -16,19 +17,15 @@ class QuickStatsHeader extends ConsumerWidget {
     final isDesktop = ResponsiveBreakpoints.isDesktop(context);
 
     return statsAsync.when(
-      loading: () => const Card(
-        margin: EdgeInsets.all(16),
-        child: Padding(
-          padding: EdgeInsets.all(24),
-          child: Center(child: CircularProgressIndicator()),
-        ),
+      loading: () => AppCard.elevated(
+        margin: AppSpacing.paddingAllMd,
+        padding: AppSpacing.paddingAllXl,
+        child: const Center(child: CircularProgressIndicator()),
       ),
-      error: (error, stack) => Card(
-        margin: const EdgeInsets.all(16),
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: Text(AppLocalizations.of(context)!.errorWithMessage(error.toString())),
-        ),
+      error: (error, stack) => AppCard.elevated(
+        margin: AppSpacing.paddingAllMd,
+        padding: AppSpacing.paddingAllXl,
+        child: Text(AppLocalizations.of(context)!.errorWithMessage(error.toString())),
       ),
       data: (stats) {
         final l10n = AppLocalizations.of(context)!;
@@ -38,12 +35,10 @@ class QuickStatsHeader extends ConsumerWidget {
         final statusIcon = stats.todayLogged ? Icons.check_circle : Icons.pending;
         final statusText = stats.todayLogged ? l10n.recorded : l10n.pending;
 
-        return Card(
-          margin: const EdgeInsets.all(16),
-          elevation: 2,
-          child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
+        return AppCard.elevated(
+          margin: AppSpacing.paddingAllMd,
+          padding: AppSpacing.paddingAllLg,
+          child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Header row
@@ -60,53 +55,48 @@ class QuickStatsHeader extends ConsumerWidget {
                     Icon(statusIcon, color: statusColor, size: 32),
                   ],
                 ),
-                const SizedBox(height: 16),
+                AppSpacing.verticalMd,
 
                 // Stats grid
                 isDesktop
                     ? Row(
                         children: [
                           Expanded(child: _buildStreakStat(stats.currentStreak, theme, l10n)),
-                          const SizedBox(width: 16),
+                          AppSpacing.horizontalMd,
                           Expanded(child: _buildAverageStat(stats.weekStats.averageScore, theme, l10n)),
-                          const SizedBox(width: 16),
+                          AppSpacing.horizontalMd,
                           Expanded(child: _buildStatusStat(statusText, statusColor, theme, l10n)),
                         ],
                       )
                     : Column(
                         children: [
                           _buildStreakStat(stats.currentStreak, theme, l10n),
-                          const SizedBox(height: 12),
+                          AppSpacing.verticalSm,
                           _buildAverageStat(stats.weekStats.averageScore, theme, l10n),
-                          const SizedBox(height: 12),
+                          AppSpacing.verticalSm,
                           _buildStatusStat(statusText, statusColor, theme, l10n),
                         ],
                       ),
 
                 // Action button
                 if (!stats.todayLogged) ...[
-                  const SizedBox(height: 16),
+                  AppSpacing.verticalMd,
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton.icon(
                       onPressed: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => const DiaryDayWizardPage(),
-                          ),
-                        );
+                        ref.read(selectedDrawerIndexProvider.notifier).state = 3;
                       },
                       icon: const Icon(Icons.add),
                       label: Text(l10n.recordToday),
                       style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        padding: AppSpacing.paddingVerticalMd,
                       ),
                     ),
                   ),
                 ],
               ],
             ),
-          ),
         );
       },
     );
@@ -114,10 +104,10 @@ class QuickStatsHeader extends ConsumerWidget {
 
   Widget _buildStreakStat(int streak, ThemeData theme, AppLocalizations l10n) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: AppSpacing.paddingAllMd,
       decoration: BoxDecoration(
         color: theme.colorScheme.surfaceContainerHigh,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: AppRadius.borderRadiusMd,
       ),
       child: Column(
         children: [
@@ -125,7 +115,7 @@ class QuickStatsHeader extends ConsumerWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const Text('🔥', style: TextStyle(fontSize: 24)),
-              const SizedBox(width: 8),
+              AppSpacing.horizontalXs,
               Text(
                 '$streak',
                 style: theme.textTheme.headlineMedium?.copyWith(
@@ -135,7 +125,7 @@ class QuickStatsHeader extends ConsumerWidget {
               ),
             ],
           ),
-          const SizedBox(height: 4),
+          AppSpacing.verticalXxs,
           Text(
             l10n.dayStreak,
             style: theme.textTheme.bodyMedium?.copyWith(
@@ -149,10 +139,10 @@ class QuickStatsHeader extends ConsumerWidget {
 
   Widget _buildAverageStat(double average, ThemeData theme, AppLocalizations l10n) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: AppSpacing.paddingAllMd,
       decoration: BoxDecoration(
         color: theme.colorScheme.surfaceContainerHigh,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: AppRadius.borderRadiusMd,
       ),
       child: Column(
         children: [
@@ -160,7 +150,7 @@ class QuickStatsHeader extends ConsumerWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const Text('⭐', style: TextStyle(fontSize: 24)),
-              const SizedBox(width: 8),
+              AppSpacing.horizontalXs,
               Text(
                 average.toStringAsFixed(1),
                 style: theme.textTheme.headlineMedium?.copyWith(
@@ -170,7 +160,7 @@ class QuickStatsHeader extends ConsumerWidget {
               ),
             ],
           ),
-          const SizedBox(height: 4),
+          AppSpacing.verticalXxs,
           Text(
             l10n.weeklyAverage,
             style: theme.textTheme.bodyMedium?.copyWith(
@@ -184,10 +174,10 @@ class QuickStatsHeader extends ConsumerWidget {
 
   Widget _buildStatusStat(String status, Color color, ThemeData theme, AppLocalizations l10n) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: AppSpacing.paddingAllMd,
       decoration: BoxDecoration(
         color: theme.colorScheme.surfaceContainerHigh,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: AppRadius.borderRadiusMd,
       ),
       child: Column(
         children: [
@@ -198,7 +188,7 @@ class QuickStatsHeader extends ConsumerWidget {
               color: color,
             ),
           ),
-          const SizedBox(height: 4),
+          AppSpacing.verticalXxs,
           Text(
             l10n.status,
             style: theme.textTheme.bodyMedium?.copyWith(

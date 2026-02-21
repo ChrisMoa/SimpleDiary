@@ -6,6 +6,7 @@ import 'package:day_tracker/features/notes/domain/providers/note_editing_page_pr
 import 'package:day_tracker/features/notes/domain/providers/note_local_db_provider.dart';
 import 'package:day_tracker/features/notes/domain/providers/note_selected_date_provider.dart';
 import 'package:day_tracker/features/notes/presentation/widgets/image_picker_widget.dart';
+import 'package:day_tracker/core/widgets/app_ui_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:day_tracker/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -75,23 +76,23 @@ class _NoteEditingPageState extends ConsumerState<NoteEditingPage> {
     return Form(
       key: _formKey,
       child: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
+        padding: AppSpacing.paddingAllMd,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
               buildTitle(),
-              const SizedBox(height: 20),
+              AppSpacing.verticalLg,
               buildDateTimePickers(),
-              const SizedBox(height: 20),
+              AppSpacing.verticalLg,
               buildAllDayCheckbox(),
-              const SizedBox(height: 20),
+              AppSpacing.verticalLg,
               buildDescription(),
-              const SizedBox(height: 20),
+              AppSpacing.verticalLg,
               buildCategory(),
-              const SizedBox(height: 20),
+              AppSpacing.verticalLg,
               ImagePickerWidget(noteId: note.id!),
               if (widget.addAdditionalSaveButton) ...[
-                const SizedBox(height: 20),
+                AppSpacing.verticalLg,
                 Row(
                   children: [
                     TextButton(

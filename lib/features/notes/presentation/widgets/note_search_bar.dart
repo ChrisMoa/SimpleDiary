@@ -4,6 +4,7 @@ import 'package:day_tracker/features/notes/data/models/note_category.dart';
 import 'package:day_tracker/features/notes/domain/providers/category_local_db_provider.dart';
 import 'package:day_tracker/features/notes/domain/providers/note_search_provider.dart';
 import 'package:day_tracker/l10n/app_localizations.dart';
+import 'package:day_tracker/core/widgets/app_ui_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -95,11 +96,10 @@ class _NoteSearchBarState extends ConsumerState<NoteSearchBar> {
     final searchState = ref.watch(noteSearchProvider);
     final theme = Theme.of(context);
 
-    return Card(
+    return AppCard.elevated(
       margin: const EdgeInsets.all(8.0),
-      child: Padding(
-        padding: const EdgeInsets.all(12.0),
-        child: Column(
+      padding: const EdgeInsets.all(12.0),
+      child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             // Search text field
@@ -131,16 +131,16 @@ class _NoteSearchBarState extends ConsumerState<NoteSearchBar> {
                       )
                     : null,
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8.0),
+                  borderRadius: AppRadius.borderRadiusSm,
                 ),
                 enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8.0),
+                  borderRadius: AppRadius.borderRadiusSm,
                   borderSide: BorderSide(
                     color: theme.colorScheme.outline.withValues(alpha: 0.5),
                   ),
                 ),
                 focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8.0),
+                  borderRadius: AppRadius.borderRadiusSm,
                   borderSide: BorderSide(
                     color: theme.colorScheme.primary,
                     width: 2.0,
@@ -152,7 +152,7 @@ class _NoteSearchBarState extends ConsumerState<NoteSearchBar> {
                 ),
               ),
             ),
-            const SizedBox(height: 12.0),
+            AppSpacing.verticalSm,
 
             // Filter buttons row
             Wrap(
@@ -200,7 +200,7 @@ class _NoteSearchBarState extends ConsumerState<NoteSearchBar> {
 
             // Active filters chips
             if (searchState.isActive) ...[
-              const SizedBox(height: 8.0),
+              AppSpacing.verticalXs,
               Wrap(
                 spacing: 8.0,
                 runSpacing: 4.0,
@@ -233,7 +233,6 @@ class _NoteSearchBarState extends ConsumerState<NoteSearchBar> {
             ],
           ],
         ),
-      ),
     );
   }
 
@@ -287,7 +286,7 @@ class _NoteSearchBarState extends ConsumerState<NoteSearchBar> {
                     shape: BoxShape.circle,
                   ),
                 ),
-                const SizedBox(width: 8),
+                AppSpacing.horizontalXs,
                 Text(category.title),
               ],
             ),

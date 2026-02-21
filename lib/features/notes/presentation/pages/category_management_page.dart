@@ -1,4 +1,5 @@
 import 'package:day_tracker/core/provider/theme_provider.dart';
+import 'package:day_tracker/core/widgets/app_ui_kit.dart';
 import 'package:day_tracker/features/notes/data/models/note_category.dart';
 import 'package:day_tracker/features/notes/domain/providers/category_local_db_provider.dart';
 import 'package:day_tracker/features/notes/presentation/widgets/category_edit_dialog.dart';
@@ -57,7 +58,7 @@ class _CategoryManagementPageState
                           color: theme.colorScheme.primary,
                           size: isSmallScreen ? 28 : 32,
                         ),
-                        const SizedBox(width: 8),
+                        AppSpacing.horizontalXs,
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -69,7 +70,7 @@ class _CategoryManagementPageState
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              const SizedBox(height: 4),
+                              AppSpacing.verticalXxs,
                               Text(
                                 'Organize your notes with custom categories',
                                 style: theme.textTheme.bodyMedium?.copyWith(
@@ -121,7 +122,7 @@ class _CategoryManagementPageState
 
   Widget _buildCategoryListItem(
       NoteCategory category, ThemeData theme, bool isSmallScreen) {
-    return Card(
+    return AppCard.elevated(
       margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
       child: ListTile(
         contentPadding: EdgeInsets.symmetric(
@@ -172,14 +173,14 @@ class _CategoryManagementPageState
             size: isSmallScreen ? 48 : 64,
             color: theme.colorScheme.primary.withValues(alpha: 0.5),
           ),
-          const SizedBox(height: 16),
+          AppSpacing.verticalMd,
           Text(
             'No categories yet',
             style: theme.textTheme.titleLarge?.copyWith(
               color: theme.colorScheme.onSurface.withValues(alpha: 0.8),
             ),
           ),
-          const SizedBox(height: 8),
+          AppSpacing.verticalXs,
           Text(
             'Create categories to organize your notes',
             style: theme.textTheme.bodyMedium?.copyWith(
@@ -187,7 +188,7 @@ class _CategoryManagementPageState
             ),
             textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 24),
+          AppSpacing.verticalXl,
           ElevatedButton.icon(
             onPressed: _createNewCategory,
             icon: const Icon(Icons.add),
@@ -225,56 +226,28 @@ class _CategoryManagementPageState
     if (!mounted) return;
 
     if (isInUse) {
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: const Text('Cannot Delete Category'),
-          content: Text(
+      AppDialog.info(
+        context,
+        title: 'Cannot Delete Category',
+        content:
             'The category "${category.title}" is currently used by one or more notes. '
             'Please reassign or delete those notes first.',
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('OK'),
-            ),
-          ],
-        ),
       );
       return;
     }
 
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Delete Category'),
-        content: Text('Are you sure you want to delete "${category.title}"?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cancel'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              ref
-                  .read(categoryLocalDataProvider.notifier)
-                  .deleteElement(category);
-              Navigator.of(context).pop();
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Category deleted'),
-                  duration: Duration(seconds: 2),
-                ),
-              );
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Theme.of(context).colorScheme.error,
-              foregroundColor: Theme.of(context).colorScheme.onError,
-            ),
-            child: const Text('Delete'),
-          ),
-        ],
-      ),
+    final confirmed = await AppDialog.confirm(
+      context,
+      title: 'Delete Category',
+      content: 'Are you sure you want to delete "${category.title}"?',
+      confirmLabel: 'Delete',
+      cancelLabel: 'Cancel',
+      isDestructive: true,
     );
+
+    if (confirmed && mounted) {
+      ref.read(categoryLocalDataProvider.notifier).deleteElement(category);
+      AppSnackBar.info(context, message: 'Category deleted');
+    }
   }
 }

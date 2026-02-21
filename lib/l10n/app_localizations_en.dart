@@ -374,6 +374,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get update => 'Update';
 
   @override
+  String get ratingSocial => 'Social';
+
+  @override
+  String get ratingProductivity => 'Productivity';
+
+  @override
+  String get ratingSport => 'Sport';
+
+  @override
+  String get ratingFood => 'Food';
+
+  @override
   String get ratingPoor => 'Poor';
 
   @override
