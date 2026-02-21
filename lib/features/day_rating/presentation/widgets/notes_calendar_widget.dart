@@ -244,18 +244,21 @@ class _NotesCalendarWidgetState extends ConsumerState<NotesCalendarWidget> {
     // Adjust text sizes based on available space
     final bool isSmallAppointment = details.bounds.height < 30;
 
+    final borderWidth = isSelected ? 2.0 : 1.0;
+    final availableHeight = details.bounds.height - (borderWidth * 2) - 4; // subtract border + padding
+
     return Container(
       decoration: BoxDecoration(
         color: note.noteCategory.color.withValues(alpha: isEmpty ? 0.3 : 0.7),
         borderRadius: BorderRadius.circular(4),
         border: Border.all(
           color: isSelected ? theme.colorScheme.primary : note.noteCategory.color,
-          width: isSelected ? 2 : 1,
+          width: borderWidth,
         ),
       ),
       clipBehavior: Clip.hardEdge,
       child: Padding(
-        padding: const EdgeInsets.all(2.0),
+        padding: const EdgeInsets.symmetric(horizontal: 2, vertical: 1),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
@@ -287,7 +290,7 @@ class _NotesCalendarWidgetState extends ConsumerState<NotesCalendarWidget> {
                   ),
               ],
             ),
-            if (details.bounds.height > 30 && note.description.isNotEmpty)
+            if (availableHeight > 20 && note.description.isNotEmpty)
               Expanded(
                 child: Text(
                   note.description,
@@ -295,7 +298,7 @@ class _NotesCalendarWidgetState extends ConsumerState<NotesCalendarWidget> {
                     color: theme.colorScheme.surface,
                     fontSize: 10,
                   ),
-                  maxLines: (details.bounds.height / 12).floor(),
+                  maxLines: (availableHeight / 14).floor(),
                   overflow: TextOverflow.ellipsis,
                 ),
               ),
