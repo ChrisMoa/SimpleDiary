@@ -14,6 +14,10 @@ class UserDataProvider extends StateNotifier<UserData> {
 
   void createUser(UserData userData) {
     LogWrapper.logger.t('creates user ${userData.username}');
+    // When creating a real account, clean up the demo guest account.
+    if (userData.username != _demoUsername) {
+      _removeDemoUserIfExists();
+    }
     bool userExists = settingsContainer.checkIfUserExists(userData.username);
     assert(!userExists, '${userData.username} already exists in the database');
 
@@ -182,6 +186,28 @@ class UserDataProvider extends StateNotifier<UserData> {
       settingsContainer.lastLoggedInUsername = '';
     }
     state = emptyUser;
+  }
+
+  static const _demoUsername = 'Demo User';
+
+  /// Creates (or logs in) the demo guest account used during the "Explore"
+  /// onboarding path.  The account has an empty password so no authentication
+  /// dialog is shown.
+  void createDemoUser() {
+    if (!settingsContainer.checkIfUserExists(_demoUsername)) {
+      createUser(UserData(username: _demoUsername, clearPassword: ''));
+    } else {
+      login(_demoUsername, '');
+    }
+  }
+
+  /// Removes the demo guest account from settings if it exists.
+  /// Called automatically at the start of [createUser] for real accounts.
+  void _removeDemoUserIfExists() {
+    settingsContainer.userSettings.removeWhere(
+      (s) => s.savedUserData.username == _demoUsername,
+    );
+    LogWrapper.logger.d('Removed demo user account if present');
   }
 
   void debugAutoLogin() {

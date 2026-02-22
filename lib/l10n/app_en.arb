@@ -835,5 +835,31 @@
     }
   },
   "backupLocationChange": "Change",
-  "backupLocationReset": "Reset to Default"
+  "backupLocationReset": "Reset to Default",
+
+  "onboardingWelcomeTitle": "Welcome to SimpleDiary",
+  "onboardingWelcomeDescription": "Your personal daily reflection companion.\nTrack your days, discover patterns, and grow every week.",
+  "onboardingRatingsTitle": "Rate Your Day",
+  "onboardingRatingsDescription": "Score four key areas every day:\nSocial · Productivity · Sport · Food.\nSee at a glance how balanced your life is.",
+  "onboardingNotesTitle": "Add Activities",
+  "onboardingNotesDescription": "Log notes and events with categories like Work, Gym, Leisure and more.\nEverything appears on your personal calendar.",
+  "onboardingInsightsTitle": "Discover Patterns",
+  "onboardingInsightsDescription": "The dashboard shows streaks, weekly stats and insights.\nFind out which activities boost your mood the most.",
+  "onboardingGetStartedTitle": "Ready to Start?",
+  "onboardingGetStartedDescription": "Explore with sample data first, or jump straight in and create your account.",
+  "onboardingExploreDemo": "Explore with Demo Data",
+  "onboardingCreateAccount": "Create Account",
+  "onboardingSkip": "Skip",
+  "onboardingNext": "Next",
+  "setupWizardTitle": "Quick Setup",
+  "setupWizardThemeTitle": "Choose Your Theme",
+  "setupWizardThemeHint": "You can change this anytime in Settings.",
+  "setupWizardThemeLight": "Light",
+  "setupWizardThemeDark": "Dark",
+  "setupWizardLanguageTitle": "Choose Your Language",
+  "setupWizardLanguageHint": "You can change this anytime in Settings.",
+  "setupWizardNext": "Next",
+  "setupWizardDone": "Done",
+  "demoModeBannerText": "Exploring with demo data",
+  "demoModeCreateAccount": "Create Account"
 }

@@ -4,7 +4,9 @@ import 'dart:ui';
 import 'package:day_tracker/core/authentication/password_auth_service.dart';
 import 'package:day_tracker/core/encryption/aes_encryptor.dart';
 import 'package:day_tracker/core/log/logger_instance.dart';
+import 'package:day_tracker/core/onboarding/demo_data_generator.dart';
 import 'package:day_tracker/core/services/backup_scheduler.dart';
+import 'package:day_tracker/core/services/onboarding_service.dart';
 import 'package:day_tracker/core/navigation/drawer_index_provider.dart';
 import 'package:day_tracker/core/navigation/drawer_item_builder.dart';
 import 'package:day_tracker/core/settings/settings_container.dart';
@@ -22,6 +24,9 @@ import 'package:day_tracker/features/notes/domain/providers/note_attachments_pro
 import 'package:day_tracker/features/notes/domain/providers/note_local_db_provider.dart';
 import 'package:day_tracker/features/habits/domain/providers/habit_providers.dart';
 import 'package:day_tracker/features/note_templates/domain/providers/note_template_local_db_provider.dart';
+import 'package:day_tracker/features/onboarding/domain/providers/onboarding_provider.dart';
+import 'package:day_tracker/features/onboarding/presentation/pages/onboarding_page.dart';
+import 'package:day_tracker/features/onboarding/presentation/widgets/demo_mode_banner.dart';
 import 'package:day_tracker/core/widgets/app_ui_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -41,6 +46,7 @@ class _MainPageState extends ConsumerState<MainPage> {
   var _userData = UserData.fromEmpty();
   bool dbRead = false;
   bool _asyncInit = false;
+  bool _demoBannerDismissed = false;
   late final AppLifecycleListener _listener;
   DateTime? _backgroundTimestamp;
 
@@ -95,6 +101,14 @@ class _MainPageState extends ConsumerState<MainPage> {
 
     return Builder(
       builder: (context) {
+        // Show onboarding before any auth checks
+        final onboardingCompleted = ref.watch(onboardingCompletedProvider);
+        if (!onboardingCompleted) {
+          LogWrapper.logger.t('showing OnboardingPage');
+          return const OnboardingPage();
+        }
+
+        final isDemoMode = ref.watch(isDemoModeProvider);
         var userData = ref.watch(userDataProvider);
 
         if (userData.username.isEmpty) {
@@ -140,6 +154,9 @@ class _MainPageState extends ConsumerState<MainPage> {
         final selectedIndex = ref.watch(selectedDrawerIndexProvider);
         final theme = Theme.of(context);
 
+        final showDemoBanner =
+            isDemoMode && !_demoBannerDismissed;
+
         return Scaffold(
           appBar: AppBar(
             backgroundColor: theme.colorScheme.surfaceContainer,
@@ -151,7 +168,19 @@ class _MainPageState extends ConsumerState<MainPage> {
             title: Text(widget.title),
           ),
           drawer: _buildDrawer(context, theme, selectedIndex),
-          body: _drawerItemProvider.getDrawerItemWidget(selectedIndex, context),
+          body: Column(
+            children: [
+              if (showDemoBanner)
+                DemoModeBanner(
+                  onDismiss: () =>
+                      setState(() => _demoBannerDismissed = true),
+                ),
+              Expanded(
+                child: _drawerItemProvider.getDrawerItemWidget(
+                    selectedIndex, context),
+              ),
+            ],
+          ),
         );
       },
     );
@@ -264,6 +293,26 @@ class _MainPageState extends ConsumerState<MainPage> {
       setState(() {
         dbRead = true;
       });
+
+      // Generate demo data after DB is ready when in demo mode
+      final isDemoMode = ref.read(isDemoModeProvider);
+      if (isDemoMode && userData.username == 'Demo User') {
+        LogWrapper.logger.d('Generating demo data for Demo User');
+        await DemoDataGenerator(ref).generate();
+      }
+
+      // If a real user just replaced the demo session, clear demo mode flag
+      if (!isDemoMode && _userData.username != 'Demo User') {
+        // No-op: demo mode was never active for this user
+      }
+      final wasDemoUser = _userData.username == 'Demo User';
+      final isNowRealUser = userData.username != 'Demo User';
+      if (wasDemoUser && isNowRealUser) {
+        await OnboardingService().exitDemoMode();
+        if (mounted) {
+          ref.read(isDemoModeProvider.notifier).state = false;
+        }
+      }
 
       // Check for overdue backups after all data is loaded
       _checkOverdueBackup();
@@ -392,6 +441,17 @@ class _MainPageState extends ConsumerState<MainPage> {
   }
 
   Future<void> _onInitAsync() async {
+    // Load onboarding status from SharedPreferences and sync Riverpod providers.
+    // This runs before the first build that uses _asyncInit = true.
+    final onboardingService = OnboardingService();
+    final shouldShow = await onboardingService.shouldShowOnboarding();
+    final isDemoMode = await onboardingService.isDemoMode();
+
+    if (mounted) {
+      ref.read(onboardingCompletedProvider.notifier).state = !shouldShow;
+      ref.read(isDemoModeProvider.notifier).state = isDemoMode;
+    }
+
     setState(() {
       _asyncInit = true;
     });

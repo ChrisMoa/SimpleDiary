@@ -1,6 +1,6 @@
 # Test Coverage
 
-**Total: 687 passing tests** across 41 test files (+ 11 optional Supabase integration tests)
+**Total: 709 passing tests** across 43 test files (+ 11 optional Supabase integration tests)
 
 Run all tests with:
 ```bash
@@ -52,6 +52,17 @@ flutter test test/core/ test/features/ test/l10n/
 | `backup_metadata_test.dart` | 21 | BackupMetadata `isSuccessful` (no error/with error), `formattedSize` (bytes/KB/MB), `toMap`/`fromMap` (all fields incl. `encrypted`/`cloudSynced`, missing optional fields), JSON round-trip (success/error/encrypted/cloudSynced), `copyWith` (cloudSynced/no-args), `toString`, defaults, BackupType enum (toJson/fromJson/unknown fallback) |
 
 **Source:** `lib/core/backup/backup_metadata.dart`
+
+### Onboarding (`test/core/onboarding/`)
+
+| File | Tests | Covers |
+|------|-------|--------|
+| `onboarding_status_test.dart` | 9 | `OnboardingStatus.initial()` defaults, `load()` from empty prefs, `markComplete()` (default + demo mode), `completedAt` ISO-8601 timestamp, `clearDemoMode()` preserves completed flag, `clear()` full reset, `toString()` content, round-trip |
+| `onboarding_service_test.dart` | 13 | `shouldShowOnboarding()` (true when empty / false after completion / false after demo), `markOnboardingComplete()` (normal + demo), `isDemoMode()` (empty / normal / demo), `exitDemoMode()` keeps onboarding done, `resetOnboarding()` re-enables flow + clears demo, full demo lifecycle, full normal lifecycle including simulated app restart |
+
+**Sources:** `lib/core/onboarding/onboarding_status.dart`, `lib/core/services/onboarding_service.dart`
+
+---
 
 ### Utils (`test/core/utils/`)
 
@@ -182,6 +193,7 @@ flutter test test/core/ test/features/ test/l10n/
 | Backup settings & metadata | Covered | Settings model, metadata model, overdue detection, frequency enum |
 | Supabase sync state | Covered | SyncStatus enum, SyncState construction/copyWith |
 | Supabase API (optional) | Covered | Requires `test/.env` with credentials; skipped otherwise |
+| Onboarding status & service | Covered | SharedPreferences persistence, all lifecycle states, demo mode flag |
 
 ### Not covered (requires integration/widget tests)
 
