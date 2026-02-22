@@ -3383,6 +3383,288 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Create Account'**
   String get demoModeCreateAccount;
+
+  /// No description provided for @quickMoodCheck.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick Mood Check'**
+  String get quickMoodCheck;
+
+  /// No description provided for @tapWhereYouAre.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap where you are on the mood map'**
+  String get tapWhereYouAre;
+
+  /// No description provided for @highEnergy.
+  ///
+  /// In en, this message translates to:
+  /// **'High Energy'**
+  String get highEnergy;
+
+  /// No description provided for @lowEnergy.
+  ///
+  /// In en, this message translates to:
+  /// **'Low Energy'**
+  String get lowEnergy;
+
+  /// No description provided for @pleasant.
+  ///
+  /// In en, this message translates to:
+  /// **'Pleasant'**
+  String get pleasant;
+
+  /// No description provided for @unpleasant.
+  ///
+  /// In en, this message translates to:
+  /// **'Unpleasant'**
+  String get unpleasant;
+
+  /// No description provided for @wellbeingDimensions.
+  ///
+  /// In en, this message translates to:
+  /// **'Wellbeing Dimensions'**
+  String get wellbeingDimensions;
+
+  /// No description provided for @permaPlusDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'PERMA+ model – rate each area of your day'**
+  String get permaPlusDescription;
+
+  /// No description provided for @overallMoodDimension.
+  ///
+  /// In en, this message translates to:
+  /// **'Mood'**
+  String get overallMoodDimension;
+
+  /// No description provided for @howDidYouFeel.
+  ///
+  /// In en, this message translates to:
+  /// **'How did you feel emotionally today?'**
+  String get howDidYouFeel;
+
+  /// No description provided for @energyDimension.
+  ///
+  /// In en, this message translates to:
+  /// **'Energy'**
+  String get energyDimension;
+
+  /// No description provided for @physicalVitality.
+  ///
+  /// In en, this message translates to:
+  /// **'Your physical vitality and alertness'**
+  String get physicalVitality;
+
+  /// No description provided for @connectionDimension.
+  ///
+  /// In en, this message translates to:
+  /// **'Connection'**
+  String get connectionDimension;
+
+  /// No description provided for @socialConnections.
+  ///
+  /// In en, this message translates to:
+  /// **'Quality of social interactions'**
+  String get socialConnections;
+
+  /// No description provided for @purposeDimension.
+  ///
+  /// In en, this message translates to:
+  /// **'Purpose'**
+  String get purposeDimension;
+
+  /// No description provided for @meaningAndPurpose.
+  ///
+  /// In en, this message translates to:
+  /// **'Sense of meaning and direction'**
+  String get meaningAndPurpose;
+
+  /// No description provided for @achievementDimension.
+  ///
+  /// In en, this message translates to:
+  /// **'Achievement'**
+  String get achievementDimension;
+
+  /// No description provided for @accomplishments.
+  ///
+  /// In en, this message translates to:
+  /// **'Progress on goals and tasks'**
+  String get accomplishments;
+
+  /// No description provided for @engagementDimension.
+  ///
+  /// In en, this message translates to:
+  /// **'Engagement'**
+  String get engagementDimension;
+
+  /// No description provided for @flowAndAbsorption.
+  ///
+  /// In en, this message translates to:
+  /// **'Absorbed in enjoyable activities'**
+  String get flowAndAbsorption;
+
+  /// No description provided for @selectEmotions.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Emotions'**
+  String get selectEmotions;
+
+  /// No description provided for @howAreYouFeeling.
+  ///
+  /// In en, this message translates to:
+  /// **'How are you feeling? (select all that apply)'**
+  String get howAreYouFeeling;
+
+  /// No description provided for @positiveEmotions.
+  ///
+  /// In en, this message translates to:
+  /// **'Positive'**
+  String get positiveEmotions;
+
+  /// No description provided for @negativeEmotions.
+  ///
+  /// In en, this message translates to:
+  /// **'Negative'**
+  String get negativeEmotions;
+
+  /// No description provided for @neutralEmotions.
+  ///
+  /// In en, this message translates to:
+  /// **'Neutral / Mixed'**
+  String get neutralEmotions;
+
+  /// No description provided for @intensityMild.
+  ///
+  /// In en, this message translates to:
+  /// **'Mild'**
+  String get intensityMild;
+
+  /// No description provided for @intensityModerate.
+  ///
+  /// In en, this message translates to:
+  /// **'Moderate'**
+  String get intensityModerate;
+
+  /// No description provided for @intensityStrong.
+  ///
+  /// In en, this message translates to:
+  /// **'Strong'**
+  String get intensityStrong;
+
+  /// No description provided for @contextFactors.
+  ///
+  /// In en, this message translates to:
+  /// **'Context Factors'**
+  String get contextFactors;
+
+  /// No description provided for @contextFactorsDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Optional context that may influence your mood'**
+  String get contextFactorsDescription;
+
+  /// No description provided for @sleepHours.
+  ///
+  /// In en, this message translates to:
+  /// **'Sleep Hours'**
+  String get sleepHours;
+
+  /// No description provided for @sleepQuality.
+  ///
+  /// In en, this message translates to:
+  /// **'Sleep Quality'**
+  String get sleepQuality;
+
+  /// No description provided for @exercisedToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Exercised Today'**
+  String get exercisedToday;
+
+  /// No description provided for @stressLevel.
+  ///
+  /// In en, this message translates to:
+  /// **'Stress Level'**
+  String get stressLevel;
+
+  /// No description provided for @addTagHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Add a tag (e.g. travel, sick, date night)'**
+  String get addTagHint;
+
+  /// No description provided for @ratingModeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Rating Mode'**
+  String get ratingModeLabel;
+
+  /// No description provided for @quickMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick (10 sec)'**
+  String get quickMode;
+
+  /// No description provided for @balancedMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Balanced (30 sec)'**
+  String get balancedMode;
+
+  /// No description provided for @detailedMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Detailed (60 sec)'**
+  String get detailedMode;
+
+  /// No description provided for @customMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom'**
+  String get customMode;
+
+  /// No description provided for @switchToEnhancedMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Switch to Enhanced Mode'**
+  String get switchToEnhancedMode;
+
+  /// No description provided for @switchToSimpleMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Switch to Simple Mode'**
+  String get switchToSimpleMode;
+
+  /// No description provided for @rateWellbeingDimensions.
+  ///
+  /// In en, this message translates to:
+  /// **'Rate your wellbeing across key dimensions'**
+  String get rateWellbeingDimensions;
+
+  /// No description provided for @showQuickMood.
+  ///
+  /// In en, this message translates to:
+  /// **'Show Quick Mood Map'**
+  String get showQuickMood;
+
+  /// No description provided for @showEmotionWheel.
+  ///
+  /// In en, this message translates to:
+  /// **'Show Emotion Wheel'**
+  String get showEmotionWheel;
+
+  /// No description provided for @showContextFactors.
+  ///
+  /// In en, this message translates to:
+  /// **'Show Context Factors'**
+  String get showContextFactors;
+
+  /// No description provided for @useLegacyRating.
+  ///
+  /// In en, this message translates to:
+  /// **'Use Simple Rating (4 categories)'**
+  String get useLegacyRating;
 }
 
 class _AppLocalizationsDelegate

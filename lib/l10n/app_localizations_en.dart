@@ -1807,4 +1807,148 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get demoModeCreateAccount => 'Create Account';
+
+  @override
+  String get quickMoodCheck => 'Quick Mood Check';
+
+  @override
+  String get tapWhereYouAre => 'Tap where you are on the mood map';
+
+  @override
+  String get highEnergy => 'High Energy';
+
+  @override
+  String get lowEnergy => 'Low Energy';
+
+  @override
+  String get pleasant => 'Pleasant';
+
+  @override
+  String get unpleasant => 'Unpleasant';
+
+  @override
+  String get wellbeingDimensions => 'Wellbeing Dimensions';
+
+  @override
+  String get permaPlusDescription =>
+      'PERMA+ model – rate each area of your day';
+
+  @override
+  String get overallMoodDimension => 'Mood';
+
+  @override
+  String get howDidYouFeel => 'How did you feel emotionally today?';
+
+  @override
+  String get energyDimension => 'Energy';
+
+  @override
+  String get physicalVitality => 'Your physical vitality and alertness';
+
+  @override
+  String get connectionDimension => 'Connection';
+
+  @override
+  String get socialConnections => 'Quality of social interactions';
+
+  @override
+  String get purposeDimension => 'Purpose';
+
+  @override
+  String get meaningAndPurpose => 'Sense of meaning and direction';
+
+  @override
+  String get achievementDimension => 'Achievement';
+
+  @override
+  String get accomplishments => 'Progress on goals and tasks';
+
+  @override
+  String get engagementDimension => 'Engagement';
+
+  @override
+  String get flowAndAbsorption => 'Absorbed in enjoyable activities';
+
+  @override
+  String get selectEmotions => 'Select Emotions';
+
+  @override
+  String get howAreYouFeeling => 'How are you feeling? (select all that apply)';
+
+  @override
+  String get positiveEmotions => 'Positive';
+
+  @override
+  String get negativeEmotions => 'Negative';
+
+  @override
+  String get neutralEmotions => 'Neutral / Mixed';
+
+  @override
+  String get intensityMild => 'Mild';
+
+  @override
+  String get intensityModerate => 'Moderate';
+
+  @override
+  String get intensityStrong => 'Strong';
+
+  @override
+  String get contextFactors => 'Context Factors';
+
+  @override
+  String get contextFactorsDescription =>
+      'Optional context that may influence your mood';
+
+  @override
+  String get sleepHours => 'Sleep Hours';
+
+  @override
+  String get sleepQuality => 'Sleep Quality';
+
+  @override
+  String get exercisedToday => 'Exercised Today';
+
+  @override
+  String get stressLevel => 'Stress Level';
+
+  @override
+  String get addTagHint => 'Add a tag (e.g. travel, sick, date night)';
+
+  @override
+  String get ratingModeLabel => 'Rating Mode';
+
+  @override
+  String get quickMode => 'Quick (10 sec)';
+
+  @override
+  String get balancedMode => 'Balanced (30 sec)';
+
+  @override
+  String get detailedMode => 'Detailed (60 sec)';
+
+  @override
+  String get customMode => 'Custom';
+
+  @override
+  String get switchToEnhancedMode => 'Switch to Enhanced Mode';
+
+  @override
+  String get switchToSimpleMode => 'Switch to Simple Mode';
+
+  @override
+  String get rateWellbeingDimensions =>
+      'Rate your wellbeing across key dimensions';
+
+  @override
+  String get showQuickMood => 'Show Quick Mood Map';
+
+  @override
+  String get showEmotionWheel => 'Show Emotion Wheel';
+
+  @override
+  String get showContextFactors => 'Show Context Factors';
+
+  @override
+  String get useLegacyRating => 'Use Simple Rating (4 categories)';
 }

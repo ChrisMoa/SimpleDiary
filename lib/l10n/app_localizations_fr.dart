@@ -1836,4 +1836,151 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get demoModeCreateAccount => 'Créer un compte';
+
+  @override
+  String get quickMoodCheck => 'Vérification rapide de l\'humeur';
+
+  @override
+  String get tapWhereYouAre =>
+      'Appuyez sur la carte d\'humeur pour indiquer votre état';
+
+  @override
+  String get highEnergy => 'Énergie élevée';
+
+  @override
+  String get lowEnergy => 'Énergie faible';
+
+  @override
+  String get pleasant => 'Agréable';
+
+  @override
+  String get unpleasant => 'Désagréable';
+
+  @override
+  String get wellbeingDimensions => 'Dimensions du bien-être';
+
+  @override
+  String get permaPlusDescription =>
+      'Modèle PERMA+ – évaluez chaque domaine de votre journée';
+
+  @override
+  String get overallMoodDimension => 'Humeur';
+
+  @override
+  String get howDidYouFeel =>
+      'Comment vous êtes-vous senti émotionnellement aujourd\'hui ?';
+
+  @override
+  String get energyDimension => 'Énergie';
+
+  @override
+  String get physicalVitality => 'Votre vitalité physique et votre vigilance';
+
+  @override
+  String get connectionDimension => 'Connexion';
+
+  @override
+  String get socialConnections => 'Qualité des interactions sociales';
+
+  @override
+  String get purposeDimension => 'Sens';
+
+  @override
+  String get meaningAndPurpose => 'Sentiment de sens et de direction';
+
+  @override
+  String get achievementDimension => 'Accomplissement';
+
+  @override
+  String get accomplishments => 'Progrès sur les objectifs et les tâches';
+
+  @override
+  String get engagementDimension => 'Engagement';
+
+  @override
+  String get flowAndAbsorption => 'Absorbé dans des activités agréables';
+
+  @override
+  String get selectEmotions => 'Sélectionner des émotions';
+
+  @override
+  String get howAreYouFeeling =>
+      'Comment vous sentez-vous ? (sélectionnez tout ce qui s\'applique)';
+
+  @override
+  String get positiveEmotions => 'Positif';
+
+  @override
+  String get negativeEmotions => 'Négatif';
+
+  @override
+  String get neutralEmotions => 'Neutre / Mixte';
+
+  @override
+  String get intensityMild => 'Légère';
+
+  @override
+  String get intensityModerate => 'Modérée';
+
+  @override
+  String get intensityStrong => 'Forte';
+
+  @override
+  String get contextFactors => 'Facteurs contextuels';
+
+  @override
+  String get contextFactorsDescription =>
+      'Contexte optionnel pouvant influencer votre humeur';
+
+  @override
+  String get sleepHours => 'Heures de sommeil';
+
+  @override
+  String get sleepQuality => 'Qualité du sommeil';
+
+  @override
+  String get exercisedToday => 'Fait du sport aujourd\'hui';
+
+  @override
+  String get stressLevel => 'Niveau de stress';
+
+  @override
+  String get addTagHint => 'Ajouter un tag (ex. voyage, malade, rendez-vous)';
+
+  @override
+  String get ratingModeLabel => 'Mode d\'évaluation';
+
+  @override
+  String get quickMode => 'Rapide (10 sec)';
+
+  @override
+  String get balancedMode => 'Équilibré (30 sec)';
+
+  @override
+  String get detailedMode => 'Détaillé (60 sec)';
+
+  @override
+  String get customMode => 'Personnalisé';
+
+  @override
+  String get switchToEnhancedMode => 'Passer au mode amélioré';
+
+  @override
+  String get switchToSimpleMode => 'Passer au mode simple';
+
+  @override
+  String get rateWellbeingDimensions =>
+      'Évaluez votre bien-être selon les dimensions clés';
+
+  @override
+  String get showQuickMood => 'Afficher la carte d\'humeur rapide';
+
+  @override
+  String get showEmotionWheel => 'Afficher la roue des émotions';
+
+  @override
+  String get showContextFactors => 'Afficher les facteurs contextuels';
+
+  @override
+  String get useLegacyRating => 'Utiliser l\'évaluation simple (4 catégories)';
 }
