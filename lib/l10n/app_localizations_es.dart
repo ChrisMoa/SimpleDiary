@@ -1745,4 +1745,86 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get backupLocationReset => 'Restablecer a predeterminado';
+
+  @override
+  String get onboardingWelcomeTitle => 'Bienvenido a SimpleDiary';
+
+  @override
+  String get onboardingWelcomeDescription =>
+      'Tu compañero personal de reflexión diaria.\nRegistra tus días, descubre patrones y crece cada semana.';
+
+  @override
+  String get onboardingRatingsTitle => 'Valora tu día';
+
+  @override
+  String get onboardingRatingsDescription =>
+      'Puntúa cuatro áreas clave cada día:\nSocial · Productividad · Deporte · Alimentación.\nVe de un vistazo qué tan equilibrada es tu vida.';
+
+  @override
+  String get onboardingNotesTitle => 'Añadir actividades';
+
+  @override
+  String get onboardingNotesDescription =>
+      'Registra notas y eventos con categorías como Trabajo, Gimnasio, Ocio y más.\nTodo aparece en tu calendario personal.';
+
+  @override
+  String get onboardingInsightsTitle => 'Descubrir patrones';
+
+  @override
+  String get onboardingInsightsDescription =>
+      'El panel muestra rachas, estadísticas semanales e información.\nDescubre qué actividades mejoran más tu estado de ánimo.';
+
+  @override
+  String get onboardingGetStartedTitle => '¿Listo para empezar?';
+
+  @override
+  String get onboardingGetStartedDescription =>
+      'Explora primero con datos de muestra o crea tu cuenta directamente.';
+
+  @override
+  String get onboardingExploreDemo => 'Explorar con datos de ejemplo';
+
+  @override
+  String get onboardingCreateAccount => 'Crear cuenta';
+
+  @override
+  String get onboardingSkip => 'Omitir';
+
+  @override
+  String get onboardingNext => 'Siguiente';
+
+  @override
+  String get setupWizardTitle => 'Configuración rápida';
+
+  @override
+  String get setupWizardThemeTitle => 'Elige tu tema';
+
+  @override
+  String get setupWizardThemeHint =>
+      'Puedes cambiarlo en cualquier momento en Ajustes.';
+
+  @override
+  String get setupWizardThemeLight => 'Claro';
+
+  @override
+  String get setupWizardThemeDark => 'Oscuro';
+
+  @override
+  String get setupWizardLanguageTitle => 'Elige tu idioma';
+
+  @override
+  String get setupWizardLanguageHint =>
+      'Puedes cambiarlo en cualquier momento en Ajustes.';
+
+  @override
+  String get setupWizardNext => 'Siguiente';
+
+  @override
+  String get setupWizardDone => 'Listo';
+
+  @override
+  String get demoModeBannerText => 'Explorando con datos de ejemplo';
+
+  @override
+  String get demoModeCreateAccount => 'Crear cuenta';
 }

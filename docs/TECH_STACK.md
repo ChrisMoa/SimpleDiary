@@ -9,7 +9,7 @@
 | Property | Value |
 |----------|-------|
 | **App Name** | SimpleDiary (package: `day_tracker`) |
-| **Version** | 1.0.15+1 |
+| **Version** | 1.0.16+1 |
 | **Platform Support** | Android, Linux, Windows |
 | **Dart SDK** | >=3.0.3 <4.0.0 |
 | **Flutter Version (CI)** | 3.29.3 stable |
@@ -120,8 +120,9 @@ lib/
 │   ├── encryption/                # AES encryptor
 │   ├── log/                       # Logger configuration
 │   ├── navigation/                # Drawer items
+│   ├── onboarding/                # OnboardingStatus model, DemoDataGenerator
 │   ├── provider/                  # Global providers (theme, keyboard)
-│   ├── services/                  # BackupService, BackupScheduler, NotificationService
+│   ├── services/                  # BackupService, BackupScheduler, NotificationService, OnboardingService
 │   ├── settings/                  # SettingsContainer, BackupSettings, etc.
 │   ├── theme/                     # Theme definitions
 │   ├── utils/                     # Utilities, platform detection
@@ -136,6 +137,7 @@ lib/
 │   ├── day_rating/                # Diary wizard, day ratings
 │   ├── note_templates/            # Note templates
 │   ├── notes/                     # Notes, categories
+│   ├── onboarding/                # Onboarding flow, setup wizard, demo mode banner
 │   └── synchronization/           # File export/import, Supabase sync
 │
 └── main.dart                      # App entry point
@@ -368,14 +370,24 @@ LogWrapper.logger.t('Trace message');
    - Read settings from `settings.json`
    - Initialize database (FFI for desktop)
 
-2. **MainPage** checks `userDataProvider`:
+2. **MainPage** (`_onInitAsync`) checks onboarding status via `OnboardingService`:
+   - Sets `onboardingCompletedProvider` and `isDemoModeProvider` from SharedPreferences
+
+3. **MainPage** checks routing in order:
+   - Onboarding not completed → `OnboardingPage` (first-launch swipeable tutorial)
+     - "Explore Demo" → creates `Demo User` account, generates sample data, shows `DemoModeBanner`
+     - "Create Account" → `SetupWizardPage` (theme + language) → `AuthUserDataPage`
    - No username → `AuthUserDataPage` (register/select user)
    - Username but not logged in → `PasswordAuthenticationPage`
    - Logged in → Show app with drawer navigation
 
-3. **Password Storage**:
+4. **Password Storage**:
    - Passwords hashed with SHA-256 + salt
    - Stored in `UserData.passwordHash`
+
+5. **Demo User Cleanup**:
+   - `Demo User` account is automatically removed from `settings.json` when a real account is created
+   - Demo mode SharedPreferences flag is cleared; `DemoModeBanner` disappears
 
 ---
 
@@ -618,4 +630,4 @@ flutter clean
 
 ---
 
-*Last updated: 2026-02-20*
+*Last updated: 2026-02-22*

@@ -3233,6 +3233,156 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Reset to Default'**
   String get backupLocationReset;
+
+  /// No description provided for @onboardingWelcomeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome to SimpleDiary'**
+  String get onboardingWelcomeTitle;
+
+  /// No description provided for @onboardingWelcomeDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Your personal daily reflection companion.\nTrack your days, discover patterns, and grow every week.'**
+  String get onboardingWelcomeDescription;
+
+  /// No description provided for @onboardingRatingsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Rate Your Day'**
+  String get onboardingRatingsTitle;
+
+  /// No description provided for @onboardingRatingsDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Score four key areas every day:\nSocial · Productivity · Sport · Food.\nSee at a glance how balanced your life is.'**
+  String get onboardingRatingsDescription;
+
+  /// No description provided for @onboardingNotesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Activities'**
+  String get onboardingNotesTitle;
+
+  /// No description provided for @onboardingNotesDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Log notes and events with categories like Work, Gym, Leisure and more.\nEverything appears on your personal calendar.'**
+  String get onboardingNotesDescription;
+
+  /// No description provided for @onboardingInsightsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Discover Patterns'**
+  String get onboardingInsightsTitle;
+
+  /// No description provided for @onboardingInsightsDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'The dashboard shows streaks, weekly stats and insights.\nFind out which activities boost your mood the most.'**
+  String get onboardingInsightsDescription;
+
+  /// No description provided for @onboardingGetStartedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Ready to Start?'**
+  String get onboardingGetStartedTitle;
+
+  /// No description provided for @onboardingGetStartedDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Explore with sample data first, or jump straight in and create your account.'**
+  String get onboardingGetStartedDescription;
+
+  /// No description provided for @onboardingExploreDemo.
+  ///
+  /// In en, this message translates to:
+  /// **'Explore with Demo Data'**
+  String get onboardingExploreDemo;
+
+  /// No description provided for @onboardingCreateAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Account'**
+  String get onboardingCreateAccount;
+
+  /// No description provided for @onboardingSkip.
+  ///
+  /// In en, this message translates to:
+  /// **'Skip'**
+  String get onboardingSkip;
+
+  /// No description provided for @onboardingNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get onboardingNext;
+
+  /// No description provided for @setupWizardTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick Setup'**
+  String get setupWizardTitle;
+
+  /// No description provided for @setupWizardThemeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose Your Theme'**
+  String get setupWizardThemeTitle;
+
+  /// No description provided for @setupWizardThemeHint.
+  ///
+  /// In en, this message translates to:
+  /// **'You can change this anytime in Settings.'**
+  String get setupWizardThemeHint;
+
+  /// No description provided for @setupWizardThemeLight.
+  ///
+  /// In en, this message translates to:
+  /// **'Light'**
+  String get setupWizardThemeLight;
+
+  /// No description provided for @setupWizardThemeDark.
+  ///
+  /// In en, this message translates to:
+  /// **'Dark'**
+  String get setupWizardThemeDark;
+
+  /// No description provided for @setupWizardLanguageTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose Your Language'**
+  String get setupWizardLanguageTitle;
+
+  /// No description provided for @setupWizardLanguageHint.
+  ///
+  /// In en, this message translates to:
+  /// **'You can change this anytime in Settings.'**
+  String get setupWizardLanguageHint;
+
+  /// No description provided for @setupWizardNext.
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get setupWizardNext;
+
+  /// No description provided for @setupWizardDone.
+  ///
+  /// In en, this message translates to:
+  /// **'Done'**
+  String get setupWizardDone;
+
+  /// No description provided for @demoModeBannerText.
+  ///
+  /// In en, this message translates to:
+  /// **'Exploring with demo data'**
+  String get demoModeBannerText;
+
+  /// No description provided for @demoModeCreateAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Create Account'**
+  String get demoModeCreateAccount;
 }
 
 class _AppLocalizationsDelegate
