@@ -1,5 +1,6 @@
 import 'package:day_tracker/core/widgets/app_ui_kit.dart';
 import 'package:day_tracker/features/day_rating/data/models/enhanced_day_rating.dart';
+import 'package:day_tracker/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 
 /// Widget for capturing contextual factors (Tier 4).
@@ -39,6 +40,7 @@ class _ContextFactorsWidgetState extends State<ContextFactorsWidget> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
     final f = widget.factors;
 
     return Column(
@@ -51,7 +53,7 @@ class _ContextFactorsWidgetState extends State<ContextFactorsWidget> {
             AppSpacing.horizontalXs,
             Flexible(
               child: Text(
-                'Context Factors',
+                l10n.contextFactors,
                 style: theme.textTheme.titleMedium?.copyWith(
                   color: theme.colorScheme.onSurface,
                   fontWeight: FontWeight.bold,
@@ -62,7 +64,7 @@ class _ContextFactorsWidgetState extends State<ContextFactorsWidget> {
         ),
         AppSpacing.verticalXxs,
         Text(
-          'Optional context that may influence your mood',
+          l10n.contextFactorsDescription,
           style: theme.textTheme.bodySmall?.copyWith(
             color: theme.colorScheme.onSurfaceVariant,
           ),
@@ -70,7 +72,7 @@ class _ContextFactorsWidgetState extends State<ContextFactorsWidget> {
         AppSpacing.verticalSm,
 
         // Sleep hours
-        _SectionLabel(icon: Icons.bedtime, label: 'Sleep Hours', theme: theme),
+        _SectionLabel(icon: Icons.bedtime, label: l10n.sleepHours, theme: theme),
         AppSpacing.verticalXxs,
         Row(
           children: [
@@ -80,17 +82,17 @@ class _ContextFactorsWidgetState extends State<ContextFactorsWidget> {
                 min: 0,
                 max: 12,
                 divisions: 24,
-                label:
-                    '${(f.sleepHours ?? 7.0).toStringAsFixed(1)} h',
-                onChanged: (v) =>
-                    _update(f.copyWith(sleepHours: v)),
+                label: '${(f.sleepHours ?? 7.0).toStringAsFixed(1)} h',
+                onChanged: (v) => _update(f.copyWith(sleepHours: v)),
               ),
             ),
             SizedBox(
               width: 52,
               child: Text(
                 '${(f.sleepHours ?? 7.0).toStringAsFixed(1)} h',
-                style: theme.textTheme.bodySmall,
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: theme.colorScheme.onSurface,
+                ),
                 textAlign: TextAlign.end,
               ),
             ),
@@ -100,7 +102,7 @@ class _ContextFactorsWidgetState extends State<ContextFactorsWidget> {
         AppSpacing.verticalXs,
 
         // Sleep quality
-        _SectionLabel(icon: Icons.star_half, label: 'Sleep Quality', theme: theme),
+        _SectionLabel(icon: Icons.star_half, label: l10n.sleepQuality, theme: theme),
         AppSpacing.verticalXxs,
         _FiveStepRow(
           value: f.sleepQuality ?? 0,
@@ -112,7 +114,7 @@ class _ContextFactorsWidgetState extends State<ContextFactorsWidget> {
         AppSpacing.verticalSm,
 
         // Exercise
-        _SectionLabel(icon: Icons.directions_run, label: 'Exercised Today', theme: theme),
+        _SectionLabel(icon: Icons.directions_run, label: l10n.exercisedToday, theme: theme),
         AppSpacing.verticalXxs,
         Row(
           children: [
@@ -123,7 +125,9 @@ class _ContextFactorsWidgetState extends State<ContextFactorsWidget> {
             AppSpacing.horizontalXs,
             Text(
               (f.exercised ?? false) ? 'Yes' : 'No',
-              style: theme.textTheme.bodyMedium,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: theme.colorScheme.onSurface,
+              ),
             ),
           ],
         ),
@@ -131,7 +135,7 @@ class _ContextFactorsWidgetState extends State<ContextFactorsWidget> {
         AppSpacing.verticalSm,
 
         // Stress level
-        _SectionLabel(icon: Icons.psychology_alt, label: 'Stress Level', theme: theme),
+        _SectionLabel(icon: Icons.psychology_alt, label: l10n.stressLevel, theme: theme),
         AppSpacing.verticalXxs,
         _FiveStepRow(
           value: f.stressLevel ?? 0,
@@ -169,7 +173,7 @@ class _ContextFactorsWidgetState extends State<ContextFactorsWidget> {
             Expanded(
               child: AppTextField(
                 controller: _tagController,
-                hint: 'Add a tag (e.g. travel, sick, date night)',
+                hint: l10n.addTagHint,
                 onSubmitted: (_) => _addTag(),
               ),
             ),
@@ -177,7 +181,7 @@ class _ContextFactorsWidgetState extends State<ContextFactorsWidget> {
             IconButton(
               onPressed: _addTag,
               icon: const Icon(Icons.add_circle_outline),
-              tooltip: 'Add tag',
+              tooltip: l10n.add,
             ),
           ],
         ),

@@ -1,5 +1,6 @@
 import 'package:day_tracker/core/widgets/app_ui_kit.dart';
 import 'package:day_tracker/features/day_rating/data/models/enhanced_day_rating.dart';
+import 'package:day_tracker/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 
 /// Displays PERMA+ wellbeing dimension sliders.
@@ -18,47 +19,47 @@ class WellbeingDimensionsWidget extends StatelessWidget {
     required this.onChanged,
   });
 
-  static const _allDimensions = [
+  static List<_Dimension> _getDimensions(AppLocalizations l10n) => [
     _Dimension(
       key: 'mood',
       icon: Icons.sentiment_satisfied_alt,
-      label: 'Mood',
-      subtitle: 'How did you feel emotionally today?',
+      label: l10n.overallMoodDimension,
+      subtitle: l10n.howDidYouFeel,
       color: Colors.purple,
     ),
     _Dimension(
       key: 'energy',
       icon: Icons.bolt,
-      label: 'Energy',
-      subtitle: 'Your physical vitality and alertness',
+      label: l10n.energyDimension,
+      subtitle: l10n.physicalVitality,
       color: Colors.orange,
     ),
     _Dimension(
       key: 'connection',
       icon: Icons.people,
-      label: 'Connection',
-      subtitle: 'Quality of social interactions',
+      label: l10n.connectionDimension,
+      subtitle: l10n.socialConnections,
       color: Colors.blue,
     ),
     _Dimension(
       key: 'purpose',
       icon: Icons.track_changes,
-      label: 'Purpose',
-      subtitle: 'Sense of meaning and direction',
+      label: l10n.purposeDimension,
+      subtitle: l10n.meaningAndPurpose,
       color: Colors.teal,
     ),
     _Dimension(
       key: 'achievement',
       icon: Icons.check_circle_outline,
-      label: 'Achievement',
-      subtitle: 'Progress on goals and tasks',
+      label: l10n.achievementDimension,
+      subtitle: l10n.accomplishments,
       color: Colors.green,
     ),
     _Dimension(
       key: 'engagement',
       icon: Icons.psychology,
-      label: 'Engagement',
-      subtitle: 'Absorbed in enjoyable activities',
+      label: l10n.engagementDimension,
+      subtitle: l10n.flowAndAbsorption,
       color: Colors.indigo,
     ),
   ];
@@ -66,7 +67,8 @@ class WellbeingDimensionsWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final visible = _allDimensions
+    final l10n = AppLocalizations.of(context)!;
+    final visible = _getDimensions(l10n)
         .where((d) => enabledDimensions.contains(d.key))
         .toList();
 
@@ -80,7 +82,7 @@ class WellbeingDimensionsWidget extends StatelessWidget {
             AppSpacing.horizontalXs,
             Flexible(
               child: Text(
-                'Wellbeing Dimensions',
+                l10n.wellbeingDimensions,
                 style: theme.textTheme.titleMedium?.copyWith(
                   color: theme.colorScheme.onSurface,
                   fontWeight: FontWeight.bold,
@@ -91,7 +93,7 @@ class WellbeingDimensionsWidget extends StatelessWidget {
         ),
         AppSpacing.verticalXxs,
         Text(
-          'PERMA+ model – rate each area of your day',
+          l10n.permaPlusDescription,
           style: theme.textTheme.bodySmall?.copyWith(
             color: theme.colorScheme.onSurfaceVariant,
           ),
@@ -163,25 +165,26 @@ class _DimensionSlider extends StatelessWidget {
     required this.theme,
   });
 
-  String get _label {
+  String _getLabel(AppLocalizations l10n) {
     switch (value) {
       case 1:
-        return 'Poor';
+        return l10n.ratingPoor;
       case 2:
-        return 'Fair';
+        return l10n.ratingFair;
       case 3:
-        return 'Good';
+        return l10n.ratingGood;
       case 4:
-        return 'Great';
+        return l10n.ratingGreat;
       case 5:
-        return 'Excellent';
+        return l10n.ratingExcellent;
       default:
-        return 'Not rated';
+        return l10n.notRated;
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final effectiveValue = value == 0 ? 3.0 : value.toDouble();
 
     return Padding(
@@ -206,6 +209,7 @@ class _DimensionSlider extends StatelessWidget {
                       Text(
                         dimension.label,
                         style: theme.textTheme.titleSmall?.copyWith(
+                          color: theme.colorScheme.onSurface,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -226,7 +230,7 @@ class _DimensionSlider extends StatelessWidget {
                     borderRadius: BorderRadius.circular(AppRadius.sm),
                   ),
                   child: Text(
-                    _label,
+                    _getLabel(l10n),
                     style: theme.textTheme.labelSmall?.copyWith(
                       color: _scoreColor(value),
                       fontWeight: FontWeight.bold,

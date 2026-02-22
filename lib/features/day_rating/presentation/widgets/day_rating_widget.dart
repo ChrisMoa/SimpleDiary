@@ -66,7 +66,7 @@ class DayRatingWidget extends ConsumerWidget {
                 Text(
                   isLegacy
                       ? AppLocalizations.of(context)!.howWasYourDay
-                      : 'Rate your wellbeing across key dimensions',
+                      : AppLocalizations.of(context)!.rateWellbeingDimensions,
                   style: theme.textTheme.bodyMedium?.copyWith(
                     color: theme.colorScheme.onSecondaryContainer,
                   ),
@@ -76,7 +76,9 @@ class DayRatingWidget extends ConsumerWidget {
           ),
           // Toggle between legacy and enhanced
           Tooltip(
-            message: isLegacy ? 'Switch to Enhanced Mode' : 'Switch to Simple Mode',
+            message: isLegacy
+                ? AppLocalizations.of(context)!.switchToEnhancedMode
+                : AppLocalizations.of(context)!.switchToSimpleMode,
             child: IconButton(
               icon: Icon(
                 isLegacy ? Icons.science_outlined : Icons.star_outline,
@@ -316,7 +318,7 @@ class _LegacyRatingBody extends ConsumerWidget {
               SizedBox(height: spacingSmall),
               Center(
                 child: Text(
-                  _getRatingLabel(rating.score),
+                  _getRatingLabel(context, rating.score),
                   style: theme.textTheme.titleMedium?.copyWith(
                     color: _getRatingColor(rating.score, theme),
                     fontWeight: FontWeight.bold,
@@ -363,20 +365,21 @@ class _LegacyRatingBody extends ConsumerWidget {
     }
   }
 
-  String _getRatingLabel(int score) {
+  String _getRatingLabel(BuildContext context, int score) {
+    final l10n = AppLocalizations.of(context)!;
     switch (score) {
       case 1:
-        return 'Poor';
+        return l10n.ratingPoor;
       case 2:
-        return 'Fair';
+        return l10n.ratingFair;
       case 3:
-        return 'Good';
+        return l10n.ratingGood;
       case 4:
-        return 'Great';
+        return l10n.ratingGreat;
       case 5:
-        return 'Excellent';
+        return l10n.ratingExcellent;
       default:
-        return 'Not Rated';
+        return l10n.notRated;
     }
   }
 
@@ -415,7 +418,7 @@ class _LegacyRatingBody extends ConsumerWidget {
     diaryDay.notes = validNotes;
 
     ref.read(diaryDayLocalDbDataProvider.notifier).addElement(diaryDay);
-    AppSnackBar.success(context, message: 'Day rating saved successfully!');
+    AppSnackBar.success(context, message: AppLocalizations.of(context)!.dayRatingSaved);
     ref.read(dayRatingsProvider.notifier).resetRatings();
   }
 }
@@ -558,7 +561,7 @@ class _EnhancedRatingBody extends ConsumerWidget {
     diaryDay.notes = validNotes;
 
     ref.read(diaryDayLocalDbDataProvider.notifier).addElement(diaryDay);
-    AppSnackBar.success(context, message: 'Day rating saved successfully!');
+    AppSnackBar.success(context, message: AppLocalizations.of(context)!.dayRatingSaved);
     ref.read(enhancedDayRatingProvider.notifier).reset(selectedDate);
   }
 }

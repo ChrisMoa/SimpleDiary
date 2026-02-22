@@ -1,5 +1,6 @@
 import 'package:day_tracker/core/widgets/app_ui_kit.dart';
 import 'package:day_tracker/features/day_rating/data/models/enhanced_day_rating.dart';
+import 'package:day_tracker/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 
 /// Interactive 2D mood map based on the Circumplex Model of Affect
@@ -69,6 +70,7 @@ class _MoodMapWidgetState extends State<MoodMapWidget> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -79,7 +81,7 @@ class _MoodMapWidgetState extends State<MoodMapWidget> {
             AppSpacing.horizontalXs,
             Flexible(
               child: Text(
-                'Quick Mood Check',
+                l10n.quickMoodCheck,
                 style: theme.textTheme.titleMedium?.copyWith(
                   color: theme.colorScheme.onSurface,
                   fontWeight: FontWeight.bold,
@@ -90,7 +92,7 @@ class _MoodMapWidgetState extends State<MoodMapWidget> {
         ),
         AppSpacing.verticalXxs,
         Text(
-          'Tap where you are on the mood map',
+          l10n.tapWhereYouAre,
           style: theme.textTheme.bodySmall?.copyWith(
             color: theme.colorScheme.onSurfaceVariant,
           ),
@@ -100,7 +102,7 @@ class _MoodMapWidgetState extends State<MoodMapWidget> {
         // Map
         LayoutBuilder(builder: (context, constraints) {
           final size = widget.size ?? constraints.maxWidth;
-          return _buildMap(context, theme, size);
+          return _buildMap(context, theme, size, l10n);
         }),
 
         // Label below the map
@@ -117,7 +119,7 @@ class _MoodMapWidgetState extends State<MoodMapWidget> {
     );
   }
 
-  Widget _buildMap(BuildContext context, ThemeData theme, double size) {
+  Widget _buildMap(BuildContext context, ThemeData theme, double size, AppLocalizations l10n) {
     return SizedBox(
       width: size,
       height: size,
@@ -129,6 +131,10 @@ class _MoodMapWidgetState extends State<MoodMapWidget> {
           painter: _MoodMapPainter(
             normalised: _normalised,
             theme: theme,
+            highEnergyLabel: '▲ ${l10n.highEnergy}',
+            lowEnergyLabel: '▼ ${l10n.lowEnergy}',
+            pleasantLabel: '${l10n.pleasant} ▶',
+            unpleasantLabel: '◀ ${l10n.unpleasant}',
           ),
         ),
       ),
@@ -182,8 +188,19 @@ class _MoodLabel extends StatelessWidget {
 class _MoodMapPainter extends CustomPainter {
   final Offset? normalised;
   final ThemeData theme;
+  final String highEnergyLabel;
+  final String lowEnergyLabel;
+  final String pleasantLabel;
+  final String unpleasantLabel;
 
-  const _MoodMapPainter({this.normalised, required this.theme});
+  const _MoodMapPainter({
+    this.normalised,
+    required this.theme,
+    required this.highEnergyLabel,
+    required this.lowEnergyLabel,
+    required this.pleasantLabel,
+    required this.unpleasantLabel,
+  });
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -243,10 +260,10 @@ class _MoodMapPainter extends CustomPainter {
       fontSize: 9,
       fontWeight: FontWeight.w600,
     );
-    _drawText(canvas, '▲ High Energy', Offset(w / 2 - 36, 2), axisStyle);
-    _drawText(canvas, '▼ Low Energy', Offset(w / 2 - 34, h - 14), axisStyle);
-    _drawText(canvas, '◀ Unpleasant', Offset(2, h / 2 - 6), axisStyle);
-    _drawText(canvas, 'Pleasant ▶', Offset(w - 66, h / 2 - 6), axisStyle);
+    _drawText(canvas, highEnergyLabel, Offset(w / 2 - 36, 2), axisStyle);
+    _drawText(canvas, lowEnergyLabel, Offset(w / 2 - 34, h - 14), axisStyle);
+    _drawText(canvas, unpleasantLabel, Offset(2, h / 2 - 6), axisStyle);
+    _drawText(canvas, pleasantLabel, Offset(w - 66, h / 2 - 6), axisStyle);
 
     // Marker
     if (normalised != null) {
@@ -289,5 +306,10 @@ class _MoodMapPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(_MoodMapPainter old) =>
-      old.normalised != normalised || old.theme != theme;
+      old.normalised != normalised ||
+      old.theme != theme ||
+      old.highEnergyLabel != highEnergyLabel ||
+      old.lowEnergyLabel != lowEnergyLabel ||
+      old.pleasantLabel != pleasantLabel ||
+      old.unpleasantLabel != unpleasantLabel;
 }

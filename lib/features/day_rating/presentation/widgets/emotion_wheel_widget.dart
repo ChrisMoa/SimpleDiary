@@ -1,5 +1,6 @@
 import 'package:day_tracker/core/widgets/app_ui_kit.dart';
 import 'package:day_tracker/features/day_rating/data/models/enhanced_day_rating.dart';
+import 'package:day_tracker/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 
 /// Emotion selection widget based on the emotion wheel concept.
@@ -16,11 +17,11 @@ class EmotionWheelWidget extends StatelessWidget {
     required this.onChanged,
   });
 
-  static const _groups = <_EmotionGroup>[
+  static List<_EmotionGroup> _getGroups(AppLocalizations l10n) => [
     _EmotionGroup(
-      label: 'Positive',
+      label: l10n.positiveEmotions,
       color: Colors.green,
-      emotions: [
+      emotions: const [
         EmotionType.joy,
         EmotionType.gratitude,
         EmotionType.serenity,
@@ -34,9 +35,9 @@ class EmotionWheelWidget extends StatelessWidget {
       ],
     ),
     _EmotionGroup(
-      label: 'Negative',
+      label: l10n.negativeEmotions,
       color: Colors.red,
-      emotions: [
+      emotions: const [
         EmotionType.sadness,
         EmotionType.anger,
         EmotionType.fear,
@@ -49,9 +50,9 @@ class EmotionWheelWidget extends StatelessWidget {
       ],
     ),
     _EmotionGroup(
-      label: 'Neutral / Mixed',
+      label: l10n.neutralEmotions,
       color: Colors.blueGrey,
-      emotions: [
+      emotions: const [
         EmotionType.neutral,
         EmotionType.surprised,
       ],
@@ -61,6 +62,7 @@ class EmotionWheelWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -71,7 +73,7 @@ class EmotionWheelWidget extends StatelessWidget {
             AppSpacing.horizontalXs,
             Flexible(
               child: Text(
-                'Select Emotions',
+                l10n.selectEmotions,
                 style: theme.textTheme.titleMedium?.copyWith(
                   color: theme.colorScheme.onSurface,
                   fontWeight: FontWeight.bold,
@@ -82,7 +84,7 @@ class EmotionWheelWidget extends StatelessWidget {
         ),
         AppSpacing.verticalXxs,
         Text(
-          'How are you feeling? (select all that apply)',
+          l10n.howAreYouFeeling,
           style: theme.textTheme.bodySmall?.copyWith(
             color: theme.colorScheme.onSurfaceVariant,
           ),
@@ -90,7 +92,7 @@ class EmotionWheelWidget extends StatelessWidget {
         AppSpacing.verticalSm,
 
         // Groups
-        ..._groups.map((group) => _buildGroup(context, theme, group)),
+        ..._getGroups(l10n).map((group) => _buildGroup(context, theme, group)),
       ],
     );
   }
@@ -147,6 +149,7 @@ class EmotionWheelWidget extends StatelessWidget {
     Color color,
     int current,
   ) {
+    final l10n = AppLocalizations.of(context)!;
     showDialog<void>(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -155,7 +158,7 @@ class EmotionWheelWidget extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             _IntensityOption(
-              label: 'Mild',
+              label: l10n.intensityMild,
               intensity: 1,
               color: color,
               selected: current == 1,
@@ -165,7 +168,7 @@ class EmotionWheelWidget extends StatelessWidget {
               },
             ),
             _IntensityOption(
-              label: 'Moderate',
+              label: l10n.intensityModerate,
               intensity: 2,
               color: color,
               selected: current == 2,
@@ -175,7 +178,7 @@ class EmotionWheelWidget extends StatelessWidget {
               },
             ),
             _IntensityOption(
-              label: 'Strong',
+              label: l10n.intensityStrong,
               intensity: 3,
               color: color,
               selected: current == 3,
@@ -196,7 +199,7 @@ class EmotionWheelWidget extends StatelessWidget {
           ),
           TextButton(
             onPressed: () => Navigator.pop(ctx),
-            child: const Text('Cancel'),
+            child: Text(l10n.cancel),
           ),
         ],
       ),
