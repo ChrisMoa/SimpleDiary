@@ -1,6 +1,7 @@
 import 'package:day_tracker/core/log/logger_instance.dart';
 import 'package:day_tracker/core/utils/utils.dart';
 import 'package:day_tracker/features/day_rating/data/models/day_rating.dart';
+import 'package:day_tracker/features/day_rating/data/models/enhanced_day_rating.dart';
 import 'package:day_tracker/features/notes/data/models/note.dart';
 import 'package:day_tracker/features/notes/data/models/note_category.dart';
 import 'package:day_tracker/features/notes/domain/providers/category_local_db_provider.dart';
@@ -280,4 +281,46 @@ final createNoteFromTemplateProvider = Provider.family<Note, NoteTemplate>((ref,
     noteCategory: template.noteCategory,
   );
 });
+
+// ── Enhanced day rating provider ───────────────────────────────────────────
+
+/// Holds the in-progress [EnhancedDayRating] for the selected date.
+/// Reset to empty whenever the wizard date changes.
+final enhancedDayRatingProvider =
+    StateNotifierProvider<EnhancedDayRatingNotifier, EnhancedDayRating>(
+  (ref) {
+    final date = ref.watch(wizardSelectedDateProvider);
+    return EnhancedDayRatingNotifier(date);
+  },
+);
+
+class EnhancedDayRatingNotifier extends StateNotifier<EnhancedDayRating> {
+  EnhancedDayRatingNotifier(DateTime date)
+      : super(EnhancedDayRating.empty(date));
+
+  void updateQuickMood(MoodPosition position) {
+    state = state.copyWith(quickMood: position);
+  }
+
+  void updateWellbeing(WellbeingRating wellbeing) {
+    state = state.copyWith(wellbeing: wellbeing);
+  }
+
+  void updateEmotions(List<EmotionEntry> emotions) {
+    state = state.copyWith(emotions: emotions);
+  }
+
+  void updateContext(ContextualFactors context) {
+    state = state.copyWith(context: context);
+  }
+
+  void reset(DateTime date) {
+    state = EnhancedDayRating.empty(date);
+  }
+
+  /// Pre-fill from a previously saved [EnhancedDayRating] (e.g. when editing).
+  void loadExisting(EnhancedDayRating existing) {
+    state = existing;
+  }
+}
 

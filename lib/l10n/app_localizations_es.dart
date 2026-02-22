@@ -1827,4 +1827,149 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get demoModeCreateAccount => 'Crear cuenta';
+
+  @override
+  String get quickMoodCheck => 'Verificación rápida del estado de ánimo';
+
+  @override
+  String get tapWhereYouAre => 'Toca donde estás en el mapa de ánimo';
+
+  @override
+  String get highEnergy => 'Energía alta';
+
+  @override
+  String get lowEnergy => 'Energía baja';
+
+  @override
+  String get pleasant => 'Agradable';
+
+  @override
+  String get unpleasant => 'Desagradable';
+
+  @override
+  String get wellbeingDimensions => 'Dimensiones del bienestar';
+
+  @override
+  String get permaPlusDescription =>
+      'Modelo PERMA+ – valora cada área de tu día';
+
+  @override
+  String get overallMoodDimension => 'Estado de ánimo';
+
+  @override
+  String get howDidYouFeel => '¿Cómo te sentiste emocionalmente hoy?';
+
+  @override
+  String get energyDimension => 'Energía';
+
+  @override
+  String get physicalVitality => 'Tu vitalidad física y estado de alerta';
+
+  @override
+  String get connectionDimension => 'Conexión';
+
+  @override
+  String get socialConnections => 'Calidad de las interacciones sociales';
+
+  @override
+  String get purposeDimension => 'Propósito';
+
+  @override
+  String get meaningAndPurpose => 'Sentido de significado y dirección';
+
+  @override
+  String get achievementDimension => 'Logro';
+
+  @override
+  String get accomplishments => 'Progreso en metas y tareas';
+
+  @override
+  String get engagementDimension => 'Compromiso';
+
+  @override
+  String get flowAndAbsorption => 'Absorto en actividades placenteras';
+
+  @override
+  String get selectEmotions => 'Seleccionar emociones';
+
+  @override
+  String get howAreYouFeeling =>
+      '¿Cómo te sientes? (selecciona todo lo que corresponda)';
+
+  @override
+  String get positiveEmotions => 'Positivo';
+
+  @override
+  String get negativeEmotions => 'Negativo';
+
+  @override
+  String get neutralEmotions => 'Neutral / Mixto';
+
+  @override
+  String get intensityMild => 'Leve';
+
+  @override
+  String get intensityModerate => 'Moderado';
+
+  @override
+  String get intensityStrong => 'Intenso';
+
+  @override
+  String get contextFactors => 'Factores contextuales';
+
+  @override
+  String get contextFactorsDescription =>
+      'Contexto opcional que puede influir en tu estado de ánimo';
+
+  @override
+  String get sleepHours => 'Horas de sueño';
+
+  @override
+  String get sleepQuality => 'Calidad del sueño';
+
+  @override
+  String get exercisedToday => 'Hice ejercicio hoy';
+
+  @override
+  String get stressLevel => 'Nivel de estrés';
+
+  @override
+  String get addTagHint => 'Añadir etiqueta (ej. viaje, enfermo, cita)';
+
+  @override
+  String get ratingModeLabel => 'Modo de valoración';
+
+  @override
+  String get quickMode => 'Rápido (10 seg)';
+
+  @override
+  String get balancedMode => 'Equilibrado (30 seg)';
+
+  @override
+  String get detailedMode => 'Detallado (60 seg)';
+
+  @override
+  String get customMode => 'Personalizado';
+
+  @override
+  String get switchToEnhancedMode => 'Cambiar al modo mejorado';
+
+  @override
+  String get switchToSimpleMode => 'Cambiar al modo simple';
+
+  @override
+  String get rateWellbeingDimensions =>
+      'Valora tu bienestar en las dimensiones clave';
+
+  @override
+  String get showQuickMood => 'Mostrar mapa rápido del ánimo';
+
+  @override
+  String get showEmotionWheel => 'Mostrar rueda de emociones';
+
+  @override
+  String get showContextFactors => 'Mostrar factores contextuales';
+
+  @override
+  String get useLegacyRating => 'Usar valoración simple (4 categorías)';
 }

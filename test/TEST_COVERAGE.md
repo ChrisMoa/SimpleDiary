@@ -1,6 +1,6 @@
 # Test Coverage
 
-**Total: 709 passing tests** across 43 test files (+ 11 optional Supabase integration tests)
+**Total: 762 passing tests** across 45 test files (+ 11 optional Supabase integration tests)
 
 Run all tests with:
 ```bash
@@ -103,9 +103,11 @@ flutter test test/core/ test/features/ test/l10n/
 |------|-------|--------|
 | `models/day_rating_test.dart` | 12 | `DayRatings` enum `stringToEnum` (all valid values, invalid/empty/case-sensitive), `DayRating` default score (-1), custom score, `toMap`/`fromMap` round-trip for all types, Firestore map conversion (`toFirestoreMap` structure, `fromFirestoreMap` parsing), score mutation |
 | `models/diary_day_test.dart` | 11 | DiaryDay construction (required fields, `fromEmpty`), `overallScore` (sum, empty, single), `toMap`/`fromMap` (data, with notes, keys), LocalDb map (JSON-encoded ratings round-trip), `primaryKeyValue` (ISO date format, padding) |
+| `models/enhanced_day_rating_test.dart` | 39 | **MoodPosition:** valence/arousal storage, quadrant detection (all 4 quadrants), label generation (Excited/Anxious/Calm/Sad/Pleasant/Neutral), `copyWith`, `toMap`/`fromMap` round-trip. **WellbeingRating:** defaults (all zero), `totalScore`, `averageScore` (excludes zeros, 0.0 when empty), `isComplete`, `copyWith`, `toMap`/`fromMap` round-trip, missing keys default to zero, `WellbeingRating.empty()`. **EmotionEntry:** construction, `copyWith`, `toMap`/`fromMap` round-trip, unknown emotion fallback to neutral. **ContextualFactors:** defaults (all null/empty), `copyWith`, `toMap`/`fromMap` round-trip (sleepHours/quality/exercised/stressLevel/tags), missing keys, `ContextualFactors.empty()`. **EnhancedDayRating:** `empty()` factory, `overallScore` (0 when empty, scales 0-30→0-20, half wellbeing→12), `copyWith`, `toMap`/`fromMap` round-trip (with/without quickMood, emotions, context), `toJson`/`fromJson` round-trip |
+| `models/rating_preferences_test.dart` | 10 | **RatingPreferences:** default values (mode=balanced, showQuickMood=true, 6 enabled dimensions), `copyWith` (single/multiple/no-args), `toMap`/`fromMap` round-trip (all fields, missing keys→defaults, unknown mode→balanced), `toJson`/`fromJson` round-trip. **RatingMode enum:** distinct names, 4 values (quick/balanced/detailed/custom) |
 | `wizard_logic_test.dart` | 22 | **isDayFullyScheduled:** empty, full coverage (7:00-22:00), gaps, contiguous, late start, early end, overlapping, unsorted input. **nextAvailableTimeSlot:** empty (7:00 default), gap at beginning/middle/end, fully booked (next day). **isDayFinished (15-min chunks):** empty, full, 30-min gap detection, contiguous, many small notes. **DayRatings:** default initialization (score 3), update preserves others, reset. **Note date filtering** |
 
-**Sources:** `lib/features/day_rating/data/models/day_rating.dart`, `diary_day.dart`, `lib/features/day_rating/domain/providers/diary_wizard_providers.dart`
+**Sources:** `lib/features/day_rating/data/models/day_rating.dart`, `diary_day.dart`, `enhanced_day_rating.dart`, `rating_preferences.dart`, `lib/features/day_rating/domain/providers/diary_wizard_providers.dart`
 
 ### Notes (`test/features/notes/`)
 
