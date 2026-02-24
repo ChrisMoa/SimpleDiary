@@ -6,7 +6,13 @@ import 'package:flutter/material.dart';
 import 'package:day_tracker/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-/// Quick stats header showing today's status, streak, and weekly average
+/// Quick stats header showing today's status, streak, and weekly average.
+///
+/// Uses a two-layer structure to reduce unnecessary rebuilds:
+/// - Outer [QuickStatsHeader] watches [dashboardStatsProvider] only for
+///   loading/error state.
+/// - Inner [_QuickStatsContent] watches granular providers so it only rebuilds
+///   when the specific values it displays actually change.
 class QuickStatsHeader extends ConsumerWidget {
   const QuickStatsHeader({super.key});
 
@@ -14,7 +20,6 @@ class QuickStatsHeader extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final statsAsync = ref.watch(dashboardStatsProvider);
     final theme = Theme.of(context);
-    final isDesktop = ResponsiveBreakpoints.isDesktop(context);
 
     return statsAsync.when(
       loading: () => AppCard.elevated(
@@ -44,78 +49,96 @@ class QuickStatsHeader extends ConsumerWidget {
         padding: AppSpacing.paddingAllXl,
         child: Text(AppLocalizations.of(context)!.errorWithMessage(error.toString())),
       ),
-      data: (stats) {
-        final l10n = AppLocalizations.of(context)!;
-        final colorScheme = theme.colorScheme;
-        // Use theme colors: primary for done, error for pending
-        final statusColor = stats.todayLogged ? colorScheme.primary : colorScheme.error;
-        final statusIcon = stats.todayLogged ? Icons.check_circle : Icons.pending;
-        final statusText = stats.todayLogged ? l10n.recorded : l10n.pending;
+      // Return const widget so Flutter skips rebuild of its subtree.
+      // _QuickStatsContent watches granular providers for selective updates.
+      data: (_) => const _QuickStatsContent(),
+    );
+  }
+}
 
-        return AppCard.elevated(
-          margin: AppSpacing.paddingAllMd,
-          padding: AppSpacing.paddingAllLg,
-          child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+/// Inner content widget that watches only the granular providers it needs.
+/// Only rebuilds when streak, average, or todayLogged actually change —
+/// not when unrelated stats (insights, monthly trend, etc.) update.
+class _QuickStatsContent extends ConsumerWidget {
+  const _QuickStatsContent();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final streak = ref.watch(currentStreakProvider);
+    final average = ref.watch(weekAverageProvider);
+    final todayLogged = ref.watch(todayLoggedProvider);
+
+    final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
+    final colorScheme = theme.colorScheme;
+    final isDesktop = ResponsiveBreakpoints.isDesktop(context);
+
+    final statusColor = todayLogged ? colorScheme.primary : colorScheme.error;
+    final statusIcon = todayLogged ? Icons.check_circle : Icons.pending;
+    final statusText = todayLogged ? l10n.recorded : l10n.pending;
+
+    return AppCard.elevated(
+      margin: AppSpacing.paddingAllMd,
+      padding: AppSpacing.paddingAllLg,
+      child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Header row
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                // Header row
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      l10n.today,
-                      style: theme.textTheme.headlineSmall?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: theme.colorScheme.onSurface,
-                      ),
-                    ),
-                    Icon(statusIcon, color: statusColor, size: 32),
-                  ],
-                ),
-                AppSpacing.verticalMd,
-
-                // Stats grid
-                isDesktop
-                    ? Row(
-                        children: [
-                          Expanded(child: _buildStreakStat(stats.currentStreak, theme, l10n)),
-                          AppSpacing.horizontalMd,
-                          Expanded(child: _buildAverageStat(stats.weekStats.averageScore, theme, l10n)),
-                          AppSpacing.horizontalMd,
-                          Expanded(child: _buildStatusStat(statusText, statusColor, theme, l10n)),
-                        ],
-                      )
-                    : Column(
-                        children: [
-                          _buildStreakStat(stats.currentStreak, theme, l10n),
-                          AppSpacing.verticalSm,
-                          _buildAverageStat(stats.weekStats.averageScore, theme, l10n),
-                          AppSpacing.verticalSm,
-                          _buildStatusStat(statusText, statusColor, theme, l10n),
-                        ],
-                      ),
-
-                // Action button
-                if (!stats.todayLogged) ...[
-                  AppSpacing.verticalMd,
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton.icon(
-                      onPressed: () {
-                        ref.read(selectedDrawerIndexProvider.notifier).state = 3;
-                      },
-                      icon: const Icon(Icons.add),
-                      label: Text(l10n.recordToday),
-                      style: ElevatedButton.styleFrom(
-                        padding: AppSpacing.paddingVerticalMd,
-                      ),
-                    ),
+                Text(
+                  l10n.today,
+                  style: theme.textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: theme.colorScheme.onSurface,
                   ),
-                ],
+                ),
+                Icon(statusIcon, color: statusColor, size: 32),
               ],
             ),
-        );
-      },
+            AppSpacing.verticalMd,
+
+            // Stats grid
+            isDesktop
+                ? Row(
+                    children: [
+                      Expanded(child: _buildStreakStat(streak, theme, l10n)),
+                      AppSpacing.horizontalMd,
+                      Expanded(child: _buildAverageStat(average, theme, l10n)),
+                      AppSpacing.horizontalMd,
+                      Expanded(child: _buildStatusStat(statusText, statusColor, theme, l10n)),
+                    ],
+                  )
+                : Column(
+                    children: [
+                      _buildStreakStat(streak, theme, l10n),
+                      AppSpacing.verticalSm,
+                      _buildAverageStat(average, theme, l10n),
+                      AppSpacing.verticalSm,
+                      _buildStatusStat(statusText, statusColor, theme, l10n),
+                    ],
+                  ),
+
+            // Action button
+            if (!todayLogged) ...[
+              AppSpacing.verticalMd,
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  onPressed: () {
+                    ref.read(selectedDrawerIndexProvider.notifier).state = 3;
+                  },
+                  icon: const Icon(Icons.add),
+                  label: Text(l10n.recordToday),
+                  style: ElevatedButton.styleFrom(
+                    padding: AppSpacing.paddingVerticalMd,
+                  ),
+                ),
+              ),
+            ],
+          ],
+        ),
     );
   }
 
