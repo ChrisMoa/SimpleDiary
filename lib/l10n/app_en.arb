@@ -909,5 +909,57 @@
   "showQuickMood": "Show Quick Mood Map",
   "showEmotionWheel": "Show Emotion Wheel",
   "showContextFactors": "Show Context Factors",
-  "useLegacyRating": "Use Simple Rating (4 categories)"
+  "useLegacyRating": "Use Simple Rating (4 categories)",
+
+  "showPassword": "Show password",
+  "hidePassword": "Hide password",
+  "clearSearch": "Clear search",
+  "decrease": "Decrease",
+  "increase": "Increase",
+  "dismissBanner": "Dismiss",
+  "selectMoodOnMap": "Select mood on map",
+  "categoryColorLabel": "Color for category {name}",
+  "@categoryColorLabel": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "sleepHoursValue": "{hours} hours",
+  "@sleepHoursValue": {
+    "placeholders": {
+      "hours": {
+        "type": "String"
+      }
+    }
+  },
+  "scoreValue": "{value} of {max}",
+  "@scoreValue": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      },
+      "max": {
+        "type": "String"
+      }
+    }
+  },
+  "selectTheme": "Select {theme} theme",
+  "@selectTheme": {
+    "placeholders": {
+      "theme": {
+        "type": "String"
+      }
+    }
+  },
+  "selectLanguage": "Select {language}",
+  "@selectLanguage": {
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  },
+  "addNewNote": "Add new note"
 }

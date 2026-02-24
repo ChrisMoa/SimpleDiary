@@ -2,6 +2,7 @@ import 'package:day_tracker/core/provider/theme_provider.dart';
 import 'package:day_tracker/core/widgets/app_ui_kit.dart';
 import 'package:day_tracker/features/notes/data/models/note_category.dart';
 import 'package:day_tracker/features/notes/domain/providers/category_local_db_provider.dart';
+import 'package:day_tracker/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -105,6 +106,7 @@ class _CategoryEditDialogState extends ConsumerState<CategoryEditDialog> {
                     ),
                     IconButton(
                       icon: const Icon(Icons.close),
+                      tooltip: AppLocalizations.of(context).close,
                       onPressed: () => Navigator.of(context).pop(),
                     ),
                   ],
@@ -174,42 +176,47 @@ class _CategoryEditDialogState extends ConsumerState<CategoryEditDialog> {
                   runSpacing: 8,
                   children: _colorPalette.map((color) {
                     final isSelected = color.toARGB32() == _selectedColor.toARGB32();
-                    return InkWell(
-                      onTap: () {
-                        setState(() {
-                          _selectedColor = color;
-                        });
-                      },
-                      child: Container(
-                        width: 40,
-                        height: 40,
-                        decoration: BoxDecoration(
-                          color: color,
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                            color: isSelected
-                                ? theme.colorScheme.primary
-                                : Colors.transparent,
-                            width: 3,
+                    final colorName = _colorName(color);
+                    return Semantics(
+                      label: AppLocalizations.of(context).categoryColorLabel(colorName),
+                      selected: isSelected,
+                      child: InkWell(
+                        onTap: () {
+                          setState(() {
+                            _selectedColor = color;
+                          });
+                        },
+                        child: Container(
+                          width: 40,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            color: color,
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: isSelected
+                                  ? theme.colorScheme.primary
+                                  : Colors.transparent,
+                              width: 3,
+                            ),
+                            boxShadow: isSelected
+                                ? [
+                                    BoxShadow(
+                                      color: theme.colorScheme.primary
+                                          .withValues(alpha: 0.4),
+                                      blurRadius: 8,
+                                      spreadRadius: 1,
+                                    ),
+                                  ]
+                                : null,
                           ),
-                          boxShadow: isSelected
-                              ? [
-                                  BoxShadow(
-                                    color: theme.colorScheme.primary
-                                        .withValues(alpha: 0.4),
-                                    blurRadius: 8,
-                                    spreadRadius: 1,
-                                  ),
-                                ]
+                          child: isSelected
+                              ? Icon(
+                                  Icons.check,
+                                  color: _getContrastColor(color),
+                                  size: 20,
+                                )
                               : null,
                         ),
-                        child: isSelected
-                            ? Icon(
-                                Icons.check,
-                                color: _getContrastColor(color),
-                                size: 20,
-                              )
-                            : null,
                       ),
                     );
                   }).toList(),
@@ -267,6 +274,32 @@ class _CategoryEditDialogState extends ConsumerState<CategoryEditDialog> {
     }
 
     Navigator.of(context).pop();
+  }
+
+  /// Get a human-readable name for a Material color.
+  String _colorName(Color color) {
+    const names = <int, String>{
+      0xFFF44336: 'Red',
+      0xFFE91E63: 'Pink',
+      0xFF9C27B0: 'Purple',
+      0xFF673AB7: 'Deep Purple',
+      0xFF3F51B5: 'Indigo',
+      0xFF2196F3: 'Blue',
+      0xFF03A9F4: 'Light Blue',
+      0xFF00BCD4: 'Cyan',
+      0xFF009688: 'Teal',
+      0xFF4CAF50: 'Green',
+      0xFF8BC34A: 'Light Green',
+      0xFFCDDC39: 'Lime',
+      0xFFFFEB3B: 'Yellow',
+      0xFFFFC107: 'Amber',
+      0xFFFF9800: 'Orange',
+      0xFFFF5722: 'Deep Orange',
+      0xFF795548: 'Brown',
+      0xFF9E9E9E: 'Grey',
+      0xFF607D8B: 'Blue Grey',
+    };
+    return names[color.toARGB32()] ?? 'Color';
   }
 
   /// Get contrast color (white or black) based on background color

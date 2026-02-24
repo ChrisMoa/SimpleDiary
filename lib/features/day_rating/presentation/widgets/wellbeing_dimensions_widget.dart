@@ -255,6 +255,8 @@ class _DimensionSlider extends StatelessWidget {
                 min: 1,
                 max: 5,
                 divisions: 4,
+                semanticFormatterCallback: (v) =>
+                    l10n.scoreValue(v.round().toString(), '5'),
                 onChanged: (v) => onChanged(v.round()),
               ),
             ),

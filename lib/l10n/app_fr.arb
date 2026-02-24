@@ -659,5 +659,19 @@
   "showQuickMood": "Afficher la carte d'humeur rapide",
   "showEmotionWheel": "Afficher la roue des émotions",
   "showContextFactors": "Afficher les facteurs contextuels",
-  "useLegacyRating": "Utiliser l'évaluation simple (4 catégories)"
+  "useLegacyRating": "Utiliser l'évaluation simple (4 catégories)",
+
+  "showPassword": "Afficher le mot de passe",
+  "hidePassword": "Masquer le mot de passe",
+  "clearSearch": "Effacer la recherche",
+  "decrease": "Diminuer",
+  "increase": "Augmenter",
+  "dismissBanner": "Fermer",
+  "selectMoodOnMap": "Sélectionner l'humeur sur la carte",
+  "categoryColorLabel": "Couleur de la catégorie {name}",
+  "sleepHoursValue": "{hours} heures",
+  "scoreValue": "{value} sur {max}",
+  "selectTheme": "Sélectionner le thème {theme}",
+  "selectLanguage": "Sélectionner {language}",
+  "addNewNote": "Ajouter une nouvelle note"
 }

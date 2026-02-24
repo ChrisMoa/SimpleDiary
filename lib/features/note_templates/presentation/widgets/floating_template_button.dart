@@ -82,6 +82,7 @@ class _FloatingTemplateButtonState
           GestureDetector(
             onLongPress: () => _showTemplateSelector(context, ref),
             child: FloatingActionButton(
+              tooltip: AppLocalizations.of(context).selectTemplate,
               onPressed: () {
                 setState(() => _expanded = !_expanded);
               },
@@ -109,6 +110,7 @@ class _FloatingTemplateButtonState
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
       child: FloatingActionButton.small(
+        tooltip: template.title,
         onPressed: () {
           _createNoteFromTemplate(context, ref, template);
           setState(() => _expanded = false);

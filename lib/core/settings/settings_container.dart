@@ -33,9 +33,7 @@ class SettingsContainer {
     File settingsFile = File('$applicationDocumentsPath/settings.json');
     Map<String, dynamic> settingsAsJson = {};
     if (!settingsFile.existsSync()) {
-      if (kDebugMode) {
-        print("creates settingsfile");
-      }
+      LogWrapper.logger.d("creates settingsfile");
       settingsFile.createSync(recursive: true);
       userSettings = [UserSettings.fromEmpty()];
     } else {
@@ -56,13 +54,10 @@ class SettingsContainer {
       }
       activeUserSettings = getUserSettings(lastLoggedInUsername);
     }
-    if (kDebugMode && userSettings.isEmpty) {
-      // ignore: avoid_print
-      print("settings file has no user settings in it");
+    if (userSettings.isEmpty) {
+      LogWrapper.logger.d("settings file has no user settings in it");
     }
-    if (kDebugMode) {
-      print("read settings successfully");
-    }
+    LogWrapper.logger.d("read settings successfully");
   }
 
   Future<void> saveSettings() async {

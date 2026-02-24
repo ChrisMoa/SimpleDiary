@@ -3665,6 +3665,84 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Use Simple Rating (4 categories)'**
   String get useLegacyRating;
+
+  /// No description provided for @showPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Show password'**
+  String get showPassword;
+
+  /// No description provided for @hidePassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide password'**
+  String get hidePassword;
+
+  /// No description provided for @clearSearch.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear search'**
+  String get clearSearch;
+
+  /// No description provided for @decrease.
+  ///
+  /// In en, this message translates to:
+  /// **'Decrease'**
+  String get decrease;
+
+  /// No description provided for @increase.
+  ///
+  /// In en, this message translates to:
+  /// **'Increase'**
+  String get increase;
+
+  /// No description provided for @dismissBanner.
+  ///
+  /// In en, this message translates to:
+  /// **'Dismiss'**
+  String get dismissBanner;
+
+  /// No description provided for @selectMoodOnMap.
+  ///
+  /// In en, this message translates to:
+  /// **'Select mood on map'**
+  String get selectMoodOnMap;
+
+  /// No description provided for @categoryColorLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Color for category {name}'**
+  String categoryColorLabel(String name);
+
+  /// No description provided for @sleepHoursValue.
+  ///
+  /// In en, this message translates to:
+  /// **'{hours} hours'**
+  String sleepHoursValue(String hours);
+
+  /// No description provided for @scoreValue.
+  ///
+  /// In en, this message translates to:
+  /// **'{value} of {max}'**
+  String scoreValue(String value, String max);
+
+  /// No description provided for @selectTheme.
+  ///
+  /// In en, this message translates to:
+  /// **'Select {theme} theme'**
+  String selectTheme(String theme);
+
+  /// No description provided for @selectLanguage.
+  ///
+  /// In en, this message translates to:
+  /// **'Select {language}'**
+  String selectLanguage(String language);
+
+  /// No description provided for @addNewNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Add new note'**
+  String get addNewNote;
 }
 
 class _AppLocalizationsDelegate

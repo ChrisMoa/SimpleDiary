@@ -235,6 +235,8 @@ class _BackupSettingsWidgetState extends ConsumerState<BackupSettingsWidget> {
                         max: 30,
                         divisions: 29,
                         label: l10n.backupMaxCountValue(_maxBackups),
+                        semanticFormatterCallback: (v) =>
+                            l10n.backupMaxCountValue(v.round()),
                         onChanged: (value) {
                           setState(() {
                             _maxBackups = value.round();

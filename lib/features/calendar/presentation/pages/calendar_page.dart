@@ -5,6 +5,7 @@ import 'package:day_tracker/features/notes/domain/providers/note_editing_page_pr
 import 'package:day_tracker/features/notes/domain/providers/note_selected_date_provider.dart';
 import 'package:day_tracker/features/notes/presentation/pages/note_editing_page.dart';
 import 'package:flutter/material.dart';
+import 'package:day_tracker/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class CalendarPage extends ConsumerStatefulWidget {
@@ -22,6 +23,7 @@ class _CalendarPageState extends ConsumerState<CalendarPage> {
           const CalendarWidget(), // This trailing comma makes auto-formatting nicer for build methods.
       backgroundColor: Theme.of(context).colorScheme.background,
       floatingActionButton: FloatingActionButton(
+        tooltip: AppLocalizations.of(context).addNewNote,
         backgroundColor: Theme.of(context).colorScheme.primaryContainer,
         onPressed: () {
           var note = Note.fromEmpty();

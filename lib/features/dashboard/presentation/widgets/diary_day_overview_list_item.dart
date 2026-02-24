@@ -4,6 +4,7 @@ import 'package:day_tracker/features/day_rating/data/models/diary_day.dart';
 import 'package:day_tracker/features/day_rating/domain/providers/diary_day_local_db_provider.dart';
 import 'package:day_tracker/core/widgets/app_ui_kit.dart';
 import 'package:flutter/material.dart';
+import 'package:day_tracker/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
@@ -96,8 +97,8 @@ class DiaryDayOverviewListItem extends ConsumerWidget {
                 .addOrUpdateElement(updated);
           },
           tooltip: diaryDay.isFavorite
-              ? 'Remove from favorites'
-              : 'Add to favorites',
+              ? AppLocalizations.of(context).removeFromFavorites
+              : AppLocalizations.of(context).addToFavorites,
         ),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),

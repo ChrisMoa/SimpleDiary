@@ -345,6 +345,8 @@ class _CreateGoalDialogState extends ConsumerState<CreateGoalDialog> {
           max: 5.0,
           divisions: 40,
           label: _targetValue.toStringAsFixed(1),
+          semanticFormatterCallback: (v) =>
+              '${v.toStringAsFixed(1)} / 5.0',
           onChanged: (value) => setState(() => _targetValue = value),
         ),
         Row(
