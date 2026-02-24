@@ -1,6 +1,6 @@
 # Test Coverage
 
-**Total: 762 passing tests** across 45 test files (+ 11 optional Supabase integration tests)
+**Total: 805 passing tests** across 53 test files (+ 11 optional Supabase integration tests)
 
 Run all tests with:
 ```bash
@@ -160,6 +160,48 @@ flutter test test/core/ test/features/ test/l10n/
 
 ---
 
+## Widget Tests
+
+### Notes (`test/features/notes/presentation/pages/`)
+
+| File | Tests | Covers |
+|------|-------|--------|
+| `note_editing_page_test.dart` | 9 | Form fields render (TextFormField, DropdownButtonFormField, Checkbox), title hint & description header (l10n), from/to date-time pickers with arrow icons, category dropdown opens and shows all categories, all-day checkbox toggle, save/reload buttons with `addAdditionalSaveButton`, AppBar save action & close button with `navigateBack`, pre-filled form when editing existing note, allDay checkbox label |
+
+**Source:** `lib/features/notes/presentation/pages/note_editing_page.dart`
+
+### Day Rating (`test/features/day_rating/presentation/pages/`)
+
+| File | Tests | Covers |
+|------|-------|--------|
+| `diary_day_wizard_page_test.dart` | 6 | Shimmer loading placeholders on first frame, transition from loading to DiaryDayEditingWizardWidget, tab navigation bar with Calendar/Note Details/Day Rating labels, tab icons (calendar_today, edit_note, rate_review_outlined), SafeArea wrapping after load, tab navigation switches between views |
+
+**Source:** `lib/features/day_rating/presentation/pages/diary_day_wizard_page.dart`
+
+### Dashboard (`test/features/dashboard/presentation/pages/`)
+
+| File | Tests | Covers |
+|------|-------|--------|
+| `new_dashboard_page_test.dart` | 6 | Scaffold with FloatingActionButton, FAB "New Entry" label with add icon, RefreshIndicator for pull-to-refresh, mobile layout on narrow screen (SliverToBoxAdapters), rendering with custom DashboardStats, responsive LayoutBuilder |
+
+**Source:** `lib/features/dashboard/presentation/pages/new_dashboard_page.dart`
+
+### App (`test/features/app/presentation/pages/`)
+
+| File | Tests | Covers |
+|------|-------|--------|
+| `settings_page_test.dart` | 6 | Settings title rendering, top settings sections (ThemeSettingsWidget, LanguageSettingsWidget), all 6 settings sections visible on tall surface (Theme, Language, Notification, Biometric, Backup, Supabase), category management section with "Manage Categories" text and chevron icon, SettingsSection components, CustomScrollView scrollability |
+
+**Source:** `lib/features/app/presentation/pages/settings_page.dart`
+
+### Test Helpers (`test/helpers/`)
+
+| File | Purpose |
+|------|---------|
+| `widget_test_helpers.dart` | Shared test harness: `TestDbRepository` (skips SQLite), `TestCategoryProvider`, `TestAttachmentProvider`, `TestNoteTemplateProvider`, `createTestOverrides()` (overrides all DB-backed providers), `createTestApp()` (MaterialApp + l10n + ProviderScope) |
+
+---
+
 ## Localization (`test/l10n/`)
 
 | File | Tests | Covers |
@@ -196,14 +238,17 @@ flutter test test/core/ test/features/ test/l10n/
 | Supabase sync state | Covered | SyncStatus enum, SyncState construction/copyWith |
 | Supabase API (optional) | Covered | Requires `test/.env` with credentials; skipped otherwise |
 | Onboarding status & service | Covered | SharedPreferences persistence, all lifecycle states, demo mode flag |
+| Widget: NoteEditingPage | Covered | Form fields, category dropdown, checkbox toggle, save actions, editing pre-fill |
+| Widget: DiaryDayWizardPage | Covered | Loading shimmer, tab navigation, tab icons, SafeArea, view switching |
+| Widget: NewDashboardPage | Covered | FAB, RefreshIndicator, responsive layout, custom stats rendering |
+| Widget: SettingsPage | Covered | Settings title, all 6 settings sections, category management, scrollability |
 
-### Not covered (requires integration/widget tests)
+### Not covered (requires integration tests)
 
 | Area | Reason |
 |------|--------|
 | Riverpod provider state (with ProviderContainer) | Requires mocking database layer |
 | SQLite database operations (LocalDbHelper) | Requires real/mock SQLite database |
-| Widget/UI tests (pages, forms, navigation) | Requires `WidgetTester` with full app setup |
 | File picker / permission handler | Platform-specific, requires integration tests |
 
 ---
