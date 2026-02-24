@@ -1,30 +1,35 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-//* light themes -----------------------------------------------------------------------------------------------------------------------------------
+const defaultSeedColor = Color.fromARGB(255, 16, 188, 0);
 
-var lightBaseColor = const Color.fromARGB(255, 16, 188, 0);
-
-var _lightColorScheme = ColorScheme.fromSeed(
-  brightness: Brightness.light,
-  seedColor: lightBaseColor,
-);
-
-var lightTheme = ThemeData().copyWith(
-  colorScheme: _lightColorScheme,
-  textTheme: GoogleFonts.latoTextTheme(),
-  cardTheme: CardThemeData(
-    color: _lightColorScheme.surface,
-    elevation: 1,
-    margin: const EdgeInsets.symmetric(
-      horizontal: 16,
-      vertical: 8,
+ThemeData buildAppTheme({
+  required Color seedColor,
+  required bool isDark,
+}) {
+  final colorScheme = ColorScheme.fromSeed(
+    brightness: isDark ? Brightness.dark : Brightness.light,
+    seedColor: seedColor,
+  );
+  return ThemeData(
+    useMaterial3: true,
+    colorScheme: colorScheme,
+    textTheme: GoogleFonts.latoTextTheme(),
+    cardTheme: CardThemeData(
+      color: colorScheme.surface,
+      elevation: 1,
+      margin: const EdgeInsets.symmetric(
+        horizontal: 16,
+        vertical: 8,
+      ),
     ),
-  ),
-  elevatedButtonTheme: ElevatedButtonThemeData(
-    style: ElevatedButton.styleFrom(
-      backgroundColor: _lightColorScheme.primaryContainer,
+    elevatedButtonTheme: ElevatedButtonThemeData(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: colorScheme.primaryContainer,
+      ),
     ),
-  ),
-);
+  );
+}
+
+final lightTheme = buildAppTheme(seedColor: defaultSeedColor, isDark: false);
 

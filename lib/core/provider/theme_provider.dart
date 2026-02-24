@@ -7,52 +7,26 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class ThemeProvider extends StateNotifier<ThemeData> {
   ThemeProvider()
-      : super(_buildTheme(
+      : super(buildAppTheme(
           seedColor: settingsContainer.activeUserSettings.themeSeedColor,
           isDark: settingsContainer.activeUserSettings.darkThemeMode,
         ));
   bool darkMode = false;
   Color _seedColor = settingsContainer.activeUserSettings.themeSeedColor;
 
-  static ThemeData _buildTheme({
-    required Color seedColor,
-    required bool isDark,
-  }) {
-    final colorScheme = ColorScheme.fromSeed(
-      brightness: isDark ? Brightness.dark : Brightness.light,
-      seedColor: seedColor,
-    );
-    return lightTheme.copyWith(
-      colorScheme: colorScheme,
-      cardTheme: CardThemeData(
-        color: colorScheme.surface,
-        elevation: 1,
-        margin: const EdgeInsets.symmetric(
-          horizontal: 16,
-          vertical: 8,
-        ),
-      ),
-      elevatedButtonTheme: ElevatedButtonThemeData(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: colorScheme.primaryContainer,
-        ),
-      ),
-    );
-  }
-
   void updateThemeFromSeedColor(Color newThemeColor) {
     LogWrapper.logger
         .t('updates themeColor to ${Utils.colorToRGBInt(newThemeColor)}');
 
     _seedColor = newThemeColor;
-    state = _buildTheme(seedColor: _seedColor, isDark: darkMode);
+    state = buildAppTheme(seedColor: _seedColor, isDark: darkMode);
   }
 
   void toggleDarkMode(bool darkMode) {
     LogWrapper.logger.t('toggles between dark and light mode');
     this.darkMode = darkMode;
 
-    state = _buildTheme(seedColor: _seedColor, isDark: darkMode);
+    state = buildAppTheme(seedColor: _seedColor, isDark: darkMode);
   }
 
   Color get seedColor {
