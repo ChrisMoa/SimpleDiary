@@ -9,10 +9,9 @@
 | Property | Value |
 |----------|-------|
 | **App Name** | SimpleDiary (package: `day_tracker`) |
-| **Version** | 1.0.22+1 |
 | **Platform Support** | Android, Linux, Windows |
 | **Dart SDK** | >=3.0.3 <4.0.0 |
-| **Flutter Version (CI)** | 3.29.3 stable |
+| **Flutter Version (CI)** | 3.41.2 stable |
 | **Primary Language** | Dart |
 | **License** | Private (not published to pub.dev) |
 
@@ -479,20 +478,26 @@ flutter test test/features/            # Feature tests only
 ### Jobs
 
 1. **test** (ubuntu-latest)
-   - Runs `flutter test test/core/ test/features/`
+   - Runs `flutter test test/core/ test/features/ test/l10n/`
    - Creates `.env` from secrets
 
-2. **build-windows** (needs: test)
-   - Builds Windows release
+2. **version-bump** (needs: test, push to main only)
+   - Increments patch version in `pubspec.yaml` (e.g., `1.0.22+1` → `1.0.23+1`)
+   - Commits with `[skip ci]` to prevent infinite loops
+   - Creates annotated git tag (e.g., `v1.0.23+1`)
+   - Skipped on PRs and manual dispatch
+
+3. **build-windows** (needs: test, version-bump)
+   - Builds Windows release using bumped version
    - Uploads artifact: `release-windows`
 
-3. **build-linux** (needs: test)
+4. **build-linux** (needs: test, version-bump)
    - Installs GTK3 dependencies
-   - Builds Linux release
+   - Builds Linux release using bumped version
    - Uploads artifact: `release-linux`
 
-4. **build-android** (needs: test)
-   - Builds APK and App Bundle
+5. **build-android** (needs: test, version-bump)
+   - Builds APK and App Bundle using bumped version
    - Uploads artifacts: `release-apk`, `release-aab`
 
 ### Triggers
