@@ -1,6 +1,7 @@
 import 'package:day_tracker/core/database/db_repository.dart';
 import 'package:day_tracker/core/log/logger_instance.dart';
 import 'package:day_tracker/core/settings/settings_container.dart';
+import 'package:day_tracker/features/notes/data/models/note.dart';
 import 'package:day_tracker/features/notes/data/models/note_category.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -115,7 +116,21 @@ class CategoryLocalDataProvider extends DbRepository<NoteCategory> {
   }
 
   Future<bool> isCategoryInUse(String categoryId) async {
-    return false;
+    final category = getCategoryById(categoryId);
+    if (category == null) return false;
+
+    try {
+      final results = await rawQuery(
+        'SELECT COUNT(*) as count FROM "${Note.tableName}" WHERE noteCategory = ?',
+        [category.title],
+      );
+      final count = results.first['count'] as int;
+      return count > 0;
+    } catch (e) {
+      // Notes table may not exist yet if the notes provider hasn't initialized
+      LogWrapper.logger.d('Could not query notes table: $e');
+      return false;
+    }
   }
 }
 
