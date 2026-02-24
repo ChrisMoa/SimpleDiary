@@ -1975,4 +1975,53 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get useLegacyRating => 'Einfache Bewertung verwenden (4 Kategorien)';
+
+  @override
+  String get showPassword => 'Passwort anzeigen';
+
+  @override
+  String get hidePassword => 'Passwort verbergen';
+
+  @override
+  String get clearSearch => 'Suche löschen';
+
+  @override
+  String get decrease => 'Verringern';
+
+  @override
+  String get increase => 'Erhöhen';
+
+  @override
+  String get dismissBanner => 'Verwerfen';
+
+  @override
+  String get selectMoodOnMap => 'Stimmung auf der Karte auswählen';
+
+  @override
+  String categoryColorLabel(String name) {
+    return 'Farbe für Kategorie $name';
+  }
+
+  @override
+  String sleepHoursValue(String hours) {
+    return '$hours Stunden';
+  }
+
+  @override
+  String scoreValue(String value, String max) {
+    return '$value von $max';
+  }
+
+  @override
+  String selectTheme(String theme) {
+    return '$theme-Design auswählen';
+  }
+
+  @override
+  String selectLanguage(String language) {
+    return '$language auswählen';
+  }
+
+  @override
+  String get addNewNote => 'Neue Notiz hinzufügen';
 }

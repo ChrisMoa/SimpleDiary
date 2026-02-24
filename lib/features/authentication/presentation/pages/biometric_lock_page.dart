@@ -163,6 +163,7 @@ class _BiometricLockPageState extends ConsumerState<BiometricLockPage> {
                         // Fingerprint icon button
                         IconButton(
                           onPressed: _isAuthenticating ? null : _triggerBiometric,
+                          tooltip: l10n.biometricTapToUnlock,
                           icon: Icon(
                             Icons.fingerprint,
                             size: 64,

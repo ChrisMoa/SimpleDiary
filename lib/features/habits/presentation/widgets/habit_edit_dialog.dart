@@ -180,6 +180,7 @@ class _HabitEditDialogState extends ConsumerState<HabitEditDialog> {
                     IconButton(
                       onPressed:
                           _targetCount > 1 ? () => setState(() => _targetCount--) : null,
+                      tooltip: l10n.decrease,
                       icon: Icon(
                         Icons.remove_circle_outline,
                         color: theme.colorScheme.onSurfaceVariant,
@@ -193,6 +194,7 @@ class _HabitEditDialogState extends ConsumerState<HabitEditDialog> {
                     ),
                     IconButton(
                       onPressed: () => setState(() => _targetCount++),
+                      tooltip: l10n.increase,
                       icon: Icon(
                         Icons.add_circle_outline,
                         color: theme.colorScheme.onSurfaceVariant,
@@ -318,6 +320,7 @@ class _HabitEditDialogState extends ConsumerState<HabitEditDialog> {
         IconButton(
           onPressed:
               _timesPerWeek > 1 ? () => setState(() => _timesPerWeek--) : null,
+          tooltip: l10n.decrease,
           icon: Icon(
             Icons.remove_circle_outline,
             color: theme.colorScheme.onSurfaceVariant,
@@ -332,6 +335,7 @@ class _HabitEditDialogState extends ConsumerState<HabitEditDialog> {
         IconButton(
           onPressed:
               _timesPerWeek < 7 ? () => setState(() => _timesPerWeek++) : null,
+          tooltip: l10n.increase,
           icon: Icon(
             Icons.add_circle_outline,
             color: theme.colorScheme.onSurfaceVariant,

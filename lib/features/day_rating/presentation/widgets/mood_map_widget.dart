@@ -123,18 +123,21 @@ class _MoodMapWidgetState extends State<MoodMapWidget> {
     return SizedBox(
       width: size,
       height: size,
-      child: GestureDetector(
-        onTapDown: (d) => _handleGesture(d.localPosition, size),
-        onPanUpdate: (d) => _handleGesture(d.localPosition, size),
-        child: CustomPaint(
-          size: Size(size, size),
-          painter: _MoodMapPainter(
-            normalised: _normalised,
-            theme: theme,
-            highEnergyLabel: '▲ ${l10n.highEnergy}',
-            lowEnergyLabel: '▼ ${l10n.lowEnergy}',
-            pleasantLabel: '${l10n.pleasant} ▶',
-            unpleasantLabel: '◀ ${l10n.unpleasant}',
+      child: Semantics(
+        label: l10n.selectMoodOnMap,
+        child: GestureDetector(
+          onTapDown: (d) => _handleGesture(d.localPosition, size),
+          onPanUpdate: (d) => _handleGesture(d.localPosition, size),
+          child: CustomPaint(
+            size: Size(size, size),
+            painter: _MoodMapPainter(
+              normalised: _normalised,
+              theme: theme,
+              highEnergyLabel: '▲ ${l10n.highEnergy}',
+              lowEnergyLabel: '▼ ${l10n.lowEnergy}',
+              pleasantLabel: '${l10n.pleasant} ▶',
+              unpleasantLabel: '◀ ${l10n.unpleasant}',
+            ),
           ),
         ),
       ),

@@ -107,6 +107,7 @@ class _PasswordAuthenticationPageState
                                     ? Icons.visibility_off
                                     : Icons.visibility,
                               ),
+                              tooltip: _isPasswordVisible ? l10n.hidePassword : l10n.showPassword,
                               onPressed: () {
                                 setState(() {
                                   _isPasswordVisible = !_isPasswordVisible;

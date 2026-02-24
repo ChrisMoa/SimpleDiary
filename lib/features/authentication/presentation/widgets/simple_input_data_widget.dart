@@ -1,4 +1,5 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:day_tracker/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 
 class SimpleInputDataWidget extends StatefulWidget {
@@ -82,6 +83,9 @@ class _SimpleInputDataWidgetState extends State<SimpleInputDataWidget> {
                       _visibleObscureText = !_visibleObscureText;
                     });
                   },
+                  tooltip: _visibleObscureText
+                      ? AppLocalizations.of(context).hidePassword
+                      : AppLocalizations.of(context).showPassword,
                   icon: const Icon(Icons.remove_red_eye),
                 )
               : const Text(''),
