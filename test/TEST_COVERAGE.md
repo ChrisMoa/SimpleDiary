@@ -1,6 +1,6 @@
 # Test Coverage
 
-**Total: 762 passing tests** across 50 test files (+ 11 optional Supabase integration tests)
+**Total: 800 passing tests** across 54 test files (+ 16 optional/skipped Supabase integration tests)
 
 Run all tests with:
 ```bash
@@ -102,8 +102,9 @@ flutter test test/core/ test/features/ test/l10n/
 | `repositories/dashboard_repository_test.dart` | 30 | **Streak calculation:** empty data, single day (today/yesterday), consecutive days, 2+ day gap breaks streak, single-day gap tolerance, longest vs current, inactive old entries, 7-day milestone, lastEntryDate. **isTodayLogged:** logged/not logged/empty. **Week stats:** empty data, average score, category averages, note counts per day, incomplete days. **Monthly trend:** empty data, week grouping, excludes other months. **Top activities:** empty, sorted by frequency, max 5. **Insights:** today-not-logged suggestion, perfect week achievement, best category, streak milestone. **generateDashboardStats:** combined output, empty data |
 | `models/dashboard_models_test.dart` | 22 | **StreakData:** empty factory, `isMilestone` (7/30/100/365 and non-milestones), `milestoneValue` (365/100/30/7/0), `copyWith`. **WeekStats:** construction, `copyWith`. **DayScore:** construction, `copyWith`. **Insight:** construction (with/without metadata), `copyWith`, InsightType enum values. **DashboardStats:** construction, `copyWith` |
 | `services/mood_correlation_service_test.dart` | 26 | **Correlation Analysis:** Pearson correlation (perfect positive/negative/no correlation/insufficient data/mismatched lengths/zero variance), activity-rating correlation (insufficient days/positive correlation detection/impact calculation/case-insensitive matching), strong correlation finding (empty/sorting/threshold filtering). **Day of Week Analysis:** best/worst day identification, day names, empty handling. **Trend Detection:** insufficient data/improving/declining/stable trends, all trends filtering. **Model Tests:** CorrelationResult (strengthLabel/isPositive), DayOfWeekAnalysis (variance threshold), TrendAnalysis (significance validation) |
+| `providers/granular_providers_test.dart` | 11 | **currentStreakProvider:** returns streak from stats, returns 0 before load, updates on invalidation. **todayLoggedProvider:** returns true/false, returns false before load. **weekAverageProvider:** returns average, returns 0.0 before load, handles zero average. **Selective rebuild:** all providers derive from shared source, consistent values across providers |
 
-**Sources:** `lib/features/dashboard/data/repositories/dashboard_repository.dart`, `data/services/mood_correlation_service.dart`, `data/models/dashboard_stats.dart`, `streak_data.dart`, `week_stats.dart`, `insight.dart`
+**Sources:** `lib/features/dashboard/data/repositories/dashboard_repository.dart`, `data/services/mood_correlation_service.dart`, `data/models/dashboard_stats.dart`, `streak_data.dart`, `week_stats.dart`, `insight.dart`, `lib/features/dashboard/domain/providers/dashboard_stats_provider.dart`
 
 ### Day Rating (`test/features/day_rating/`)
 
@@ -262,6 +263,7 @@ flutter test test/core/ test/features/ test/l10n/
 | Onboarding status & service | Covered | SharedPreferences persistence, all lifecycle states, demo mode flag |
 | Widget: NoteEditingPage | Covered | Form fields, category dropdown, checkbox toggle, save actions, editing pre-fill |
 | Widget: DiaryDayWizardPage | Covered | Loading shimmer, tab navigation, tab icons, SafeArea, view switching |
+| Dashboard granular providers | Covered | currentStreakProvider, todayLoggedProvider, weekAverageProvider: value extraction, default before load, selective rebuild |
 | Widget: NewDashboardPage | Covered | FAB, RefreshIndicator, responsive layout, custom stats rendering |
 | Widget: SettingsPage | Covered | Settings title, all 6 settings sections, category management, scrollability |
 

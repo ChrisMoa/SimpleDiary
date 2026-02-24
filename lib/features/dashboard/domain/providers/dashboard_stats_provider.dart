@@ -23,3 +23,28 @@ final dashboardStatsProvider = FutureProvider<DashboardStats>((ref) async {
 
 /// Provider for refreshing dashboard
 final dashboardRefreshProvider = StateProvider<int>((ref) => 0);
+
+// ── Granular providers ──────────────────────────────────────────────────────
+// Derived from dashboardStatsProvider using select() so widgets only rebuild
+// when their specific value changes, not on every stats recalculation.
+
+/// Current streak count. Only rebuilds dependents when streak value changes.
+final currentStreakProvider = Provider<int>((ref) {
+  return ref.watch(dashboardStatsProvider.select(
+    (stats) => stats.valueOrNull?.currentStreak ?? 0,
+  ));
+});
+
+/// Whether today has been logged. Only rebuilds when this flag changes.
+final todayLoggedProvider = Provider<bool>((ref) {
+  return ref.watch(dashboardStatsProvider.select(
+    (stats) => stats.valueOrNull?.todayLogged ?? false,
+  ));
+});
+
+/// Weekly average score. Only rebuilds when the average changes.
+final weekAverageProvider = Provider<double>((ref) {
+  return ref.watch(dashboardStatsProvider.select(
+    (stats) => stats.valueOrNull?.weekStats.averageScore ?? 0.0,
+  ));
+});

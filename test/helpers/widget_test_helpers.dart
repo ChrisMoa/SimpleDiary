@@ -258,6 +258,9 @@ List<Override> createTestOverrides({
 
     // Dashboard providers
     dashboardStatsProvider.overrideWith((_) async => stats),
+    currentStreakProvider.overrideWith((_) => stats.currentStreak),
+    todayLoggedProvider.overrideWith((_) => stats.todayLogged),
+    weekAverageProvider.overrideWith((_) => stats.weekStats.averageScore),
     insightsProvider.overrideWith((_) async => stats.insights),
     weekOverviewProvider.overrideWith((_) async => stats.weekStats),
 
