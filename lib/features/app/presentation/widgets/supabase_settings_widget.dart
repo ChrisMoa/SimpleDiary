@@ -108,6 +108,7 @@ class _SupabaseSettingsWidgetState
                     : Icons.visibility,
                 size: 20,
               ),
+              tooltip: _anonKeyVisible ? l10n.hidePassword : l10n.showPassword,
               onPressed: () =>
                   setState(() => _anonKeyVisible = !_anonKeyVisible),
             ),
@@ -156,6 +157,7 @@ class _SupabaseSettingsWidgetState
                     : Icons.visibility,
                 size: 20,
               ),
+              tooltip: _passwordVisible ? l10n.hidePassword : l10n.showPassword,
               onPressed: () =>
                   setState(() => _passwordVisible = !_passwordVisible),
             ),

@@ -4,6 +4,7 @@ import 'package:day_tracker/features/notes/data/models/note_category.dart';
 import 'package:day_tracker/features/notes/domain/providers/category_local_db_provider.dart';
 import 'package:day_tracker/features/notes/presentation/widgets/category_edit_dialog.dart';
 import 'package:flutter/material.dart';
+import 'package:day_tracker/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class CategoryManagementPage extends ConsumerStatefulWidget {
@@ -108,6 +109,7 @@ class _CategoryManagementPageState
               right: 16,
               bottom: 16,
               child: FloatingActionButton(
+                tooltip: AppLocalizations.of(context).createCategory,
                 onPressed: _createNewCategory,
                 backgroundColor: theme.colorScheme.primaryContainer,
                 foregroundColor: theme.colorScheme.onPrimaryContainer,
@@ -150,12 +152,12 @@ class _CategoryManagementPageState
             IconButton(
               icon: const Icon(Icons.edit),
               onPressed: () => _editCategory(category),
-              tooltip: 'Edit category',
+              tooltip: AppLocalizations.of(context).editCategoryTooltip,
             ),
             IconButton(
               icon: const Icon(Icons.delete),
               onPressed: () => _confirmDeleteCategory(category),
-              tooltip: 'Delete category',
+              tooltip: AppLocalizations.of(context).deleteCategoryTooltip,
             ),
           ],
         ),

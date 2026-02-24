@@ -43,6 +43,7 @@ class HabitsPage extends ConsumerWidget {
           ],
         ),
         floatingActionButton: FloatingActionButton(
+          tooltip: l10n.habitCreateNew,
           onPressed: () => showDialog(
             context: context,
             builder: (_) => const HabitEditDialog(),

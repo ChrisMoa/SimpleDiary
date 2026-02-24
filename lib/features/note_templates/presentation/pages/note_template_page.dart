@@ -90,6 +90,7 @@ class _NoteTemplatePageState extends ConsumerState<NoteTemplatePage> {
             right: 16,
             bottom: 16,
             child: FloatingActionButton(
+              tooltip: l10n.createTemplate,
               onPressed: _createNewTemplate,
               backgroundColor: theme.colorScheme.primaryContainer,
               foregroundColor: theme.colorScheme.onPrimaryContainer,

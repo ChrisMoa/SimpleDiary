@@ -659,5 +659,19 @@
   "showQuickMood": "Schnelle Stimmungskarte anzeigen",
   "showEmotionWheel": "Emotionsrad anzeigen",
   "showContextFactors": "Kontextfaktoren anzeigen",
-  "useLegacyRating": "Einfache Bewertung verwenden (4 Kategorien)"
+  "useLegacyRating": "Einfache Bewertung verwenden (4 Kategorien)",
+
+  "showPassword": "Passwort anzeigen",
+  "hidePassword": "Passwort verbergen",
+  "clearSearch": "Suche löschen",
+  "decrease": "Verringern",
+  "increase": "Erhöhen",
+  "dismissBanner": "Verwerfen",
+  "selectMoodOnMap": "Stimmung auf der Karte auswählen",
+  "categoryColorLabel": "Farbe für Kategorie {name}",
+  "sleepHoursValue": "{hours} Stunden",
+  "scoreValue": "{value} von {max}",
+  "selectTheme": "{theme}-Design auswählen",
+  "selectLanguage": "{language} auswählen",
+  "addNewNote": "Neue Notiz hinzufügen"
 }

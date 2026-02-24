@@ -59,6 +59,7 @@ class DemoModeBanner extends StatelessWidget {
                 size: 18,
                 color: theme.colorScheme.onTertiaryContainer,
               ),
+              tooltip: l10n.dismissBanner,
               onPressed: onDismiss,
               visualDensity: VisualDensity.compact,
               padding: EdgeInsets.zero,

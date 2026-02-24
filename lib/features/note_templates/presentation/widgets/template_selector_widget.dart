@@ -63,6 +63,7 @@ class TemplateSelectorWidget extends ConsumerWidget {
                 ),
                 IconButton(
                   icon: const Icon(Icons.close),
+                  tooltip: l10n.close,
                   onPressed: () => Navigator.of(context).pop(),
                 ),
               ],

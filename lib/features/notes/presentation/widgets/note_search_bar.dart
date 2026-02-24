@@ -124,6 +124,7 @@ class _NoteSearchBarState extends ConsumerState<NoteSearchBar> {
                           Icons.clear,
                           color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
                         ),
+                        tooltip: l10n.clearSearch,
                         onPressed: () {
                           _searchController.clear();
                           ref.read(noteSearchProvider.notifier).setQuery('');

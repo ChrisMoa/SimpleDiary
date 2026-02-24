@@ -83,6 +83,8 @@ class _ContextFactorsWidgetState extends State<ContextFactorsWidget> {
                 max: 12,
                 divisions: 24,
                 label: '${(f.sleepHours ?? 7.0).toStringAsFixed(1)} h',
+                semanticFormatterCallback: (v) =>
+                    l10n.sleepHoursValue(v.toStringAsFixed(1)),
                 onChanged: (v) => _update(f.copyWith(sleepHours: v)),
               ),
             ),
