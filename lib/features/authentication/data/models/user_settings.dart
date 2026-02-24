@@ -58,7 +58,7 @@ class UserSettings {
 
   factory UserSettings.fromEmpty() => UserSettings(
         false,
-        lightBaseColor,
+        defaultSeedColor,
         UserData.fromEmpty(),
         SupabaseSettings.empty(),
         'en',
