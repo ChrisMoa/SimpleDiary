@@ -17,24 +17,10 @@ class _HomePageState extends ConsumerState<HomePage> {
         color: Theme.of(context).colorScheme.background,
         child: Column(
           children: [
-            Builder(
-              builder: (context) {
-                return const SizedBox(
-                  height: 0,
-                  width: 0,
-                );
-              },
-            ),
             _buildNotesOverviewList(context),
-            const SizedBox(
-              height: 20,
-            ),
-            // const Expanded(
-            //     flex: 1, child: Text("Only a placeholder for the charts")),
           ],
         ),
       ),
-      // floatingActionButton: _buildActionButton(context), // todo:
     );
   }
 
