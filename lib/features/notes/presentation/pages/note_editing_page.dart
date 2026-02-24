@@ -139,7 +139,7 @@ class _NoteEditingPageState extends ConsumerState<NoteEditingPage> {
       ),
       onSaved: (newValue) {
         if (newValue == null || newValue == '') {
-          throw ('title is empty');
+          throw Exception('Title is empty');
         }
         note.title = newValue;
         ref.read(noteEditingPageProvider.notifier).updateNote(note);
@@ -218,7 +218,7 @@ class _NoteEditingPageState extends ConsumerState<NoteEditingPage> {
           initialValue: note.description,
           onSaved: (newValue) {
             if (newValue == null || newValue == '') {
-              throw ('description is empty');
+              throw Exception('Description is empty');
             }
             note.description = newValue;
             ref.read(noteEditingPageProvider.notifier).updateNote(note);
