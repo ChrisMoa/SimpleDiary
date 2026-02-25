@@ -2,6 +2,7 @@ import 'package:day_tracker/core/database/db_column.dart';
 import 'package:day_tracker/core/database/db_entity.dart';
 import 'package:day_tracker/core/database/db_migration.dart';
 import 'package:day_tracker/core/database/db_repository.dart';
+import 'package:day_tracker/core/settings/settings_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// Creates a fully wired Riverpod [StateNotifierProvider] for [DbRepository].
@@ -27,10 +28,12 @@ StateNotifierProvider<DbRepository<T>, List<T>>
   List<String> additionalSql = const [],
 }) {
   return StateNotifierProvider<DbRepository<T>, List<T>>((ref) {
+    final appDocPath = ref.read(settingsProvider).applicationDocumentsPath;
     return DbRepository<T>(
       tableName: tableName,
       columns: columns,
       fromMap: fromMap,
+      applicationDocumentsPath: appDocPath,
       migrations: migrations,
       additionalSql: additionalSql,
     );

@@ -9,7 +9,7 @@ import 'package:day_tracker/core/services/backup_scheduler.dart';
 import 'package:day_tracker/core/services/onboarding_service.dart';
 import 'package:day_tracker/core/navigation/drawer_index_provider.dart';
 import 'package:day_tracker/core/navigation/drawer_item_builder.dart';
-import 'package:day_tracker/core/settings/settings_container.dart';
+import 'package:day_tracker/core/settings/settings_provider.dart';
 import 'package:day_tracker/core/utils/debug_auto_login.dart';
 import 'package:day_tracker/features/authentication/data/models/user_data.dart';
 import 'package:day_tracker/features/authentication/domain/providers/user_data_provider.dart';
@@ -117,7 +117,7 @@ class _MainPageState extends ConsumerState<MainPage> {
           return const AuthUserDataPage();
         } else if (userData.username.isNotEmpty && !userData.isLoggedIn) {
           // Check if biometric is enabled for this user
-          final biometricEnabled = settingsContainer
+          final biometricEnabled = ref.read(settingsProvider)
               .activeUserSettings.biometricSettings.isEnabled;
           final skipBiometric = ref.watch(skipBiometricProvider);
           if (biometricEnabled && !skipBiometric) {
@@ -460,7 +460,7 @@ class _MainPageState extends ConsumerState<MainPage> {
   Future<AppExitResponse> _handleExitRequest() async {
     LogWrapper.logger.i('leaves app');
     await _decryptDatabase(_userData, UserData.fromEmpty());
-    settingsContainer.saveSettings();
+    ref.read(settingsNotifierProvider).saveSettings();
     return AppExitResponse.exit;
   }
 
@@ -476,7 +476,7 @@ class _MainPageState extends ConsumerState<MainPage> {
   void _handleOnResume() {
     LogWrapper.logger.d('resumes app');
     final biometricSettings =
-        settingsContainer.activeUserSettings.biometricSettings;
+        ref.read(settingsProvider).activeUserSettings.biometricSettings;
     if (biometricSettings.isEnabled &&
         biometricSettings.requireOnResume &&
         _backgroundTimestamp != null &&

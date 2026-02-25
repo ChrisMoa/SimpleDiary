@@ -1,6 +1,6 @@
 import 'package:day_tracker/core/log/logger_instance.dart';
 import 'package:day_tracker/core/services/biometric_service.dart';
-import 'package:day_tracker/core/settings/settings_container.dart';
+import 'package:day_tracker/core/settings/settings_provider.dart';
 import 'package:day_tracker/features/authentication/domain/providers/biometric_provider.dart';
 import 'package:day_tracker/features/authentication/domain/providers/user_data_provider.dart';
 import 'package:day_tracker/core/widgets/app_ui_kit.dart';
@@ -26,13 +26,13 @@ class _BiometricSettingsWidgetState
   @override
   void initState() {
     super.initState();
-    final settings = settingsContainer.activeUserSettings.biometricSettings;
+    final settings = ref.read(settingsProvider).activeUserSettings.biometricSettings;
     _biometricEnabled = settings.isEnabled;
     _requireOnResume = settings.requireOnResume;
     _lockTimeoutMinutes = settings.lockTimeoutMinutes;
   }
 
-  void _autoSave() => settingsContainer.saveSettings().ignore();
+  void _autoSave() => ref.read(settingsNotifierProvider).saveSettings().ignore();
 
   @override
   Widget build(BuildContext context) {
@@ -124,7 +124,7 @@ class _BiometricSettingsWidgetState
                   onChanged: (value) {
                     setState(() {
                       _requireOnResume = value;
-                      settingsContainer.activeUserSettings.biometricSettings
+                      ref.read(settingsProvider).activeUserSettings.biometricSettings
                           .requireOnResume = value;
                     });
                     _autoSave();
@@ -171,7 +171,7 @@ class _BiometricSettingsWidgetState
                         if (value != null) {
                           setState(() {
                             _lockTimeoutMinutes = value;
-                            settingsContainer
+                            ref.read(settingsProvider)
                                 .activeUserSettings.biometricSettings
                                 .lockTimeoutMinutes = value;
                           });
@@ -228,7 +228,7 @@ class _BiometricSettingsWidgetState
 
     setState(() {
       _biometricEnabled = value;
-      settingsContainer.activeUserSettings.biometricSettings.isEnabled = value;
+      ref.read(settingsProvider).activeUserSettings.biometricSettings.isEnabled = value;
     });
     _autoSave();
   }

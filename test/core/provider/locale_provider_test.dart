@@ -26,7 +26,7 @@ void main() {
       // Set language to German in settings
       settingsContainer.activeUserSettings.languageCode = 'de';
 
-      final provider = LocaleProvider();
+      final provider = LocaleProvider(settingsContainer);
 
       expect(provider.state, equals(const Locale('de')));
     });
@@ -34,13 +34,13 @@ void main() {
     test('initial locale defaults to English', () {
       settingsContainer.activeUserSettings.languageCode = 'en';
 
-      final provider = LocaleProvider();
+      final provider = LocaleProvider(settingsContainer);
 
       expect(provider.state, equals(const Locale('en')));
     });
 
     test('setLocale updates state', () {
-      final provider = LocaleProvider();
+      final provider = LocaleProvider(settingsContainer);
 
       provider.setLocale(const Locale('de'));
 
@@ -48,7 +48,7 @@ void main() {
     });
 
     test('setLocale persists to settings', () {
-      final provider = LocaleProvider();
+      final provider = LocaleProvider(settingsContainer);
 
       provider.setLocale(const Locale('de'));
 
@@ -58,7 +58,7 @@ void main() {
     test('setLocale to English', () {
       // Start with German
       settingsContainer.activeUserSettings.languageCode = 'de';
-      final provider = LocaleProvider();
+      final provider = LocaleProvider(settingsContainer);
 
       // Switch to English
       provider.setLocale(const Locale('en'));
@@ -68,7 +68,7 @@ void main() {
     });
 
     test('state updates trigger listeners', () {
-      final provider = LocaleProvider();
+      final provider = LocaleProvider(settingsContainer);
       var listenerCalled = false;
       Locale? capturedLocale;
 
@@ -84,7 +84,7 @@ void main() {
     });
 
     test('languageCode property matches locale', () {
-      final provider = LocaleProvider();
+      final provider = LocaleProvider(settingsContainer);
 
       provider.setLocale(const Locale('de'));
       expect(provider.state.languageCode, equals('de'));
@@ -94,7 +94,7 @@ void main() {
     });
 
     test('handles unsupported locale gracefully', () {
-      final provider = LocaleProvider();
+      final provider = LocaleProvider(settingsContainer);
 
       // Try to set an unsupported locale (should still work, but app might fallback)
       provider.setLocale(const Locale('fr'));
@@ -104,7 +104,7 @@ void main() {
     });
 
     test('multiple locale changes preserve state', () {
-      final provider = LocaleProvider();
+      final provider = LocaleProvider(settingsContainer);
 
       provider.setLocale(const Locale('de'));
       expect(provider.state.languageCode, equals('de'));

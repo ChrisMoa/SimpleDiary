@@ -4,7 +4,7 @@ import 'package:day_tracker/core/log/logger_instance.dart';
 import 'package:day_tracker/core/services/backup_service.dart';
 import 'package:day_tracker/core/services/backup_scheduler.dart';
 import 'package:day_tracker/core/services/cloud_backup_service.dart';
-import 'package:day_tracker/core/settings/settings_container.dart';
+import 'package:day_tracker/core/settings/settings_provider.dart';
 import 'package:day_tracker/features/day_rating/data/models/diary_day.dart';
 import 'package:day_tracker/features/day_rating/domain/providers/diary_day_local_db_provider.dart';
 import 'package:day_tracker/features/habits/data/models/habit.dart';
@@ -487,7 +487,7 @@ class _BackupHistoryPageState extends ConsumerState<BackupHistoryPage> {
   // -- Cloud sync helpers --
 
   bool get _isCloudSyncEnabled =>
-      settingsContainer.activeUserSettings.backupSettings.isCloudEnabled;
+      ref.read(settingsProvider).activeUserSettings.backupSettings.isCloudEnabled;
 
   Future<void> _uploadToCloud(
     BackupMetadata backup,

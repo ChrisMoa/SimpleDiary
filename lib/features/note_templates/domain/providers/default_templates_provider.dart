@@ -1,4 +1,4 @@
-import 'package:day_tracker/core/settings/settings_container.dart';
+import 'package:day_tracker/core/settings/settings_provider.dart';
 import 'package:day_tracker/features/note_templates/data/models/description_section.dart';
 import 'package:day_tracker/features/note_templates/data/models/note_template.dart';
 import 'package:day_tracker/features/notes/data/models/note_category.dart';
@@ -8,7 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final defaultTemplatesProvider = Provider<List<NoteTemplate>>((ref) {
   final categories = ref.watch(categoryLocalDataProvider);
-  final languageCode = settingsContainer.activeUserSettings.languageCode;
+  final languageCode = ref.read(settingsProvider).activeUserSettings.languageCode;
 
   // Helper to find category by title, or use first available
   NoteCategory getCategoryByTitle(String title) {

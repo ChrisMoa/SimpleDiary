@@ -26,14 +26,14 @@ void main() {
       testWidgets('seed color change survives ThemeProvider recreation',
           (tester) async {
         // Session 1: change theme color
-        final provider1 = ThemeProvider();
+        final provider1 = ThemeProvider(settingsContainer);
         provider1.updateThemeFromSeedColor(Colors.blue);
 
         // Persist to settings (normally done by ThemeSettingsWidget)
         settingsContainer.activeUserSettings.themeSeedColor = Colors.blue;
 
         // Session 2: recreate provider (simulates app restart)
-        final provider2 = ThemeProvider();
+        final provider2 = ThemeProvider(settingsContainer);
 
         expect(provider2.seedColor, equals(Colors.blue));
       });
@@ -41,7 +41,7 @@ void main() {
       testWidgets('dark mode toggle survives ThemeProvider recreation',
           (tester) async {
         // Session 1: enable dark mode
-        final provider1 = ThemeProvider();
+        final provider1 = ThemeProvider(settingsContainer);
         expect(provider1.state.brightness, Brightness.light);
 
         provider1.toggleDarkMode(true);
@@ -51,14 +51,14 @@ void main() {
         settingsContainer.activeUserSettings.darkThemeMode = true;
 
         // Session 2: recreate
-        final provider2 = ThemeProvider();
+        final provider2 = ThemeProvider(settingsContainer);
 
         expect(provider2.state.brightness, Brightness.dark);
       });
 
       testWidgets('default seed color is used when no settings persisted',
           (tester) async {
-        final provider = ThemeProvider();
+        final provider = ThemeProvider(settingsContainer);
 
         expect(provider.seedColor, equals(defaultSeedColor));
       });
@@ -66,7 +66,7 @@ void main() {
 
     group('locale persistence across provider recreation', () {
       test('locale change persists to settingsContainer automatically', () {
-        final provider = LocaleProvider();
+        final provider = LocaleProvider(settingsContainer);
 
         provider.setLocale(const Locale('de'));
 
@@ -79,11 +79,11 @@ void main() {
 
       test('locale survives LocaleProvider recreation', () {
         // Session 1: change to German
-        final provider1 = LocaleProvider();
+        final provider1 = LocaleProvider(settingsContainer);
         provider1.setLocale(const Locale('de'));
 
         // Session 2: recreate (reads from settingsContainer)
-        final provider2 = LocaleProvider();
+        final provider2 = LocaleProvider(settingsContainer);
 
         expect(provider2.state, equals(const Locale('de')));
       });
@@ -93,8 +93,8 @@ void main() {
       testWidgets('theme + locale + dark mode all persist across restart',
           (tester) async {
         // Session 1: change multiple settings
-        final theme1 = ThemeProvider();
-        final locale1 = LocaleProvider();
+        final theme1 = ThemeProvider(settingsContainer);
+        final locale1 = LocaleProvider(settingsContainer);
 
         theme1.updateThemeFromSeedColor(Colors.deepPurple);
         theme1.toggleDarkMode(true);
@@ -105,8 +105,8 @@ void main() {
         settingsContainer.activeUserSettings.darkThemeMode = true;
 
         // Session 2: recreate all providers
-        final theme2 = ThemeProvider();
-        final locale2 = LocaleProvider();
+        final theme2 = ThemeProvider(settingsContainer);
+        final locale2 = LocaleProvider(settingsContainer);
 
         expect(theme2.seedColor, equals(Colors.deepPurple));
         expect(theme2.state.brightness, Brightness.dark);
@@ -120,15 +120,15 @@ void main() {
         settingsContainer.activeUserSettings.darkThemeMode = true;
         settingsContainer.activeUserSettings.languageCode = 'de';
 
-        final themeA = ThemeProvider();
+        final themeA = ThemeProvider(settingsContainer);
         expect(themeA.seedColor, equals(Colors.blue));
         expect(themeA.state.brightness, Brightness.dark);
 
         // Switch to user B (fresh defaults)
         settingsContainer.activeUserSettings = UserSettings.fromEmpty();
 
-        final themeB = ThemeProvider();
-        final localeB = LocaleProvider();
+        final themeB = ThemeProvider(settingsContainer);
+        final localeB = LocaleProvider(settingsContainer);
 
         expect(themeB.seedColor, equals(defaultSeedColor));
         expect(themeB.state.brightness, Brightness.light);
@@ -138,8 +138,8 @@ void main() {
       testWidgets(
           'ThemeProvider does not auto-persist but LocaleProvider does',
           (tester) async {
-        final theme = ThemeProvider();
-        final locale = LocaleProvider();
+        final theme = ThemeProvider(settingsContainer);
+        final locale = LocaleProvider(settingsContainer);
 
         // ThemeProvider updates state but NOT settingsContainer
         theme.updateThemeFromSeedColor(Colors.red);

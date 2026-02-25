@@ -53,6 +53,7 @@ class BackupScheduler {
     required List<Habit> habits,
     required List<HabitEntry> habitEntries,
   }) async {
+    // ignore: deprecated_member_use
     final settings = settingsContainer.activeUserSettings.backupSettings;
     if (!settings.enabled) return null;
     if (!settings.isBackupOverdue) {
@@ -100,6 +101,7 @@ class BackupScheduler {
   /// Returns updated metadata with cloudSynced flag on success.
   /// For cloudOnly destination, deletes the local file after successful upload.
   Future<BackupMetadata> _tryCloudUpload(BackupMetadata metadata) async {
+    // ignore: deprecated_member_use
     final settings = settingsContainer.activeUserSettings.backupSettings;
     if (!settings.isCloudEnabled) return metadata;
 

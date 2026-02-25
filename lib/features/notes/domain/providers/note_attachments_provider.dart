@@ -2,16 +2,18 @@ import 'dart:io';
 
 import 'package:day_tracker/core/database/db_repository.dart';
 import 'package:day_tracker/core/services/image_storage_service.dart';
+import 'package:day_tracker/core/settings/settings_provider.dart';
 import 'package:day_tracker/features/notes/data/models/note_attachment.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// NoteAttachmentsProvider — subclasses DbRepository for custom image logic.
 class NoteAttachmentsProvider extends DbRepository<NoteAttachment> {
-  NoteAttachmentsProvider()
+  NoteAttachmentsProvider({required String applicationDocumentsPath})
       : super(
           tableName: NoteAttachment.tableName,
           columns: NoteAttachment.columns,
           fromMap: NoteAttachment.fromDbMap,
+          applicationDocumentsPath: applicationDocumentsPath,
           migrations: NoteAttachment.migrations,
         );
 
@@ -42,5 +44,6 @@ class NoteAttachmentsProvider extends DbRepository<NoteAttachment> {
 
 final noteAttachmentsProvider =
     StateNotifierProvider<NoteAttachmentsProvider, List<NoteAttachment>>((ref) {
-  return NoteAttachmentsProvider();
+  final appDocPath = ref.read(settingsProvider).applicationDocumentsPath;
+  return NoteAttachmentsProvider(applicationDocumentsPath: appDocPath);
 });

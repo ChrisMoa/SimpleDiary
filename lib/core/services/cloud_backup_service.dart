@@ -34,6 +34,7 @@ class CloudBackupService {
   /// Ensure Supabase is initialized and authenticated.
   /// Returns true if ready, false if not configured or auth fails.
   Future<bool> _ensureAuthenticated() async {
+    // ignore: deprecated_member_use
     final settings = settingsContainer.activeUserSettings.supabaseSettings;
     if (settings.supabaseUrl.isEmpty ||
         settings.supabaseAnonKey.isEmpty ||

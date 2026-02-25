@@ -1,15 +1,18 @@
 import 'package:day_tracker/core/authentication/password_auth_service.dart';
 import 'package:day_tracker/core/log/logger_instance.dart';
 import 'package:day_tracker/core/settings/settings_container.dart';
+import 'package:day_tracker/core/settings/settings_provider.dart';
 import 'package:day_tracker/core/utils/debug_auto_login.dart';
 import 'package:day_tracker/features/authentication/data/models/user_data.dart';
 import 'package:day_tracker/features/authentication/data/models/user_settings.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class UserDataProvider extends StateNotifier<UserData> {
-  UserDataProvider()
-      : super(settingsContainer.lastLoggedInUsername.isNotEmpty
-            ? settingsContainer.getUserSettings().savedUserData
+  final SettingsContainer _settings;
+
+  UserDataProvider(this._settings)
+      : super(_settings.lastLoggedInUsername.isNotEmpty
+            ? _settings.getUserSettings().savedUserData
             : UserData.fromEmpty());
 
   void createUser(UserData userData) {
@@ -18,7 +21,7 @@ class UserDataProvider extends StateNotifier<UserData> {
     if (userData.username != _demoUsername) {
       _removeDemoUserIfExists();
     }
-    bool userExists = settingsContainer.checkIfUserExists(userData.username);
+    bool userExists = _settings.checkIfUserExists(userData.username);
     assert(!userExists, '${userData.username} already exists in the database');
 
     // Store original clear password
@@ -39,11 +42,11 @@ class UserDataProvider extends StateNotifier<UserData> {
     UserSettings newUserSettings = UserSettings.fromEmpty();
     newUserSettings.savedUserData = savedUser;
 
-    settingsContainer.userSettings.add(newUserSettings);
-    settingsContainer.lastLoggedInUsername = userData.username;
-    settingsContainer.activeUserSettings = newUserSettings;
-    settingsContainer.activeUserSettings.savedUserData.clearPassword = originalPassword;
-    settingsContainer.saveSettings();
+    _settings.userSettings.add(newUserSettings);
+    _settings.lastLoggedInUsername = userData.username;
+    _settings.activeUserSettings = newUserSettings;
+    _settings.activeUserSettings.savedUserData.clearPassword = originalPassword;
+    _settings.saveSettings();
 
     // Create a new UserData for state with clearPassword
     UserData sessionUser = UserData(
@@ -60,10 +63,10 @@ class UserDataProvider extends StateNotifier<UserData> {
   }
 
   bool login(String username, String password) {
-    bool userExists = settingsContainer.checkIfUserExists(username);
+    bool userExists = _settings.checkIfUserExists(username);
     assert(userExists, '$username doesnt exist in the database');
 
-    var savedUserData = settingsContainer.userSettings
+    var savedUserData = _settings.userSettings
         .firstWhere(
             (userSetting) => userSetting.savedUserData.username == username)
         .savedUserData;
@@ -89,10 +92,10 @@ class UserDataProvider extends StateNotifier<UserData> {
     );
 
     state = stateUserData;
-    settingsContainer.lastLoggedInUsername = stateUserData.username;
-    settingsContainer.activeUserSettings = settingsContainer.getUserSettings();
-    settingsContainer.activeUserSettings.savedUserData.clearPassword = password;
-    settingsContainer.saveSettings();
+    _settings.lastLoggedInUsername = stateUserData.username;
+    _settings.activeUserSettings = _settings.getUserSettings();
+    _settings.activeUserSettings.savedUserData.clearPassword = password;
+    _settings.saveSettings();
     LogWrapper.logger.i('logged in as ${state.username}');
     return true;
   }
@@ -100,9 +103,9 @@ class UserDataProvider extends StateNotifier<UserData> {
   void updateUser(UserData userData) {
     LogWrapper.logger.i('update user ${userData.username}');
     var oldUsername =
-        settingsContainer.activeUserSettings.savedUserData.username;
+        _settings.activeUserSettings.savedUserData.username;
 
-    var savedUserData = settingsContainer.userSettings
+    var savedUserData = _settings.userSettings
         .firstWhere(
             (userSetting) =>
                 userSetting.savedUserData.username == oldUsername)
@@ -129,16 +132,16 @@ class UserDataProvider extends StateNotifier<UserData> {
     savedUserData.email = userData.email;
 
     // update saved user
-    settingsContainer.activeUserSettings.savedUserData = savedUserData;
-    settingsContainer.activeUserSettings.savedUserData.clearPassword = originalPassword;
-    settingsContainer.lastLoggedInUsername = userData.username;
-    var existingUserIndex = settingsContainer.userSettings.indexWhere(
-        (userSetting) => userSetting == settingsContainer.activeUserSettings);
+    _settings.activeUserSettings.savedUserData = savedUserData;
+    _settings.activeUserSettings.savedUserData.clearPassword = originalPassword;
+    _settings.lastLoggedInUsername = userData.username;
+    var existingUserIndex = _settings.userSettings.indexWhere(
+        (userSetting) => userSetting == _settings.activeUserSettings);
     if (existingUserIndex != -1) {
-      settingsContainer.userSettings[existingUserIndex] =
-          settingsContainer.activeUserSettings;
+      _settings.userSettings[existingUserIndex] =
+          _settings.activeUserSettings;
     }
-    settingsContainer.saveSettings();
+    _settings.saveSettings();
 
     // update state user with clear password
     UserData updatedStateUser = UserData(
@@ -172,18 +175,18 @@ class UserDataProvider extends StateNotifier<UserData> {
   void logout() {
     LogWrapper.logger.i('logout from user ${state.username}');
     UserData emptyUser = UserData.fromEmpty();
-    var userSettings = settingsContainer.userSettings;
+    var userSettings = _settings.userSettings;
     var emptyUserSettings = userSettings.firstWhere(
       (userSetting) => userSetting.savedUserData.username == emptyUser.username,
       orElse: () => UserSettings.fromEmpty(),
     );
-    if (!settingsContainer
+    if (!_settings
         .checkIfUserExists(emptyUserSettings.savedUserData.username)) {
       createUser(UserData.fromEmpty());
     } else {
-      settingsContainer.activeUserSettings =
+      _settings.activeUserSettings =
           emptyUserSettings; // 0 is always empty user
-      settingsContainer.lastLoggedInUsername = '';
+      _settings.lastLoggedInUsername = '';
     }
     state = emptyUser;
   }
@@ -194,7 +197,7 @@ class UserDataProvider extends StateNotifier<UserData> {
   /// onboarding path.  The account has an empty password so no authentication
   /// dialog is shown.
   void createDemoUser() {
-    if (!settingsContainer.checkIfUserExists(_demoUsername)) {
+    if (!_settings.checkIfUserExists(_demoUsername)) {
       createUser(UserData(username: _demoUsername, clearPassword: ''));
     } else {
       login(_demoUsername, '');
@@ -204,7 +207,7 @@ class UserDataProvider extends StateNotifier<UserData> {
   /// Removes the demo guest account from settings if it exists.
   /// Called automatically at the start of [createUser] for real accounts.
   void _removeDemoUserIfExists() {
-    settingsContainer.userSettings.removeWhere(
+    _settings.userSettings.removeWhere(
       (s) => s.savedUserData.username == _demoUsername,
     );
     LogWrapper.logger.d('Removed demo user account if present');
@@ -222,7 +225,7 @@ class UserDataProvider extends StateNotifier<UserData> {
     LogWrapper.logger.i('Debug auto-login: attempting login as $username');
 
     // Create user if doesn't exist yet
-    if (!settingsContainer.checkIfUserExists(username)) {
+    if (!_settings.checkIfUserExists(username)) {
       LogWrapper.logger.i('Debug auto-login: creating test user $username');
       createUser(UserData(
         username: username,
@@ -253,12 +256,12 @@ class UserDataProvider extends StateNotifier<UserData> {
 }
 
 final userDataProvider = StateNotifierProvider<UserDataProvider, UserData>(
-  (ref) => UserDataProvider(),
+  (ref) => UserDataProvider(ref.read(settingsProvider)),
 );
 
 final userDataSettingsProvider = Provider<UserSettings>((ref) {
   final userData = ref.watch(userDataProvider);
-  var userSettings = settingsContainer.userSettings;
+  var userSettings = ref.read(settingsProvider).userSettings;
   return userSettings.firstWhere(
       (userSetting) => userSetting.savedUserData.username == userData.username);
 });

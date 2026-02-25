@@ -1,6 +1,7 @@
 import 'package:day_tracker/core/database/db_repository.dart';
 import 'package:day_tracker/core/log/logger_instance.dart';
 import 'package:day_tracker/core/settings/settings_container.dart';
+import 'package:day_tracker/core/settings/settings_provider.dart';
 import 'package:day_tracker/features/notes/data/models/note.dart';
 import 'package:day_tracker/features/notes/data/models/note_category.dart';
 import 'package:flutter/material.dart';
@@ -9,11 +10,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 /// CategoryLocalDataProvider — subclasses DbRepository for custom logic
 /// (default category initialization, name validation).
 class CategoryLocalDataProvider extends DbRepository<NoteCategory> {
-  CategoryLocalDataProvider()
+  final SettingsContainer _settings;
+
+  CategoryLocalDataProvider(this._settings)
       : super(
           tableName: NoteCategory.tableName,
           columns: NoteCategory.columns,
           fromMap: NoteCategory.fromDbMap,
+          applicationDocumentsPath: _settings.applicationDocumentsPath,
           migrations: NoteCategory.migrations,
         );
 
@@ -29,7 +33,7 @@ class CategoryLocalDataProvider extends DbRepository<NoteCategory> {
   }
 
   Future<void> _addDefaultCategories() async {
-    final languageCode = settingsContainer.activeUserSettings.languageCode;
+    final languageCode = _settings.activeUserSettings.languageCode;
     final categoryNames = _getLocalizedCategoryNames(languageCode);
 
     final defaultCategories = [
@@ -138,7 +142,7 @@ class CategoryLocalDataProvider extends DbRepository<NoteCategory> {
 
 final categoryLocalDataProvider =
     StateNotifierProvider<CategoryLocalDataProvider, List<NoteCategory>>((ref) {
-  return CategoryLocalDataProvider();
+  return CategoryLocalDataProvider(ref.read(settingsProvider));
 });
 
 //-----------------------------------------------------------------------------------------------------------------------------------

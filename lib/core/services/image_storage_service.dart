@@ -8,6 +8,7 @@ import 'package:path/path.dart' as p;
 
 class ImageStorageService {
   Directory _imagesDir() {
+    // ignore: deprecated_member_use
     final basePath = settingsContainer.applicationDocumentsPath;
     return Directory(p.join(basePath, 'images'));
   }

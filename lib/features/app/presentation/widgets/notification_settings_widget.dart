@@ -1,6 +1,6 @@
 import 'package:day_tracker/core/log/logger_instance.dart';
 import 'package:day_tracker/core/services/notification_service.dart';
-import 'package:day_tracker/core/settings/settings_container.dart';
+import 'package:day_tracker/core/settings/settings_provider.dart';
 import 'package:day_tracker/core/widgets/app_ui_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:day_tracker/l10n/app_localizations.dart';
@@ -27,14 +27,14 @@ class _NotificationSettingsWidgetState
   void initState() {
     super.initState();
     final settings =
-        settingsContainer.activeUserSettings.notificationSettings;
+        ref.read(settingsProvider).activeUserSettings.notificationSettings;
     _notificationsEnabled = settings.enabled;
     _smartRemindersEnabled = settings.smartRemindersEnabled;
     _streakWarningsEnabled = settings.streakWarningsEnabled;
     _reminderTime = settings.reminderTime;
   }
 
-  void _autoSave() => settingsContainer.saveSettings().ignore();
+  void _autoSave() => ref.read(settingsNotifierProvider).saveSettings().ignore();
 
   @override
   Widget build(BuildContext context) {
@@ -70,7 +70,7 @@ class _NotificationSettingsWidgetState
               onChanged: (value) {
                 setState(() {
                   _smartRemindersEnabled = value;
-                  settingsContainer.activeUserSettings.notificationSettings
+                  ref.read(settingsProvider).activeUserSettings.notificationSettings
                       .smartRemindersEnabled = value;
                 });
                 _autoSave();
@@ -86,7 +86,7 @@ class _NotificationSettingsWidgetState
               onChanged: (value) {
                 setState(() {
                   _streakWarningsEnabled = value;
-                  settingsContainer.activeUserSettings.notificationSettings
+                  ref.read(settingsProvider).activeUserSettings.notificationSettings
                       .streakWarningsEnabled = value;
                 });
                 _autoSave();
@@ -113,13 +113,13 @@ class _NotificationSettingsWidgetState
 
     setState(() {
       _notificationsEnabled = value;
-      settingsContainer.activeUserSettings.notificationSettings.enabled = value;
+      ref.read(settingsProvider).activeUserSettings.notificationSettings.enabled = value;
     });
     _autoSave();
 
     if (value) {
       await _notificationService.scheduleDailyReminder(
-        settingsContainer.activeUserSettings.notificationSettings,
+        ref.read(settingsProvider).activeUserSettings.notificationSettings,
       );
       LogWrapper.logger.i('Notifications enabled and scheduled');
     } else {
@@ -139,14 +139,14 @@ class _NotificationSettingsWidgetState
     if (picked != null && picked != _reminderTime) {
       setState(() {
         _reminderTime = picked;
-        settingsContainer.activeUserSettings.notificationSettings.reminderTime =
+        ref.read(settingsProvider).activeUserSettings.notificationSettings.reminderTime =
             picked;
       });
       _autoSave();
 
       if (_notificationsEnabled) {
         await _notificationService.scheduleDailyReminder(
-          settingsContainer.activeUserSettings.notificationSettings,
+          ref.read(settingsProvider).activeUserSettings.notificationSettings,
         );
       }
     }

@@ -1,16 +1,18 @@
 import 'package:day_tracker/core/database/db_repository.dart';
 import 'package:day_tracker/core/log/logger_instance.dart';
+import 'package:day_tracker/core/settings/settings_provider.dart';
 import 'package:day_tracker/features/note_templates/data/models/note_template.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// NoteTemplateLocalDataProvider — subclasses DbRepository for custom
 /// default template initialization logic.
 class NoteTemplateLocalDataProvider extends DbRepository<NoteTemplate> {
-  NoteTemplateLocalDataProvider()
+  NoteTemplateLocalDataProvider({required String applicationDocumentsPath})
       : super(
           tableName: NoteTemplate.tableName,
           columns: NoteTemplate.columns,
           fromMap: NoteTemplate.fromDbMap,
+          applicationDocumentsPath: applicationDocumentsPath,
           migrations: NoteTemplate.migrations,
         );
 
@@ -36,7 +38,8 @@ class NoteTemplateLocalDataProvider extends DbRepository<NoteTemplate> {
 }
 
 final noteTemplateLocalDataProvider = StateNotifierProvider<NoteTemplateLocalDataProvider, List<NoteTemplate>>((ref) {
-  return NoteTemplateLocalDataProvider();
+  final appDocPath = ref.read(settingsProvider).applicationDocumentsPath;
+  return NoteTemplateLocalDataProvider(applicationDocumentsPath: appDocPath);
 });
 
 // Provider for the currently selected template

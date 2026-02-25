@@ -2,7 +2,7 @@ import 'package:day_tracker/core/backup/backup_metadata.dart';
 import 'package:day_tracker/core/log/logger_instance.dart';
 import 'package:day_tracker/core/services/backup_scheduler.dart';
 import 'package:day_tracker/core/settings/backup_settings.dart';
-import 'package:day_tracker/core/settings/settings_container.dart';
+import 'package:day_tracker/core/settings/settings_provider.dart';
 import 'package:day_tracker/features/app/presentation/pages/backup_history_page.dart';
 import 'package:day_tracker/features/day_rating/domain/providers/diary_day_local_db_provider.dart';
 import 'package:day_tracker/features/habits/domain/providers/habit_providers.dart';
@@ -33,7 +33,7 @@ class _BackupSettingsWidgetState extends ConsumerState<BackupSettingsWidget> {
   @override
   void initState() {
     super.initState();
-    final settings = settingsContainer.activeUserSettings.backupSettings;
+    final settings = ref.read(settingsProvider).activeUserSettings.backupSettings;
     _backupEnabled = settings.enabled;
     _frequency = settings.frequency;
     _preferredTime = settings.preferredTime;
@@ -42,10 +42,10 @@ class _BackupSettingsWidgetState extends ConsumerState<BackupSettingsWidget> {
     _destination = settings.destination;
   }
 
-  void _autoSave() => settingsContainer.saveSettings().ignore();
+  void _autoSave() => ref.read(settingsNotifierProvider).saveSettings().ignore();
 
   bool get _isSupabaseConfigured {
-    final s = settingsContainer.activeUserSettings.supabaseSettings;
+    final s = ref.read(settingsProvider).activeUserSettings.supabaseSettings;
     return s.supabaseUrl.isNotEmpty &&
         s.supabaseAnonKey.isNotEmpty &&
         s.email.isNotEmpty &&
@@ -56,12 +56,12 @@ class _BackupSettingsWidgetState extends ConsumerState<BackupSettingsWidget> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context);
-    final backupSettings = settingsContainer.activeUserSettings.backupSettings;
+    final backupSettings = ref.read(settingsProvider).activeUserSettings.backupSettings;
     final isOverdue = backupSettings.isBackupOverdue;
     final lastBackup = backupSettings.lastBackupDateTime;
 
     final customPath = backupSettings.backupDirectoryPath;
-    final defaultPath = settingsContainer.applicationDocumentsPath;
+    final defaultPath = ref.read(settingsProvider).applicationDocumentsPath;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -131,7 +131,7 @@ class _BackupSettingsWidgetState extends ConsumerState<BackupSettingsWidget> {
                   onSelectionChanged: (selected) {
                     setState(() {
                       _frequency = selected.first;
-                      settingsContainer.activeUserSettings.backupSettings
+                      ref.read(settingsProvider).activeUserSettings.backupSettings
                           .frequency = _frequency;
                     });
                     _autoSave();
@@ -191,11 +191,11 @@ class _BackupSettingsWidgetState extends ConsumerState<BackupSettingsWidget> {
                   onSelectionChanged: (selected) {
                     setState(() {
                       _destination = selected.first;
-                      settingsContainer.activeUserSettings.backupSettings
+                      ref.read(settingsProvider).activeUserSettings.backupSettings
                           .destination = _destination;
                     });
                     BackupScheduler().updateSchedule(
-                      settingsContainer.activeUserSettings.backupSettings,
+                      ref.read(settingsProvider).activeUserSettings.backupSettings,
                     );
                     _autoSave();
                   },
@@ -213,7 +213,7 @@ class _BackupSettingsWidgetState extends ConsumerState<BackupSettingsWidget> {
                     onChanged: (value) {
                       setState(() {
                         _wifiOnly = value;
-                        settingsContainer.activeUserSettings.backupSettings
+                        ref.read(settingsProvider).activeUserSettings.backupSettings
                             .wifiOnly = value;
                       });
                       _autoSave();
@@ -240,7 +240,7 @@ class _BackupSettingsWidgetState extends ConsumerState<BackupSettingsWidget> {
                         onChanged: (value) {
                           setState(() {
                             _maxBackups = value.round();
-                            settingsContainer
+                            ref.read(settingsProvider)
                                 .activeUserSettings.backupSettings
                                 .maxBackups = _maxBackups;
                           });
@@ -284,7 +284,7 @@ class _BackupSettingsWidgetState extends ConsumerState<BackupSettingsWidget> {
                       child: TextButton.icon(
                         onPressed: () {
                           setState(() {
-                            settingsContainer
+                            ref.read(settingsProvider)
                                 .activeUserSettings.backupSettings
                                 .backupDirectoryPath = null;
                           });
@@ -352,12 +352,12 @@ class _BackupSettingsWidgetState extends ConsumerState<BackupSettingsWidget> {
   void _onBackupToggled(bool value) {
     setState(() {
       _backupEnabled = value;
-      settingsContainer.activeUserSettings.backupSettings.enabled = value;
+      ref.read(settingsProvider).activeUserSettings.backupSettings.enabled = value;
     });
     _autoSave();
 
     BackupScheduler().updateSchedule(
-      settingsContainer.activeUserSettings.backupSettings,
+      ref.read(settingsProvider).activeUserSettings.backupSettings,
     );
 
     if (!value) {
@@ -371,7 +371,7 @@ class _BackupSettingsWidgetState extends ConsumerState<BackupSettingsWidget> {
     final selectedDirectory = await FilePicker.platform.getDirectoryPath();
     if (selectedDirectory != null && mounted) {
       setState(() {
-        settingsContainer.activeUserSettings.backupSettings
+        ref.read(settingsProvider).activeUserSettings.backupSettings
             .backupDirectoryPath = selectedDirectory;
       });
       _autoSave();
@@ -389,7 +389,7 @@ class _BackupSettingsWidgetState extends ConsumerState<BackupSettingsWidget> {
     if (picked != null && picked != _preferredTime) {
       setState(() {
         _preferredTime = picked;
-        settingsContainer.activeUserSettings.backupSettings.preferredTime =
+        ref.read(settingsProvider).activeUserSettings.backupSettings.preferredTime =
             picked;
       });
       _autoSave();

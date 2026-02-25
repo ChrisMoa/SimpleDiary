@@ -1,4 +1,4 @@
-import 'package:day_tracker/core/settings/settings_container.dart';
+import 'package:day_tracker/core/settings/settings_provider.dart';
 import 'package:day_tracker/features/authentication/data/models/user_data.dart';
 import 'package:day_tracker/features/authentication/domain/providers/user_data_provider.dart';
 import 'package:day_tracker/core/widgets/app_ui_kit.dart';
@@ -16,13 +16,19 @@ class AuthUserDataPage extends ConsumerStatefulWidget {
 
 class _AuthUserDataPageState extends ConsumerState<AuthUserDataPage> {
   final _formKey = GlobalKey<FormState>();
-  var _isLogin = settingsContainer.userSettings.isNotEmpty;
+  late bool _isLogin;
   var _isAuthenticating = false;
   var _isRemoteAccount = false;
   var _isPasswordVisible = false;
 
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _isLogin = ref.read(settingsProvider).userSettings.isNotEmpty;
+  }
   final _emailController = TextEditingController();
 
   //? build --------------------------------------------------------------------

@@ -44,7 +44,7 @@ void main() {
         'DEBUG_EMAIL': 'test@test.com',
       });
 
-      final provider = UserDataProvider();
+      final provider = UserDataProvider(settingsContainer);
       provider.debugAutoLogin();
 
       expect(provider.debugState.isLoggedIn, true);
@@ -63,14 +63,14 @@ void main() {
       });
 
       // First create the user
-      final provider = UserDataProvider();
+      final provider = UserDataProvider(settingsContainer);
       provider.debugAutoLogin();
       expect(provider.debugState.isLoggedIn, true);
 
       // Create a new provider instance (simulates app restart)
       // The user now exists in settingsContainer
       settingsContainer.lastLoggedInUsername = 'testuser';
-      final provider2 = UserDataProvider();
+      final provider2 = UserDataProvider(settingsContainer);
       // State loaded from settings but not logged in yet
       expect(provider2.debugState.isLoggedIn, false);
 
@@ -89,7 +89,7 @@ void main() {
         'DEBUG_PASSWORD': 'testpass123',
       });
 
-      final provider = UserDataProvider();
+      final provider = UserDataProvider(settingsContainer);
       provider.debugAutoLogin();
 
       expect(provider.debugState.isLoggedIn, false);
@@ -103,7 +103,7 @@ void main() {
         'DEBUG_PASSWORD': 'testpass123',
       });
 
-      final provider = UserDataProvider();
+      final provider = UserDataProvider(settingsContainer);
       provider.debugAutoLogin();
 
       expect(provider.debugState.isLoggedIn, false);
@@ -117,7 +117,7 @@ void main() {
         'DEBUG_PASSWORD': 'short',
       });
 
-      final provider = UserDataProvider();
+      final provider = UserDataProvider(settingsContainer);
       provider.debugAutoLogin();
 
       expect(provider.debugState.isLoggedIn, false);
@@ -131,7 +131,7 @@ void main() {
         'DEBUG_PASSWORD': 'testpass123',
       });
 
-      final provider = UserDataProvider();
+      final provider = UserDataProvider(settingsContainer);
       provider.debugAutoLogin();
 
       expect(provider.debugState.isLoggedIn, false);
