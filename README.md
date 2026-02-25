@@ -216,7 +216,7 @@ flutter test test/core/ test/features/ test/l10n/
 # Run with coverage
 flutter test --coverage test/core/ test/features/ test/l10n/
 
-# Static analysis
+# Static flutter analysis
 flutter analyze
 ```
 
