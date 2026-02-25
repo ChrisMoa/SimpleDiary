@@ -1,10 +1,10 @@
 # Test Coverage
 
-**Total: 815 passing tests** across 55 test files (+ 16 optional/skipped Supabase integration tests)
+**Total: 851+ passing tests** across 59 test files (+ 16 optional/skipped Supabase integration tests)
 
 Run all tests with:
 ```bash
-flutter test test/core/ test/features/ test/l10n/
+flutter test test/core/ test/features/ test/l10n/ test/integration/
 ```
 
 ---
@@ -234,6 +234,44 @@ flutter test test/core/ test/features/ test/l10n/
 
 ---
 
+## Integration Tests (`test/integration/`)
+
+Workflow-level tests that verify multi-feature provider interactions using `ProviderContainer` and `TestDbRepository`.
+
+### Diary Entry Workflow (`test/integration/diary_entry_workflow_test.dart`)
+
+| File | Tests | Covers |
+|------|-------|--------|
+| `diary_entry_workflow_test.dart` | 9 | **Provider chain:** DayRatingsNotifier updates, DiaryDay construction + save, `diaryDayFullDataProvider` note association, `isDiaryOfDayCompleteProvider` (complete/empty). **Wizard providers:** `wizardDayNotesProvider` date filtering, dynamic note addition, `createEmptyNoteProvider` defaults. **Enhanced rating:** resets on date change |
+
+**Sources:** `lib/features/day_rating/domain/providers/diary_wizard_providers.dart`, `diary_day_local_db_provider.dart`
+
+### Note Search Workflow (`test/integration/note_search_workflow_test.dart`)
+
+| File | Tests | Covers |
+|------|-------|--------|
+| `note_search_workflow_test.dart` | 9 | **Full provider chain:** notes appear in `filteredNotesProvider`, text search filters in real-time, category filter, combined category+text search, date range filter, `clearAll` resets, adding note while filter active updates results, deleting note updates results, favorites filter |
+
+**Sources:** `lib/features/notes/domain/providers/note_local_db_provider.dart`, `note_search_provider.dart`
+
+### Settings Persistence Workflow (`test/integration/settings_persistence_workflow_test.dart`)
+
+| File | Tests | Covers |
+|------|-------|--------|
+| `settings_persistence_workflow_test.dart` | 7 | **Cross-provider persistence:** theme seed color survives `ThemeProvider` recreation, dark mode toggle + restore, default seed color, locale auto-persists to `settingsContainer`, locale survives recreation, combined theme+locale+dark mode workflow, independent user settings, ThemeProvider vs LocaleProvider persistence asymmetry |
+
+**Sources:** `lib/core/provider/theme_provider.dart`, `locale_provider.dart`, `lib/core/settings/settings_container.dart`
+
+### Export/Import Workflow (`test/integration/export_import_workflow_test.dart`)
+
+| File | Tests | Covers |
+|------|-------|--------|
+| `export_import_workflow_test.dart` | 10 | **Data round-trip with notes:** diary days with embedded notes, multiple days with mixed content, file-based round-trip, encrypted round-trip preserves notes, import populates provider state. **Cross-feature integrity:** note categories preserved, all 4 DayRating types, EnhancedDayRating (PERMA+), empty data, large dataset (30 days) |
+
+**Sources:** `lib/features/synchronization/domain/providers/file_db_provider.dart`, `lib/features/synchronization/data/models/export_data.dart`
+
+---
+
 ## Coverage Summary by Area
 
 | Area | Status | Notes |
@@ -268,14 +306,17 @@ flutter test test/core/ test/features/ test/l10n/
 | Dashboard granular providers | Covered | currentStreakProvider, todayLoggedProvider, weekAverageProvider: value extraction, default before load, selective rebuild |
 | Widget: NewDashboardPage | Covered | FAB, RefreshIndicator, responsive layout, custom stats rendering |
 | Widget: SettingsPage | Covered | Settings title, all 6 settings sections, category management, scrollability |
+| Integration: Diary entry workflow | Covered | Provider chain + wizard providers + enhanced rating reset |
+| Integration: Note search workflow | Covered | Full filteredNotesProvider chain with CRUD + filters |
+| Integration: Settings persistence | Covered | Cross-provider state + restart simulation |
+| Integration: Export/import round-trip | Covered | Notes in diary days, encryption, large datasets |
 
-### Not covered (requires integration tests)
+### Not covered
 
 | Area | Reason |
 |------|--------|
-| Riverpod provider state (with ProviderContainer) | Requires mocking database layer |
-| SQLite database operations (LocalDbHelper) | Requires real/mock SQLite database |
-| File picker / permission handler | Platform-specific, requires integration tests |
+| SQLite database operations (LocalDbHelper) | Requires real SQLite database |
+| File picker / permission handler | Platform-specific, requires device |
 
 ---
 
