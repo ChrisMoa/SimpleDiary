@@ -25,7 +25,7 @@ jobs:
           envkey_PROJECT_NAME: ${{ secrets.PROJECT_NAME }}
       - run: flutter pub get
       - name: Run tests
-        run: flutter test test/core/ test/features/ test/l10n/
+        run: flutter test test/core/ test/features/ test/l10n/ test/integration/
 
   version-bump:
     needs: test
