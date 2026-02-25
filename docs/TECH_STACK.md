@@ -486,6 +486,7 @@ flutter test test/features/            # Feature tests only
    - Commits with `[skip ci]` to prevent infinite loops
    - Creates annotated git tag (e.g., `v1.0.23+1`)
    - Skipped on PRs and manual dispatch
+   - Own ruleset for workflow
 
 3. **build-windows** (needs: test, version-bump)
    - Builds Windows release using bumped version
