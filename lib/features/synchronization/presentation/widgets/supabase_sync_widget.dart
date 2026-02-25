@@ -184,7 +184,37 @@ class _SupabaseSyncWidgetState extends ConsumerState<SupabaseSyncWidget> {
     );
   }
 
+  String _formatSyncMessage(SyncState syncState, AppLocalizations l10n) {
+    return switch (syncState.phase) {
+      SyncPhase.idle => l10n.syncReadyToSync,
+      SyncPhase.initializing => l10n.syncInitializing,
+      SyncPhase.authenticating => l10n.syncAuthenticating,
+      SyncPhase.syncDiaryDays => l10n.syncingDiaryDaysBatch(
+        syncState.completedItems, syncState.totalItems,
+      ),
+      SyncPhase.syncNotes => l10n.syncingNotesBatch(
+        syncState.completedItems, syncState.totalItems,
+      ),
+      SyncPhase.syncTemplates => l10n.syncingTemplatesBatch(
+        syncState.completedItems, syncState.totalItems,
+      ),
+      SyncPhase.downloadDiaryDays => l10n.downloadingDiaryDays,
+      SyncPhase.downloadNotes => l10n.downloadingNotes,
+      SyncPhase.downloadTemplates => l10n.downloadingTemplates,
+      SyncPhase.updatingLocalDatabase => l10n.updatingLocalDatabase,
+      SyncPhase.completed => syncState.status == SyncStatus.success
+          ? l10n.syncCompletedSuccessfully
+          : l10n.downloadCompletedSuccessfully,
+      SyncPhase.failed => syncState.errorMessage != null
+          ? (syncState.errorMessage!.startsWith('Download')
+              ? l10n.downloadFailed(syncState.errorMessage!.replaceFirst('Download failed: ', ''))
+              : l10n.syncFailed(syncState.errorMessage!.replaceFirst('Sync failed: ', '')))
+          : l10n.syncFailed(''),
+    };
+  }
+
   Widget _buildSyncStatus(SyncState syncState, ThemeData theme, bool isSmallScreen) {
+    final l10n = AppLocalizations.of(context);
     Color statusColor;
     IconData statusIcon;
 
@@ -221,7 +251,7 @@ class _SupabaseSyncWidgetState extends ConsumerState<SupabaseSyncWidget> {
               AppSpacing.horizontalXs,
               Expanded(
                 child: Text(
-                  syncState.message,
+                  _formatSyncMessage(syncState, l10n),
                   style: theme.textTheme.bodyMedium?.copyWith(
                     color: statusColor,
                     fontSize: isSmallScreen ? 14 : 16,

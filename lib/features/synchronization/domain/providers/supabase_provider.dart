@@ -56,26 +56,76 @@ class SupabaseSettingsNotifier extends StateNotifier<SupabaseSettings> {
 // Supabase synchronization state provider
 enum SyncStatus { idle, syncing, success, error }
 
+enum SyncPhase {
+  idle,
+  initializing,
+  authenticating,
+  syncDiaryDays,
+  syncNotes,
+  syncTemplates,
+  downloadDiaryDays,
+  downloadNotes,
+  downloadTemplates,
+  updatingLocalDatabase,
+  completed,
+  failed,
+}
+
 class SyncState {
   final SyncStatus status;
-  final String message;
+  final SyncPhase phase;
   final double progress;
+  final int completedItems;
+  final int totalItems;
+  final String? errorMessage;
 
   SyncState({
     required this.status,
-    required this.message,
+    this.phase = SyncPhase.idle,
     this.progress = 0.0,
+    this.completedItems = 0,
+    this.totalItems = 0,
+    this.errorMessage,
   });
+
+  /// Backward-compatible message getter for tests and non-l10n contexts.
+  String get message {
+    if (errorMessage != null && phase == SyncPhase.failed) {
+      return errorMessage!;
+    }
+    return switch (phase) {
+      SyncPhase.idle => 'Ready to sync',
+      SyncPhase.initializing => 'Initializing sync...',
+      SyncPhase.authenticating => 'Authenticating...',
+      SyncPhase.syncDiaryDays => 'Syncing diary days...',
+      SyncPhase.syncNotes => 'Syncing notes...',
+      SyncPhase.syncTemplates => 'Syncing templates...',
+      SyncPhase.downloadDiaryDays => 'Downloading diary days...',
+      SyncPhase.downloadNotes => 'Downloading notes...',
+      SyncPhase.downloadTemplates => 'Downloading templates...',
+      SyncPhase.updatingLocalDatabase => 'Updating local database...',
+      SyncPhase.completed => 'Sync completed successfully',
+      SyncPhase.failed => errorMessage ?? 'Sync failed',
+    };
+  }
 
   SyncState copyWith({
     SyncStatus? status,
-    String? message,
+    SyncPhase? phase,
     double? progress,
+    int? completedItems,
+    int? totalItems,
+    String? errorMessage,
+    // Keep backward-compatible message parameter — maps to phase for tests
+    String? message,
   }) {
     return SyncState(
       status: status ?? this.status,
-      message: message ?? this.message,
+      phase: phase ?? this.phase,
       progress: progress ?? this.progress,
+      completedItems: completedItems ?? this.completedItems,
+      totalItems: totalItems ?? this.totalItems,
+      errorMessage: errorMessage ?? this.errorMessage,
     );
   }
 }
@@ -84,16 +134,16 @@ class SyncState {
 class SupabaseSyncNotifier extends StateNotifier<SyncState> {
   final Ref ref;
 
-  SupabaseSyncNotifier(this.ref) : super(SyncState(status: SyncStatus.idle, message: 'Ready to sync')) {
+  SupabaseSyncNotifier(this.ref) : super(SyncState(status: SyncStatus.idle)) {
     LogWrapper.logger.i('Initialized SupabaseSyncNotifier');
   }
 
   Future<void> syncToSupabase() async {
     LogWrapper.logger.i('Starting sync to Supabase');
     try {
-      state = state.copyWith(
+      state = SyncState(
         status: SyncStatus.syncing,
-        message: 'Initializing sync...',
+        phase: SyncPhase.initializing,
         progress: 0.0,
       );
 
@@ -108,7 +158,7 @@ class SupabaseSyncNotifier extends StateNotifier<SyncState> {
       );
 
       state = state.copyWith(
-        message: 'Authenticating...',
+        phase: SyncPhase.authenticating,
         progress: 0.1,
       );
 
@@ -123,63 +173,86 @@ class SupabaseSyncNotifier extends StateNotifier<SyncState> {
         throw Exception('Authentication failed');
       }
 
-      state = state.copyWith(
-        message: 'Syncing diary days...',
-        progress: 0.2,
-      );
-
+      // Sync diary days (progress 0.2 → 0.5)
       final diaryDays = ref.read(diaryDayLocalDbDataProvider);
       LogWrapper.logger.i('Syncing ${diaryDays.length} diary days');
-      await supabaseApi.syncDiaryDays(diaryDays, userData.userId!);
-
       state = state.copyWith(
-        message: 'Syncing notes...',
-        progress: 0.5,
+        phase: SyncPhase.syncDiaryDays,
+        progress: 0.2,
+        completedItems: 0,
+        totalItems: diaryDays.length,
+      );
+      await supabaseApi.syncDiaryDays(diaryDays, userData.userId!,
+        onProgress: (completed, total) {
+          state = state.copyWith(
+            completedItems: completed,
+            totalItems: total,
+            progress: total > 0 ? 0.2 + (0.3 * completed / total) : 0.5,
+          );
+        },
       );
 
+      // Sync notes (progress 0.5 → 0.8)
       final notes = ref.read(notesLocalDataProvider);
       LogWrapper.logger.i('Syncing ${notes.length} notes');
-      await supabaseApi.syncNotes(notes, userData.userId!);
-
       state = state.copyWith(
-        message: 'Syncing templates...',
-        progress: 0.8,
+        phase: SyncPhase.syncNotes,
+        progress: 0.5,
+        completedItems: 0,
+        totalItems: notes.length,
+      );
+      await supabaseApi.syncNotes(notes, userData.userId!,
+        onProgress: (completed, total) {
+          state = state.copyWith(
+            completedItems: completed,
+            totalItems: total,
+            progress: total > 0 ? 0.5 + (0.3 * completed / total) : 0.8,
+          );
+        },
       );
 
+      // Sync templates (progress 0.8 → 0.95)
       final templates = ref.read(noteTemplateLocalDataProvider);
       LogWrapper.logger.i('Syncing ${templates.length} templates');
-      await supabaseApi.syncTemplates(templates, userData.userId!);
+      state = state.copyWith(
+        phase: SyncPhase.syncTemplates,
+        progress: 0.8,
+        completedItems: 0,
+        totalItems: templates.length,
+      );
+      await supabaseApi.syncTemplates(templates, userData.userId!,
+        onProgress: (completed, total) {
+          state = state.copyWith(
+            completedItems: completed,
+            totalItems: total,
+            progress: total > 0 ? 0.8 + (0.15 * completed / total) : 0.95,
+          );
+        },
+      );
 
       LogWrapper.logger.i('Sync completed successfully');
-      state = state.copyWith(
+      state = SyncState(
         status: SyncStatus.success,
-        message: 'Sync completed successfully',
+        phase: SyncPhase.completed,
         progress: 1.0,
       );
 
       Future.delayed(const Duration(seconds: 3), () {
         if (mounted) {
-          state = state.copyWith(
-            status: SyncStatus.idle,
-            message: 'Ready to sync',
-            progress: 0.0,
-          );
+          state = SyncState(status: SyncStatus.idle);
         }
       });
     } catch (e) {
       LogWrapper.logger.e('Sync failed: $e');
       state = state.copyWith(
         status: SyncStatus.error,
-        message: 'Sync failed: ${e.toString()}',
+        phase: SyncPhase.failed,
+        errorMessage: 'Sync failed: ${e.toString()}',
       );
 
       Future.delayed(const Duration(seconds: 5), () {
         if (mounted) {
-          state = state.copyWith(
-            status: SyncStatus.idle,
-            message: 'Ready to sync',
-            progress: 0.0,
-          );
+          state = SyncState(status: SyncStatus.idle);
         }
       });
     }
@@ -188,9 +261,9 @@ class SupabaseSyncNotifier extends StateNotifier<SyncState> {
   Future<void> syncFromSupabase() async {
     LogWrapper.logger.i('Starting sync from Supabase');
     try {
-      state = state.copyWith(
+      state = SyncState(
         status: SyncStatus.syncing,
-        message: 'Downloading data...',
+        phase: SyncPhase.initializing,
         progress: 0.0,
       );
 
@@ -205,7 +278,7 @@ class SupabaseSyncNotifier extends StateNotifier<SyncState> {
       );
 
       state = state.copyWith(
-        message: 'Authenticating...',
+        phase: SyncPhase.authenticating,
         progress: 0.1,
       );
 
@@ -221,7 +294,7 @@ class SupabaseSyncNotifier extends StateNotifier<SyncState> {
       }
 
       state = state.copyWith(
-        message: 'Downloading diary days...',
+        phase: SyncPhase.downloadDiaryDays,
         progress: 0.2,
       );
 
@@ -230,7 +303,7 @@ class SupabaseSyncNotifier extends StateNotifier<SyncState> {
       LogWrapper.logger.i('Fetched ${diaryDays.length} diary days');
 
       state = state.copyWith(
-        message: 'Downloading notes...',
+        phase: SyncPhase.downloadNotes,
         progress: 0.5,
       );
 
@@ -239,7 +312,7 @@ class SupabaseSyncNotifier extends StateNotifier<SyncState> {
       LogWrapper.logger.i('Fetched ${notes.length} notes');
 
       state = state.copyWith(
-        message: 'Downloading templates...',
+        phase: SyncPhase.downloadTemplates,
         progress: 0.7,
       );
 
@@ -248,7 +321,7 @@ class SupabaseSyncNotifier extends StateNotifier<SyncState> {
       LogWrapper.logger.i('Fetched ${templates.length} templates');
 
       state = state.copyWith(
-        message: 'Updating local database...',
+        phase: SyncPhase.updatingLocalDatabase,
         progress: 0.8,
       );
 
@@ -270,35 +343,28 @@ class SupabaseSyncNotifier extends StateNotifier<SyncState> {
       }
 
       LogWrapper.logger.i('Download completed successfully');
-      state = state.copyWith(
+      state = SyncState(
         status: SyncStatus.success,
-        message: 'Download completed successfully',
+        phase: SyncPhase.completed,
         progress: 1.0,
       );
 
       Future.delayed(const Duration(seconds: 3), () {
         if (mounted) {
-          state = state.copyWith(
-            status: SyncStatus.idle,
-            message: 'Ready to sync',
-            progress: 0.0,
-          );
+          state = SyncState(status: SyncStatus.idle);
         }
       });
     } catch (e) {
       LogWrapper.logger.e('Download failed: $e');
       state = state.copyWith(
         status: SyncStatus.error,
-        message: 'Download failed: ${e.toString()}',
+        phase: SyncPhase.failed,
+        errorMessage: 'Download failed: ${e.toString()}',
       );
 
       Future.delayed(const Duration(seconds: 5), () {
         if (mounted) {
-          state = state.copyWith(
-            status: SyncStatus.idle,
-            message: 'Ready to sync',
-            progress: 0.0,
-          );
+          state = SyncState(status: SyncStatus.idle);
         }
       });
     }

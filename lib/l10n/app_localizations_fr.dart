@@ -865,6 +865,61 @@ class AppLocalizationsFr extends AppLocalizations {
       'Charger les données du journal depuis le cloud';
 
   @override
+  String get syncReadyToSync => 'Prêt à synchroniser';
+
+  @override
+  String get syncInitializing => 'Initialisation de la synchronisation...';
+
+  @override
+  String get syncAuthenticating => 'Authentification...';
+
+  @override
+  String syncingDiaryDaysBatch(int completed, int total) {
+    return 'Synchronisation des entrées du journal ($completed/$total)...';
+  }
+
+  @override
+  String syncingNotesBatch(int completed, int total) {
+    return 'Synchronisation des notes ($completed/$total)...';
+  }
+
+  @override
+  String syncingTemplatesBatch(int completed, int total) {
+    return 'Synchronisation des modèles ($completed/$total)...';
+  }
+
+  @override
+  String get syncCompletedSuccessfully =>
+      'Synchronisation terminée avec succès';
+
+  @override
+  String syncFailed(String error) {
+    return 'Synchronisation échouée : $error';
+  }
+
+  @override
+  String get downloadingDiaryDays => 'Téléchargement des entrées du journal...';
+
+  @override
+  String get downloadingNotes => 'Téléchargement des notes...';
+
+  @override
+  String get downloadingTemplates => 'Téléchargement des modèles...';
+
+  @override
+  String get updatingLocalDatabase =>
+      'Mise à jour de la base de données locale...';
+
+  @override
+  String get downloadCompletedSuccessfully =>
+      'Téléchargement terminé avec succès';
+
+  @override
+  String downloadFailed(String error) {
+    return 'Téléchargement échoué : $error';
+  }
+
+  @override
   String get supabaseSettings => 'Paramètres Supabase';
 
   @override

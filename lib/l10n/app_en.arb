@@ -418,6 +418,48 @@
   "saveYourDiaryDataToCloud": "Save your diary data to the cloud",
   "downloadFromSupabase": "Download from Supabase",
   "loadDiaryDataFromCloud": "Load diary data from the cloud",
+  "syncReadyToSync": "Ready to sync",
+  "syncInitializing": "Initializing sync...",
+  "syncAuthenticating": "Authenticating...",
+  "syncingDiaryDaysBatch": "Syncing diary days ({completed}/{total})...",
+  "@syncingDiaryDaysBatch": {
+    "placeholders": {
+      "completed": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  },
+  "syncingNotesBatch": "Syncing notes ({completed}/{total})...",
+  "@syncingNotesBatch": {
+    "placeholders": {
+      "completed": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  },
+  "syncingTemplatesBatch": "Syncing templates ({completed}/{total})...",
+  "@syncingTemplatesBatch": {
+    "placeholders": {
+      "completed": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  },
+  "syncCompletedSuccessfully": "Sync completed successfully",
+  "syncFailed": "Sync failed: {error}",
+  "@syncFailed": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "downloadingDiaryDays": "Downloading diary days...",
+  "downloadingNotes": "Downloading notes...",
+  "downloadingTemplates": "Downloading templates...",
+  "updatingLocalDatabase": "Updating local database...",
+  "downloadCompletedSuccessfully": "Download completed successfully",
+  "downloadFailed": "Download failed: {error}",
+  "@downloadFailed": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
   "supabaseSettings": "Supabase Settings",
   "supabaseDescription": "Configure your Supabase cloud storage settings for backup and cross-device access.",
   "supabaseUrl": "Supabase URL",
