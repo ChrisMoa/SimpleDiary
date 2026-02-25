@@ -1650,6 +1650,90 @@ abstract class AppLocalizations {
   /// **'Load diary data from the cloud'**
   String get loadDiaryDataFromCloud;
 
+  /// No description provided for @syncReadyToSync.
+  ///
+  /// In en, this message translates to:
+  /// **'Ready to sync'**
+  String get syncReadyToSync;
+
+  /// No description provided for @syncInitializing.
+  ///
+  /// In en, this message translates to:
+  /// **'Initializing sync...'**
+  String get syncInitializing;
+
+  /// No description provided for @syncAuthenticating.
+  ///
+  /// In en, this message translates to:
+  /// **'Authenticating...'**
+  String get syncAuthenticating;
+
+  /// No description provided for @syncingDiaryDaysBatch.
+  ///
+  /// In en, this message translates to:
+  /// **'Syncing diary days ({completed}/{total})...'**
+  String syncingDiaryDaysBatch(int completed, int total);
+
+  /// No description provided for @syncingNotesBatch.
+  ///
+  /// In en, this message translates to:
+  /// **'Syncing notes ({completed}/{total})...'**
+  String syncingNotesBatch(int completed, int total);
+
+  /// No description provided for @syncingTemplatesBatch.
+  ///
+  /// In en, this message translates to:
+  /// **'Syncing templates ({completed}/{total})...'**
+  String syncingTemplatesBatch(int completed, int total);
+
+  /// No description provided for @syncCompletedSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync completed successfully'**
+  String get syncCompletedSuccessfully;
+
+  /// No description provided for @syncFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Sync failed: {error}'**
+  String syncFailed(String error);
+
+  /// No description provided for @downloadingDiaryDays.
+  ///
+  /// In en, this message translates to:
+  /// **'Downloading diary days...'**
+  String get downloadingDiaryDays;
+
+  /// No description provided for @downloadingNotes.
+  ///
+  /// In en, this message translates to:
+  /// **'Downloading notes...'**
+  String get downloadingNotes;
+
+  /// No description provided for @downloadingTemplates.
+  ///
+  /// In en, this message translates to:
+  /// **'Downloading templates...'**
+  String get downloadingTemplates;
+
+  /// No description provided for @updatingLocalDatabase.
+  ///
+  /// In en, this message translates to:
+  /// **'Updating local database...'**
+  String get updatingLocalDatabase;
+
+  /// No description provided for @downloadCompletedSuccessfully.
+  ///
+  /// In en, this message translates to:
+  /// **'Download completed successfully'**
+  String get downloadCompletedSuccessfully;
+
+  /// No description provided for @downloadFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Download failed: {error}'**
+  String downloadFailed(String error);
+
   /// No description provided for @supabaseSettings.
   ///
   /// In en, this message translates to:

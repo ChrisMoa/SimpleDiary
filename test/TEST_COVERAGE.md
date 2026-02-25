@@ -1,6 +1,6 @@
 # Test Coverage
 
-**Total: 800 passing tests** across 54 test files (+ 16 optional/skipped Supabase integration tests)
+**Total: 815 passing tests** across 55 test files (+ 16 optional/skipped Supabase integration tests)
 
 Run all tests with:
 ```bash
@@ -173,7 +173,8 @@ flutter test test/core/ test/features/ test/l10n/
 | `json_serialization_test.dart` | 8 | DiaryDay list JSON round-trip (with ratings, empty, with notes), Note list JSON round-trip (timed, all-day), NoteTemplate list JSON round-trip (with sections), mixed data combined export, encryption readiness (UTF-8 encode/decode) |
 | `pdf_export_test.dart` | 68 | **DateRange factories:** `lastWeek` (7-day), `lastMonth` (30-day), `currentMonth` (1st of month), `all` (empty/non-empty), `forMonth` (non-leap/leap Feb, Dec, Jan, 30-day month), `forWeek` (Monday-Sunday, week 1, week 52). **DateRange edge cases:** equality/inequality, hashCode, single date, duplicate dates, currentMonth bounds. **File naming:** CW format (week), YYMM (currentMonth), 30d range (month), YYMMDD-YYMMDD (custom/all), `forWeek`/`forMonth` exact format, no spaces/special chars, zero-padded week numbers, year boundary. **PDF generation:** valid header (%PDF), empty data, ratings-only, notes-only, single-day range, size bounds (1KB-5MB). **PDF content verification (text extraction):** username on cover, "Diary Report" title, "Summary"/"Report Period"/"Daily Breakdown" section headers, category names, note titles, score values. **PDF page structure:** minimum 3 pages, more pages with diary entries. **Large datasets:** 30/90/365 days valid PDF, PDF size scales with data. **Edge cases:** all-day notes ("All day" text), max scores (20/20), min scores (4/20), year boundary ranges, favorite days, empty title fallback to category, all 5 note categories, notes outside range excluded from top activities, custom theme colors, empty ratings (Score: 0), multiple notes per day. **Date range filtering precision:** inclusive boundaries, exclusion of out-of-range days, empty range produces valid PDF |
 | `models/supabase_settings_test.dart` | 7 | SupabaseSettings construction (all fields, empty defaults), `toMap`/`fromMap` (round-trip, snake_case keys, missing keys), `copyWith` (partial/full) |
-| `models/sync_state_test.dart` | 9 | `SyncStatus` enum values (idle/syncing/success/error), `SyncState` construction (required fields, all fields), `copyWith` (preserves unchanged, updates all, no mutation), progress default, typical sync lifecycle, error state preserves progress |
+| `models/sync_state_test.dart` | 12 | `SyncStatus` enum values (idle/syncing/success/error), `SyncPhase` enum values (12 phases), `SyncState` construction (required fields, all fields), `message` getter (phase-based messages, error message, default failed), `copyWith` (preserves unchanged, updates all, no mutation), progress default, typical sync lifecycle, error state preserves progress, batch progress tracking |
+| `supabase_batch_sync_test.dart` | 12 | **retryWithBackoff:** succeeds on first attempt, retries and succeeds on 2nd/3rd attempt, throws after max retries exceeded, custom max retries, correct return type, rethrows original exception type, delay increases between retries, maxRetries=1 means no retry. **SyncProgressCallback:** type definition. **Constants:** defaultBatchSize (50), defaultDelayBetweenBatches (100ms), defaultMaxRetries (3) |
 | `supabase_integration_test.dart` | 11 (optional) | **Skipped when `test/.env` is missing.** Connection (initialize + sign in, wrong password, sign out), diary day sync round-trip, note sync round-trip (timed + all-day), template sync round-trip, full upload + download round-trip, error handling (uninitialized, unauthenticated sync/fetch) |
 
 **Sources:** `lib/features/synchronization/data/models/export_data.dart`, `lib/features/synchronization/domain/providers/file_db_provider.dart`, `ics_file_provider.dart`, `lib/features/synchronization/data/repositories/ics_converter.dart`, `lib/features/synchronization/data/services/pdf_report_generator.dart`, `lib/features/synchronization/domain/providers/pdf_export_provider.dart`, `supabase_api.dart`, `supabase_provider.dart`
@@ -258,7 +259,8 @@ flutter test test/core/ test/features/ test/l10n/
 | Supabase settings | Covered | Model serialization |
 | Biometric settings | Covered | Settings model serialization, defaults, backwards compat |
 | Backup settings & metadata | Covered | Settings model, metadata model, overdue detection, frequency enum |
-| Supabase sync state | Covered | SyncStatus enum, SyncState construction/copyWith |
+| Supabase sync state | Covered | SyncStatus/SyncPhase enums, SyncState construction/copyWith, phase-based messages, batch progress |
+| Supabase batch sync & retry | Covered | retryWithBackoff (success/retry/failure/types/delay), SyncProgressCallback, batch constants |
 | Supabase API (optional) | Covered | Requires `test/.env` with credentials; skipped otherwise |
 | Onboarding status & service | Covered | SharedPreferences persistence, all lifecycle states, demo mode flag |
 | Widget: NoteEditingPage | Covered | Form fields, category dropdown, checkbox toggle, save actions, editing pre-fill |

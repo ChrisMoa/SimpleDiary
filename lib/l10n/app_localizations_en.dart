@@ -853,6 +853,58 @@ class AppLocalizationsEn extends AppLocalizations {
   String get loadDiaryDataFromCloud => 'Load diary data from the cloud';
 
   @override
+  String get syncReadyToSync => 'Ready to sync';
+
+  @override
+  String get syncInitializing => 'Initializing sync...';
+
+  @override
+  String get syncAuthenticating => 'Authenticating...';
+
+  @override
+  String syncingDiaryDaysBatch(int completed, int total) {
+    return 'Syncing diary days ($completed/$total)...';
+  }
+
+  @override
+  String syncingNotesBatch(int completed, int total) {
+    return 'Syncing notes ($completed/$total)...';
+  }
+
+  @override
+  String syncingTemplatesBatch(int completed, int total) {
+    return 'Syncing templates ($completed/$total)...';
+  }
+
+  @override
+  String get syncCompletedSuccessfully => 'Sync completed successfully';
+
+  @override
+  String syncFailed(String error) {
+    return 'Sync failed: $error';
+  }
+
+  @override
+  String get downloadingDiaryDays => 'Downloading diary days...';
+
+  @override
+  String get downloadingNotes => 'Downloading notes...';
+
+  @override
+  String get downloadingTemplates => 'Downloading templates...';
+
+  @override
+  String get updatingLocalDatabase => 'Updating local database...';
+
+  @override
+  String get downloadCompletedSuccessfully => 'Download completed successfully';
+
+  @override
+  String downloadFailed(String error) {
+    return 'Download failed: $error';
+  }
+
+  @override
   String get supabaseSettings => 'Supabase Settings';
 
   @override
