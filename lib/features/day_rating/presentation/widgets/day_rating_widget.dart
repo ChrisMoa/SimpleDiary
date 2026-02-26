@@ -30,7 +30,7 @@ class DayRatingWidget extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildHeader(context, theme, ref, prefs.useLegacyMode),
+          _buildHeader(context, theme, ref),
           AppSpacing.verticalXs,
           Expanded(
             child: prefs.useLegacyMode
@@ -46,7 +46,6 @@ class DayRatingWidget extends ConsumerWidget {
     BuildContext context,
     ThemeData theme,
     WidgetRef ref,
-    bool isLegacy,
   ) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
@@ -64,9 +63,7 @@ class DayRatingWidget extends ConsumerWidget {
                   ),
                 ),
                 Text(
-                  isLegacy
-                      ? AppLocalizations.of(context)!.howWasYourDay
-                      : AppLocalizations.of(context)!.rateWellbeingDimensions,
+                  AppLocalizations.of(context)!.rateWellbeingDimensions,
                   style: theme.textTheme.bodyMedium?.copyWith(
                     color: theme.colorScheme.onSecondaryContainer,
                   ),
@@ -74,23 +71,27 @@ class DayRatingWidget extends ConsumerWidget {
               ],
             ),
           ),
-          // Toggle between legacy and enhanced
-          Tooltip(
-            message: isLegacy
-                ? AppLocalizations.of(context)!.switchToEnhancedMode
-                : AppLocalizations.of(context)!.switchToSimpleMode,
-            child: IconButton(
-              icon: Icon(
-                isLegacy ? Icons.science_outlined : Icons.star_outline,
-                color: theme.colorScheme.primary,
-              ),
-              onPressed: () => ref
-                  .read(ratingPreferencesProvider.notifier)
-                  .setUseLegacyMode(!isLegacy),
-            ),
-          ),
+          // Favorite toggle for the day
+          _buildFavoriteToggle(context, theme, ref),
         ],
       ),
+    );
+  }
+
+  Widget _buildFavoriteToggle(
+    BuildContext context,
+    ThemeData theme,
+    WidgetRef ref,
+  ) {
+    final isFavorite = ref.watch(wizardDayFavoriteProvider);
+    final l10n = AppLocalizations.of(context)!;
+    return IconButton(
+      icon: Icon(
+        isFavorite ? Icons.star : Icons.star_outline,
+        color: isFavorite ? Colors.amber : theme.colorScheme.onSurfaceVariant,
+      ),
+      tooltip: isFavorite ? l10n.removeFromFavorites : l10n.addToFavorites,
+      onPressed: () => ref.read(wizardDayFavoriteProvider.notifier).toggle(),
     );
   }
 }
@@ -411,9 +412,11 @@ class _LegacyRatingBody extends ConsumerWidget {
         .where((n) => n.title.isNotEmpty || n.description.isNotEmpty)
         .toList();
 
+    final isFavorite = ref.read(wizardDayFavoriteProvider);
     final diaryDay = DiaryDay(
       day: selectedDate,
       ratings: ratings,
+      isFavorite: isFavorite,
     );
     diaryDay.notes = validNotes;
 
@@ -553,10 +556,12 @@ class _EnhancedRatingBody extends ConsumerWidget {
           score: enhanced.wellbeing.mood.clamp(1, 5)),
     ];
 
+    final isFavorite = ref.read(wizardDayFavoriteProvider);
     final diaryDay = DiaryDay(
       day: selectedDate,
       ratings: legacyRatings,
       enhancedRating: enhanced,
+      isFavorite: isFavorite,
     );
     diaryDay.notes = validNotes;
 

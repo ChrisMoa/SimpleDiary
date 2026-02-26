@@ -2,6 +2,7 @@ import 'package:day_tracker/core/log/logger_instance.dart';
 import 'package:day_tracker/core/utils/utils.dart';
 import 'package:day_tracker/features/day_rating/data/models/day_rating.dart';
 import 'package:day_tracker/features/day_rating/data/models/enhanced_day_rating.dart';
+import 'package:day_tracker/features/day_rating/domain/providers/diary_day_local_db_provider.dart';
 import 'package:day_tracker/features/notes/data/models/note.dart';
 import 'package:day_tracker/features/notes/data/models/note_category.dart';
 import 'package:day_tracker/features/notes/domain/providers/category_local_db_provider.dart';
@@ -281,6 +282,29 @@ final createNoteFromTemplateProvider = Provider.family<Note, NoteTemplate>((ref,
     noteCategory: template.noteCategory,
   );
 });
+
+// ── Wizard day favorite provider ──────────────────────────────────────────
+
+/// Tracks the favorite state for the current wizard day.
+/// Auto-loads existing diary day's favorite status when date changes.
+final wizardDayFavoriteProvider = StateNotifierProvider<WizardDayFavoriteNotifier, bool>(
+  (ref) {
+    final selectedDate = ref.watch(wizardSelectedDateProvider);
+    final diaryDays = ref.watch(diaryDayLocalDbDataProvider);
+    final existing = diaryDays.where((d) =>
+        d.day.year == selectedDate.year &&
+        d.day.month == selectedDate.month &&
+        d.day.day == selectedDate.day);
+    final initialValue = existing.isNotEmpty ? existing.first.isFavorite : false;
+    return WizardDayFavoriteNotifier(initialValue);
+  },
+);
+
+class WizardDayFavoriteNotifier extends StateNotifier<bool> {
+  WizardDayFavoriteNotifier(super.initial);
+
+  void toggle() => state = !state;
+}
 
 // ── Enhanced day rating provider ───────────────────────────────────────────
 
