@@ -147,6 +147,22 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),
+                        GestureDetector(
+                          onTap: () {
+                            final updated = selectedNote.copyWith(isFavorite: !selectedNote.isFavorite);
+                            _updateNote(updated);
+                          },
+                          child: Padding(
+                            padding: AppSpacing.paddingAllXs,
+                            child: Icon(
+                              selectedNote.isFavorite ? Icons.star : Icons.star_outline,
+                              size: 24,
+                              color: selectedNote.isFavorite
+                                  ? Colors.amber
+                                  : theme.colorScheme.onSurfaceVariant,
+                            ),
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -245,6 +261,7 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
                         to: selectedNote.to,
                         noteCategory: selectedNote.noteCategory,
                         isAllDay: selectedNote.isAllDay,
+                        isFavorite: selectedNote.isFavorite,
                       ),
                     );
                   }
@@ -360,6 +377,7 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
                               to: selectedNote.to,
                               noteCategory: selectedNote.noteCategory,
                               isAllDay: selectedNote.isAllDay,
+                              isFavorite: selectedNote.isFavorite,
                             ),
                           );
                         }
@@ -584,6 +602,7 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
                   to: note.to,
                   noteCategory: value,
                   isAllDay: note.isAllDay,
+                  isFavorite: note.isFavorite,
                 ),
               );
             }
@@ -697,6 +716,7 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
                   to: note.to,
                   noteCategory: value,
                   isAllDay: note.isAllDay,
+                  isFavorite: note.isFavorite,
                 ),
               );
             }
@@ -853,6 +873,7 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
             to: endTime,
             noteCategory: note.noteCategory,
             isAllDay: note.isAllDay,
+            isFavorite: note.isFavorite,
           ),
         );
       } else {
@@ -867,6 +888,7 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
               to: newDateTime,
               noteCategory: note.noteCategory,
               isAllDay: note.isAllDay,
+              isFavorite: note.isFavorite,
             ),
           );
         } else {
@@ -976,6 +998,7 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
             to: selectedNote.to,
             noteCategory: selectedNote.noteCategory,
             isAllDay: selectedNote.isAllDay,
+            isFavorite: selectedNote.isFavorite,
           ),
         );
       }
@@ -1011,6 +1034,7 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
           to: selectedNote.to,
           noteCategory: selectedNote.noteCategory,
           isAllDay: selectedNote.isAllDay,
+          isFavorite: selectedNote.isFavorite,
         ),
       );
     }
@@ -1043,6 +1067,7 @@ class _NoteDetailWidgetState extends ConsumerState<NoteDetailWidget> {
         to: note.to,
         noteCategory: note.noteCategory,
         isAllDay: note.isAllDay,
+        isFavorite: note.isFavorite,
       ),
     );
   }
