@@ -115,6 +115,19 @@ class _NoteEditingPageState extends ConsumerState<NoteEditingPage> {
   List<Widget> buildEditingActions() {
     final l10n = AppLocalizations.of(context)!;
     return [
+      IconButton(
+        icon: Icon(
+          note.isFavorite ? Icons.star : Icons.star_outline,
+          color: note.isFavorite ? Colors.amber : null,
+        ),
+        tooltip: note.isFavorite ? l10n.removeFromFavorites : l10n.addToFavorites,
+        onPressed: () {
+          setState(() {
+            note.isFavorite = !note.isFavorite;
+            ref.read(noteEditingPageProvider.notifier).updateNote(note);
+          });
+        },
+      ),
       ElevatedButton.icon(
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.transparent,

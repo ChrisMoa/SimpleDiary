@@ -180,6 +180,18 @@ class _NoteViewingPageState extends ConsumerState<NoteViewingPage> {
     final l10n = AppLocalizations.of(context);
     return [
       IconButton(
+        icon: Icon(
+          note.isFavorite ? Icons.star : Icons.star_outline,
+          color: note.isFavorite ? Colors.amber : null,
+        ),
+        tooltip: note.isFavorite ? l10n.removeFromFavorites : l10n.addToFavorites,
+        onPressed: () {
+          final updated = note.copyWith(isFavorite: !note.isFavorite);
+          ref.read(notesLocalDataProvider.notifier).addOrUpdateElement(updated);
+          ref.read(noteEditingPageProvider.notifier).updateNote(updated);
+        },
+      ),
+      IconButton(
         icon: const Icon(Icons.edit),
         tooltip: l10n.editNote,
         onPressed: () {
