@@ -1,6 +1,6 @@
 // ignore_for_file: public_member_api_docs
 import 'package:day_tracker/core/services/biometric_service.dart';
-import 'package:day_tracker/core/settings/settings_container.dart';
+import 'package:day_tracker/core/settings/settings_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// Whether biometric hardware is available on this device
@@ -15,7 +15,7 @@ final biometricStatusProvider = FutureProvider<BiometricStatus>((ref) async {
 
 /// Whether the current user has biometric login enabled
 final biometricEnabledProvider = Provider<bool>((ref) {
-  return settingsContainer.activeUserSettings.biometricSettings.isEnabled;
+  return ref.read(settingsProvider).activeUserSettings.biometricSettings.isEnabled;
 });
 
 /// Temporary flag to skip biometric and show password page instead.

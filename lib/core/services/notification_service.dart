@@ -258,6 +258,7 @@ void _callbackDispatcher() {
 
       switch (task) {
         case 'diary_reminder_check':
+          // ignore: deprecated_member_use
           final settings = settingsContainer.activeUserSettings.notificationSettings;
           if (!settings.smartRemindersEnabled) {
             return Future.value(true);

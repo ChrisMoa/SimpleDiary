@@ -111,4 +111,7 @@ class SettingsContainer {
   }
 }
 
+@Deprecated('Use ref.read(settingsProvider) instead. '
+    'Kept only for services that cannot access Riverpod (e.g. background isolates).')
+// ignore: deprecated_member_use_from_same_package
 var settingsContainer = SettingsContainer();

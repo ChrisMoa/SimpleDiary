@@ -1,6 +1,6 @@
 import 'package:day_tracker/core/provider/locale_provider.dart';
 import 'package:day_tracker/core/provider/theme_provider.dart';
-import 'package:day_tracker/core/settings/settings_container.dart';
+import 'package:day_tracker/core/settings/settings_provider.dart';
 import 'package:day_tracker/core/widgets/app_ui_kit.dart';
 import 'package:day_tracker/features/authentication/presentation/pages/auth_user_data_page.dart';
 import 'package:day_tracker/l10n/app_localizations.dart';
@@ -52,7 +52,7 @@ class _SetupWizardPageState extends ConsumerState<SetupWizardPage> {
   }
 
   void _onDone() {
-    settingsContainer.saveSettings();
+    ref.read(settingsNotifierProvider).saveSettings();
     Navigator.of(context).pushReplacement(
       AppPageRoute(builder: (_) => const AuthUserDataPage()),
     );
@@ -186,7 +186,7 @@ class _ThemeStepPage extends ConsumerWidget {
                   isSelected: !isDark,
                   onTap: () {
                     ref.read(themeProvider.notifier).toggleDarkMode(false);
-                    settingsContainer.activeUserSettings.darkThemeMode = false;
+                    ref.read(settingsProvider).activeUserSettings.darkThemeMode = false;
                   },
                 ),
               ),
@@ -198,7 +198,7 @@ class _ThemeStepPage extends ConsumerWidget {
                   isSelected: isDark,
                   onTap: () {
                     ref.read(themeProvider.notifier).toggleDarkMode(true);
-                    settingsContainer.activeUserSettings.darkThemeMode = true;
+                    ref.read(settingsProvider).activeUserSettings.darkThemeMode = true;
                   },
                 ),
               ),

@@ -1,6 +1,7 @@
 import 'package:day_tracker/core/database/db_entity.dart';
 import 'package:day_tracker/core/database/db_repository.dart';
 import 'package:day_tracker/core/settings/settings_container.dart';
+import 'package:day_tracker/core/settings/settings_provider.dart';
 import 'package:day_tracker/features/dashboard/data/models/dashboard_stats.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:day_tracker/features/dashboard/data/models/insight.dart';
@@ -39,8 +40,10 @@ void initTestSettingsContainer() {
   // dotenv must be loaded before SettingsContainer is constructed,
   // because its constructor reads dotenv.env['PROJECT_NAME'].
   dotenv.testLoad(fileInput: "PROJECT_NAME=day_tracker");
+  // ignore: deprecated_member_use
   settingsContainer = SettingsContainer();
   // Set a valid path so DbRepository constructors don't break
+  // ignore: deprecated_member_use
   settingsContainer.applicationDocumentsPath = '/tmp/test_diary';
 }
 
@@ -55,6 +58,7 @@ class TestDbRepository<T extends DbEntity> extends DbRepository<T> {
     required super.columns,
     required super.fromMap,
     super.migrations,
+    super.applicationDocumentsPath = '/tmp/test_diary',
     List<T>? initialData,
   }) {
     if (initialData != null) state = initialData;
@@ -106,7 +110,8 @@ class TestCategoryProvider extends CategoryLocalDataProvider {
   final List<NoteCategory> _initialCategories;
 
   TestCategoryProvider([List<NoteCategory>? initial])
-      : _initialCategories = initial ?? [] {
+      // ignore: deprecated_member_use
+      : _initialCategories = initial ?? [], super(settingsContainer) {
     state = _initialCategories;
   }
 
@@ -143,7 +148,7 @@ class TestCategoryProvider extends CategoryLocalDataProvider {
 
 /// Test-safe NoteAttachmentsProvider (skips SQLite + image storage).
 class TestAttachmentProvider extends NoteAttachmentsProvider {
-  TestAttachmentProvider();
+  TestAttachmentProvider() : super(applicationDocumentsPath: '/tmp/test_diary');
 
   @override
   Future<void> initDatabase() async {}
@@ -166,7 +171,7 @@ class TestAttachmentProvider extends NoteAttachmentsProvider {
 
 /// Test-safe NoteTemplateLocalDataProvider (skips SQLite).
 class TestNoteTemplateProvider extends NoteTemplateLocalDataProvider {
-  TestNoteTemplateProvider();
+  TestNoteTemplateProvider() : super(applicationDocumentsPath: '/tmp/test_diary');
 
   @override
   Future<void> initDatabase() async {}
@@ -230,6 +235,10 @@ List<Override> createTestOverrides({
   final stats = dashboardStats ?? testDashboardStats;
 
   return [
+    // Settings provider (must be first — other providers read from it)
+    // ignore: deprecated_member_use
+    settingsProvider.overrideWithValue(settingsContainer),
+
     // Core providers
     categoryLocalDataProvider.overrideWith((_) => TestCategoryProvider(cats)),
     notesLocalDataProvider.overrideWith(

@@ -1,5 +1,5 @@
 import 'package:day_tracker/core/provider/theme_provider.dart';
-import 'package:day_tracker/core/settings/settings_container.dart';
+import 'package:day_tracker/core/settings/settings_provider.dart';
 import 'package:flex_color_picker/flex_color_picker.dart';
 import 'package:day_tracker/core/widgets/app_ui_kit.dart';
 import 'package:flutter/material.dart';
@@ -15,11 +15,18 @@ class ThemeSettingsWidget extends ConsumerStatefulWidget {
 }
 
 class _ThemeSettingsWidgetState extends ConsumerState<ThemeSettingsWidget> {
-  Color _dialogPickerColor =
-      settingsContainer.activeUserSettings.themeSeedColor;
-  var _darkModeSwitch = settingsContainer.activeUserSettings.darkThemeMode;
+  late Color _dialogPickerColor;
+  late bool _darkModeSwitch;
 
-  void _autoSave() => settingsContainer.saveSettings().ignore();
+  @override
+  void initState() {
+    super.initState();
+    final settings = ref.read(settingsProvider);
+    _dialogPickerColor = settings.activeUserSettings.themeSeedColor;
+    _darkModeSwitch = settings.activeUserSettings.darkThemeMode;
+  }
+
+  void _autoSave() => ref.read(settingsNotifierProvider).saveSettings().ignore();
 
   @override
   Widget build(BuildContext context) {
@@ -114,14 +121,14 @@ class _ThemeSettingsWidgetState extends ConsumerState<ThemeSettingsWidget> {
   void _onColorPickerAcceptedClicked(Color color) {
     setState(() => _dialogPickerColor = color);
     ref.read(themeProvider.notifier).updateThemeFromSeedColor(color);
-    settingsContainer.activeUserSettings.themeSeedColor = color;
+    ref.read(settingsProvider).activeUserSettings.themeSeedColor = color;
     _autoSave();
   }
 
   void _onSwitchDarkModeClicked(bool value) {
     setState(() => _darkModeSwitch = value);
     ref.read(themeProvider.notifier).toggleDarkMode(_darkModeSwitch);
-    settingsContainer.activeUserSettings.darkThemeMode = value;
+    ref.read(settingsProvider).activeUserSettings.darkThemeMode = value;
     _autoSave();
   }
 }

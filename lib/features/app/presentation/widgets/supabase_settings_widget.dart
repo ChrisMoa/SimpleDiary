@@ -1,4 +1,4 @@
-import 'package:day_tracker/core/settings/settings_container.dart';
+import 'package:day_tracker/core/settings/settings_provider.dart';
 import 'package:day_tracker/core/widgets/app_ui_kit.dart';
 import 'package:day_tracker/features/synchronization/domain/providers/supabase_provider.dart';
 import 'package:day_tracker/features/synchronization/data/repositories/supabase_api.dart';
@@ -28,7 +28,7 @@ class _SupabaseSettingsWidgetState
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final settings = settingsContainer.activeUserSettings.supabaseSettings;
+      final settings = ref.read(settingsProvider).activeUserSettings.supabaseSettings;
       _urlController.text = settings.supabaseUrl;
       _anonKeyController.text = settings.supabaseAnonKey;
       _emailController.text = settings.email;
@@ -86,9 +86,10 @@ class _SupabaseSettingsWidgetState
               ref
                   .read(supabaseSettingsProvider.notifier)
                   .updateUrl(value);
-              settingsContainer.activeUserSettings.supabaseSettings =
-                  settingsContainer.activeUserSettings.supabaseSettings
+              ref.read(settingsProvider).activeUserSettings.supabaseSettings =
+                  ref.read(settingsProvider).activeUserSettings.supabaseSettings
                       .copyWith(supabaseUrl: value);
+              ref.read(settingsNotifierProvider).saveSettings().ignore();
             },
           ),
         ),
@@ -116,9 +117,10 @@ class _SupabaseSettingsWidgetState
               ref
                   .read(supabaseSettingsProvider.notifier)
                   .updateAnonKey(value);
-              settingsContainer.activeUserSettings.supabaseSettings =
-                  settingsContainer.activeUserSettings.supabaseSettings
+              ref.read(settingsProvider).activeUserSettings.supabaseSettings =
+                  ref.read(settingsProvider).activeUserSettings.supabaseSettings
                       .copyWith(supabaseAnonKey: value);
+              ref.read(settingsNotifierProvider).saveSettings().ignore();
             },
           ),
         ),
@@ -135,9 +137,10 @@ class _SupabaseSettingsWidgetState
               ref
                   .read(supabaseSettingsProvider.notifier)
                   .updateEmail(value);
-              settingsContainer.activeUserSettings.supabaseSettings =
-                  settingsContainer.activeUserSettings.supabaseSettings
+              ref.read(settingsProvider).activeUserSettings.supabaseSettings =
+                  ref.read(settingsProvider).activeUserSettings.supabaseSettings
                       .copyWith(email: value);
+              ref.read(settingsNotifierProvider).saveSettings().ignore();
             },
           ),
         ),
@@ -165,9 +168,10 @@ class _SupabaseSettingsWidgetState
               ref
                   .read(supabaseSettingsProvider.notifier)
                   .updatePassword(value);
-              settingsContainer.activeUserSettings.supabaseSettings =
-                  settingsContainer.activeUserSettings.supabaseSettings
+              ref.read(settingsProvider).activeUserSettings.supabaseSettings =
+                  ref.read(settingsProvider).activeUserSettings.supabaseSettings
                       .copyWith(password: value);
+              ref.read(settingsNotifierProvider).saveSettings().ignore();
             },
           ),
         ),

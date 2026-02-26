@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:day_tracker/features/synchronization/data/services/pdf_report_generator.dart';
 import 'package:day_tracker/features/day_rating/domain/providers/diary_day_local_db_provider.dart';
 import 'package:day_tracker/features/notes/domain/providers/note_local_db_provider.dart';
-import 'package:day_tracker/core/settings/settings_container.dart';
+import 'package:day_tracker/core/settings/settings_provider.dart';
 
 enum DateRangeType { week, month, currentMonth, custom, all }
 
@@ -152,7 +152,7 @@ final pdfExportProvider = FutureProvider.family<Uint8List, DateRange>(
   (ref, dateRange) async {
     final diaryDays = ref.read(diaryDayFullDataProvider);
     final notes = ref.read(notesLocalDataProvider);
-    final username = settingsContainer.activeUserSettings.savedUserData.username;
+    final username = ref.read(settingsProvider).activeUserSettings.savedUserData.username;
 
     final generator = PdfReportGenerator(
       diaryDays: diaryDays,

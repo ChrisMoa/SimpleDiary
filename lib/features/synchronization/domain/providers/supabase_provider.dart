@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:day_tracker/core/log/logger_instance.dart';
 import 'package:day_tracker/core/settings/settings_container.dart';
+import 'package:day_tracker/core/settings/settings_provider.dart';
 import 'package:day_tracker/features/authentication/domain/providers/user_data_provider.dart';
 import 'package:day_tracker/features/day_rating/domain/providers/diary_day_local_db_provider.dart';
 import 'package:day_tracker/features/notes/domain/providers/note_local_db_provider.dart';
@@ -19,12 +20,13 @@ final supabaseApiProvider = Provider<SupabaseApi>((ref) {
 // Supabase settings provider
 final supabaseSettingsProvider = StateNotifierProvider<SupabaseSettingsNotifier, SupabaseSettings>((ref) {
   LogWrapper.logger.d('Creating new SupabaseSettingsNotifier');
-  return SupabaseSettingsNotifier();
+  final settings = ref.read(settingsProvider);
+  return SupabaseSettingsNotifier(settings);
 });
 
 class SupabaseSettingsNotifier extends StateNotifier<SupabaseSettings> {
-  SupabaseSettingsNotifier() : super(settingsContainer.activeUserSettings.supabaseSettings) {
-    LogWrapper.logger.i('Initialized SupabaseSettingsNotifier with settings for user: ${settingsContainer.activeUserSettings.savedUserData.username}');
+  SupabaseSettingsNotifier(SettingsContainer settings) : super(settings.activeUserSettings.supabaseSettings) {
+    LogWrapper.logger.i('Initialized SupabaseSettingsNotifier with settings for user: ${settings.activeUserSettings.savedUserData.username}');
   }
 
   void updateSettings(SupabaseSettings settings) {

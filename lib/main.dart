@@ -5,6 +5,7 @@ import 'package:day_tracker/core/provider/theme_provider.dart';
 import 'package:day_tracker/core/services/backup_scheduler.dart';
 import 'package:day_tracker/core/services/notification_service.dart';
 import 'package:day_tracker/core/settings/settings_container.dart';
+import 'package:day_tracker/core/settings/settings_provider.dart';
 import 'package:day_tracker/core/utils/platform_utils.dart';
 import 'package:day_tracker/features/app/presentation/pages/main_page.dart';
 import 'package:flutter/material.dart';
@@ -30,7 +31,10 @@ void main() async {
     }
 
     LogWrapper.logger.d('Reading application settings');
-    await settingsContainer.readSettings();
+    final settings = SettingsContainer();
+    await settings.readSettings();
+    // ignore: deprecated_member_use
+    settingsContainer = settings; // keep for services that can't use ref
 
     if (activePlatform.platform == ActivePlatform.windows || activePlatform.platform == ActivePlatform.linux) {
       LogWrapper.logger.d('Initializing FFI for desktop platform');
@@ -39,7 +43,7 @@ void main() async {
     }
 
     //* init logger
-    bool debugging = settingsContainer.debugMode;
+    bool debugging = settings.debugMode;
     LogWrapper.logger = Logger(
       level: debugging ? Level.trace : Level.info,
       output: ConsoleOutput(),
@@ -52,14 +56,14 @@ void main() async {
     await NotificationService().initialize();
 
     // Schedule notifications if enabled
-    final notificationSettings = settingsContainer.activeUserSettings.notificationSettings;
+    final notificationSettings = settings.activeUserSettings.notificationSettings;
     if (notificationSettings.enabled) {
       LogWrapper.logger.d('Scheduling notifications (enabled in settings)');
       await NotificationService().scheduleDailyReminder(notificationSettings);
     }
 
     //* init backup scheduler
-    final backupSettings = settingsContainer.activeUserSettings.backupSettings;
+    final backupSettings = settings.activeUserSettings.backupSettings;
     if (backupSettings.enabled) {
       LogWrapper.logger.d('Updating backup schedule (enabled in settings)');
       await BackupScheduler().updateSchedule(backupSettings);
@@ -68,7 +72,12 @@ void main() async {
     LogWrapper.logger.i('Initialization complete, starting application');
     //* run
     runApp(
-      const ProviderScope(child: MyApp()),
+      ProviderScope(
+        overrides: [
+          settingsProvider.overrideWithValue(settings),
+        ],
+        child: const MyApp(),
+      ),
     );
   } catch (e) {
     LogWrapper.logger.e('Failed to initialize application: $e');
@@ -97,7 +106,7 @@ class _MyAppState extends ConsumerState<MyApp> {
     LogWrapper.logger.d('Building MyApp');
     return MaterialApp(
       theme: ref.watch(themeProvider),
-      debugShowCheckedModeBanner: settingsContainer.debugMode,
+      debugShowCheckedModeBanner: ref.watch(settingsProvider).debugMode,
       home: const MainPage(
         title: 'Simple Diary',
       ),

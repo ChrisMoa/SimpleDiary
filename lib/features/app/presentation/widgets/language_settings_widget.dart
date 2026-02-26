@@ -1,5 +1,5 @@
 import 'package:day_tracker/core/provider/locale_provider.dart';
-import 'package:day_tracker/core/settings/settings_container.dart';
+import 'package:day_tracker/core/settings/settings_provider.dart';
 import 'package:day_tracker/core/widgets/app_ui_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:day_tracker/l10n/app_localizations.dart';
@@ -61,7 +61,7 @@ class LanguageSettingsWidget extends ConsumerWidget {
                   ref
                       .read(localeProvider.notifier)
                       .setLocale(Locale(newValue));
-                  settingsContainer.saveSettings().ignore();
+                  ref.read(settingsNotifierProvider).saveSettings().ignore();
                 }
               },
             ),

@@ -8,6 +8,7 @@ class LogWrapper {
   LogWrapper();
 
   static Future<File> createLogfile() async {
+    // ignore: deprecated_member_use
     var logDir =
         Directory('${settingsContainer.applicationExternalDocumentsPath}/Logs');
     await logDir.create(recursive: true);

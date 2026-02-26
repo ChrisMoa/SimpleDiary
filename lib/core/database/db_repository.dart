@@ -4,7 +4,6 @@ import 'package:day_tracker/core/database/db_column.dart';
 import 'package:day_tracker/core/database/db_entity.dart';
 import 'package:day_tracker/core/database/db_migration.dart';
 import 'package:day_tracker/core/log/logger_instance.dart';
-import 'package:day_tracker/core/settings/settings_container.dart';
 import 'package:day_tracker/features/authentication/data/models/user_data.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -32,6 +31,7 @@ class DbRepository<T extends DbEntity> extends StateNotifier<List<T>> {
   final T Function(Map<String, dynamic> map) fromMap;
   final List<DbMigration> migrations;
   final List<String> additionalSql;
+  final String applicationDocumentsPath;
 
   Database? _database;
   bool _databaseRead = false;
@@ -44,10 +44,11 @@ class DbRepository<T extends DbEntity> extends StateNotifier<List<T>> {
     required this.tableName,
     required this.columns,
     required this.fromMap,
+    required this.applicationDocumentsPath,
     this.migrations = const [],
     this.additionalSql = const [],
   })  : _dbFile = File(
-            '${settingsContainer.applicationDocumentsPath}/empty.db'),
+            '$applicationDocumentsPath/empty.db'),
         super([]) {
     primaryKey = columns.firstWhere((c) => c.isPrimaryKey).name;
     _init();
@@ -110,7 +111,7 @@ class DbRepository<T extends DbEntity> extends StateNotifier<List<T>> {
     if (userData.username.isEmpty) return;
 
     _dbFile = File(
-      '${settingsContainer.applicationDocumentsPath}/${userData.userId}.db',
+      '$applicationDocumentsPath/${userData.userId}.db',
     );
     if (!_dbFile.existsSync()) {
       LogWrapper.logger.t('creates dbFile ${_dbFile.path}');

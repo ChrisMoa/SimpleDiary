@@ -23,7 +23,9 @@ class BackupService {
 
   /// Get the backup directory path, creating it if needed
   Future<Directory> getBackupDirectory() async {
+    // ignore: deprecated_member_use
     final customPath = settingsContainer.activeUserSettings.backupSettings.backupDirectoryPath;
+    // ignore: deprecated_member_use
     final basePath = customPath ?? settingsContainer.applicationDocumentsPath;
     final dir = Directory('$basePath/$_backupSubDir');
     if (!await dir.exists()) {
@@ -35,6 +37,7 @@ class BackupService {
   /// Create an [AesEncryptor] from the current user's credentials.
   /// Returns null if no clear password is available (user not logged in).
   AesEncryptor? _createEncryptor() {
+    // ignore: deprecated_member_use
     final userData = settingsContainer.activeUserSettings.savedUserData;
     final clearPassword = userData.clearPassword;
     final salt = userData.salt;
@@ -127,8 +130,10 @@ class BackupService {
       await _saveMetadataToIndex(metadata);
 
       // Update last backup timestamp in settings
+      // ignore: deprecated_member_use
       settingsContainer.activeUserSettings.backupSettings.lastBackupTimestamp =
           now.toIso8601String();
+      // ignore: deprecated_member_use
       await settingsContainer.saveSettings();
 
       LogWrapper.logger.i(
@@ -259,6 +264,7 @@ class BackupService {
 
   /// Remove old backups exceeding the max count setting
   Future<void> pruneOldBackups() async {
+    // ignore: deprecated_member_use
     final maxBackups = settingsContainer.activeUserSettings.backupSettings.maxBackups;
     final index = await _loadMetadataIndex();
 
