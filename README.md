@@ -179,6 +179,18 @@ lib/
 - **Schema-driven DB**: Each model declares its own `columns`, `migrations`, and serialization
 - **Repository Pattern**: Unified CRUD via `DbRepository<T>`
 
+### Architecture Decision Records
+
+Key architectural decisions are documented in [`docs/architecture/`](docs/architecture/):
+
+| ADR | Decision |
+|-----|----------|
+| [ADR-001](docs/architecture/ADR-001-state-management-riverpod.md) | State Management with Riverpod |
+| [ADR-002](docs/architecture/ADR-002-local-first-supabase-sync.md) | Local-First Architecture with Supabase Sync |
+| [ADR-003](docs/architecture/ADR-003-feature-module-structure.md) | Feature Module Structure |
+| [ADR-004](docs/architecture/ADR-004-security-model.md) | Security Model |
+| [ADR-005](docs/architecture/ADR-005-multi-platform-support.md) | Multi-Platform Support |
+
 ---
 
 ## 🏗️ Building
