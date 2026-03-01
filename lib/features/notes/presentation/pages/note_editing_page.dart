@@ -8,6 +8,7 @@ import 'package:day_tracker/features/notes/domain/providers/note_selected_date_p
 import 'package:day_tracker/features/notes/presentation/widgets/image_picker_widget.dart';
 import 'package:day_tracker/core/widgets/app_ui_kit.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:day_tracker/l10n/app_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -40,6 +41,8 @@ class _NoteEditingPageState extends ConsumerState<NoteEditingPage> {
   final _formKey = GlobalKey<FormState>();
   final titleController = TextEditingController();
   final descriptionController = TextEditingController();
+  final _titleFocus = FocusNode();
+  final _descriptionFocus = FocusNode();
 
   Note note = Note.fromEmpty();
 
@@ -52,14 +55,16 @@ class _NoteEditingPageState extends ConsumerState<NoteEditingPage> {
   void dispose() {
     titleController.dispose();
     descriptionController.dispose();
+    _titleFocus.dispose();
+    _descriptionFocus.dispose();
     super.dispose();
   }
 
   @override
-  Widget build(BuildContext contex) {
+  Widget build(BuildContext context) {
     note = ref.watch(noteEditingPageProvider);
     if (!widget.navigateBack) {
-      return buildScaffoldBody(context);
+      return _wrapWithShortcuts(buildScaffoldBody(context));
     }
 
     return Scaffold(
@@ -67,7 +72,19 @@ class _NoteEditingPageState extends ConsumerState<NoteEditingPage> {
         leading: const CloseButton(),
         actions: buildEditingActions(),
       ),
-      body: buildScaffoldBody(context),
+      body: _wrapWithShortcuts(buildScaffoldBody(context)),
+    );
+  }
+
+  Widget _wrapWithShortcuts(Widget child) {
+    return CallbackShortcuts(
+      bindings: {
+        const SingleActivator(LogicalKeyboardKey.keyS, control: true): saveForm,
+      },
+      child: Focus(
+        autofocus: !widget.editNote,
+        child: child,
+      ),
     );
   }
 
@@ -143,6 +160,9 @@ class _NoteEditingPageState extends ConsumerState<NoteEditingPage> {
   buildTitle() {
     final l10n = AppLocalizations.of(context)!;
     return TextFormField(
+      focusNode: _titleFocus,
+      textInputAction: TextInputAction.next,
+      onFieldSubmitted: (_) => _descriptionFocus.requestFocus(),
       style: Theme.of(context).textTheme.titleLarge!.copyWith(
             color: Theme.of(context).colorScheme.primary,
           ),
@@ -219,6 +239,7 @@ class _NoteEditingPageState extends ConsumerState<NoteEditingPage> {
       child: SizedBox(
         height: 240,
         child: TextFormField(
+          focusNode: _descriptionFocus,
           maxLines: 10,
           style: Theme.of(context)
               .textTheme

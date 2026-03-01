@@ -23,13 +23,16 @@ class _AuthUserDataPageState extends ConsumerState<AuthUserDataPage> {
 
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _usernameFocus = FocusNode();
+  final _passwordFocus = FocusNode();
+  final _emailFocus = FocusNode();
 
   @override
   void initState() {
     super.initState();
     _isLogin = ref.read(settingsProvider).userSettings.isNotEmpty;
   }
-  final _emailController = TextEditingController();
 
   //? build --------------------------------------------------------------------
 
@@ -38,6 +41,9 @@ class _AuthUserDataPageState extends ConsumerState<AuthUserDataPage> {
     _usernameController.dispose();
     _passwordController.dispose();
     _emailController.dispose();
+    _usernameFocus.dispose();
+    _passwordFocus.dispose();
+    _emailFocus.dispose();
     super.dispose();
   }
 
@@ -105,6 +111,10 @@ class _AuthUserDataPageState extends ConsumerState<AuthUserDataPage> {
     final l10n = AppLocalizations.of(context);
     return AppTextField(
       controller: _usernameController,
+      focusNode: _usernameFocus,
+      autofocus: true,
+      textInputAction: TextInputAction.next,
+      onSubmitted: (_) => _passwordFocus.requestFocus(),
       label: l10n.username,
       prefixIcon: const Icon(Icons.person),
       validator: (value) {
@@ -120,7 +130,16 @@ class _AuthUserDataPageState extends ConsumerState<AuthUserDataPage> {
     final l10n = AppLocalizations.of(context);
     return AppTextField(
       controller: _passwordController,
+      focusNode: _passwordFocus,
       obscureText: !_isPasswordVisible,
+      textInputAction: _isLogin ? TextInputAction.done : TextInputAction.next,
+      onSubmitted: (_) {
+        if (_isLogin) {
+          _onAuthClicked(true);
+        } else {
+          _emailFocus.requestFocus();
+        }
+      },
       label: l10n.password,
       prefixIcon: const Icon(Icons.lock),
       suffixIcon: IconButton(
@@ -150,7 +169,10 @@ class _AuthUserDataPageState extends ConsumerState<AuthUserDataPage> {
     final l10n = AppLocalizations.of(context);
     return AppTextField(
       controller: _emailController,
+      focusNode: _emailFocus,
       keyboardType: TextInputType.emailAddress,
+      textInputAction: TextInputAction.done,
+      onSubmitted: (_) => _onAuthClicked(false),
       label: l10n.emailOptional,
       prefixIcon: const Icon(Icons.email),
       validator: (value) {

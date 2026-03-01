@@ -99,6 +99,9 @@ class _PasswordAuthenticationPageState
                           AppTextField(
                             controller: _passwordController,
                             obscureText: !_isPasswordVisible,
+                            autofocus: true,
+                            textInputAction: TextInputAction.done,
+                            onSubmitted: (_) => _attemptLogin(),
                             label: l10n.password,
                             prefixIcon: const Icon(Icons.lock_outline),
                             suffixIcon: IconButton(
