@@ -1236,6 +1236,32 @@ class AppLocalizationsDe extends AppLocalizations {
   String get selectReminderTime => 'Erinnerungszeit auswählen';
 
   @override
+  String get maxRemindersPerDay => 'Max. Erinnerungen pro Tag';
+
+  @override
+  String get maxRemindersPerDayDescription =>
+      'Maximale Anzahl intelligenter Erinnerungen pro Tag';
+
+  @override
+  String get quietHours => 'Ruhezeiten';
+
+  @override
+  String get quietHoursDescription =>
+      'Keine Erinnerungen während dieser Zeiten';
+
+  @override
+  String get quietHoursStart => 'Ruhezeit Beginn';
+
+  @override
+  String get quietHoursEnd => 'Ruhezeit Ende';
+
+  @override
+  String get selectQuietHoursStart => 'Beginn der Ruhezeit auswählen';
+
+  @override
+  String get selectQuietHoursEnd => 'Ende der Ruhezeit auswählen';
+
+  @override
   String get goalsSectionTitle => 'Ziele';
 
   @override

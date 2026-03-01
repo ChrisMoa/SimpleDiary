@@ -1,13 +1,18 @@
 // ignore_for_file: public_member_api_docs
 import 'package:day_tracker/core/log/logger_instance.dart';
+import 'package:day_tracker/core/services/diary_status_service.dart';
+import 'package:day_tracker/core/services/smart_reminder_algorithm.dart';
 import 'package:day_tracker/core/settings/notification_settings.dart';
-import 'package:day_tracker/core/settings/settings_container.dart';
 import 'package:day_tracker/core/utils/platform_utils.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:timezone/timezone.dart' as tz;
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:workmanager/workmanager.dart';
+
+/// Notification ID for smart reminders (distinct from daily=0, streak=1)
+const int _smartReminderNotificationId = 2;
 
 /// Service for handling local notifications and reminders
 class NotificationService {
@@ -180,9 +185,15 @@ class NotificationService {
           'diary_reminder_check',
           'diary_reminder_check',
           frequency: const Duration(hours: 1),
+          inputData: {
+            'maxReminders': settings.maxSmartRemindersPerDay,
+            'quietHoursStart': settings.quietHoursStartMinutes,
+            'quietHoursEnd': settings.quietHoursEndMinutes,
+          },
           constraints: Constraints(
             networkType: NetworkType.not_required,
           ),
+          existingWorkPolicy: ExistingWorkPolicy.replace,
         );
       }
 
@@ -254,27 +265,18 @@ class NotificationService {
 void _callbackDispatcher() {
   Workmanager().executeTask((task, inputData) async {
     try {
-      LogWrapper.logger.d('Background task executed: $task');
+      // Background isolate needs its own binding
+      WidgetsFlutterBinding.ensureInitialized();
 
       switch (task) {
         case 'diary_reminder_check':
-          // ignore: deprecated_member_use
-          final settings = settingsContainer.activeUserSettings.notificationSettings;
-          if (!settings.smartRemindersEnabled) {
-            return Future.value(true);
-          }
-          // TODO: Check if today's entry exists
-          // If no entry exists, show notification
-          LogWrapper.logger.i('Smart reminder check completed');
+          await _checkAndSendSmartReminder(inputData);
           break;
 
         case 'scheduled_backup':
-          LogWrapper.logger.i('Background scheduled backup triggered');
           // Background backup runs with limited context on Android.
           // The actual backup with full data is performed on next app open
           // via BackupScheduler.checkAndRunOverdueBackup().
-          // Here we just mark that the scheduler fired so the app knows.
-          LogWrapper.logger.i('Scheduled backup task completed (will run on next app open)');
           break;
 
         default:
@@ -287,4 +289,75 @@ void _callbackDispatcher() {
       return Future.value(false);
     }
   });
+}
+
+/// Check diary status and send a smart reminder notification if appropriate.
+Future<void> _checkAndSendSmartReminder(Map<String, dynamic>? inputData) async {
+  final maxReminders = inputData?['maxReminders'] as int? ?? 3;
+  final quietHoursStart = inputData?['quietHoursStart'] as int? ?? 22 * 60;
+  final quietHoursEnd = inputData?['quietHoursEnd'] as int? ?? 8 * 60;
+
+  final hasEntry = await DiaryStatusService.hasEntryForToday();
+  final remindersSent = await DiaryStatusService.getRemindersSentToday();
+
+  final shouldSend = SmartReminderAlgorithm.shouldSendReminder(
+    now: DateTime.now(),
+    hasEntryToday: hasEntry,
+    remindersSentToday: remindersSent,
+    maxRemindersPerDay: maxReminders,
+    quietHoursStartMinutes: quietHoursStart,
+    quietHoursEndMinutes: quietHoursEnd,
+  );
+
+  if (!shouldSend) return;
+
+  final intensity = SmartReminderAlgorithm.calculateIntensity(remindersSent);
+
+  // Initialize notifications plugin for the background isolate
+  final plugin = FlutterLocalNotificationsPlugin();
+  const androidSettings = AndroidInitializationSettings('@mipmap/ic_launcher');
+  const initSettings = InitializationSettings(android: androidSettings);
+  await plugin.initialize(initSettings);
+
+  final (title, body) = _reminderMessage(intensity);
+
+  await plugin.show(
+    _smartReminderNotificationId,
+    title,
+    body,
+    const NotificationDetails(
+      android: AndroidNotificationDetails(
+        'diary_reminders',
+        'Diary Reminders',
+        channelDescription: 'Daily reminders to write diary entries',
+        importance: Importance.high,
+        priority: Priority.high,
+        icon: '@mipmap/ic_launcher',
+      ),
+    ),
+  );
+
+  await DiaryStatusService.incrementReminderCount();
+  LogWrapper.logger.i('Smart reminder sent (intensity: ${intensity.name})');
+}
+
+/// Get notification title and body for the given intensity.
+(String title, String body) _reminderMessage(ReminderIntensity intensity) {
+  switch (intensity) {
+    case ReminderIntensity.gentle:
+      return (
+        'Time to reflect on your day',
+        'Take a moment to capture your thoughts and experiences.',
+      );
+    case ReminderIntensity.normal:
+      return (
+        'Don\'t forget your diary entry today',
+        'You haven\'t written your entry yet. How was your day?',
+      );
+    case ReminderIntensity.urgent:
+      return (
+        'Last chance to capture today\'s memories!',
+        'The day is almost over — write a quick entry before it slips away.',
+      );
+  }
 }
