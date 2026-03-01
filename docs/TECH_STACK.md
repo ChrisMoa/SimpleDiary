@@ -33,14 +33,13 @@ A personal diary/journal application that allows users to:
 ### Flutter SDK Packages
 ```yaml
 flutter_localizations: sdk: flutter  # i18n support
-intl: any                             # Internationalization utilities
+intl: ^0.20.0                         # Internationalization utilities
 ```
 
 ### State Management
 | Package | Version | Usage |
 |---------|---------|-------|
 | `flutter_riverpod` | ^2.3.7 | Primary state management (StateNotifier pattern) |
-| `provider` | ^6.0.5 | Legacy/secondary state management |
 
 ### Database & Storage
 | Package | Version | Usage |
@@ -542,7 +541,7 @@ assets/
 ## Known Technical Debt
 
 1. **Mixed Languages:** UI strings are hardcoded in both German and English (see Issue #47)
-2. **Unused Dependencies:** Some packages may be unused (`flutter_localization` was replaced)
+2. **Unused Dependencies:** Cleaned up in #92; `flutter_localization` was replaced but may still be referenced
 3. **Global Singletons:** `settingsContainer` and `activePlatform` are global singletons (testability concern)
 4. **No Widget Tests:** Only unit tests exist; widget tests use default Flutter template
 5. **DrawerItemBuilder:** Builds items without `BuildContext`, making localization difficult

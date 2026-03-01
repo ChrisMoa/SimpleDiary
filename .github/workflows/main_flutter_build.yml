@@ -24,6 +24,8 @@ jobs:
         with:
           envkey_PROJECT_NAME: ${{ secrets.PROJECT_NAME }}
       - run: flutter pub get
+      - name: Check outdated dependencies
+        run: flutter pub outdated
       - name: Run tests
         run: flutter test test/core/ test/features/ test/l10n/ test/integration/
 
