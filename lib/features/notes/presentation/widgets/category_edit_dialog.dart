@@ -116,6 +116,9 @@ class _CategoryEditDialogState extends ConsumerState<CategoryEditDialog> {
                 // Title field
                 AppTextField(
                   controller: _titleController,
+                  autofocus: true,
+                  textInputAction: TextInputAction.done,
+                  onSubmitted: (_) => _saveCategory(),
                   label: 'Category Name',
                   validator: (value) {
                     if (value == null || value.isEmpty) {

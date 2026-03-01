@@ -20,6 +20,8 @@ class _HabitEditDialogState extends ConsumerState<HabitEditDialog> {
   final _formKey = GlobalKey<FormState>();
   late TextEditingController _nameController;
   late TextEditingController _descriptionController;
+  final _nameFocus = FocusNode();
+  final _descriptionFocus = FocusNode();
   late int _iconCodePoint;
   late Color _color;
   late HabitFrequency _frequency;
@@ -47,6 +49,8 @@ class _HabitEditDialogState extends ConsumerState<HabitEditDialog> {
   void dispose() {
     _nameController.dispose();
     _descriptionController.dispose();
+    _nameFocus.dispose();
+    _descriptionFocus.dispose();
     super.dispose();
   }
 
@@ -75,6 +79,10 @@ class _HabitEditDialogState extends ConsumerState<HabitEditDialog> {
                 // Name
                 AppTextField(
                   controller: _nameController,
+                  focusNode: _nameFocus,
+                  autofocus: true,
+                  textInputAction: TextInputAction.next,
+                  onSubmitted: (_) => _descriptionFocus.requestFocus(),
                   label: l10n.habitName,
                   validator: (value) {
                     if (value == null || value.trim().isEmpty) {
@@ -88,6 +96,7 @@ class _HabitEditDialogState extends ConsumerState<HabitEditDialog> {
                 // Description
                 AppTextField(
                   controller: _descriptionController,
+                  focusNode: _descriptionFocus,
                   label: l10n.habitDescription,
                   maxLines: 2,
                 ),
