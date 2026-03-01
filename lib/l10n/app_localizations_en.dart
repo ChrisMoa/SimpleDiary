@@ -1218,6 +1218,31 @@ class AppLocalizationsEn extends AppLocalizations {
   String get selectReminderTime => 'Select reminder time';
 
   @override
+  String get maxRemindersPerDay => 'Max Reminders Per Day';
+
+  @override
+  String get maxRemindersPerDayDescription =>
+      'Maximum number of smart reminders sent each day';
+
+  @override
+  String get quietHours => 'Quiet Hours';
+
+  @override
+  String get quietHoursDescription => 'No reminders during these hours';
+
+  @override
+  String get quietHoursStart => 'Quiet Hours Start';
+
+  @override
+  String get quietHoursEnd => 'Quiet Hours End';
+
+  @override
+  String get selectQuietHoursStart => 'Select quiet hours start';
+
+  @override
+  String get selectQuietHoursEnd => 'Select quiet hours end';
+
+  @override
   String get goalsSectionTitle => 'Goals';
 
   @override

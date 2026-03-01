@@ -1231,6 +1231,31 @@ class AppLocalizationsEs extends AppLocalizations {
   String get selectReminderTime => 'Seleccionar hora del recordatorio';
 
   @override
+  String get maxRemindersPerDay => 'Máx. recordatorios por día';
+
+  @override
+  String get maxRemindersPerDayDescription =>
+      'Número máximo de recordatorios inteligentes enviados cada día';
+
+  @override
+  String get quietHours => 'Horas de silencio';
+
+  @override
+  String get quietHoursDescription => 'Sin recordatorios durante estas horas';
+
+  @override
+  String get quietHoursStart => 'Inicio de horas de silencio';
+
+  @override
+  String get quietHoursEnd => 'Fin de horas de silencio';
+
+  @override
+  String get selectQuietHoursStart => 'Seleccionar inicio de horas de silencio';
+
+  @override
+  String get selectQuietHoursEnd => 'Seleccionar fin de horas de silencio';
+
+  @override
   String get goalsSectionTitle => 'Objetivos';
 
   @override

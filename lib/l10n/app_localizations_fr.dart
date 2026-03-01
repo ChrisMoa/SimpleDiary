@@ -1242,6 +1242,31 @@ class AppLocalizationsFr extends AppLocalizations {
   String get selectReminderTime => 'Sélectionner l\'heure du rappel';
 
   @override
+  String get maxRemindersPerDay => 'Rappels max. par jour';
+
+  @override
+  String get maxRemindersPerDayDescription =>
+      'Nombre maximum de rappels intelligents envoyés chaque jour';
+
+  @override
+  String get quietHours => 'Heures calmes';
+
+  @override
+  String get quietHoursDescription => 'Aucun rappel pendant ces heures';
+
+  @override
+  String get quietHoursStart => 'Début des heures calmes';
+
+  @override
+  String get quietHoursEnd => 'Fin des heures calmes';
+
+  @override
+  String get selectQuietHoursStart => 'Sélectionner le début des heures calmes';
+
+  @override
+  String get selectQuietHoursEnd => 'Sélectionner la fin des heures calmes';
+
+  @override
   String get goalsSectionTitle => 'Objectifs';
 
   @override

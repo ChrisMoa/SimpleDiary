@@ -20,6 +20,9 @@ class _NotificationSettingsWidgetState
   late bool _smartRemindersEnabled;
   late bool _streakWarningsEnabled;
   late TimeOfDay _reminderTime;
+  late int _maxSmartRemindersPerDay;
+  late TimeOfDay _quietHoursStart;
+  late TimeOfDay _quietHoursEnd;
 
   final NotificationService _notificationService = NotificationService();
 
@@ -32,6 +35,9 @@ class _NotificationSettingsWidgetState
     _smartRemindersEnabled = settings.smartRemindersEnabled;
     _streakWarningsEnabled = settings.streakWarningsEnabled;
     _reminderTime = settings.reminderTime;
+    _maxSmartRemindersPerDay = settings.maxSmartRemindersPerDay;
+    _quietHoursStart = settings.quietHoursStart;
+    _quietHoursEnd = settings.quietHoursEnd;
   }
 
   void _autoSave() => ref.read(settingsNotifierProvider).saveSettings().ignore();
@@ -67,16 +73,46 @@ class _NotificationSettingsWidgetState
             subtitle: l10n.smartRemindersDescription,
             trailing: Switch(
               value: _smartRemindersEnabled,
-              onChanged: (value) {
-                setState(() {
-                  _smartRemindersEnabled = value;
-                  ref.read(settingsProvider).activeUserSettings.notificationSettings
-                      .smartRemindersEnabled = value;
-                });
-                _autoSave();
-              },
+              onChanged: _onSmartRemindersToggled,
             ),
           ),
+          if (_smartRemindersEnabled) ...[
+            SettingsExpandedTile(
+              icon: Icons.repeat,
+              title: l10n.maxRemindersPerDay,
+              subtitle: l10n.maxRemindersPerDayDescription,
+              control: Slider(
+                value: _maxSmartRemindersPerDay.toDouble(),
+                min: 1,
+                max: 5,
+                divisions: 4,
+                label: _maxSmartRemindersPerDay.toString(),
+                onChanged: (value) {
+                  final intValue = value.round();
+                  setState(() {
+                    _maxSmartRemindersPerDay = intValue;
+                    ref.read(settingsProvider).activeUserSettings
+                        .notificationSettings.maxSmartRemindersPerDay = intValue;
+                  });
+                  _autoSave();
+                  _rescheduleSmartReminders();
+                },
+              ),
+            ),
+            SettingsTile(
+              icon: Icons.bedtime_outlined,
+              title: l10n.quietHoursStart,
+              subtitle: l10n.quietHoursDescription,
+              trailing: _TimeChip(time: _quietHoursStart, context: context),
+              onTap: _selectQuietHoursStart,
+            ),
+            SettingsTile(
+              icon: Icons.wb_sunny_outlined,
+              title: l10n.quietHoursEnd,
+              trailing: _TimeChip(time: _quietHoursEnd, context: context),
+              onTap: _selectQuietHoursEnd,
+            ),
+          ],
           SettingsTile(
             icon: Icons.local_fire_department_outlined,
             title: l10n.streakWarnings,
@@ -128,6 +164,16 @@ class _NotificationSettingsWidgetState
     }
   }
 
+  void _onSmartRemindersToggled(bool value) {
+    setState(() {
+      _smartRemindersEnabled = value;
+      ref.read(settingsProvider).activeUserSettings.notificationSettings
+          .smartRemindersEnabled = value;
+    });
+    _autoSave();
+    _rescheduleSmartReminders();
+  }
+
   Future<void> _selectReminderTime() async {
     final l10n = AppLocalizations.of(context);
     final TimeOfDay? picked = await showTimePicker(
@@ -149,6 +195,53 @@ class _NotificationSettingsWidgetState
           ref.read(settingsProvider).activeUserSettings.notificationSettings,
         );
       }
+    }
+  }
+
+  Future<void> _selectQuietHoursStart() async {
+    final l10n = AppLocalizations.of(context);
+    final TimeOfDay? picked = await showTimePicker(
+      context: context,
+      initialTime: _quietHoursStart,
+      helpText: l10n.selectQuietHoursStart,
+    );
+
+    if (picked != null && picked != _quietHoursStart) {
+      setState(() {
+        _quietHoursStart = picked;
+        ref.read(settingsProvider).activeUserSettings.notificationSettings
+            .quietHoursStart = picked;
+      });
+      _autoSave();
+      _rescheduleSmartReminders();
+    }
+  }
+
+  Future<void> _selectQuietHoursEnd() async {
+    final l10n = AppLocalizations.of(context);
+    final TimeOfDay? picked = await showTimePicker(
+      context: context,
+      initialTime: _quietHoursEnd,
+      helpText: l10n.selectQuietHoursEnd,
+    );
+
+    if (picked != null && picked != _quietHoursEnd) {
+      setState(() {
+        _quietHoursEnd = picked;
+        ref.read(settingsProvider).activeUserSettings.notificationSettings
+            .quietHoursEnd = picked;
+      });
+      _autoSave();
+      _rescheduleSmartReminders();
+    }
+  }
+
+  /// Re-register the Workmanager task with updated settings.
+  Future<void> _rescheduleSmartReminders() async {
+    if (_notificationsEnabled) {
+      await _notificationService.scheduleDailyReminder(
+        ref.read(settingsProvider).activeUserSettings.notificationSettings,
+      );
     }
   }
 }

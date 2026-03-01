@@ -2292,6 +2292,54 @@ abstract class AppLocalizations {
   /// **'Select reminder time'**
   String get selectReminderTime;
 
+  /// No description provided for @maxRemindersPerDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Max Reminders Per Day'**
+  String get maxRemindersPerDay;
+
+  /// No description provided for @maxRemindersPerDayDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Maximum number of smart reminders sent each day'**
+  String get maxRemindersPerDayDescription;
+
+  /// No description provided for @quietHours.
+  ///
+  /// In en, this message translates to:
+  /// **'Quiet Hours'**
+  String get quietHours;
+
+  /// No description provided for @quietHoursDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'No reminders during these hours'**
+  String get quietHoursDescription;
+
+  /// No description provided for @quietHoursStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Quiet Hours Start'**
+  String get quietHoursStart;
+
+  /// No description provided for @quietHoursEnd.
+  ///
+  /// In en, this message translates to:
+  /// **'Quiet Hours End'**
+  String get quietHoursEnd;
+
+  /// No description provided for @selectQuietHoursStart.
+  ///
+  /// In en, this message translates to:
+  /// **'Select quiet hours start'**
+  String get selectQuietHoursStart;
+
+  /// No description provided for @selectQuietHoursEnd.
+  ///
+  /// In en, this message translates to:
+  /// **'Select quiet hours end'**
+  String get selectQuietHoursEnd;
+
   /// No description provided for @goalsSectionTitle.
   ///
   /// In en, this message translates to:
