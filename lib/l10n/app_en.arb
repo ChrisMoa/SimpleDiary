@@ -449,9 +449,31 @@
       "error": { "type": "String" }
     }
   },
+  "syncingAttachments": "Syncing attachments ({completed}/{total})...",
+  "@syncingAttachments": {
+    "placeholders": {
+      "completed": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  },
+  "uploadingPhotos": "Uploading photos ({completed}/{total})...",
+  "@uploadingPhotos": {
+    "placeholders": {
+      "completed": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  },
   "downloadingDiaryDays": "Downloading diary days...",
   "downloadingNotes": "Downloading notes...",
   "downloadingTemplates": "Downloading templates...",
+  "downloadingAttachments": "Downloading attachments...",
+  "downloadingPhotos": "Downloading photos ({completed}/{total})...",
+  "@downloadingPhotos": {
+    "placeholders": {
+      "completed": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  },
   "updatingLocalDatabase": "Updating local database...",
   "downloadCompletedSuccessfully": "Download completed successfully",
   "downloadFailed": "Download failed: {error}",

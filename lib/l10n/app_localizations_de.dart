@@ -898,6 +898,16 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String syncingAttachments(int completed, int total) {
+    return 'Synchronisiere Anhänge ($completed/$total)...';
+  }
+
+  @override
+  String uploadingPhotos(int completed, int total) {
+    return 'Lade Fotos hoch ($completed/$total)...';
+  }
+
+  @override
   String get downloadingDiaryDays => 'Lade Tagebucheinträge herunter...';
 
   @override
@@ -905,6 +915,14 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get downloadingTemplates => 'Lade Vorlagen herunter...';
+
+  @override
+  String get downloadingAttachments => 'Lade Anhänge herunter...';
+
+  @override
+  String downloadingPhotos(int completed, int total) {
+    return 'Lade Fotos herunter ($completed/$total)...';
+  }
 
   @override
   String get updatingLocalDatabase => 'Lokale Datenbank wird aktualisiert...';

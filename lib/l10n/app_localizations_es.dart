@@ -896,6 +896,16 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
+  String syncingAttachments(int completed, int total) {
+    return 'Sincronizando adjuntos ($completed/$total)...';
+  }
+
+  @override
+  String uploadingPhotos(int completed, int total) {
+    return 'Subiendo fotos ($completed/$total)...';
+  }
+
+  @override
   String get downloadingDiaryDays => 'Descargando entradas del diario...';
 
   @override
@@ -903,6 +913,14 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get downloadingTemplates => 'Descargando plantillas...';
+
+  @override
+  String get downloadingAttachments => 'Descargando adjuntos...';
+
+  @override
+  String downloadingPhotos(int completed, int total) {
+    return 'Descargando fotos ($completed/$total)...';
+  }
 
   @override
   String get updatingLocalDatabase => 'Actualizando base de datos local...';

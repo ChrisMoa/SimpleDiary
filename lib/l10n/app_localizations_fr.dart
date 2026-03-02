@@ -898,6 +898,16 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
+  String syncingAttachments(int completed, int total) {
+    return 'Synchronisation des pièces jointes ($completed/$total)...';
+  }
+
+  @override
+  String uploadingPhotos(int completed, int total) {
+    return 'Téléversement des photos ($completed/$total)...';
+  }
+
+  @override
   String get downloadingDiaryDays => 'Téléchargement des entrées du journal...';
 
   @override
@@ -905,6 +915,14 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get downloadingTemplates => 'Téléchargement des modèles...';
+
+  @override
+  String get downloadingAttachments => 'Téléchargement des pièces jointes...';
+
+  @override
+  String downloadingPhotos(int completed, int total) {
+    return 'Téléchargement des photos ($completed/$total)...';
+  }
 
   @override
   String get updatingLocalDatabase =>

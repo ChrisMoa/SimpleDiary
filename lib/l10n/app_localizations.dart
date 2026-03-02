@@ -1698,6 +1698,18 @@ abstract class AppLocalizations {
   /// **'Sync failed: {error}'**
   String syncFailed(String error);
 
+  /// No description provided for @syncingAttachments.
+  ///
+  /// In en, this message translates to:
+  /// **'Syncing attachments ({completed}/{total})...'**
+  String syncingAttachments(int completed, int total);
+
+  /// No description provided for @uploadingPhotos.
+  ///
+  /// In en, this message translates to:
+  /// **'Uploading photos ({completed}/{total})...'**
+  String uploadingPhotos(int completed, int total);
+
   /// No description provided for @downloadingDiaryDays.
   ///
   /// In en, this message translates to:
@@ -1715,6 +1727,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Downloading templates...'**
   String get downloadingTemplates;
+
+  /// No description provided for @downloadingAttachments.
+  ///
+  /// In en, this message translates to:
+  /// **'Downloading attachments...'**
+  String get downloadingAttachments;
+
+  /// No description provided for @downloadingPhotos.
+  ///
+  /// In en, this message translates to:
+  /// **'Downloading photos ({completed}/{total})...'**
+  String downloadingPhotos(int completed, int total);
 
   /// No description provided for @updatingLocalDatabase.
   ///

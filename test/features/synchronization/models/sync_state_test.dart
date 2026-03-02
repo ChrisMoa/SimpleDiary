@@ -23,14 +23,18 @@ void main() {
         SyncPhase.syncDiaryDays,
         SyncPhase.syncNotes,
         SyncPhase.syncTemplates,
+        SyncPhase.syncAttachments,
+        SyncPhase.uploadAttachmentFiles,
         SyncPhase.downloadDiaryDays,
         SyncPhase.downloadNotes,
         SyncPhase.downloadTemplates,
+        SyncPhase.downloadAttachments,
+        SyncPhase.downloadAttachmentFiles,
         SyncPhase.updatingLocalDatabase,
         SyncPhase.completed,
         SyncPhase.failed,
       ]));
-      expect(SyncPhase.values.length, 12);
+      expect(SyncPhase.values.length, 16);
     });
   });
 
@@ -92,6 +96,14 @@ void main() {
         'Syncing templates...',
       );
       expect(
+        SyncState(status: SyncStatus.syncing, phase: SyncPhase.syncAttachments).message,
+        'Syncing attachments...',
+      );
+      expect(
+        SyncState(status: SyncStatus.syncing, phase: SyncPhase.uploadAttachmentFiles).message,
+        'Uploading photos...',
+      );
+      expect(
         SyncState(status: SyncStatus.syncing, phase: SyncPhase.downloadDiaryDays).message,
         'Downloading diary days...',
       );
@@ -102,6 +114,14 @@ void main() {
       expect(
         SyncState(status: SyncStatus.syncing, phase: SyncPhase.downloadTemplates).message,
         'Downloading templates...',
+      );
+      expect(
+        SyncState(status: SyncStatus.syncing, phase: SyncPhase.downloadAttachments).message,
+        'Downloading attachments...',
+      );
+      expect(
+        SyncState(status: SyncStatus.syncing, phase: SyncPhase.downloadAttachmentFiles).message,
+        'Downloading photos...',
       );
       expect(
         SyncState(status: SyncStatus.syncing, phase: SyncPhase.updatingLocalDatabase).message,
