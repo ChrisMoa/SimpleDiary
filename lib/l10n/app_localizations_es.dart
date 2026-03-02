@@ -2098,4 +2098,33 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get addNewNote => 'Agregar nueva nota';
+
+  @override
+  String get exportToZip => 'Exportar a ZIP';
+
+  @override
+  String get importFromZip => 'Importar desde ZIP';
+
+  @override
+  String get saveDataWithPhotos => 'Guarda tus datos del diario con fotos';
+
+  @override
+  String get loadDataWithPhotos =>
+      'Cargar datos del diario con fotos desde un archivo ZIP';
+
+  @override
+  String get selectZipFileToImport => 'Seleccionar archivo ZIP para importar';
+
+  @override
+  String get saveZipExportFile => 'Guardar archivo de exportación ZIP';
+
+  @override
+  String importedWithPhotos(int days, int notes, int photos) {
+    return 'Importados $days días con $notes notas y $photos fotos';
+  }
+
+  @override
+  String zipExportLargeWarning(int size) {
+    return 'Advertencia: El tamaño total de las fotos supera los $size MB. La exportación puede tardar un tiempo.';
+  }
 }

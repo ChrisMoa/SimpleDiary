@@ -2104,4 +2104,33 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get addNewNote => 'Neue Notiz hinzufügen';
+
+  @override
+  String get exportToZip => 'Als ZIP exportieren';
+
+  @override
+  String get importFromZip => 'Aus ZIP importieren';
+
+  @override
+  String get saveDataWithPhotos => 'Speichere deine Tagebuchdaten mit Fotos';
+
+  @override
+  String get loadDataWithPhotos =>
+      'Lade Tagebuchdaten mit Fotos aus einer ZIP-Datei';
+
+  @override
+  String get selectZipFileToImport => 'ZIP-Datei zum Importieren wählen';
+
+  @override
+  String get saveZipExportFile => 'ZIP-Exportdatei speichern';
+
+  @override
+  String importedWithPhotos(int days, int notes, int photos) {
+    return '$days Tage mit $notes Notizen und $photos Fotos importiert';
+  }
+
+  @override
+  String zipExportLargeWarning(int size) {
+    return 'Warnung: Die Gesamtgröße der Fotos überschreitet $size MB. Der Export kann eine Weile dauern.';
+  }
 }

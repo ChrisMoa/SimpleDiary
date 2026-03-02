@@ -6,6 +6,7 @@ import 'package:day_tracker/core/authentication/password_auth_service.dart';
 import 'package:day_tracker/core/encryption/aes_encryptor.dart';
 import 'package:day_tracker/core/log/logger_instance.dart';
 import 'package:day_tracker/features/day_rating/data/models/diary_day.dart';
+import 'package:day_tracker/features/notes/data/models/note_attachment.dart';
 import 'package:day_tracker/features/synchronization/data/models/export_data.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -62,12 +63,14 @@ class FileDbProvider extends StateNotifier<List<DiaryDay>> {
 
   /// Generate export JSON string with metadata
   /// Returns the JSON string to be saved
+  /// [attachments] - Optional list of attachment metadata to include (v1.1)
   String exportToString({
     required List<DiaryDay> diaryDays,
     String? username,
     String? salt,
     required bool encrypted,
     String? password,
+    List<NoteAttachment>? attachments,
   }) {
     // Encrypt data if password is provided
     String dataJson;
@@ -83,9 +86,11 @@ class FileDbProvider extends StateNotifier<List<DiaryDay>> {
       dataJson = jsonEncode(diaryDays.map((d) => d.toMap()).toList());
     }
 
+    final hasAttachments = attachments != null && attachments.isNotEmpty;
+
     // Create export structure with metadata in plain text
-    final exportMap = {
-      'version': '1.0',
+    final exportMap = <String, dynamic>{
+      'version': hasAttachments ? '1.1' : '1.0',
       'metadata': {
         'username': username,
         'salt': salt,
@@ -93,6 +98,8 @@ class FileDbProvider extends StateNotifier<List<DiaryDay>> {
         'encrypted': encrypted,
       },
       'data': dataJson, // This is either encrypted string or plain JSON
+      if (hasAttachments)
+        'attachments': attachments.map((a) => a.toMap()).toList(),
     };
 
     return jsonEncode(exportMap);

@@ -341,3 +341,133 @@ CREATE POLICY "Users can delete own test backups"
 ON storage.objects FOR DELETE
 TO authenticated
 USING (bucket_id = 'test_backups' AND (storage.foldername(name))[1] = auth.uid()::text);
+
+
+-- ============================================================
+-- NOTE ATTACHMENTS (photo sync metadata)
+-- ============================================================
+
+-- Production note_attachments table
+CREATE TABLE IF NOT EXISTS public.note_attachments (
+    id TEXT PRIMARY KEY,
+    user_id TEXT NOT NULL,
+    note_id TEXT NOT NULL,
+    file_path TEXT NOT NULL,
+    file_size INTEGER NOT NULL DEFAULT 0,
+    remote_url TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now())
+);
+
+CREATE INDEX IF NOT EXISTS idx_note_attachments_user_id ON public.note_attachments(user_id);
+CREATE INDEX IF NOT EXISTS idx_note_attachments_note_id ON public.note_attachments(note_id);
+
+ALTER TABLE public.note_attachments ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can read own attachments" ON public.note_attachments
+    FOR SELECT USING (auth.uid()::text = user_id);
+CREATE POLICY "Users can insert own attachments" ON public.note_attachments
+    FOR INSERT WITH CHECK (auth.uid()::text = user_id);
+CREATE POLICY "Users can update own attachments" ON public.note_attachments
+    FOR UPDATE USING (auth.uid()::text = user_id);
+CREATE POLICY "Users can delete own attachments" ON public.note_attachments
+    FOR DELETE USING (auth.uid()::text = user_id);
+
+CREATE TRIGGER update_note_attachments_updated_at
+    BEFORE UPDATE ON public.note_attachments
+    FOR EACH ROW
+    EXECUTE FUNCTION update_updated_at_column();
+
+GRANT ALL ON public.note_attachments TO authenticated;
+GRANT ALL ON public.note_attachments TO service_role;
+
+-- Test note_attachments table
+CREATE TABLE IF NOT EXISTS public.test_note_attachments (
+    id TEXT PRIMARY KEY,
+    user_id TEXT NOT NULL,
+    note_id TEXT NOT NULL,
+    file_path TEXT NOT NULL,
+    file_size INTEGER NOT NULL DEFAULT 0,
+    remote_url TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now())
+);
+
+CREATE INDEX IF NOT EXISTS idx_test_note_attachments_user_id ON public.test_note_attachments(user_id);
+CREATE INDEX IF NOT EXISTS idx_test_note_attachments_note_id ON public.test_note_attachments(note_id);
+
+ALTER TABLE public.test_note_attachments ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can read own test attachments" ON public.test_note_attachments
+    FOR SELECT USING (auth.uid()::text = user_id);
+CREATE POLICY "Users can insert own test attachments" ON public.test_note_attachments
+    FOR INSERT WITH CHECK (auth.uid()::text = user_id);
+CREATE POLICY "Users can update own test attachments" ON public.test_note_attachments
+    FOR UPDATE USING (auth.uid()::text = user_id);
+CREATE POLICY "Users can delete own test attachments" ON public.test_note_attachments
+    FOR DELETE USING (auth.uid()::text = user_id);
+
+CREATE TRIGGER update_test_note_attachments_updated_at
+    BEFORE UPDATE ON public.test_note_attachments
+    FOR EACH ROW
+    EXECUTE FUNCTION update_updated_at_column();
+
+GRANT ALL ON public.test_note_attachments TO authenticated;
+GRANT ALL ON public.test_note_attachments TO service_role;
+
+-- ============================================================
+-- ATTACHMENT STORAGE BUCKETS
+-- ============================================================
+
+-- Production attachment bucket (private)
+INSERT INTO storage.buckets (id, name, public)
+VALUES ('attachments', 'attachments', false)
+ON CONFLICT (id) DO NOTHING;
+
+-- Test attachment bucket (private)
+INSERT INTO storage.buckets (id, name, public)
+VALUES ('test_attachments', 'test_attachments', false)
+ON CONFLICT (id) DO NOTHING;
+
+-- RLS policies for attachments bucket
+-- Path: {userId}/attachments/{noteId}/{attachmentId}.{ext}
+CREATE POLICY "Users can upload own attachments"
+ON storage.objects FOR INSERT
+TO authenticated
+WITH CHECK (bucket_id = 'attachments' AND (storage.foldername(name))[1] = auth.uid()::text);
+
+CREATE POLICY "Users can read own attachments"
+ON storage.objects FOR SELECT
+TO authenticated
+USING (bucket_id = 'attachments' AND (storage.foldername(name))[1] = auth.uid()::text);
+
+CREATE POLICY "Users can update own attachments"
+ON storage.objects FOR UPDATE
+TO authenticated
+USING (bucket_id = 'attachments' AND (storage.foldername(name))[1] = auth.uid()::text);
+
+CREATE POLICY "Users can delete own attachments"
+ON storage.objects FOR DELETE
+TO authenticated
+USING (bucket_id = 'attachments' AND (storage.foldername(name))[1] = auth.uid()::text);
+
+-- RLS policies for test_attachments bucket
+CREATE POLICY "Users can upload own test attachments"
+ON storage.objects FOR INSERT
+TO authenticated
+WITH CHECK (bucket_id = 'test_attachments' AND (storage.foldername(name))[1] = auth.uid()::text);
+
+CREATE POLICY "Users can read own test attachments"
+ON storage.objects FOR SELECT
+TO authenticated
+USING (bucket_id = 'test_attachments' AND (storage.foldername(name))[1] = auth.uid()::text);
+
+CREATE POLICY "Users can update own test attachments"
+ON storage.objects FOR UPDATE
+TO authenticated
+USING (bucket_id = 'test_attachments' AND (storage.foldername(name))[1] = auth.uid()::text);
+
+CREATE POLICY "Users can delete own test attachments"
+ON storage.objects FOR DELETE
+TO authenticated
+USING (bucket_id = 'test_attachments' AND (storage.foldername(name))[1] = auth.uid()::text);

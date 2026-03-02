@@ -1,11 +1,15 @@
+import 'dart:io';
+
 import 'package:day_tracker/core/log/logger_instance.dart';
 import 'package:day_tracker/core/utils/utils.dart';
 import 'package:day_tracker/features/day_rating/data/models/day_rating.dart';
 import 'package:day_tracker/features/day_rating/data/models/diary_day.dart';
 import 'package:day_tracker/features/notes/data/models/note.dart';
+import 'package:day_tracker/features/notes/data/models/note_attachment.dart';
 import 'package:day_tracker/features/note_templates/data/models/description_section.dart';
 import 'package:day_tracker/features/note_templates/data/models/note_template.dart';
 import 'package:flutter/foundation.dart';
+import 'package:path/path.dart' as p;
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 typedef SyncProgressCallback = void Function(int completedItems, int totalItems);

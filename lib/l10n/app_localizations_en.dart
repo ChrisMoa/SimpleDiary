@@ -2077,4 +2077,33 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get addNewNote => 'Add new note';
+
+  @override
+  String get exportToZip => 'Export to ZIP';
+
+  @override
+  String get importFromZip => 'Import from ZIP';
+
+  @override
+  String get saveDataWithPhotos => 'Save your diary data with photos';
+
+  @override
+  String get loadDataWithPhotos =>
+      'Load diary data with photos from a ZIP file';
+
+  @override
+  String get selectZipFileToImport => 'Select ZIP File to Import';
+
+  @override
+  String get saveZipExportFile => 'Save ZIP Export File';
+
+  @override
+  String importedWithPhotos(int days, int notes, int photos) {
+    return 'Imported $days days with $notes notes and $photos photos';
+  }
+
+  @override
+  String zipExportLargeWarning(int size) {
+    return 'Warning: Total photo size exceeds $size MB. The export may take a while.';
+  }
 }

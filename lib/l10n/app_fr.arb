@@ -695,5 +695,14 @@
   "scoreValue": "{value} sur {max}",
   "selectTheme": "Sélectionner le thème {theme}",
   "selectLanguage": "Sélectionner {language}",
-  "addNewNote": "Ajouter une nouvelle note"
+  "addNewNote": "Ajouter une nouvelle note",
+
+  "exportToZip": "Exporter en ZIP",
+  "importFromZip": "Importer depuis ZIP",
+  "saveDataWithPhotos": "Enregistrez vos données de journal avec les photos",
+  "loadDataWithPhotos": "Charger les données du journal avec photos depuis un fichier ZIP",
+  "selectZipFileToImport": "Sélectionner le fichier ZIP à importer",
+  "saveZipExportFile": "Enregistrer le fichier d'exportation ZIP",
+  "importedWithPhotos": "Importé {days} jours avec {notes} notes et {photos} photos",
+  "zipExportLargeWarning": "Attention : La taille totale des photos dépasse {size} Mo. L'exportation peut prendre un certain temps."
 }
