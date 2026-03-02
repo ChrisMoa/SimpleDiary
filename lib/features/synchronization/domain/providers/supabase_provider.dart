@@ -290,6 +290,27 @@ class SupabaseSyncNotifier extends StateNotifier<SyncState> {
         );
       }
 
+      // Clean up orphaned remote attachments (deleted locally)
+      try {
+        final remoteAttachments = await supabaseApi.fetchAttachments(userData.userId!);
+        final localIds = attachments.map((a) => a.id).toSet();
+        final orphaned = remoteAttachments.where((a) => !localIds.contains(a.id)).toList();
+
+        if (orphaned.isNotEmpty) {
+          LogWrapper.logger.i('Cleaning up ${orphaned.length} orphaned remote attachments');
+          for (final attachment in orphaned) {
+            try {
+              await supabaseApi.deleteAttachmentFile(attachment);
+            } catch (e) {
+              LogWrapper.logger.w('Failed to delete orphaned storage file ${attachment.id}: $e');
+            }
+          }
+          await supabaseApi.deleteAttachmentMetadata(orphaned.map((a) => a.id).toList());
+        }
+      } catch (e) {
+        LogWrapper.logger.w('Failed to clean up orphaned remote attachments: $e');
+      }
+
       LogWrapper.logger.i('Sync completed successfully');
       state = SyncState(
         status: SyncStatus.success,

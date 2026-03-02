@@ -769,6 +769,17 @@ class FileSyncWidget extends ConsumerWidget {
 
       LogWrapper.logger.i('Exporting ${diaryDays.length} diary days with ${allNotes.length} notes and ${attachments.length} attachments');
 
+      // Warn if total attachment size exceeds 50 MB
+      final totalAttachmentBytes = attachments.fold<int>(0, (sum, a) {
+        final file = File(a.filePath);
+        return sum + (file.existsSync() ? file.lengthSync() : 0);
+      });
+      if (totalAttachmentBytes > 50 * 1024 * 1024) {
+        final sizeMb = totalAttachmentBytes ~/ (1024 * 1024);
+        LogWrapper.logger.w('Large ZIP export: $sizeMb MB of photos');
+        AppSnackBar.info(context, message: l10n.zipExportLargeWarning(sizeMb));
+      }
+
       // Create ZIP archive
       final zipService = ZipExportService();
       final zipBytes = zipService.createZipExport(

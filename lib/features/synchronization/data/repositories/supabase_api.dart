@@ -495,6 +495,13 @@ class SupabaseApi {
       throw Exception('Attachment file not found: ${attachment.filePath}');
     }
 
+    final fileSizeBytes = file.lengthSync();
+    if (fileSizeBytes > 5 * 1024 * 1024) {
+      LogWrapper.logger.w(
+        'Large attachment ${attachment.id}: ${(fileSizeBytes / (1024 * 1024)).toStringAsFixed(1)} MB',
+      );
+    }
+
     LogWrapper.logger.d('Uploading attachment ${attachment.id} to $storagePath');
 
     await _retryWithBackoff(() async {
@@ -576,6 +583,26 @@ class SupabaseApi {
       LogWrapper.logger.e('Failed to fetch attachments: $e');
       rethrow;
     }
+  }
+
+  // Delete attachment metadata rows from Supabase table
+  Future<void> deleteAttachmentMetadata(List<String> attachmentIds) async {
+    if (attachmentIds.isEmpty) return;
+    final supabaseUserId = _getAuthenticatedUserId()!;
+
+    LogWrapper.logger.d('Deleting ${attachmentIds.length} orphaned attachment records');
+
+    for (final id in attachmentIds) {
+      await _retryWithBackoff(() async {
+        await _client!
+            .from(_noteAttachmentsTable)
+            .delete()
+            .eq('id', id)
+            .eq('user_id', supabaseUserId);
+      });
+    }
+
+    LogWrapper.logger.d('Deleted ${attachmentIds.length} orphaned attachment records');
   }
 
   // Delete attachment file from Supabase Storage
