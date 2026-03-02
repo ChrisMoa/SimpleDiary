@@ -298,7 +298,8 @@ Workflow-level tests that verify multi-feature provider interactions using `Prov
 | Export/import (ICS) | Covered | Plain ICS, wrapped JSON, encrypted, categories |
 | PDF export | Covered | DateRange model, file naming, PDF generation, content verification, large datasets, edge cases |
 | Note search & filtering | Covered | Search state, provider, filterNotes function, text highlighting |
-| Note attachments | Covered | Model serialization, round-trips, copyWith |
+| Note attachments | Covered | Model serialization, round-trips, copyWith, remoteUrl field, backward compat |
+| ZIP export/import | Covered | Archive creation/extraction, manifest structure, image bundling, encryption, isZipFile detection, round-trips |
 | Wizard scheduling logic | Covered | Time slots, gaps, 15-min chunks, day coverage |
 | Category management | Covered | Name validation, lookup, defaults |
 | Goals & progress tracking | Covered | Goal models, progress calculation, streaks, repository logic |
@@ -307,7 +308,7 @@ Workflow-level tests that verify multi-feature provider interactions using `Prov
 | Supabase settings | Covered | Model serialization |
 | Biometric settings | Covered | Settings model serialization, defaults, backwards compat |
 | Backup settings & metadata | Covered | Settings model, metadata model, overdue detection, frequency enum |
-| Supabase sync state | Covered | SyncStatus/SyncPhase enums, SyncState construction/copyWith, phase-based messages, batch progress |
+| Supabase sync state | Covered | SyncStatus/SyncPhase enums (16 phases incl. attachment sync), SyncState construction/copyWith, phase-based messages, batch progress |
 | Supabase batch sync & retry | Covered | retryWithBackoff (success/retry/failure/types/delay), SyncProgressCallback, batch constants |
 | Supabase API (optional) | Covered | Requires `test/.env` with credentials; skipped otherwise |
 | Onboarding status & service | Covered | SharedPreferences persistence, all lifecycle states, demo mode flag |
