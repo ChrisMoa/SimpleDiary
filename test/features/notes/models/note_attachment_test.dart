@@ -6,13 +6,14 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   group('NoteAttachment', () {
-    NoteAttachment createSample() {
+    NoteAttachment createSample({String? remoteUrl}) {
       return NoteAttachment(
         id: 'attachment-id-1',
         noteId: 'note-id-1',
         filePath: '/app/images/note-id-1/attachment-id-1.jpg',
         createdAt: DateTime(2024, 6, 15, 10, 30),
         fileSize: 204800,
+        remoteUrl: remoteUrl,
       );
     }
 
@@ -24,6 +25,22 @@ void main() {
         expect(a.filePath, '/app/images/note-id-1/attachment-id-1.jpg');
         expect(a.createdAt, DateTime(2024, 6, 15, 10, 30));
         expect(a.fileSize, 204800);
+        expect(a.remoteUrl, isNull);
+      });
+
+      test('creates with remoteUrl', () {
+        final a = createSample(remoteUrl: 'https://storage.example.com/img.jpg');
+        expect(a.remoteUrl, 'https://storage.example.com/img.jpg');
+      });
+
+      test('remoteUrl defaults to null', () {
+        final a = NoteAttachment(
+          noteId: 'n',
+          filePath: '/path.jpg',
+          createdAt: DateTime.now(),
+          fileSize: 0,
+        );
+        expect(a.remoteUrl, isNull);
       });
 
       test('auto-generates UUID when id is not provided', () {
@@ -64,6 +81,7 @@ void main() {
         expect(copy.noteId, original.noteId);
         expect(copy.filePath, original.filePath);
         expect(copy.createdAt, original.createdAt);
+        expect(copy.remoteUrl, original.remoteUrl);
       });
 
       test('can update all fields', () {
@@ -75,6 +93,7 @@ void main() {
           filePath: '/new/path.png',
           createdAt: newDate,
           fileSize: 1024,
+          remoteUrl: 'https://example.com/new.jpg',
         );
 
         expect(copy.id, 'new-id');
@@ -82,6 +101,18 @@ void main() {
         expect(copy.filePath, '/new/path.png');
         expect(copy.createdAt, newDate);
         expect(copy.fileSize, 1024);
+        expect(copy.remoteUrl, 'https://example.com/new.jpg');
+      });
+
+      test('can set remoteUrl on attachment without one', () {
+        final original = createSample();
+        expect(original.remoteUrl, isNull);
+
+        final updated = original.copyWith(
+          remoteUrl: 'https://storage.example.com/synced.jpg',
+        );
+        expect(updated.remoteUrl, 'https://storage.example.com/synced.jpg');
+        expect(updated.id, original.id);
       });
     });
 
@@ -99,21 +130,47 @@ void main() {
           Utils.toDateTime(original.createdAt),
         );
         expect(restored.fileSize, original.fileSize);
+        expect(restored.remoteUrl, original.remoteUrl);
+      });
+
+      test('round-trip preserves remoteUrl', () {
+        final original = createSample(
+          remoteUrl: 'https://storage.example.com/img.jpg',
+        );
+        final map = original.toMap();
+        final restored = NoteAttachment.fromMap(map);
+
+        expect(restored.remoteUrl, 'https://storage.example.com/img.jpg');
       });
 
       test('map contains expected keys', () {
         final map = createSample().toMap();
-        expect(map, contains('id'));
-        expect(map, contains('noteId'));
-        expect(map, contains('filePath'));
-        expect(map, contains('createdAt'));
-        expect(map, contains('fileSize'));
+        expect(map.keys, containsAll([
+          'id',
+          'noteId',
+          'filePath',
+          'createdAt',
+          'fileSize',
+          'remoteUrl',
+        ]));
       });
 
       test('fileSize defaults to 0 when missing from map', () {
         final map = createSample().toMap()..remove('fileSize');
         final restored = NoteAttachment.fromMap(map);
         expect(restored.fileSize, 0);
+      });
+
+      test('remoteUrl defaults to null when missing from map (backward compat)', () {
+        final map = <String, dynamic>{
+          'id': 'att-1',
+          'noteId': 'note-1',
+          'filePath': '/path.jpg',
+          'createdAt': Utils.toDateTime(DateTime(2024, 1, 1)),
+          'fileSize': 100,
+        };
+        final restored = NoteAttachment.fromMap(map);
+        expect(restored.remoteUrl, isNull);
       });
     });
 
@@ -135,6 +192,17 @@ void main() {
         expect(restored.noteId, original.noteId);
         expect(restored.filePath, original.filePath);
         expect(restored.fileSize, original.fileSize);
+        expect(restored.remoteUrl, original.remoteUrl);
+      });
+
+      test('round-trip via JSON with remoteUrl', () {
+        final original = createSample(
+          remoteUrl: 'https://storage.example.com/img.jpg',
+        );
+        final jsonStr = original.toJson();
+        final restored = NoteAttachment.fromJson(jsonStr);
+
+        expect(restored.remoteUrl, 'https://storage.example.com/img.jpg');
       });
     });
 
@@ -148,16 +216,30 @@ void main() {
         expect(restored.noteId, original.noteId);
         expect(restored.filePath, original.filePath);
         expect(restored.fileSize, original.fileSize);
+        expect(restored.remoteUrl, original.remoteUrl);
       });
 
-      test('dbMap uses same keys as toMap', () {
+      test('round-trip preserves remoteUrl', () {
+        final original = createSample(
+          remoteUrl: 'https://storage.example.com/img.jpg',
+        );
+        final dbMap = original.toDbMap();
+        final restored = NoteAttachment.fromDbMap(dbMap);
+
+        expect(restored.remoteUrl, 'https://storage.example.com/img.jpg');
+      });
+
+      test('dbMap contains all keys', () {
         final a = createSample();
         final dbMap = a.toDbMap();
-        expect(dbMap, contains('id'));
-        expect(dbMap, contains('noteId'));
-        expect(dbMap, contains('filePath'));
-        expect(dbMap, contains('createdAt'));
-        expect(dbMap, contains('fileSize'));
+        expect(dbMap.keys, containsAll([
+          'id',
+          'noteId',
+          'filePath',
+          'createdAt',
+          'fileSize',
+          'remoteUrl',
+        ]));
       });
     });
 

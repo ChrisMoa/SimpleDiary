@@ -11,12 +11,14 @@ class NoteAttachment extends DbEntity {
   String filePath;
   DateTime createdAt;
   int fileSize;
+  String? remoteUrl;
 
   NoteAttachment({
     required this.noteId,
     required this.filePath,
     required this.createdAt,
     required this.fileSize,
+    this.remoteUrl,
     String? id,
   }) : id = id ?? Utils.uuid.v4();
 
@@ -30,9 +32,17 @@ class NoteAttachment extends DbEntity {
     DbColumn.text('filePath'),
     DbColumn.text('createdAt'),
     DbColumn.integer('fileSize', defaultValue: '0'),
+    DbColumn.text('remoteUrl', isNotNull: false),
   ];
 
-  static const List<DbMigration> migrations = [];
+  static final List<DbMigration> migrations = [
+    DbMigration.addColumn(
+      version: 1,
+      columnName: 'remoteUrl',
+      columnDefinition: 'TEXT',
+      description: 'Supabase Storage URL for synced attachments',
+    ),
+  ];
 
   // ── Serialization (single source of truth) ─────────────────────
 
@@ -43,6 +53,7 @@ class NoteAttachment extends DbEntity {
         'filePath': filePath,
         'createdAt': Utils.toDateTime(createdAt),
         'fileSize': fileSize,
+        'remoteUrl': remoteUrl,
       };
 
   static NoteAttachment fromDbMap(Map<String, dynamic> map) => NoteAttachment(
@@ -51,6 +62,7 @@ class NoteAttachment extends DbEntity {
         filePath: map['filePath'],
         createdAt: Utils.fromDateTimeString(map['createdAt']),
         fileSize: map['fileSize'] ?? 0,
+        remoteUrl: map['remoteUrl'],
       );
 
   @override
@@ -75,6 +87,7 @@ class NoteAttachment extends DbEntity {
     String? filePath,
     DateTime? createdAt,
     int? fileSize,
+    String? remoteUrl,
   }) {
     return NoteAttachment(
       id: id ?? this.id,
@@ -82,6 +95,7 @@ class NoteAttachment extends DbEntity {
       filePath: filePath ?? this.filePath,
       createdAt: createdAt ?? this.createdAt,
       fileSize: fileSize ?? this.fileSize,
+      remoteUrl: remoteUrl ?? this.remoteUrl,
     );
   }
 }
