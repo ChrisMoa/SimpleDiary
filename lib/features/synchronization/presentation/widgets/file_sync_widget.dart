@@ -987,15 +987,19 @@ class FileSyncWidget extends ConsumerWidget {
       end: DateTime.now().add(const Duration(days: 1)),
     );
 
+    final theme = Theme.of(context);
     final choice = await showDialog<bool>(
       context: context,
-      builder: (dialogContext) => AlertDialog(
-        title: Text(l10n.exportRange),
-        content: Text(l10n.whichEntriesToExport),
+      builder: (dialogContext) => AppDialog(
+        title: l10n.exportRange,
+        content: l10n.whichEntriesToExport,
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(dialogContext, null),
-            child: Text(l10n.cancel),
+            child: Text(
+              l10n.cancel,
+              style: TextStyle(color: theme.colorScheme.onSurfaceVariant),
+            ),
           ),
           TextButton(
             onPressed: () => Navigator.pop(dialogContext, false),
@@ -1033,11 +1037,12 @@ class FileSyncWidget extends ConsumerWidget {
     final TextEditingController controller = TextEditingController(
       text: defaultValue ?? '',
     );
+    final theme = Theme.of(context);
     final password = await showDialog<String>(
       context: context,
-      builder: (dialogContext) => AlertDialog(
-        title: Text(title),
-        content: TextField(
+      builder: (dialogContext) => AppDialog(
+        title: title,
+        contentWidget: TextField(
           controller: controller,
           obscureText: true,
           decoration: InputDecoration(
@@ -1048,9 +1053,12 @@ class FileSyncWidget extends ConsumerWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(dialogContext, null),
-            child: Text(l10n.cancel),
+            child: Text(
+              l10n.cancel,
+              style: TextStyle(color: theme.colorScheme.onSurfaceVariant),
+            ),
           ),
-          TextButton(
+          FilledButton(
             onPressed: () => Navigator.pop(dialogContext, controller.text),
             child: Text(l10n.ok),
           ),
