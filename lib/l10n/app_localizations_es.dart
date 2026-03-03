@@ -2257,35 +2257,35 @@ class AppLocalizationsEs extends AppLocalizations {
   String get streakAndProgress => 'Racha y Progreso';
 
   @override
-  String get moodQuadrant => 'Mood Quadrant';
+  String get moodQuadrant => 'Cuadrante de Ánimo';
 
   @override
-  String get moodExcited => 'Excited';
+  String get moodExcited => 'Emocionado';
 
   @override
-  String get moodAnxious => 'Anxious';
+  String get moodAnxious => 'Ansioso';
 
   @override
-  String get moodCalm => 'Calm';
+  String get moodCalm => 'Tranquilo';
 
   @override
-  String get moodSad => 'Sad';
+  String get moodSad => 'Triste';
 
   @override
-  String get moodPleasant => 'Pleasant';
+  String get moodPleasant => 'Agradable';
 
   @override
-  String get moodUnpleasant => 'Unpleasant';
+  String get moodUnpleasant => 'Desagradable';
 
   @override
   String get moodNeutral => 'Neutral';
 
   @override
-  String get moodPosition => 'Mood Position';
+  String get moodPosition => 'Posición de Ánimo';
 
   @override
-  String get valenceLabel => 'Valence';
+  String get valenceLabel => 'Valencia';
 
   @override
-  String get arousalLabel => 'Arousal';
+  String get arousalLabel => 'Activación';
 }
