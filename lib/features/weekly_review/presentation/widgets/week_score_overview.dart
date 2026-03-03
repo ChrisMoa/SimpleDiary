@@ -31,7 +31,7 @@ class WeekScoreOverview extends StatelessWidget {
           ),
           AppSpacing.verticalMd,
           SizedBox(
-            height: 160,
+            height: 170,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
               itemCount: scores.length,
@@ -54,7 +54,7 @@ class WeekScoreOverview extends StatelessWidget {
     Map<String, dynamic> day,
     ThemeData theme,
   ) {
-    final date = DateTime.parse(day['date'] as String);
+    final date = DateFormat('dd.MM.yyyy').parse(day['date'] as String);
     final score = day['score'] as int? ?? 0;
     final isComplete = day['isComplete'] as bool? ?? false;
     final noteCount = day['noteCount'] as int? ?? 0;

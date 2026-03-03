@@ -4,6 +4,9 @@ import 'package:day_tracker/features/day_rating/domain/providers/diary_day_local
 import 'package:day_tracker/features/notes/data/models/note.dart';
 import 'package:day_tracker/features/notes/data/models/note_category.dart';
 import 'package:day_tracker/features/notes/domain/providers/note_local_db_provider.dart';
+import 'package:day_tracker/features/weekly_review/data/models/weekly_review_data.dart';
+import 'package:day_tracker/features/weekly_review/data/repositories/weekly_review_repository.dart';
+import 'package:day_tracker/features/weekly_review/domain/providers/weekly_review_providers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// Generates 14 days of realistic sample diary entries and notes so that
@@ -30,6 +33,9 @@ class DemoDataGenerator {
       await _addDiaryDay(day);
       await _addNotesForDay(day);
     }
+
+    // Generate weekly reviews for the two previous complete weeks
+    await _generateDemoWeeklyReviews(today);
   }
 
   Future<void> clear() async {
@@ -51,6 +57,11 @@ class DemoDataGenerator {
     final demoNotes = notes.where((n) => !n.from.isBefore(cutoff)).toList();
     for (final note in demoNotes) {
       await ref.read(notesLocalDataProvider.notifier).deleteElement(note);
+    }
+    // Clear demo weekly reviews
+    final reviews = ref.read(weeklyReviewLocalDbProvider);
+    for (final review in reviews) {
+      await ref.read(weeklyReviewLocalDbProvider.notifier).deleteElement(review);
     }
   }
 
@@ -207,6 +218,45 @@ class DemoDataGenerator {
   }
 
   NoteCategory _cat(String title) => NoteCategory.fromString(title);
+
+  /// Generate weekly reviews for the two most recent complete weeks
+  /// covered by the 14-day demo data window.
+  Future<void> _generateDemoWeeklyReviews(DateTime today) async {
+    final repository = WeeklyReviewRepository();
+    final diaryDays = ref.read(diaryDayLocalDbDataProvider);
+    final notes = ref.read(notesLocalDataProvider);
+
+    // Collect up to 2 distinct complete ISO weeks from the demo data window.
+    final weeksGenerated = <String>{};
+    for (int daysBack = 1; daysBack <= 13; daysBack++) {
+      final day = today.subtract(Duration(days: daysBack));
+      final monday = day.subtract(Duration(days: day.weekday - 1));
+      final sunday = monday.add(const Duration(days: 6));
+
+      // Only generate for complete weeks (Sunday must be in the past)
+      if (sunday.isAfter(today) || sunday.isAtSameMomentAs(today)) continue;
+
+      final year = monday.year;
+      final week = WeeklyReviewData.isoWeekNumber(monday);
+      final key = '$year-$week';
+      if (weeksGenerated.contains(key)) continue;
+
+      final review = repository.generateReview(
+        year: year,
+        weekNumber: week,
+        allDiaryDays: diaryDays,
+        allNotes: notes,
+        currentStreak: 14 - daysBack, // approximate streak
+      );
+
+      await ref
+          .read(weeklyReviewLocalDbProvider.notifier)
+          .addOrUpdateElement(review);
+
+      weeksGenerated.add(key);
+      if (weeksGenerated.length >= 2) break;
+    }
+  }
 
   DateTime _dateOnly(DateTime dt) =>
       DateTime(dt.year, dt.month, dt.day);
