@@ -2160,4 +2160,114 @@ class AppLocalizationsFr extends AppLocalizations {
   String zipExportLargeWarning(int size) {
     return 'Attention : La taille totale des photos dépasse $size Mo. L\'exportation peut prendre un certain temps.';
   }
+
+  @override
+  String get drawerWeeklyReview => 'Bilan Hebdomadaire';
+
+  @override
+  String get weeklyReview => 'Bilan Hebdomadaire';
+
+  @override
+  String get weeklyReviewDescription => 'Votre résumé hebdomadaire du journal';
+
+  @override
+  String weekLabel(int weekNumber) {
+    return 'Semaine $weekNumber';
+  }
+
+  @override
+  String get weeklyReviewNotification => 'Notification du Bilan Hebdomadaire';
+
+  @override
+  String get weeklyReviewDay => 'Jour du Bilan';
+
+  @override
+  String get weeklyReviewTime => 'Heure du Bilan';
+
+  @override
+  String get generateReview => 'Générer le Bilan';
+
+  @override
+  String get generateCurrentWeekReview => 'Générer le bilan de cette semaine';
+
+  @override
+  String get noReviewsYet =>
+      'Pas encore de bilans hebdomadaires. Les bilans sont générés automatiquement à la fin de chaque semaine.';
+
+  @override
+  String completedDaysCount(int count) {
+    return '$count/7 jours complétés';
+  }
+
+  @override
+  String get vsLastWeek => 'vs. semaine dernière';
+
+  @override
+  String get permaAverages => 'Moyennes PERMA+';
+
+  @override
+  String get topEmotions => 'Émotions Principales';
+
+  @override
+  String get contextHighlights => 'Points Contextuels';
+
+  @override
+  String get notableEntries => 'Entrées Remarquables';
+
+  @override
+  String get moodTrend => 'Tendance d\'Humeur';
+
+  @override
+  String get weeklyReviewAvailable => 'Votre bilan hebdomadaire est prêt !';
+
+  @override
+  String get weeklyReviewBody =>
+      'Découvrez comment s\'est passée votre semaine — appuyez pour voir votre résumé.';
+
+  @override
+  String get averageSleep => 'Moy. Sommeil';
+
+  @override
+  String get exerciseDays => 'Jours d\'Exercice';
+
+  @override
+  String get averageStress => 'Moy. Stress';
+
+  @override
+  String get averageSleepQuality => 'Qualité de Sommeil';
+
+  @override
+  String get noDataForWeek => 'Pas de données pour cette semaine';
+
+  @override
+  String reviewGeneratedFor(String weekLabel) {
+    return 'Bilan pour $weekLabel';
+  }
+
+  @override
+  String get monday => 'Lundi';
+
+  @override
+  String get tuesday => 'Mardi';
+
+  @override
+  String get wednesday => 'Mercredi';
+
+  @override
+  String get thursday => 'Jeudi';
+
+  @override
+  String get friday => 'Vendredi';
+
+  @override
+  String get saturday => 'Samedi';
+
+  @override
+  String get sunday => 'Dimanche';
+
+  @override
+  String get weeklyScoreOverview => 'Aperçu des Scores';
+
+  @override
+  String get streakAndProgress => 'Série & Progrès';
 }

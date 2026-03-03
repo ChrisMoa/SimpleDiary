@@ -15,6 +15,9 @@ void main() {
       expect(settings.maxSmartRemindersPerDay, 3);
       expect(settings.quietHoursStartMinutes, 22 * 60);
       expect(settings.quietHoursEndMinutes, 8 * 60);
+      expect(settings.weeklyReviewEnabled, true);
+      expect(settings.weeklyReviewDay, 7); // Sunday
+      expect(settings.weeklyReviewTimeMinutes, 20 * 60); // 20:00
     });
 
     test('reminderTime getter converts minutes correctly', () {
@@ -63,6 +66,22 @@ void main() {
       expect(settings.quietHoursEndMinutes, 7 * 60 + 45);
     });
 
+    test('weeklyReviewTime getter converts minutes correctly', () {
+      final settings = NotificationSettings.fromEmpty();
+      settings.weeklyReviewTimeMinutes = 10 * 60 + 30; // 10:30
+
+      final time = settings.weeklyReviewTime;
+      expect(time.hour, 10);
+      expect(time.minute, 30);
+    });
+
+    test('weeklyReviewTime setter converts TimeOfDay correctly', () {
+      final settings = NotificationSettings.fromEmpty();
+      settings.weeklyReviewTime = const TimeOfDay(hour: 18, minute: 45);
+
+      expect(settings.weeklyReviewTimeMinutes, 18 * 60 + 45);
+    });
+
     test('toMap serializes all fields', () {
       final settings = NotificationSettings(
         enabled: true,
@@ -73,6 +92,9 @@ void main() {
         maxSmartRemindersPerDay: 5,
         quietHoursStartMinutes: 23 * 60,
         quietHoursEndMinutes: 7 * 60,
+        weeklyReviewEnabled: false,
+        weeklyReviewDay: 1,
+        weeklyReviewTimeMinutes: 9 * 60,
       );
 
       final map = settings.toMap();
@@ -85,6 +107,9 @@ void main() {
       expect(map['maxSmartRemindersPerDay'], 5);
       expect(map['quietHoursStartMinutes'], 23 * 60);
       expect(map['quietHoursEndMinutes'], 7 * 60);
+      expect(map['weeklyReviewEnabled'], false);
+      expect(map['weeklyReviewDay'], 1);
+      expect(map['weeklyReviewTimeMinutes'], 9 * 60);
     });
 
     test('fromMap deserializes all fields', () {
@@ -97,6 +122,9 @@ void main() {
         'maxSmartRemindersPerDay': 2,
         'quietHoursStartMinutes': 21 * 60,
         'quietHoursEndMinutes': 9 * 60,
+        'weeklyReviewEnabled': false,
+        'weeklyReviewDay': 3,
+        'weeklyReviewTimeMinutes': 14 * 60 + 15,
       };
 
       final settings = NotificationSettings.fromMap(map);
@@ -109,6 +137,9 @@ void main() {
       expect(settings.maxSmartRemindersPerDay, 2);
       expect(settings.quietHoursStartMinutes, 21 * 60);
       expect(settings.quietHoursEndMinutes, 9 * 60);
+      expect(settings.weeklyReviewEnabled, false);
+      expect(settings.weeklyReviewDay, 3);
+      expect(settings.weeklyReviewTimeMinutes, 14 * 60 + 15);
     });
 
     test('fromMap handles missing fields with defaults', () {
@@ -124,6 +155,9 @@ void main() {
       expect(settings.maxSmartRemindersPerDay, 3);
       expect(settings.quietHoursStartMinutes, 22 * 60);
       expect(settings.quietHoursEndMinutes, 8 * 60);
+      expect(settings.weeklyReviewEnabled, true);
+      expect(settings.weeklyReviewDay, 7);
+      expect(settings.weeklyReviewTimeMinutes, 20 * 60);
     });
 
     test('fromMap handles missing new fields with defaults (backward compat)', () {
@@ -141,6 +175,10 @@ void main() {
       expect(settings.maxSmartRemindersPerDay, 3);
       expect(settings.quietHoursStartMinutes, 22 * 60);
       expect(settings.quietHoursEndMinutes, 8 * 60);
+      // Weekly review fields fall back to defaults
+      expect(settings.weeklyReviewEnabled, true);
+      expect(settings.weeklyReviewDay, 7);
+      expect(settings.weeklyReviewTimeMinutes, 20 * 60);
     });
 
     test('round-trip through JSON preserves data', () {
@@ -153,6 +191,9 @@ void main() {
         maxSmartRemindersPerDay: 4,
         quietHoursStartMinutes: 23 * 60 + 30,
         quietHoursEndMinutes: 6 * 60 + 45,
+        weeklyReviewEnabled: false,
+        weeklyReviewDay: 2,
+        weeklyReviewTimeMinutes: 18 * 60,
       );
 
       final json = original.toJson();
@@ -166,6 +207,9 @@ void main() {
       expect(restored.maxSmartRemindersPerDay, original.maxSmartRemindersPerDay);
       expect(restored.quietHoursStartMinutes, original.quietHoursStartMinutes);
       expect(restored.quietHoursEndMinutes, original.quietHoursEndMinutes);
+      expect(restored.weeklyReviewEnabled, original.weeklyReviewEnabled);
+      expect(restored.weeklyReviewDay, original.weeklyReviewDay);
+      expect(restored.weeklyReviewTimeMinutes, original.weeklyReviewTimeMinutes);
     });
 
     test('copyWith creates new instance with updated fields', () {
@@ -184,6 +228,10 @@ void main() {
       expect(updated.maxSmartRemindersPerDay, original.maxSmartRemindersPerDay);
       expect(updated.quietHoursStartMinutes, original.quietHoursStartMinutes);
       expect(updated.quietHoursEndMinutes, original.quietHoursEndMinutes);
+      // Weekly review fields unchanged
+      expect(updated.weeklyReviewEnabled, original.weeklyReviewEnabled);
+      expect(updated.weeklyReviewDay, original.weeklyReviewDay);
+      expect(updated.weeklyReviewTimeMinutes, original.weeklyReviewTimeMinutes);
     });
 
     test('copyWith updates new fields', () {
@@ -203,6 +251,23 @@ void main() {
       expect(updated.reminderTimeMinutes, original.reminderTimeMinutes);
     });
 
+    test('copyWith updates weekly review fields', () {
+      final original = NotificationSettings.fromEmpty();
+
+      final updated = original.copyWith(
+        weeklyReviewEnabled: false,
+        weeklyReviewDay: 1, // Monday
+        weeklyReviewTimeMinutes: 9 * 60,
+      );
+
+      expect(updated.weeklyReviewEnabled, false);
+      expect(updated.weeklyReviewDay, 1);
+      expect(updated.weeklyReviewTimeMinutes, 9 * 60);
+      // Original fields unchanged
+      expect(updated.enabled, original.enabled);
+      expect(updated.reminderTimeMinutes, original.reminderTimeMinutes);
+    });
+
     test('copyWith with no arguments creates identical copy', () {
       final original = NotificationSettings(
         enabled: true,
@@ -213,6 +278,9 @@ void main() {
         maxSmartRemindersPerDay: 2,
         quietHoursStartMinutes: 23 * 60,
         quietHoursEndMinutes: 7 * 60,
+        weeklyReviewEnabled: false,
+        weeklyReviewDay: 3,
+        weeklyReviewTimeMinutes: 15 * 60,
       );
 
       final copy = original.copyWith();
@@ -225,6 +293,9 @@ void main() {
       expect(copy.maxSmartRemindersPerDay, original.maxSmartRemindersPerDay);
       expect(copy.quietHoursStartMinutes, original.quietHoursStartMinutes);
       expect(copy.quietHoursEndMinutes, original.quietHoursEndMinutes);
+      expect(copy.weeklyReviewEnabled, original.weeklyReviewEnabled);
+      expect(copy.weeklyReviewDay, original.weeklyReviewDay);
+      expect(copy.weeklyReviewTimeMinutes, original.weeklyReviewTimeMinutes);
     });
 
     test('toString formats time and quiet hours correctly', () {
@@ -239,6 +310,9 @@ void main() {
       expect(str, contains('streakWarnings: true'));
       expect(str, contains('maxSmartReminders: 3'));
       expect(str, contains('quietHours: 22:00-08:00'));
+      expect(str, contains('weeklyReview: true'));
+      expect(str, contains('day=7'));
+      expect(str, contains('time=20:00'));
     });
 
     test('reminderDays list is independent between instances', () {
@@ -264,6 +338,9 @@ void main() {
         'maxSmartRemindersPerDay',
         'quietHoursStartMinutes',
         'quietHoursEndMinutes',
+        'weeklyReviewEnabled',
+        'weeklyReviewDay',
+        'weeklyReviewTimeMinutes',
       ]));
     });
   });

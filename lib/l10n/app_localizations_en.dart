@@ -2124,4 +2124,114 @@ class AppLocalizationsEn extends AppLocalizations {
   String zipExportLargeWarning(int size) {
     return 'Warning: Total photo size exceeds $size MB. The export may take a while.';
   }
+
+  @override
+  String get drawerWeeklyReview => 'Weekly Review';
+
+  @override
+  String get weeklyReview => 'Weekly Review';
+
+  @override
+  String get weeklyReviewDescription => 'Your weekly diary summary';
+
+  @override
+  String weekLabel(int weekNumber) {
+    return 'Week $weekNumber';
+  }
+
+  @override
+  String get weeklyReviewNotification => 'Weekly Review Notification';
+
+  @override
+  String get weeklyReviewDay => 'Review Day';
+
+  @override
+  String get weeklyReviewTime => 'Review Time';
+
+  @override
+  String get generateReview => 'Generate Review';
+
+  @override
+  String get generateCurrentWeekReview => 'Generate This Week\'s Review';
+
+  @override
+  String get noReviewsYet =>
+      'No weekly reviews yet. Reviews are generated automatically at the end of each week.';
+
+  @override
+  String completedDaysCount(int count) {
+    return '$count/7 days completed';
+  }
+
+  @override
+  String get vsLastWeek => 'vs. last week';
+
+  @override
+  String get permaAverages => 'PERMA+ Averages';
+
+  @override
+  String get topEmotions => 'Top Emotions';
+
+  @override
+  String get contextHighlights => 'Context Highlights';
+
+  @override
+  String get notableEntries => 'Notable Entries';
+
+  @override
+  String get moodTrend => 'Mood Trend';
+
+  @override
+  String get weeklyReviewAvailable => 'Your weekly review is ready!';
+
+  @override
+  String get weeklyReviewBody =>
+      'See how your week went — tap to view your summary.';
+
+  @override
+  String get averageSleep => 'Avg. Sleep';
+
+  @override
+  String get exerciseDays => 'Exercise Days';
+
+  @override
+  String get averageStress => 'Avg. Stress';
+
+  @override
+  String get averageSleepQuality => 'Sleep Quality';
+
+  @override
+  String get noDataForWeek => 'No diary data for this week';
+
+  @override
+  String reviewGeneratedFor(String weekLabel) {
+    return 'Review for $weekLabel';
+  }
+
+  @override
+  String get monday => 'Monday';
+
+  @override
+  String get tuesday => 'Tuesday';
+
+  @override
+  String get wednesday => 'Wednesday';
+
+  @override
+  String get thursday => 'Thursday';
+
+  @override
+  String get friday => 'Friday';
+
+  @override
+  String get saturday => 'Saturday';
+
+  @override
+  String get sunday => 'Sunday';
+
+  @override
+  String get weeklyScoreOverview => 'Score Overview';
+
+  @override
+  String get streakAndProgress => 'Streak & Progress';
 }

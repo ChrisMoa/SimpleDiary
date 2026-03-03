@@ -23,6 +23,9 @@ class _NotificationSettingsWidgetState
   late int _maxSmartRemindersPerDay;
   late TimeOfDay _quietHoursStart;
   late TimeOfDay _quietHoursEnd;
+  late bool _weeklyReviewEnabled;
+  late int _weeklyReviewDay;
+  late TimeOfDay _weeklyReviewTime;
 
   final NotificationService _notificationService = NotificationService();
 
@@ -38,6 +41,9 @@ class _NotificationSettingsWidgetState
     _maxSmartRemindersPerDay = settings.maxSmartRemindersPerDay;
     _quietHoursStart = settings.quietHoursStart;
     _quietHoursEnd = settings.quietHoursEnd;
+    _weeklyReviewEnabled = settings.weeklyReviewEnabled;
+    _weeklyReviewDay = settings.weeklyReviewDay;
+    _weeklyReviewTime = settings.weeklyReviewTime;
   }
 
   void _autoSave() => ref.read(settingsNotifierProvider).saveSettings().ignore();
@@ -129,6 +135,48 @@ class _NotificationSettingsWidgetState
               },
             ),
           ),
+          SettingsTile(
+            icon: Icons.auto_awesome,
+            title: l10n.weeklyReviewNotification,
+            subtitle: l10n.weeklyReviewDescription,
+            trailing: Switch(
+              value: _weeklyReviewEnabled,
+              onChanged: _onWeeklyReviewToggled,
+            ),
+          ),
+          if (_weeklyReviewEnabled) ...[
+            SettingsTile(
+              icon: Icons.calendar_today,
+              title: l10n.weeklyReviewDay,
+              trailing: DropdownButton<int>(
+                value: _weeklyReviewDay,
+                underline: const SizedBox.shrink(),
+                items: List.generate(7, (i) {
+                  final day = i + 1;
+                  return DropdownMenuItem(
+                    value: day,
+                    child: Text(_dayName(day, l10n)),
+                  );
+                }),
+                onChanged: (value) {
+                  if (value == null) return;
+                  setState(() {
+                    _weeklyReviewDay = value;
+                    ref.read(settingsProvider).activeUserSettings
+                        .notificationSettings.weeklyReviewDay = value;
+                  });
+                  _autoSave();
+                  _rescheduleSmartReminders();
+                },
+              ),
+            ),
+            SettingsTile(
+              icon: Icons.access_time,
+              title: l10n.weeklyReviewTime,
+              trailing: _TimeChip(time: _weeklyReviewTime, context: context),
+              onTap: _selectWeeklyReviewTime,
+            ),
+          ],
         ],
       ],
     );
@@ -233,6 +281,48 @@ class _NotificationSettingsWidgetState
       });
       _autoSave();
       _rescheduleSmartReminders();
+    }
+  }
+
+  void _onWeeklyReviewToggled(bool value) {
+    setState(() {
+      _weeklyReviewEnabled = value;
+      ref.read(settingsProvider).activeUserSettings.notificationSettings
+          .weeklyReviewEnabled = value;
+    });
+    _autoSave();
+    _rescheduleSmartReminders();
+  }
+
+  Future<void> _selectWeeklyReviewTime() async {
+    final l10n = AppLocalizations.of(context);
+    final TimeOfDay? picked = await showTimePicker(
+      context: context,
+      initialTime: _weeklyReviewTime,
+      helpText: l10n.weeklyReviewTime,
+    );
+
+    if (picked != null && picked != _weeklyReviewTime) {
+      setState(() {
+        _weeklyReviewTime = picked;
+        ref.read(settingsProvider).activeUserSettings.notificationSettings
+            .weeklyReviewTime = picked;
+      });
+      _autoSave();
+      _rescheduleSmartReminders();
+    }
+  }
+
+  String _dayName(int day, AppLocalizations l10n) {
+    switch (day) {
+      case 1: return l10n.monday;
+      case 2: return l10n.tuesday;
+      case 3: return l10n.wednesday;
+      case 4: return l10n.thursday;
+      case 5: return l10n.friday;
+      case 6: return l10n.saturday;
+      case 7: return l10n.sunday;
+      default: return '';
     }
   }
 

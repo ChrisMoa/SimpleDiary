@@ -14,6 +14,9 @@ import 'package:workmanager/workmanager.dart';
 /// Notification ID for smart reminders (distinct from daily=0, streak=1)
 const int _smartReminderNotificationId = 2;
 
+/// Notification ID for weekly review
+const int _weeklyReviewNotificationId = 3;
+
 /// Service for handling local notifications and reminders
 class NotificationService {
   static final NotificationService _instance = NotificationService._internal();
@@ -197,9 +200,62 @@ class NotificationService {
         );
       }
 
+      // Schedule weekly review notification if enabled
+      if (settings.weeklyReviewEnabled) {
+        await scheduleWeeklyReview(settings);
+      }
+
       LogWrapper.logger.i('Daily reminder scheduled successfully');
     } catch (e) {
       LogWrapper.logger.e('Error scheduling daily reminder: $e');
+    }
+  }
+
+  /// Schedule weekly review notification on the configured day/time
+  Future<void> scheduleWeeklyReview(NotificationSettings settings) async {
+    if (!settings.enabled || !settings.weeklyReviewEnabled) return;
+    if (!_isInitialized) return;
+
+    try {
+      final time = settings.weeklyReviewTime;
+      final reviewDay = settings.weeklyReviewDay; // 1=Mon, 7=Sun
+      final now = tz.TZDateTime.now(tz.local);
+
+      // Find the next occurrence of the review day
+      var scheduledDate = tz.TZDateTime(
+        tz.local,
+        now.year,
+        now.month,
+        now.day,
+        time.hour,
+        time.minute,
+      );
+
+      // Adjust to the correct weekday
+      while (scheduledDate.weekday != reviewDay) {
+        scheduledDate = scheduledDate.add(const Duration(days: 1));
+      }
+
+      // If that time has already passed this week, schedule for next week
+      if (scheduledDate.isBefore(now)) {
+        scheduledDate = scheduledDate.add(const Duration(days: 7));
+      }
+
+      await _notificationsPlugin.zonedSchedule(
+        _weeklyReviewNotificationId,
+        'Your weekly review is ready! ✨',
+        'See how your week went — tap to view your summary.',
+        scheduledDate,
+        _notificationDetails(),
+        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+        uiLocalNotificationDateInterpretation:
+            UILocalNotificationDateInterpretation.absoluteTime,
+        matchDateTimeComponents: DateTimeComponents.dayOfWeekAndTime,
+      );
+
+      LogWrapper.logger.i('Weekly review scheduled for day $reviewDay at ${time.hour}:${time.minute}');
+    } catch (e) {
+      LogWrapper.logger.e('Error scheduling weekly review: $e');
     }
   }
 

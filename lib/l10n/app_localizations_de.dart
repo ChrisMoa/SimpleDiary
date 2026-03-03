@@ -1182,10 +1182,10 @@ class AppLocalizationsDe extends AppLocalizations {
   String get favorites => 'Favoriten';
 
   @override
-  String get favoriteDays => 'Lieblings-Tage';
+  String get favoriteDays => 'Lieblingstage';
 
   @override
-  String get favoriteNotes => 'Lieblings-Notizen';
+  String get favoriteNotes => 'Lieblingsnotizen';
 
   @override
   String get addToFavorites => 'Zu Favoriten hinzufügen';
@@ -2151,4 +2151,115 @@ class AppLocalizationsDe extends AppLocalizations {
   String zipExportLargeWarning(int size) {
     return 'Warnung: Die Gesamtgröße der Fotos überschreitet $size MB. Der Export kann eine Weile dauern.';
   }
+
+  @override
+  String get drawerWeeklyReview => 'Wochenrückblick';
+
+  @override
+  String get weeklyReview => 'Wochenrückblick';
+
+  @override
+  String get weeklyReviewDescription =>
+      'Deine wöchentliche Tagebuchzusammenfassung';
+
+  @override
+  String weekLabel(int weekNumber) {
+    return 'Woche $weekNumber';
+  }
+
+  @override
+  String get weeklyReviewNotification => 'Wochenrückblick-Benachrichtigung';
+
+  @override
+  String get weeklyReviewDay => 'Rückblick-Tag';
+
+  @override
+  String get weeklyReviewTime => 'Rückblick-Uhrzeit';
+
+  @override
+  String get generateReview => 'Rückblick erstellen';
+
+  @override
+  String get generateCurrentWeekReview => 'Rückblick für diese Woche erstellen';
+
+  @override
+  String get noReviewsYet =>
+      'Noch keine Wochenrückblicke. Rückblicke werden automatisch am Ende jeder Woche erstellt.';
+
+  @override
+  String completedDaysCount(int count) {
+    return '$count/7 Tage ausgefüllt';
+  }
+
+  @override
+  String get vsLastWeek => 'ggü. letzter Woche';
+
+  @override
+  String get permaAverages => 'PERMA+ Durchschnitt';
+
+  @override
+  String get topEmotions => 'Häufigste Emotionen';
+
+  @override
+  String get contextHighlights => 'Kontext-Highlights';
+
+  @override
+  String get notableEntries => 'Bemerkenswerte Einträge';
+
+  @override
+  String get moodTrend => 'Stimmungsverlauf';
+
+  @override
+  String get weeklyReviewAvailable => 'Dein Wochenrückblick ist fertig!';
+
+  @override
+  String get weeklyReviewBody =>
+      'Schau dir an, wie deine Woche war — tippe hier für die Zusammenfassung.';
+
+  @override
+  String get averageSleep => 'Ø Schlaf';
+
+  @override
+  String get exerciseDays => 'Sporttage';
+
+  @override
+  String get averageStress => 'Ø Stress';
+
+  @override
+  String get averageSleepQuality => 'Schlafqualität';
+
+  @override
+  String get noDataForWeek => 'Keine Tagebuchdaten für diese Woche';
+
+  @override
+  String reviewGeneratedFor(String weekLabel) {
+    return 'Rückblick für $weekLabel';
+  }
+
+  @override
+  String get monday => 'Montag';
+
+  @override
+  String get tuesday => 'Dienstag';
+
+  @override
+  String get wednesday => 'Mittwoch';
+
+  @override
+  String get thursday => 'Donnerstag';
+
+  @override
+  String get friday => 'Freitag';
+
+  @override
+  String get saturday => 'Samstag';
+
+  @override
+  String get sunday => 'Sonntag';
+
+  @override
+  String get weeklyScoreOverview => 'Bewertungsübersicht';
+
+  @override
+  String get streakAndProgress => 'Serie & Fortschritt';
 }

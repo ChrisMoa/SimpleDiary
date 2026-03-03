@@ -3947,6 +3947,210 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Warning: Total photo size exceeds {size} MB. The export may take a while.'**
   String zipExportLargeWarning(int size);
+
+  /// No description provided for @drawerWeeklyReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly Review'**
+  String get drawerWeeklyReview;
+
+  /// No description provided for @weeklyReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly Review'**
+  String get weeklyReview;
+
+  /// No description provided for @weeklyReviewDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Your weekly diary summary'**
+  String get weeklyReviewDescription;
+
+  /// No description provided for @weekLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Week {weekNumber}'**
+  String weekLabel(int weekNumber);
+
+  /// No description provided for @weeklyReviewNotification.
+  ///
+  /// In en, this message translates to:
+  /// **'Weekly Review Notification'**
+  String get weeklyReviewNotification;
+
+  /// No description provided for @weeklyReviewDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Review Day'**
+  String get weeklyReviewDay;
+
+  /// No description provided for @weeklyReviewTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Review Time'**
+  String get weeklyReviewTime;
+
+  /// No description provided for @generateReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Generate Review'**
+  String get generateReview;
+
+  /// No description provided for @generateCurrentWeekReview.
+  ///
+  /// In en, this message translates to:
+  /// **'Generate This Week\'s Review'**
+  String get generateCurrentWeekReview;
+
+  /// No description provided for @noReviewsYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No weekly reviews yet. Reviews are generated automatically at the end of each week.'**
+  String get noReviewsYet;
+
+  /// No description provided for @completedDaysCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count}/7 days completed'**
+  String completedDaysCount(int count);
+
+  /// No description provided for @vsLastWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'vs. last week'**
+  String get vsLastWeek;
+
+  /// No description provided for @permaAverages.
+  ///
+  /// In en, this message translates to:
+  /// **'PERMA+ Averages'**
+  String get permaAverages;
+
+  /// No description provided for @topEmotions.
+  ///
+  /// In en, this message translates to:
+  /// **'Top Emotions'**
+  String get topEmotions;
+
+  /// No description provided for @contextHighlights.
+  ///
+  /// In en, this message translates to:
+  /// **'Context Highlights'**
+  String get contextHighlights;
+
+  /// No description provided for @notableEntries.
+  ///
+  /// In en, this message translates to:
+  /// **'Notable Entries'**
+  String get notableEntries;
+
+  /// No description provided for @moodTrend.
+  ///
+  /// In en, this message translates to:
+  /// **'Mood Trend'**
+  String get moodTrend;
+
+  /// No description provided for @weeklyReviewAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Your weekly review is ready!'**
+  String get weeklyReviewAvailable;
+
+  /// No description provided for @weeklyReviewBody.
+  ///
+  /// In en, this message translates to:
+  /// **'See how your week went — tap to view your summary.'**
+  String get weeklyReviewBody;
+
+  /// No description provided for @averageSleep.
+  ///
+  /// In en, this message translates to:
+  /// **'Avg. Sleep'**
+  String get averageSleep;
+
+  /// No description provided for @exerciseDays.
+  ///
+  /// In en, this message translates to:
+  /// **'Exercise Days'**
+  String get exerciseDays;
+
+  /// No description provided for @averageStress.
+  ///
+  /// In en, this message translates to:
+  /// **'Avg. Stress'**
+  String get averageStress;
+
+  /// No description provided for @averageSleepQuality.
+  ///
+  /// In en, this message translates to:
+  /// **'Sleep Quality'**
+  String get averageSleepQuality;
+
+  /// No description provided for @noDataForWeek.
+  ///
+  /// In en, this message translates to:
+  /// **'No diary data for this week'**
+  String get noDataForWeek;
+
+  /// No description provided for @reviewGeneratedFor.
+  ///
+  /// In en, this message translates to:
+  /// **'Review for {weekLabel}'**
+  String reviewGeneratedFor(String weekLabel);
+
+  /// No description provided for @monday.
+  ///
+  /// In en, this message translates to:
+  /// **'Monday'**
+  String get monday;
+
+  /// No description provided for @tuesday.
+  ///
+  /// In en, this message translates to:
+  /// **'Tuesday'**
+  String get tuesday;
+
+  /// No description provided for @wednesday.
+  ///
+  /// In en, this message translates to:
+  /// **'Wednesday'**
+  String get wednesday;
+
+  /// No description provided for @thursday.
+  ///
+  /// In en, this message translates to:
+  /// **'Thursday'**
+  String get thursday;
+
+  /// No description provided for @friday.
+  ///
+  /// In en, this message translates to:
+  /// **'Friday'**
+  String get friday;
+
+  /// No description provided for @saturday.
+  ///
+  /// In en, this message translates to:
+  /// **'Saturday'**
+  String get saturday;
+
+  /// No description provided for @sunday.
+  ///
+  /// In en, this message translates to:
+  /// **'Sunday'**
+  String get sunday;
+
+  /// No description provided for @weeklyScoreOverview.
+  ///
+  /// In en, this message translates to:
+  /// **'Score Overview'**
+  String get weeklyScoreOverview;
+
+  /// No description provided for @streakAndProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Streak & Progress'**
+  String get streakAndProgress;
 }
 
 class _AppLocalizationsDelegate

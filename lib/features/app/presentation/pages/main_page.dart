@@ -24,6 +24,9 @@ import 'package:day_tracker/features/notes/domain/providers/note_attachments_pro
 import 'package:day_tracker/features/notes/domain/providers/note_local_db_provider.dart';
 import 'package:day_tracker/features/habits/domain/providers/habit_providers.dart';
 import 'package:day_tracker/features/note_templates/domain/providers/note_template_local_db_provider.dart';
+import 'package:day_tracker/features/weekly_review/data/repositories/weekly_review_repository.dart';
+import 'package:day_tracker/features/weekly_review/domain/providers/weekly_review_providers.dart';
+import 'package:day_tracker/core/services/weekly_review_status_service.dart';
 import 'package:day_tracker/features/onboarding/domain/providers/onboarding_provider.dart';
 import 'package:day_tracker/features/onboarding/presentation/pages/onboarding_page.dart';
 import 'package:day_tracker/features/onboarding/presentation/widgets/demo_mode_banner.dart';
@@ -289,6 +292,11 @@ class _MainPageState extends ConsumerState<MainPage> {
       await ref.read(habitEntriesLocalDbDataProvider.notifier).changeDbFileToUser(userData);
       await ref.read(habitEntriesLocalDbDataProvider.notifier).readObjectsFromDatabase();
 
+      // Initialize weekly reviews database for the user
+      LogWrapper.logger.d('Initializing weekly reviews for user ${userData.username}');
+      await ref.read(weeklyReviewLocalDbProvider.notifier).changeDbFileToUser(userData);
+      await ref.read(weeklyReviewLocalDbProvider.notifier).readObjectsFromDatabase();
+
       _userData = userData;
       setState(() {
         dbRead = true;
@@ -316,6 +324,9 @@ class _MainPageState extends ConsumerState<MainPage> {
 
       // Check for overdue backups after all data is loaded
       _checkOverdueBackup();
+
+      // Check for overdue weekly review
+      _checkOverdueWeeklyReview();
     } on AssertionError catch (e) {
       if (mounted) {
         AppDialog.info(context, title: '${e.message}');
@@ -343,6 +354,34 @@ class _MainPageState extends ConsumerState<MainPage> {
       );
     } catch (e) {
       LogWrapper.logger.e('Overdue backup check failed: $e');
+    }
+  }
+
+  /// Check if a weekly review is due and generate it (non-blocking)
+  Future<void> _checkOverdueWeeklyReview() async {
+    try {
+      final settings = ref.read(settingsProvider).activeUserSettings.notificationSettings;
+      if (!settings.weeklyReviewEnabled) return;
+
+      final isDue = await WeeklyReviewStatusService.isReviewDueForLastWeek();
+      if (!isDue) return;
+
+      final (year, week) = WeeklyReviewRepository.previousWeek();
+      final params = (year: year, week: week);
+
+      // Only generate if not already persisted
+      final existing = ref.read(hasReviewForWeekProvider(params));
+      if (existing) {
+        await WeeklyReviewStatusService.markReviewShown(year, week);
+        return;
+      }
+
+      await ref.read(generateWeeklyReviewProvider(params).future);
+      await WeeklyReviewStatusService.markReviewShown(year, week);
+
+      LogWrapper.logger.i('Weekly review generated for week $week/$year');
+    } catch (e) {
+      LogWrapper.logger.e('Overdue weekly review check failed: $e');
     }
   }
 

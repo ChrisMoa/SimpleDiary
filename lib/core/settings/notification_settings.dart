@@ -29,6 +29,15 @@ class NotificationSettings {
   /// End of quiet hours (minutes since midnight, e.g. 480 = 08:00)
   int quietHoursEndMinutes;
 
+  /// Whether weekly review notifications are enabled
+  bool weeklyReviewEnabled;
+
+  /// Day of week for the weekly review notification (1=Monday, 7=Sunday)
+  int weeklyReviewDay;
+
+  /// Time for weekly review notification (minutes since midnight)
+  int weeklyReviewTimeMinutes;
+
   NotificationSettings({
     required this.enabled,
     required this.reminderTimeMinutes,
@@ -38,6 +47,9 @@ class NotificationSettings {
     required this.maxSmartRemindersPerDay,
     required this.quietHoursStartMinutes,
     required this.quietHoursEndMinutes,
+    required this.weeklyReviewEnabled,
+    required this.weeklyReviewDay,
+    required this.weeklyReviewTimeMinutes,
   });
 
   /// Convert minutes since midnight to TimeOfDay
@@ -76,6 +88,18 @@ class NotificationSettings {
     quietHoursEndMinutes = time.hour * 60 + time.minute;
   }
 
+  /// Convert weekly review time to TimeOfDay
+  TimeOfDay get weeklyReviewTime {
+    final hours = weeklyReviewTimeMinutes ~/ 60;
+    final minutes = weeklyReviewTimeMinutes % 60;
+    return TimeOfDay(hour: hours, minute: minutes);
+  }
+
+  /// Set weekly review time from TimeOfDay
+  set weeklyReviewTime(TimeOfDay time) {
+    weeklyReviewTimeMinutes = time.hour * 60 + time.minute;
+  }
+
   /// Create default notification settings
   factory NotificationSettings.fromEmpty() => NotificationSettings(
         enabled: false,
@@ -86,6 +110,9 @@ class NotificationSettings {
         maxSmartRemindersPerDay: 3,
         quietHoursStartMinutes: 22 * 60, // 22:00
         quietHoursEndMinutes: 8 * 60, // 08:00
+        weeklyReviewEnabled: true,
+        weeklyReviewDay: 7, // Sunday
+        weeklyReviewTimeMinutes: 20 * 60, // 20:00
       );
 
   /// Serialize to JSON
@@ -99,6 +126,9 @@ class NotificationSettings {
       'maxSmartRemindersPerDay': maxSmartRemindersPerDay,
       'quietHoursStartMinutes': quietHoursStartMinutes,
       'quietHoursEndMinutes': quietHoursEndMinutes,
+      'weeklyReviewEnabled': weeklyReviewEnabled,
+      'weeklyReviewDay': weeklyReviewDay,
+      'weeklyReviewTimeMinutes': weeklyReviewTimeMinutes,
     };
   }
 
@@ -113,6 +143,9 @@ class NotificationSettings {
       maxSmartRemindersPerDay: map['maxSmartRemindersPerDay'] as int? ?? 3,
       quietHoursStartMinutes: map['quietHoursStartMinutes'] as int? ?? 22 * 60,
       quietHoursEndMinutes: map['quietHoursEndMinutes'] as int? ?? 8 * 60,
+      weeklyReviewEnabled: map['weeklyReviewEnabled'] as bool? ?? true,
+      weeklyReviewDay: map['weeklyReviewDay'] as int? ?? 7,
+      weeklyReviewTimeMinutes: map['weeklyReviewTimeMinutes'] as int? ?? 20 * 60,
     );
   }
 
@@ -131,6 +164,9 @@ class NotificationSettings {
     int? maxSmartRemindersPerDay,
     int? quietHoursStartMinutes,
     int? quietHoursEndMinutes,
+    bool? weeklyReviewEnabled,
+    int? weeklyReviewDay,
+    int? weeklyReviewTimeMinutes,
   }) {
     return NotificationSettings(
       enabled: enabled ?? this.enabled,
@@ -141,6 +177,9 @@ class NotificationSettings {
       maxSmartRemindersPerDay: maxSmartRemindersPerDay ?? this.maxSmartRemindersPerDay,
       quietHoursStartMinutes: quietHoursStartMinutes ?? this.quietHoursStartMinutes,
       quietHoursEndMinutes: quietHoursEndMinutes ?? this.quietHoursEndMinutes,
+      weeklyReviewEnabled: weeklyReviewEnabled ?? this.weeklyReviewEnabled,
+      weeklyReviewDay: weeklyReviewDay ?? this.weeklyReviewDay,
+      weeklyReviewTimeMinutes: weeklyReviewTimeMinutes ?? this.weeklyReviewTimeMinutes,
     );
   }
 
@@ -152,6 +191,8 @@ class NotificationSettings {
     final qEnd = quietHoursEnd;
     final qStartStr = '${qStart.hour.toString().padLeft(2, '0')}:${qStart.minute.toString().padLeft(2, '0')}';
     final qEndStr = '${qEnd.hour.toString().padLeft(2, '0')}:${qEnd.minute.toString().padLeft(2, '0')}';
-    return 'NotificationSettings(enabled: $enabled, reminderTime: $timeStr, smartReminders: $smartRemindersEnabled, streakWarnings: $streakWarningsEnabled, days: $reminderDays, maxSmartReminders: $maxSmartRemindersPerDay, quietHours: $qStartStr-$qEndStr)';
+    final wrTime = weeklyReviewTime;
+    final wrTimeStr = '${wrTime.hour.toString().padLeft(2, '0')}:${wrTime.minute.toString().padLeft(2, '0')}';
+    return 'NotificationSettings(enabled: $enabled, reminderTime: $timeStr, smartReminders: $smartRemindersEnabled, streakWarnings: $streakWarningsEnabled, days: $reminderDays, maxSmartReminders: $maxSmartRemindersPerDay, quietHours: $qStartStr-$qEndStr, weeklyReview: $weeklyReviewEnabled day=$weeklyReviewDay time=$wrTimeStr)';
   }
 }
