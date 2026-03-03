@@ -1698,6 +1698,18 @@ abstract class AppLocalizations {
   /// **'Sync failed: {error}'**
   String syncFailed(String error);
 
+  /// No description provided for @syncingAttachments.
+  ///
+  /// In en, this message translates to:
+  /// **'Syncing attachments ({completed}/{total})...'**
+  String syncingAttachments(int completed, int total);
+
+  /// No description provided for @uploadingPhotos.
+  ///
+  /// In en, this message translates to:
+  /// **'Uploading photos ({completed}/{total})...'**
+  String uploadingPhotos(int completed, int total);
+
   /// No description provided for @downloadingDiaryDays.
   ///
   /// In en, this message translates to:
@@ -1715,6 +1727,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Downloading templates...'**
   String get downloadingTemplates;
+
+  /// No description provided for @downloadingAttachments.
+  ///
+  /// In en, this message translates to:
+  /// **'Downloading attachments...'**
+  String get downloadingAttachments;
+
+  /// No description provided for @downloadingPhotos.
+  ///
+  /// In en, this message translates to:
+  /// **'Downloading photos ({completed}/{total})...'**
+  String downloadingPhotos(int completed, int total);
 
   /// No description provided for @updatingLocalDatabase.
   ///
@@ -3875,6 +3899,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Add new note'**
   String get addNewNote;
+
+  /// No description provided for @exportToZip.
+  ///
+  /// In en, this message translates to:
+  /// **'Export to ZIP'**
+  String get exportToZip;
+
+  /// No description provided for @importFromZip.
+  ///
+  /// In en, this message translates to:
+  /// **'Import from ZIP'**
+  String get importFromZip;
+
+  /// No description provided for @saveDataWithPhotos.
+  ///
+  /// In en, this message translates to:
+  /// **'Save your diary data with photos'**
+  String get saveDataWithPhotos;
+
+  /// No description provided for @loadDataWithPhotos.
+  ///
+  /// In en, this message translates to:
+  /// **'Load diary data with photos from a ZIP file'**
+  String get loadDataWithPhotos;
+
+  /// No description provided for @selectZipFileToImport.
+  ///
+  /// In en, this message translates to:
+  /// **'Select ZIP File to Import'**
+  String get selectZipFileToImport;
+
+  /// No description provided for @saveZipExportFile.
+  ///
+  /// In en, this message translates to:
+  /// **'Save ZIP Export File'**
+  String get saveZipExportFile;
+
+  /// No description provided for @importedWithPhotos.
+  ///
+  /// In en, this message translates to:
+  /// **'Imported {days} days with {notes} notes and {photos} photos'**
+  String importedWithPhotos(int days, int notes, int photos);
+
+  /// No description provided for @zipExportLargeWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'Warning: Total photo size exceeds {size} MB. The export may take a while.'**
+  String zipExportLargeWarning(int size);
 }
 
 class _AppLocalizationsDelegate

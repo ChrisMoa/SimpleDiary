@@ -10,6 +10,7 @@ import 'package:day_tracker/features/day_rating/data/models/diary_day.dart';
 import 'package:day_tracker/features/habits/data/models/habit.dart';
 import 'package:day_tracker/features/habits/data/models/habit_entry.dart';
 import 'package:day_tracker/features/notes/data/models/note.dart';
+import 'package:day_tracker/features/notes/data/models/note_attachment.dart';
 import 'package:workmanager/workmanager.dart';
 
 /// Task name used for Workmanager registration
@@ -52,6 +53,7 @@ class BackupScheduler {
     required List<Note> notes,
     required List<Habit> habits,
     required List<HabitEntry> habitEntries,
+    List<NoteAttachment> attachments = const [],
   }) async {
     // ignore: deprecated_member_use
     final settings = settingsContainer.activeUserSettings.backupSettings;
@@ -67,6 +69,7 @@ class BackupScheduler {
       notes: notes,
       habits: habits,
       habitEntries: habitEntries,
+      attachments: attachments,
       type: BackupType.scheduled,
     );
   }
@@ -78,6 +81,7 @@ class BackupScheduler {
     required List<Note> notes,
     required List<Habit> habits,
     required List<HabitEntry> habitEntries,
+    List<NoteAttachment> attachments = const [],
     required BackupType type,
   }) async {
     // Step 1: Create local backup
@@ -86,6 +90,7 @@ class BackupScheduler {
       notesJson: notes.map((n) => n.toDbMap()).toList(),
       habitsJson: habits.map((h) => h.toDbMap()).toList(),
       habitEntriesJson: habitEntries.map((e) => e.toDbMap()).toList(),
+      attachmentsJson: attachments.map((a) => a.toDbMap()).toList(),
       type: type,
     );
 

@@ -58,12 +58,14 @@ class BackupService {
   /// [notesJson] - List of note maps (from toDbMap())
   /// [habitsJson] - List of habit maps (from toDbMap())
   /// [habitEntriesJson] - List of habit entry maps (from toDbMap())
+  /// [attachmentsJson] - List of attachment maps (from toDbMap()), optional
   /// [type] - What triggered this backup
   Future<BackupMetadata> createBackup({
     required List<Map<String, dynamic>> diaryDaysJson,
     required List<Map<String, dynamic>> notesJson,
     required List<Map<String, dynamic>> habitsJson,
     required List<Map<String, dynamic>> habitEntriesJson,
+    List<Map<String, dynamic>> attachmentsJson = const [],
     required BackupType type,
   }) async {
     LogWrapper.logger.i('Creating ${type.name} backup...');
@@ -80,6 +82,7 @@ class BackupService {
         'notes': notesJson,
         'habits': habitsJson,
         'habitEntries': habitEntriesJson,
+        if (attachmentsJson.isNotEmpty) 'attachments': attachmentsJson,
       };
 
       // Encrypt data if credentials are available
@@ -222,6 +225,9 @@ class BackupService {
       ),
       'habitEntries': List<Map<String, dynamic>>.from(
         (data['habitEntries'] as List? ?? []).map((e) => Map<String, dynamic>.from(e as Map)),
+      ),
+      'attachments': List<Map<String, dynamic>>.from(
+        (data['attachments'] as List? ?? []).map((e) => Map<String, dynamic>.from(e as Map)),
       ),
     };
   }

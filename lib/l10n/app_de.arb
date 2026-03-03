@@ -266,9 +266,13 @@
   "syncingTemplatesBatch": "Synchronisiere Vorlagen ({completed}/{total})...",
   "syncCompletedSuccessfully": "Synchronisation erfolgreich abgeschlossen",
   "syncFailed": "Synchronisation fehlgeschlagen: {error}",
+  "syncingAttachments": "Synchronisiere Anhänge ({completed}/{total})...",
+  "uploadingPhotos": "Lade Fotos hoch ({completed}/{total})...",
   "downloadingDiaryDays": "Lade Tagebucheinträge herunter...",
   "downloadingNotes": "Lade Notizen herunter...",
   "downloadingTemplates": "Lade Vorlagen herunter...",
+  "downloadingAttachments": "Lade Anhänge herunter...",
+  "downloadingPhotos": "Lade Fotos herunter ({completed}/{total})...",
   "updatingLocalDatabase": "Lokale Datenbank wird aktualisiert...",
   "downloadCompletedSuccessfully": "Download erfolgreich abgeschlossen",
   "downloadFailed": "Download fehlgeschlagen: {error}",
@@ -695,5 +699,14 @@
   "scoreValue": "{value} von {max}",
   "selectTheme": "{theme}-Design auswählen",
   "selectLanguage": "{language} auswählen",
-  "addNewNote": "Neue Notiz hinzufügen"
+  "addNewNote": "Neue Notiz hinzufügen",
+
+  "exportToZip": "Als ZIP exportieren",
+  "importFromZip": "Aus ZIP importieren",
+  "saveDataWithPhotos": "Speichere deine Tagebuchdaten mit Fotos",
+  "loadDataWithPhotos": "Lade Tagebuchdaten mit Fotos aus einer ZIP-Datei",
+  "selectZipFileToImport": "ZIP-Datei zum Importieren wählen",
+  "saveZipExportFile": "ZIP-Exportdatei speichern",
+  "importedWithPhotos": "{days} Tage mit {notes} Notizen und {photos} Fotos importiert",
+  "zipExportLargeWarning": "Warnung: Die Gesamtgröße der Fotos überschreitet {size} MB. Der Export kann eine Weile dauern."
 }

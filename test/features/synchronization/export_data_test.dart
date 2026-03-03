@@ -5,6 +5,7 @@ import 'package:day_tracker/core/encryption/aes_encryptor.dart';
 import 'package:day_tracker/core/utils/utils.dart';
 import 'package:day_tracker/features/day_rating/data/models/day_rating.dart';
 import 'package:day_tracker/features/day_rating/data/models/diary_day.dart';
+import 'package:day_tracker/features/notes/data/models/note_attachment.dart';
 import 'package:day_tracker/features/synchronization/data/models/export_data.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -327,6 +328,116 @@ void main() {
         expect(exportData.data.length, diaryDays.length);
         expect(exportData.metadata.encrypted, true);
         expect(exportData.metadata.username, 'encrypted_user');
+      });
+    });
+
+    group('attachments field (v1.1)', () {
+      test('parses attachments from map', () {
+        final att1 = NoteAttachment(
+          id: 'att-1',
+          noteId: 'note-1',
+          filePath: '/path/image.jpg',
+          createdAt: DateTime(2024, 3, 10, 14, 30),
+          fileSize: 1024,
+          remoteUrl: 'https://example.com/img.jpg',
+        );
+        final att2 = NoteAttachment(
+          id: 'att-2',
+          noteId: 'note-2',
+          filePath: '/path/photo.png',
+          createdAt: DateTime(2024, 3, 11, 9, 0),
+          fileSize: 2048,
+        );
+        final exportMap = {
+          'version': '1.1',
+          'metadata': {
+            'exportDate': '2024-03-15T10:00:00.000',
+            'encrypted': false,
+          },
+          'data': jsonEncode([]),
+          'attachments': [att1.toMap(), att2.toMap()],
+        };
+
+        final exportData = ExportData.fromMap(exportMap);
+        expect(exportData.attachments.length, 2);
+        expect(exportData.attachments[0].id, 'att-1');
+        expect(exportData.attachments[0].noteId, 'note-1');
+        expect(exportData.attachments[0].remoteUrl,
+            'https://example.com/img.jpg');
+        expect(exportData.attachments[1].id, 'att-2');
+        expect(exportData.attachments[1].remoteUrl, isNull);
+      });
+
+      test('missing attachments key defaults to empty list', () {
+        final exportMap = {
+          'version': '1.0',
+          'metadata': {
+            'exportDate': '2024-03-15T10:00:00.000',
+            'encrypted': false,
+          },
+          'data': jsonEncode([]),
+        };
+
+        final exportData = ExportData.fromMap(exportMap);
+        expect(exportData.attachments, isEmpty);
+      });
+
+      test('null attachments key defaults to empty list', () {
+        final exportMap = {
+          'version': '1.0',
+          'metadata': {
+            'exportDate': '2024-03-15T10:00:00.000',
+            'encrypted': false,
+          },
+          'data': jsonEncode([]),
+          'attachments': null,
+        };
+
+        final exportData = ExportData.fromMap(exportMap);
+        expect(exportData.attachments, isEmpty);
+      });
+
+      test('constructor defaults attachments to empty list', () {
+        final exportData = ExportData(
+          version: '1.0',
+          metadata: ExportMetadata(
+            exportDate: '2024-03-15',
+            encrypted: false,
+          ),
+          data: [],
+        );
+        expect(exportData.attachments, isEmpty);
+      });
+
+      test('v1.1 fromJson round-trip with attachments', () {
+        final attachment = NoteAttachment(
+          id: 'att-1',
+          noteId: 'note-1',
+          filePath: '/path/img.jpg',
+          createdAt: DateTime(2024, 3, 10),
+          fileSize: 512,
+          remoteUrl: 'https://cdn.example.com/img.jpg',
+        );
+
+        final exportJsonStr = jsonEncode({
+          'version': '1.1',
+          'metadata': {
+            'username': 'att_user',
+            'salt': null,
+            'exportDate': '2024-03-15T10:00:00.000',
+            'encrypted': false,
+          },
+          'data': jsonEncode([]),
+          'attachments': [attachment.toMap()],
+        });
+
+        final parsed = ExportData.fromJson(exportJsonStr);
+        expect(parsed.version, '1.1');
+        expect(parsed.attachments.length, 1);
+        expect(parsed.attachments[0].id, 'att-1');
+        expect(parsed.attachments[0].remoteUrl,
+            'https://cdn.example.com/img.jpg');
+        expect(parsed.attachments[0].fileSize, 512);
       });
     });
   });

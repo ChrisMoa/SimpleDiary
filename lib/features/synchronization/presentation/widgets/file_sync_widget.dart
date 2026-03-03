@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:archive/archive.dart';
 import 'package:day_tracker/core/log/logger_instance.dart';
 import 'package:day_tracker/core/provider/theme_provider.dart';
 import 'package:day_tracker/core/utils/utils.dart';
@@ -13,9 +14,12 @@ import 'package:day_tracker/features/day_rating/domain/providers/diary_day_local
 import 'package:day_tracker/features/notes/data/models/note.dart';
 import 'package:day_tracker/features/notes/domain/providers/category_local_db_provider.dart';
 import 'package:day_tracker/features/notes/domain/providers/note_local_db_provider.dart';
+import 'package:day_tracker/features/notes/domain/providers/note_attachments_provider.dart';
 import 'package:day_tracker/features/synchronization/data/models/export_data.dart';
+import 'package:day_tracker/features/synchronization/data/services/zip_export_service.dart';
 import 'package:day_tracker/features/synchronization/domain/providers/file_db_provider.dart';
 import 'package:day_tracker/features/synchronization/domain/providers/ics_file_provider.dart';
+import 'package:day_tracker/core/settings/settings_provider.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:day_tracker/l10n/app_localizations.dart';
@@ -161,6 +165,34 @@ class FileSyncWidget extends ConsumerWidget {
                 label: l10n.importFromIcsCalendar,
                 description: l10n.loadCalendarEvents,
                 onPressed: () => _onImportFromIcs(context, ref),
+                theme: theme,
+                isSmallScreen: isSmallScreen,
+              ),
+
+              AppSpacing.verticalMd,
+
+              // Export to ZIP Button
+              _buildSyncButton(
+                context: context,
+                ref: ref,
+                icon: Icons.archive_outlined,
+                label: l10n.exportToZip,
+                description: l10n.saveDataWithPhotos,
+                onPressed: () => _onExportToZip(context, ref),
+                theme: theme,
+                isSmallScreen: isSmallScreen,
+              ),
+
+              AppSpacing.verticalMd,
+
+              // Import from ZIP Button
+              _buildSyncButton(
+                context: context,
+                ref: ref,
+                icon: Icons.unarchive_outlined,
+                label: l10n.importFromZip,
+                description: l10n.loadDataWithPhotos,
+                onPressed: () => _onImportFromZip(context, ref),
                 theme: theme,
                 isSmallScreen: isSmallScreen,
               ),
@@ -673,6 +705,260 @@ class FileSyncWidget extends ConsumerWidget {
     }
   }
 
+  Future<void> _onExportToZip(BuildContext context, WidgetRef ref) async {
+    final l10n = AppLocalizations.of(context)!;
+    try {
+      LogWrapper.logger.i('ZIP export started');
+
+      // Prompt for date range
+      final dateRange = await _promptForDateRange(context);
+      if (dateRange == null) {
+        LogWrapper.logger.i('ZIP export cancelled by user (date range)');
+        return;
+      }
+
+      // Prompt for encryption password
+      final userData = ref.read(userDataProvider);
+      final defaultPassword = userData.clearPassword;
+
+      final password = await _promptForPassword(
+        context,
+        l10n.encryptJsonExport,
+        defaultValue: defaultPassword,
+      );
+
+      final defaultFileName = 'data_export_${Utils.toFileDateTime(DateTime.now())}.zip';
+      final bool willEncrypt = password != null && password.isNotEmpty;
+      final rangeEnd = dateRange.end.add(const Duration(days: 1));
+
+      // Get diary days with their matched notes
+      var diaryDays = ref.read(diaryDayFullDataProvider).where((day) {
+        return !day.day.isBefore(dateRange.start) && day.day.isBefore(rangeEnd);
+      }).toList();
+
+      // Find orphan notes (notes that have no matching diary day)
+      final allNotes = ref.read(notesLocalDataProvider).where((note) {
+        return !note.from.isBefore(dateRange.start) && note.from.isBefore(rangeEnd);
+      }).toList();
+      final exportedNoteIds = diaryDays.expand((d) => d.notes).map((n) => n.id).toSet();
+      final orphanNotes = allNotes.where((n) => !exportedNoteIds.contains(n.id)).toList();
+
+      if (orphanNotes.isNotEmpty) {
+        final Map<String, List<Note>> orphanByDate = {};
+        for (var note in orphanNotes) {
+          final dateKey = '${note.from.year}-${note.from.month}-${note.from.day}';
+          orphanByDate.putIfAbsent(dateKey, () => []).add(note);
+        }
+        for (var entry in orphanByDate.entries) {
+          final firstNote = entry.value.first;
+          final dd = DiaryDay(
+            day: DateTime(firstNote.from.year, firstNote.from.month, firstNote.from.day),
+            ratings: [],
+          );
+          dd.notes = entry.value;
+          diaryDays.add(dd);
+        }
+        LogWrapper.logger.i('Added ${orphanNotes.length} orphan notes in ${orphanByDate.length} extra days');
+      }
+
+      // Gather all attachments for notes in the export range
+      final noteIds = diaryDays.expand((d) => d.notes).map((n) => n.id).toSet();
+      final attachments = ref.read(noteAttachmentsProvider)
+          .where((a) => noteIds.contains(a.noteId))
+          .toList();
+
+      LogWrapper.logger.i('Exporting ${diaryDays.length} diary days with ${allNotes.length} notes and ${attachments.length} attachments');
+
+      // Warn if total attachment size exceeds 50 MB
+      final totalAttachmentBytes = attachments.fold<int>(0, (sum, a) {
+        final file = File(a.filePath);
+        return sum + (file.existsSync() ? file.lengthSync() : 0);
+      });
+      if (totalAttachmentBytes > 50 * 1024 * 1024) {
+        final sizeMb = totalAttachmentBytes ~/ (1024 * 1024);
+        LogWrapper.logger.w('Large ZIP export: $sizeMb MB of photos');
+        AppSnackBar.info(context, message: l10n.zipExportLargeWarning(sizeMb));
+      }
+
+      // Create ZIP archive
+      final zipService = ZipExportService();
+      final zipBytes = zipService.createZipExport(
+        diaryDays: diaryDays,
+        attachments: attachments,
+        username: userData.username.isNotEmpty ? userData.username : null,
+        salt: willEncrypt ? userData.salt : null,
+        encrypted: willEncrypt,
+        password: willEncrypt ? password : null,
+      );
+      final contentBytes = Uint8List.fromList(zipBytes);
+
+      // Get last used directory (not supported on Android)
+      final lastDir = Platform.isAndroid ? null : await _getLastUsedDirectory();
+
+      String? outputPath = await FilePicker.platform.saveFile(
+        dialogTitle: l10n.saveZipExportFile,
+        fileName: defaultFileName,
+        type: FileType.custom,
+        allowedExtensions: ['zip'],
+        initialDirectory: lastDir,
+        bytes: contentBytes,
+      );
+
+      if (outputPath != null) {
+        LogWrapper.logger.d('ZIP export path selected: $outputPath');
+
+        if (!Platform.isAndroid) {
+          if (!outputPath.endsWith('.zip')) {
+            outputPath = '$outputPath.zip';
+          }
+          await File(outputPath).writeAsBytes(zipBytes);
+          await _saveLastUsedDirectory(outputPath);
+        }
+
+        LogWrapper.logger.i('ZIP export finished successfully to $outputPath');
+        _onImportExportSuccessfully(context);
+      } else {
+        LogWrapper.logger.i('ZIP export cancelled by user');
+      }
+    } catch (e) {
+      LogWrapper.logger.e('Error during ZIP exporting: ${e.toString()}');
+      _onError(context, 'Error during ZIP export: $e');
+    }
+  }
+
+  Future<void> _onImportFromZip(BuildContext context, WidgetRef ref) async {
+    final l10n = AppLocalizations.of(context)!;
+    try {
+      LogWrapper.logger.i('ZIP import started');
+
+      // Get last used directory
+      final lastDir = await _getLastUsedDirectory();
+
+      FilePickerResult? result = await FilePicker.platform.pickFiles(
+        dialogTitle: l10n.selectZipFileToImport,
+        type: FileType.custom,
+        allowedExtensions: ['zip'],
+        allowMultiple: false,
+        initialDirectory: lastDir,
+      );
+
+      if (result != null && result.files.single.path != null) {
+        final filePath = result.files.single.path!;
+        await _saveLastUsedDirectory(filePath);
+
+        final zipFile = File(filePath);
+
+        // Verify it's actually a ZIP file
+        if (!ZipExportService.isZipFile(zipFile)) {
+          _onError(context, l10n.errorPrefix('Not a valid ZIP file'));
+          return;
+        }
+
+        // Peek at manifest to check encryption
+        bool isEncrypted = false;
+        try {
+          final bytes = zipFile.readAsBytesSync();
+          final archive = _peekManifestEncryption(bytes);
+          isEncrypted = archive;
+        } catch (e) {
+          LogWrapper.logger.w('Could not peek manifest encryption: $e');
+        }
+
+        // Prompt for password if encrypted
+        final userData = ref.read(userDataProvider);
+        final defaultPassword = userData.clearPassword;
+        String? password;
+
+        if (isEncrypted) {
+          password = await _promptForPassword(
+            context,
+            l10n.decryptJsonImport,
+            defaultValue: defaultPassword,
+          );
+
+          if (password == null || password.isEmpty) {
+            _onError(context, l10n.passwordRequiredForEncryptedFile);
+            return;
+          }
+        }
+
+        try {
+          // Extract ZIP
+          final appDocPath = ref.read(settingsProvider).applicationDocumentsPath;
+          final targetImageDir = path.join(appDocPath, 'images');
+
+          final zipService = ZipExportService();
+          final importResult = zipService.extractZipImport(
+            zipFile: zipFile,
+            targetImageDir: targetImageDir,
+            password: password,
+          );
+
+          // Import diary days and notes
+          int noteCount = 0;
+          for (var diaryDay in importResult.diaryDays) {
+            await ref
+                .read(diaryDayLocalDbDataProvider.notifier)
+                .addOrUpdateElement(diaryDay);
+            for (var note in diaryDay.notes) {
+              await ref.read(notesLocalDataProvider.notifier).addOrUpdateElement(note);
+              noteCount++;
+            }
+          }
+
+          // Import attachments
+          for (var attachment in importResult.attachments) {
+            await ref.read(noteAttachmentsProvider.notifier).addOrUpdateElement(attachment);
+          }
+
+          // Force reload state from DB
+          await ref.read(notesLocalDataProvider.notifier).reloadFromDatabase();
+          await ref.read(diaryDayLocalDbDataProvider.notifier).reloadFromDatabase();
+          await ref.read(noteAttachmentsProvider.notifier).reloadFromDatabase();
+
+          LogWrapper.logger.i(
+            'ZIP import finished: ${importResult.diaryDays.length} days, '
+            '$noteCount notes, ${importResult.attachments.length} photos',
+          );
+
+          AppSnackBar.success(
+            context,
+            message: l10n.importedWithPhotos(
+              importResult.diaryDays.length,
+              noteCount,
+              importResult.attachments.length,
+            ),
+            duration: const Duration(seconds: 3),
+          );
+        } catch (e) {
+          LogWrapper.logger.e('Error during ZIP import: $e');
+          _onError(context, l10n.errorPrefix('$e'));
+        }
+      } else {
+        LogWrapper.logger.i('ZIP import cancelled by user');
+      }
+    } catch (e) {
+      LogWrapper.logger.e('Error during ZIP importing: ${e.toString()}');
+      _onError(context, l10n.errorPrefix('$e'));
+    }
+  }
+
+  /// Peek at the manifest.json inside a ZIP to check if it's encrypted.
+  bool _peekManifestEncryption(List<int> zipBytes) {
+    try {
+      final archive = ZipDecoder().decodeBytes(zipBytes);
+      final manifestFile = archive.findFile('manifest.json');
+      if (manifestFile == null) return false;
+
+      final manifestJson = utf8.decode(manifestFile.content as List<int>);
+      final manifestMap = json.decode(manifestJson) as Map<String, dynamic>;
+      final metadataMap = manifestMap['metadata'] as Map<String, dynamic>?;
+      return metadataMap?['encrypted'] == true;
+    } catch (_) {
+      return false;
+    }
+  }
+
   void _onError(BuildContext context, String errorMsg) {
     final l10n = AppLocalizations.of(context)!;
     if (errorMsg.isNotEmpty) {
@@ -701,15 +987,19 @@ class FileSyncWidget extends ConsumerWidget {
       end: DateTime.now().add(const Duration(days: 1)),
     );
 
+    final theme = Theme.of(context);
     final choice = await showDialog<bool>(
       context: context,
-      builder: (dialogContext) => AlertDialog(
-        title: Text(l10n.exportRange),
-        content: Text(l10n.whichEntriesToExport),
+      builder: (dialogContext) => AppDialog(
+        title: l10n.exportRange,
+        content: l10n.whichEntriesToExport,
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(dialogContext, null),
-            child: Text(l10n.cancel),
+            child: Text(
+              l10n.cancel,
+              style: TextStyle(color: theme.colorScheme.onSurfaceVariant),
+            ),
           ),
           TextButton(
             onPressed: () => Navigator.pop(dialogContext, false),
@@ -747,11 +1037,12 @@ class FileSyncWidget extends ConsumerWidget {
     final TextEditingController controller = TextEditingController(
       text: defaultValue ?? '',
     );
+    final theme = Theme.of(context);
     final password = await showDialog<String>(
       context: context,
-      builder: (dialogContext) => AlertDialog(
-        title: Text(title),
-        content: TextField(
+      builder: (dialogContext) => AppDialog(
+        title: title,
+        contentWidget: TextField(
           controller: controller,
           obscureText: true,
           decoration: InputDecoration(
@@ -762,9 +1053,12 @@ class FileSyncWidget extends ConsumerWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(dialogContext, null),
-            child: Text(l10n.cancel),
+            child: Text(
+              l10n.cancel,
+              style: TextStyle(color: theme.colorScheme.onSurfaceVariant),
+            ),
           ),
-          TextButton(
+          FilledButton(
             onPressed: () => Navigator.pop(dialogContext, controller.text),
             child: Text(l10n.ok),
           ),

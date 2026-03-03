@@ -1,11 +1,15 @@
+import 'dart:io';
+
 import 'package:day_tracker/core/log/logger_instance.dart';
 import 'package:day_tracker/core/utils/utils.dart';
 import 'package:day_tracker/features/day_rating/data/models/day_rating.dart';
 import 'package:day_tracker/features/day_rating/data/models/diary_day.dart';
 import 'package:day_tracker/features/notes/data/models/note.dart';
+import 'package:day_tracker/features/notes/data/models/note_attachment.dart';
 import 'package:day_tracker/features/note_templates/data/models/description_section.dart';
 import 'package:day_tracker/features/note_templates/data/models/note_template.dart';
 import 'package:flutter/foundation.dart';
+import 'package:path/path.dart' as p;
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 typedef SyncProgressCallback = void Function(int completedItems, int totalItems);
@@ -25,6 +29,8 @@ class SupabaseApi {
   String get _diaryDaysTable => '${_tablePrefix}diary_days';
   String get _notesTable => '${_tablePrefix}notes';
   String get _noteTemplatesTable => '${_tablePrefix}note_templates';
+  String get _noteAttachmentsTable => '${_tablePrefix}note_attachments';
+  String get _attachmentsBucket => '${_tablePrefix}attachments';
 
   // Initialize Supabase client
   Future<void> initialize(String url, String anonKey) async {
@@ -442,6 +448,176 @@ class SupabaseApi {
       LogWrapper.logger.e('Failed to fetch templates: $e');
       rethrow;
     }
+  }
+
+  // Sync attachment metadata to Supabase
+  Future<void> syncAttachments(
+    List<NoteAttachment> attachments,
+    String localUserId, {
+    SyncProgressCallback? onProgress,
+  }) async {
+    try {
+      final supabaseUserId = _getAuthenticatedUserId()!;
+
+      LogWrapper.logger.i('Syncing ${attachments.length} attachment records for user: $supabaseUserId');
+
+      final allData = attachments.map((attachment) => <String, dynamic>{
+        'id': attachment.id,
+        'user_id': supabaseUserId,
+        'note_id': attachment.noteId,
+        'file_path': attachment.filePath,
+        'file_size': attachment.fileSize,
+        'remote_url': attachment.remoteUrl,
+      }).toList();
+
+      await _syncInBatches(
+        table: _noteAttachmentsTable,
+        data: allData,
+        entityName: 'attachments',
+        onProgress: onProgress,
+      );
+
+      LogWrapper.logger.i('Successfully synced ${attachments.length} attachment records');
+    } catch (e) {
+      LogWrapper.logger.e('Failed to sync attachments: $e');
+      rethrow;
+    }
+  }
+
+  // Upload a single attachment file to Supabase Storage
+  Future<String> uploadAttachment(NoteAttachment attachment) async {
+    final supabaseUserId = _getAuthenticatedUserId()!;
+    final ext = p.extension(attachment.filePath);
+    final storagePath = '$supabaseUserId/attachments/${attachment.noteId}/${attachment.id}$ext';
+
+    final file = File(attachment.filePath);
+    if (!file.existsSync()) {
+      throw Exception('Attachment file not found: ${attachment.filePath}');
+    }
+
+    final fileSizeBytes = file.lengthSync();
+    if (fileSizeBytes > 5 * 1024 * 1024) {
+      LogWrapper.logger.w(
+        'Large attachment ${attachment.id}: ${(fileSizeBytes / (1024 * 1024)).toStringAsFixed(1)} MB',
+      );
+    }
+
+    LogWrapper.logger.d('Uploading attachment ${attachment.id} to $storagePath');
+
+    await _retryWithBackoff(() async {
+      await _client!.storage.from(_attachmentsBucket).uploadBinary(
+        storagePath,
+        file.readAsBytesSync(),
+        fileOptions: const FileOptions(upsert: true),
+      );
+    });
+
+    final publicUrl = _client!.storage.from(_attachmentsBucket).getPublicUrl(storagePath);
+    LogWrapper.logger.d('Uploaded attachment ${attachment.id}, URL: $publicUrl');
+    return publicUrl;
+  }
+
+  // Download a single attachment file from Supabase Storage
+  Future<void> downloadAttachment({
+    required NoteAttachment attachment,
+    required String localFilePath,
+  }) async {
+    final supabaseUserId = _getAuthenticatedUserId()!;
+    final ext = p.extension(attachment.filePath);
+    final storagePath = '$supabaseUserId/attachments/${attachment.noteId}/${attachment.id}$ext';
+
+    LogWrapper.logger.d('Downloading attachment ${attachment.id} from $storagePath');
+
+    final bytes = await _retryWithBackoff(() async {
+      return await _client!.storage.from(_attachmentsBucket).download(storagePath);
+    });
+
+    final file = File(localFilePath);
+    file.parent.createSync(recursive: true);
+    file.writeAsBytesSync(bytes);
+
+    LogWrapper.logger.d('Downloaded attachment ${attachment.id} to $localFilePath');
+  }
+
+  // Fetch attachment metadata from Supabase
+  Future<List<NoteAttachment>> fetchAttachments(String localUserId) async {
+    try {
+      final supabaseUserId = _getAuthenticatedUserId()!;
+
+      LogWrapper.logger.d('Fetching attachments for user: $supabaseUserId');
+      final List<Map<String, dynamic>> response = await _client!
+          .from(_noteAttachmentsTable)
+          .select()
+          .eq('user_id', supabaseUserId);
+
+      if (response.isEmpty) {
+        LogWrapper.logger.w('No attachment data received from Supabase');
+        return <NoteAttachment>[];
+      }
+
+      LogWrapper.logger.i('Received ${response.length} attachments from Supabase');
+
+      final attachments = <NoteAttachment>[];
+      for (var i = 0; i < response.length; i++) {
+        try {
+          final data = response[i];
+          attachments.add(NoteAttachment(
+            id: data['id'] as String,
+            noteId: data['note_id'] as String,
+            filePath: data['file_path'] as String,
+            fileSize: data['file_size'] as int? ?? 0,
+            createdAt: data['created_at'] != null
+                ? DateTime.parse(data['created_at'] as String)
+                : DateTime.now(),
+            remoteUrl: data['remote_url'] as String?,
+          ));
+        } catch (e) {
+          LogWrapper.logger.e('Failed to process attachment ${i + 1}/${response.length}: $e');
+          rethrow;
+        }
+      }
+
+      LogWrapper.logger.i('Successfully fetched ${attachments.length} attachments');
+      return attachments;
+    } catch (e) {
+      LogWrapper.logger.e('Failed to fetch attachments: $e');
+      rethrow;
+    }
+  }
+
+  // Delete attachment metadata rows from Supabase table
+  Future<void> deleteAttachmentMetadata(List<String> attachmentIds) async {
+    if (attachmentIds.isEmpty) return;
+    final supabaseUserId = _getAuthenticatedUserId()!;
+
+    LogWrapper.logger.d('Deleting ${attachmentIds.length} orphaned attachment records');
+
+    for (final id in attachmentIds) {
+      await _retryWithBackoff(() async {
+        await _client!
+            .from(_noteAttachmentsTable)
+            .delete()
+            .eq('id', id)
+            .eq('user_id', supabaseUserId);
+      });
+    }
+
+    LogWrapper.logger.d('Deleted ${attachmentIds.length} orphaned attachment records');
+  }
+
+  // Delete attachment file from Supabase Storage
+  Future<void> deleteAttachmentFile(NoteAttachment attachment) async {
+    final supabaseUserId = _getAuthenticatedUserId()!;
+    final ext = p.extension(attachment.filePath);
+    final storagePath = '$supabaseUserId/attachments/${attachment.noteId}/${attachment.id}$ext';
+
+    LogWrapper.logger.d('Deleting attachment file: $storagePath');
+
+    await _retryWithBackoff(() async {
+      await _client!.storage.from(_attachmentsBucket).remove([storagePath]);
+    });
+
+    LogWrapper.logger.d('Deleted attachment file: $storagePath');
   }
 
   // Get current user

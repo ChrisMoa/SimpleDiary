@@ -198,9 +198,19 @@ class _SupabaseSyncWidgetState extends ConsumerState<SupabaseSyncWidget> {
       SyncPhase.syncTemplates => l10n.syncingTemplatesBatch(
         syncState.completedItems, syncState.totalItems,
       ),
+      SyncPhase.syncAttachments => l10n.syncingAttachments(
+        syncState.completedItems, syncState.totalItems,
+      ),
+      SyncPhase.uploadAttachmentFiles => l10n.uploadingPhotos(
+        syncState.completedItems, syncState.totalItems,
+      ),
       SyncPhase.downloadDiaryDays => l10n.downloadingDiaryDays,
       SyncPhase.downloadNotes => l10n.downloadingNotes,
       SyncPhase.downloadTemplates => l10n.downloadingTemplates,
+      SyncPhase.downloadAttachments => l10n.downloadingAttachments,
+      SyncPhase.downloadAttachmentFiles => l10n.downloadingPhotos(
+        syncState.completedItems, syncState.totalItems,
+      ),
       SyncPhase.updatingLocalDatabase => l10n.updatingLocalDatabase,
       SyncPhase.completed => syncState.status == SyncStatus.success
           ? l10n.syncCompletedSuccessfully

@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:day_tracker/core/authentication/password_auth_service.dart';
 import 'package:day_tracker/core/encryption/aes_encryptor.dart';
 import 'package:day_tracker/features/day_rating/data/models/diary_day.dart';
+import 'package:day_tracker/features/notes/data/models/note_attachment.dart';
 
 /// Model for export data with metadata
 /// This format allows storing encryption metadata alongside the diary data
@@ -10,11 +11,13 @@ class ExportData {
   final String version;
   final ExportMetadata metadata;
   final List<DiaryDay> data;
+  final List<NoteAttachment> attachments;
 
   ExportData({
     required this.version,
     required this.metadata,
     required this.data,
+    this.attachments = const [],
   });
 
   /// Create ExportData from map, handling both encrypted and unencrypted data
@@ -56,10 +59,20 @@ class ExportData {
       }
     }
     
+    // Parse attachments if present (v1.1+)
+    List<NoteAttachment> attachments = [];
+    if (map.containsKey('attachments') && map['attachments'] != null) {
+      final attachList = map['attachments'] as List;
+      attachments = attachList
+          .map((item) => NoteAttachment.fromMap(item as Map<String, dynamic>))
+          .toList();
+    }
+
     return ExportData(
       version: map['version'] as String,
       metadata: metadata,
       data: diaryDays,
+      attachments: attachments,
     );
   }
 

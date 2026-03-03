@@ -898,6 +898,16 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
+  String syncingAttachments(int completed, int total) {
+    return 'Synchronisation des pièces jointes ($completed/$total)...';
+  }
+
+  @override
+  String uploadingPhotos(int completed, int total) {
+    return 'Téléversement des photos ($completed/$total)...';
+  }
+
+  @override
   String get downloadingDiaryDays => 'Téléchargement des entrées du journal...';
 
   @override
@@ -905,6 +915,14 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get downloadingTemplates => 'Téléchargement des modèles...';
+
+  @override
+  String get downloadingAttachments => 'Téléchargement des pièces jointes...';
+
+  @override
+  String downloadingPhotos(int completed, int total) {
+    return 'Téléchargement des photos ($completed/$total)...';
+  }
 
   @override
   String get updatingLocalDatabase =>
@@ -2112,4 +2130,34 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get addNewNote => 'Ajouter une nouvelle note';
+
+  @override
+  String get exportToZip => 'Exporter en ZIP';
+
+  @override
+  String get importFromZip => 'Importer depuis ZIP';
+
+  @override
+  String get saveDataWithPhotos =>
+      'Enregistrez vos données de journal avec les photos';
+
+  @override
+  String get loadDataWithPhotos =>
+      'Charger les données du journal avec photos depuis un fichier ZIP';
+
+  @override
+  String get selectZipFileToImport => 'Sélectionner le fichier ZIP à importer';
+
+  @override
+  String get saveZipExportFile => 'Enregistrer le fichier d\'exportation ZIP';
+
+  @override
+  String importedWithPhotos(int days, int notes, int photos) {
+    return 'Importé $days jours avec $notes notes et $photos photos';
+  }
+
+  @override
+  String zipExportLargeWarning(int size) {
+    return 'Attention : La taille totale des photos dépasse $size Mo. L\'exportation peut prendre un certain temps.';
+  }
 }

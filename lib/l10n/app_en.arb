@@ -449,9 +449,31 @@
       "error": { "type": "String" }
     }
   },
+  "syncingAttachments": "Syncing attachments ({completed}/{total})...",
+  "@syncingAttachments": {
+    "placeholders": {
+      "completed": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  },
+  "uploadingPhotos": "Uploading photos ({completed}/{total})...",
+  "@uploadingPhotos": {
+    "placeholders": {
+      "completed": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  },
   "downloadingDiaryDays": "Downloading diary days...",
   "downloadingNotes": "Downloading notes...",
   "downloadingTemplates": "Downloading templates...",
+  "downloadingAttachments": "Downloading attachments...",
+  "downloadingPhotos": "Downloading photos ({completed}/{total})...",
+  "@downloadingPhotos": {
+    "placeholders": {
+      "completed": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  },
   "updatingLocalDatabase": "Updating local database...",
   "downloadCompletedSuccessfully": "Download completed successfully",
   "downloadFailed": "Download failed: {error}",
@@ -1011,5 +1033,26 @@
       }
     }
   },
-  "addNewNote": "Add new note"
+  "addNewNote": "Add new note",
+
+  "exportToZip": "Export to ZIP",
+  "importFromZip": "Import from ZIP",
+  "saveDataWithPhotos": "Save your diary data with photos",
+  "loadDataWithPhotos": "Load diary data with photos from a ZIP file",
+  "selectZipFileToImport": "Select ZIP File to Import",
+  "saveZipExportFile": "Save ZIP Export File",
+  "importedWithPhotos": "Imported {days} days with {notes} notes and {photos} photos",
+  "@importedWithPhotos": {
+    "placeholders": {
+      "days": { "type": "int" },
+      "notes": { "type": "int" },
+      "photos": { "type": "int" }
+    }
+  },
+  "zipExportLargeWarning": "Warning: Total photo size exceeds {size} MB. The export may take a while.",
+  "@zipExportLargeWarning": {
+    "placeholders": {
+      "size": { "type": "int" }
+    }
+  }
 }

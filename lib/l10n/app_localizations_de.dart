@@ -898,6 +898,16 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String syncingAttachments(int completed, int total) {
+    return 'Synchronisiere Anhänge ($completed/$total)...';
+  }
+
+  @override
+  String uploadingPhotos(int completed, int total) {
+    return 'Lade Fotos hoch ($completed/$total)...';
+  }
+
+  @override
   String get downloadingDiaryDays => 'Lade Tagebucheinträge herunter...';
 
   @override
@@ -905,6 +915,14 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get downloadingTemplates => 'Lade Vorlagen herunter...';
+
+  @override
+  String get downloadingAttachments => 'Lade Anhänge herunter...';
+
+  @override
+  String downloadingPhotos(int completed, int total) {
+    return 'Lade Fotos herunter ($completed/$total)...';
+  }
 
   @override
   String get updatingLocalDatabase => 'Lokale Datenbank wird aktualisiert...';
@@ -2104,4 +2122,33 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get addNewNote => 'Neue Notiz hinzufügen';
+
+  @override
+  String get exportToZip => 'Als ZIP exportieren';
+
+  @override
+  String get importFromZip => 'Aus ZIP importieren';
+
+  @override
+  String get saveDataWithPhotos => 'Speichere deine Tagebuchdaten mit Fotos';
+
+  @override
+  String get loadDataWithPhotos =>
+      'Lade Tagebuchdaten mit Fotos aus einer ZIP-Datei';
+
+  @override
+  String get selectZipFileToImport => 'ZIP-Datei zum Importieren wählen';
+
+  @override
+  String get saveZipExportFile => 'ZIP-Exportdatei speichern';
+
+  @override
+  String importedWithPhotos(int days, int notes, int photos) {
+    return '$days Tage mit $notes Notizen und $photos Fotos importiert';
+  }
+
+  @override
+  String zipExportLargeWarning(int size) {
+    return 'Warnung: Die Gesamtgröße der Fotos überschreitet $size MB. Der Export kann eine Weile dauern.';
+  }
 }
