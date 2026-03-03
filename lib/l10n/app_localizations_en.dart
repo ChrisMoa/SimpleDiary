@@ -1347,6 +1347,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get goalSuccessRate => 'Success Rate';
 
   @override
+  String get goalProgress => 'Progress';
+
+  @override
+  String get goalWeeklyDays => '7 days';
+
+  @override
+  String get goalMonthlyDays => '~30 days';
+
+  @override
   String get days => 'days';
 
   @override

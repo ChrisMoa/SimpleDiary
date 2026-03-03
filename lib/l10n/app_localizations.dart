@@ -2526,6 +2526,24 @@ abstract class AppLocalizations {
   /// **'Success Rate'**
   String get goalSuccessRate;
 
+  /// No description provided for @goalProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Progress'**
+  String get goalProgress;
+
+  /// No description provided for @goalWeeklyDays.
+  ///
+  /// In en, this message translates to:
+  /// **'7 days'**
+  String get goalWeeklyDays;
+
+  /// No description provided for @goalMonthlyDays.
+  ///
+  /// In en, this message translates to:
+  /// **'~30 days'**
+  String get goalMonthlyDays;
+
   /// No description provided for @days.
   ///
   /// In en, this message translates to:

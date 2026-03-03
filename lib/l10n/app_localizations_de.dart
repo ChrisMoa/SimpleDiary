@@ -1366,6 +1366,15 @@ class AppLocalizationsDe extends AppLocalizations {
   String get goalSuccessRate => 'Erfolgsrate';
 
   @override
+  String get goalProgress => 'Fortschritt';
+
+  @override
+  String get goalWeeklyDays => '7 Tage';
+
+  @override
+  String get goalMonthlyDays => '~30 Tage';
+
+  @override
   String get days => 'Tage';
 
   @override

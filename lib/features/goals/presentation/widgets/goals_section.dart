@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:day_tracker/features/goals/domain/providers/goal_providers.dart';
 import 'package:day_tracker/features/goals/presentation/widgets/goal_progress_card.dart';
 import 'package:day_tracker/features/goals/presentation/widgets/create_goal_dialog.dart';
+import 'package:day_tracker/l10n/app_localizations.dart';
 
 class GoalsSection extends ConsumerWidget {
   const GoalsSection({super.key});
@@ -13,6 +14,7 @@ class GoalsSection extends ConsumerWidget {
     final activeGoals = ref.watch(activeGoalsWithProgressProvider);
     final goalStreak = ref.watch(goalStreakProvider);
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -25,7 +27,7 @@ class GoalsSection extends ConsumerWidget {
               Icon(Icons.flag, color: theme.colorScheme.primary, size: 20),
               AppSpacing.horizontalXs,
               Text(
-                'Goals',
+                l10n.goalsSectionTitle,
                 style: theme.textTheme.titleMedium?.copyWith(
                   fontWeight: FontWeight.bold,
                   color: theme.colorScheme.onSurface,
@@ -59,7 +61,7 @@ class GoalsSection extends ConsumerWidget {
               IconButton(
                 icon: const Icon(Icons.add_circle_outline),
                 onPressed: () => _showCreateGoalDialog(context),
-                tooltip: 'Create New Goal',
+                tooltip: l10n.goalCreateNew,
                 color: theme.colorScheme.primary,
               ),
             ],
@@ -83,6 +85,7 @@ class GoalsSection extends ConsumerWidget {
 
   Widget _buildEmptyState(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
 
     return Container(
       margin: AppSpacing.paddingAllMd,
@@ -104,7 +107,7 @@ class GoalsSection extends ConsumerWidget {
           ),
           AppSpacing.verticalSm,
           Text(
-            'No active goals',
+            l10n.goalEmptyTitle,
             style: theme.textTheme.titleMedium?.copyWith(
               fontWeight: FontWeight.bold,
               color: theme.colorScheme.onSurface,
@@ -112,7 +115,7 @@ class GoalsSection extends ConsumerWidget {
           ),
           AppSpacing.verticalXxs,
           Text(
-            'Set a goal to track your progress and stay motivated',
+            l10n.goalEmptySubtitle,
             style: theme.textTheme.bodySmall?.copyWith(
               color: theme.colorScheme.onSurfaceVariant,
             ),
@@ -122,7 +125,7 @@ class GoalsSection extends ConsumerWidget {
           FilledButton.icon(
             onPressed: () => _showCreateGoalDialog(context),
             icon: const Icon(Icons.add),
-            label: const Text('Set Your First Goal'),
+            label: Text(l10n.goalSetFirst),
           ),
         ],
       ),
