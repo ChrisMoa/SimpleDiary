@@ -2,6 +2,7 @@ import 'package:day_tracker/features/dashboard/data/models/dashboard_stats.dart'
 import 'package:day_tracker/features/dashboard/data/models/insight.dart';
 import 'package:day_tracker/features/dashboard/data/models/streak_data.dart';
 import 'package:day_tracker/features/dashboard/data/models/week_stats.dart';
+import 'package:day_tracker/features/day_rating/data/models/enhanced_day_rating.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -188,6 +189,44 @@ void main() {
       expect(copy.noteCount, 5);
       expect(copy.totalScore, 16);
       expect(copy.isComplete, true);
+    });
+
+    test('moodQuadrant defaults to null', () {
+      final score = DayScore(
+        date: DateTime(2024, 3, 15),
+        totalScore: 12,
+        categoryScores: {},
+        noteCount: 0,
+        isComplete: true,
+      );
+      expect(score.moodQuadrant, isNull);
+    });
+
+    test('creates with moodQuadrant', () {
+      final score = DayScore(
+        date: DateTime(2024, 3, 15),
+        totalScore: 16,
+        categoryScores: {},
+        noteCount: 2,
+        isComplete: true,
+        moodQuadrant: MoodQuadrant.highEnergyPositive,
+      );
+      expect(score.moodQuadrant, MoodQuadrant.highEnergyPositive);
+    });
+
+    test('copyWith updates moodQuadrant', () {
+      final original = DayScore(
+        date: DateTime(2024, 3, 15),
+        totalScore: 16,
+        categoryScores: {},
+        noteCount: 0,
+        isComplete: true,
+      );
+      final copy = original.copyWith(
+        moodQuadrant: MoodQuadrant.lowEnergyPositive,
+      );
+      expect(copy.moodQuadrant, MoodQuadrant.lowEnergyPositive);
+      expect(copy.totalScore, 16);
     });
   });
 

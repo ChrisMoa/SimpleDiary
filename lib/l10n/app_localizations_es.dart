@@ -2255,4 +2255,37 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get streakAndProgress => 'Racha y Progreso';
+
+  @override
+  String get moodQuadrant => 'Mood Quadrant';
+
+  @override
+  String get moodExcited => 'Excited';
+
+  @override
+  String get moodAnxious => 'Anxious';
+
+  @override
+  String get moodCalm => 'Calm';
+
+  @override
+  String get moodSad => 'Sad';
+
+  @override
+  String get moodPleasant => 'Pleasant';
+
+  @override
+  String get moodUnpleasant => 'Unpleasant';
+
+  @override
+  String get moodNeutral => 'Neutral';
+
+  @override
+  String get moodPosition => 'Mood Position';
+
+  @override
+  String get valenceLabel => 'Valence';
+
+  @override
+  String get arousalLabel => 'Arousal';
 }

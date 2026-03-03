@@ -1,5 +1,6 @@
 import 'package:day_tracker/core/widgets/app_ui_kit.dart';
 import 'package:day_tracker/features/day_rating/data/models/enhanced_day_rating.dart';
+import 'package:day_tracker/features/day_rating/presentation/widgets/mood_quadrant_display_widget.dart';
 import 'package:day_tracker/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 
@@ -137,6 +138,10 @@ class _MoodMapWidgetState extends State<MoodMapWidget> {
               lowEnergyLabel: '▼ ${l10n.lowEnergy}',
               pleasantLabel: '${l10n.pleasant} ▶',
               unpleasantLabel: '◀ ${l10n.unpleasant}',
+              anxiousLabel: l10n.moodAnxious,
+              excitedLabel: l10n.moodExcited,
+              sadLabel: l10n.moodSad,
+              calmLabel: l10n.moodCalm,
             ),
           ),
         ),
@@ -153,32 +158,21 @@ class _MoodLabel extends StatelessWidget {
 
   const _MoodLabel({required this.mood, required this.theme});
 
-  Color get _color {
-    switch (mood.quadrant) {
-      case MoodQuadrant.highEnergyPositive:
-        return Colors.orange;
-      case MoodQuadrant.lowEnergyPositive:
-        return Colors.green;
-      case MoodQuadrant.highEnergyNegative:
-        return Colors.red;
-      case MoodQuadrant.lowEnergyNegative:
-        return Colors.blueGrey;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final color = quadrantColor(mood.quadrant);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
       decoration: BoxDecoration(
-        color: _color.withValues(alpha: 0.15),
+        color: color.withValues(alpha: 0.15),
         borderRadius: BorderRadius.circular(AppRadius.lg),
-        border: Border.all(color: _color.withValues(alpha: 0.4)),
+        border: Border.all(color: color.withValues(alpha: 0.4)),
       ),
       child: Text(
-        mood.label,
+        localizedMoodLabel(mood, l10n),
         style: theme.textTheme.labelLarge?.copyWith(
-          color: _color,
+          color: color,
           fontWeight: FontWeight.bold,
         ),
       ),
@@ -195,6 +189,10 @@ class _MoodMapPainter extends CustomPainter {
   final String lowEnergyLabel;
   final String pleasantLabel;
   final String unpleasantLabel;
+  final String anxiousLabel;
+  final String excitedLabel;
+  final String sadLabel;
+  final String calmLabel;
 
   const _MoodMapPainter({
     this.normalised,
@@ -203,6 +201,10 @@ class _MoodMapPainter extends CustomPainter {
     required this.lowEnergyLabel,
     required this.pleasantLabel,
     required this.unpleasantLabel,
+    required this.anxiousLabel,
+    required this.excitedLabel,
+    required this.sadLabel,
+    required this.calmLabel,
   });
 
   @override
@@ -248,10 +250,10 @@ class _MoodMapPainter extends CustomPainter {
       fontSize: 10,
     );
     final labels = [
-      ('Anxious', Offset(w * 0.1, h * 0.06)),
-      ('Excited', Offset(w * 0.58, h * 0.06)),
-      ('Sad', Offset(w * 0.1, h * 0.88)),
-      ('Calm', Offset(w * 0.58, h * 0.88)),
+      (anxiousLabel, Offset(w * 0.1, h * 0.06)),
+      (excitedLabel, Offset(w * 0.58, h * 0.06)),
+      (sadLabel, Offset(w * 0.1, h * 0.88)),
+      (calmLabel, Offset(w * 0.58, h * 0.88)),
     ];
     for (final (text, offset) in labels) {
       _drawText(canvas, text, offset, labelStyle);
@@ -314,5 +316,9 @@ class _MoodMapPainter extends CustomPainter {
       old.highEnergyLabel != highEnergyLabel ||
       old.lowEnergyLabel != lowEnergyLabel ||
       old.pleasantLabel != pleasantLabel ||
-      old.unpleasantLabel != unpleasantLabel;
+      old.unpleasantLabel != unpleasantLabel ||
+      old.anxiousLabel != anxiousLabel ||
+      old.excitedLabel != excitedLabel ||
+      old.sadLabel != sadLabel ||
+      old.calmLabel != calmLabel;
 }

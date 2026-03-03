@@ -1,6 +1,8 @@
 import 'package:day_tracker/core/utils/utils.dart';
+import 'package:day_tracker/features/dashboard/data/models/week_stats.dart';
 import 'package:day_tracker/features/dashboard/domain/providers/week_overview_provider.dart';
 import 'package:day_tracker/features/dashboard/presentation/pages/diary_day_detail_page.dart';
+import 'package:day_tracker/features/day_rating/presentation/widgets/mood_quadrant_display_widget.dart';
 import 'package:day_tracker/core/widgets/app_ui_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:day_tracker/l10n/app_localizations.dart';
@@ -80,12 +82,13 @@ class WeekOverviewWidget extends ConsumerWidget {
     );
   }
 
-  Widget _buildDayCard(BuildContext context, dynamic dayScore, ThemeData theme) {
-    final date = dayScore.date as DateTime;
+  Widget _buildDayCard(BuildContext context, DayScore dayScore, ThemeData theme) {
+    final date = dayScore.date;
     final isToday = Utils.isSameDay(date, DateTime.now());
-    final isComplete = dayScore.isComplete as bool;
-    final totalScore = dayScore.totalScore as int;
-    final noteCount = dayScore.noteCount as int;
+    final isComplete = dayScore.isComplete;
+    final totalScore = dayScore.totalScore;
+    final noteCount = dayScore.noteCount;
+    final moodQuadrant = dayScore.moodQuadrant;
 
     final dayName = DateFormat('EEE', 'de').format(date);
     final dayNumber = DateFormat('d', 'de').format(date);
@@ -187,36 +190,58 @@ class WeekOverviewWidget extends ConsumerWidget {
                   ),
                 ),
 
-              // Note count badge
-              if (noteCount > 0)
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: colorScheme.surfaceContainerHighest,
-                    borderRadius: AppRadius.borderRadiusMd,
-                    border: Border.all(
-                      color: colorScheme.outline.withValues(alpha:0.3),
-                      width: 1,
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        Icons.note,
-                        size: 14,
-                        color: colorScheme.primary,
-                      ),
-                      AppSpacing.horizontalXxs,
-                      Text(
-                        '$noteCount',
-                        style: theme.textTheme.labelSmall?.copyWith(
-                          color: colorScheme.onSurface,
-                          fontWeight: FontWeight.bold,
+              // Mood dot + note count row
+              if (noteCount > 0 || moodQuadrant != null)
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (moodQuadrant != null)
+                      Container(
+                        width: 10,
+                        height: 10,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: quadrantColor(moodQuadrant),
+                          border: Border.all(
+                            color: quadrantColor(moodQuadrant).withValues(alpha: 0.6),
+                            width: 1,
+                          ),
                         ),
                       ),
-                    ],
-                  ),
+                    if (moodQuadrant != null && noteCount > 0)
+                      AppSpacing.horizontalXxs,
+                    if (noteCount > 0)
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                        decoration: BoxDecoration(
+                          color: colorScheme.surfaceContainerHighest,
+                          borderRadius: AppRadius.borderRadiusSm,
+                          border: Border.all(
+                            color: colorScheme.outline.withValues(alpha: 0.3),
+                            width: 1,
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.note,
+                              size: 12,
+                              color: colorScheme.primary,
+                            ),
+                            AppSpacing.horizontalXxs,
+                            Text(
+                              '$noteCount',
+                              style: theme.textTheme.labelSmall?.copyWith(
+                                color: colorScheme.onSurface,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                  ],
                 )
               else
                 const SizedBox(height: 22),

@@ -4151,6 +4151,72 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Streak & Progress'**
   String get streakAndProgress;
+
+  /// No description provided for @moodQuadrant.
+  ///
+  /// In en, this message translates to:
+  /// **'Mood Quadrant'**
+  String get moodQuadrant;
+
+  /// No description provided for @moodExcited.
+  ///
+  /// In en, this message translates to:
+  /// **'Excited'**
+  String get moodExcited;
+
+  /// No description provided for @moodAnxious.
+  ///
+  /// In en, this message translates to:
+  /// **'Anxious'**
+  String get moodAnxious;
+
+  /// No description provided for @moodCalm.
+  ///
+  /// In en, this message translates to:
+  /// **'Calm'**
+  String get moodCalm;
+
+  /// No description provided for @moodSad.
+  ///
+  /// In en, this message translates to:
+  /// **'Sad'**
+  String get moodSad;
+
+  /// No description provided for @moodPleasant.
+  ///
+  /// In en, this message translates to:
+  /// **'Pleasant'**
+  String get moodPleasant;
+
+  /// No description provided for @moodUnpleasant.
+  ///
+  /// In en, this message translates to:
+  /// **'Unpleasant'**
+  String get moodUnpleasant;
+
+  /// No description provided for @moodNeutral.
+  ///
+  /// In en, this message translates to:
+  /// **'Neutral'**
+  String get moodNeutral;
+
+  /// No description provided for @moodPosition.
+  ///
+  /// In en, this message translates to:
+  /// **'Mood Position'**
+  String get moodPosition;
+
+  /// No description provided for @valenceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Valence'**
+  String get valenceLabel;
+
+  /// No description provided for @arousalLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Arousal'**
+  String get arousalLabel;
 }
 
 class _AppLocalizationsDelegate

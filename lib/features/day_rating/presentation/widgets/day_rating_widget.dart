@@ -10,6 +10,7 @@ import 'package:day_tracker/features/day_rating/domain/providers/rating_preferen
 import 'package:day_tracker/features/day_rating/presentation/widgets/context_factors_widget.dart';
 import 'package:day_tracker/features/day_rating/presentation/widgets/emotion_wheel_widget.dart';
 import 'package:day_tracker/features/day_rating/presentation/widgets/mood_map_widget.dart';
+import 'package:day_tracker/features/day_rating/presentation/widgets/mood_quadrant_display_widget.dart';
 import 'package:day_tracker/features/day_rating/presentation/widgets/wellbeing_dimensions_widget.dart';
 import 'package:day_tracker/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
@@ -114,11 +115,26 @@ class _LegacyRatingBody extends ConsumerWidget {
     final isSmallScreen = screenWidth < 600;
     final isLandscape = mediaQuery.orientation == Orientation.landscape;
 
+    final enhanced = ref.watch(enhancedDayRatingProvider);
+
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          // Show saved mood quadrant (read-only) if available
+          if (enhanced.quickMood != null) ...[
+            AppCard.outlined(
+              padding: AppSpacing.paddingAllMd,
+              color: theme.colorScheme.surface,
+              borderColor: theme.colorScheme.outline.withValues(alpha: 0.2),
+              borderRadius: AppRadius.borderRadiusMd,
+              child: MoodQuadrantDisplayWidget(
+                position: enhanced.quickMood!,
+              ),
+            ),
+            AppSpacing.verticalMd,
+          ],
           if (isLandscape && !isSmallScreen)
             GridView.count(
               crossAxisCount: 2,

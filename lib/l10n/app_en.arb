@@ -1106,5 +1106,17 @@
   "saturday": "Saturday",
   "sunday": "Sunday",
   "weeklyScoreOverview": "Score Overview",
-  "streakAndProgress": "Streak & Progress"
+  "streakAndProgress": "Streak & Progress",
+
+  "moodQuadrant": "Mood Quadrant",
+  "moodExcited": "Excited",
+  "moodAnxious": "Anxious",
+  "moodCalm": "Calm",
+  "moodSad": "Sad",
+  "moodPleasant": "Pleasant",
+  "moodUnpleasant": "Unpleasant",
+  "moodNeutral": "Neutral",
+  "moodPosition": "Mood Position",
+  "valenceLabel": "Valence",
+  "arousalLabel": "Arousal"
 }
