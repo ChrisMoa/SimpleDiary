@@ -309,18 +309,26 @@ class WizardDayFavoriteNotifier extends StateNotifier<bool> {
 // ── Enhanced day rating provider ───────────────────────────────────────────
 
 /// Holds the in-progress [EnhancedDayRating] for the selected date.
-/// Reset to empty whenever the wizard date changes.
+/// Auto-loads existing enhanced rating data when the wizard date changes.
 final enhancedDayRatingProvider =
     StateNotifierProvider<EnhancedDayRatingNotifier, EnhancedDayRating>(
   (ref) {
     final date = ref.watch(wizardSelectedDateProvider);
-    return EnhancedDayRatingNotifier(date);
+    final diaryDays = ref.watch(diaryDayLocalDbDataProvider);
+    final existing = diaryDays.where((d) =>
+        d.day.year == date.year &&
+        d.day.month == date.month &&
+        d.day.day == date.day);
+    final initialRating = existing.isNotEmpty
+        ? existing.first.enhancedRating
+        : null;
+    return EnhancedDayRatingNotifier(date, initialRating);
   },
 );
 
 class EnhancedDayRatingNotifier extends StateNotifier<EnhancedDayRating> {
-  EnhancedDayRatingNotifier(DateTime date)
-      : super(EnhancedDayRating.empty(date));
+  EnhancedDayRatingNotifier(DateTime date, EnhancedDayRating? existing)
+      : super(existing ?? EnhancedDayRating.empty(date));
 
   void updateQuickMood(MoodPosition position) {
     state = state.copyWith(quickMood: position);

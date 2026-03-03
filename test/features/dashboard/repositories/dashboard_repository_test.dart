@@ -2,6 +2,7 @@ import 'package:day_tracker/features/dashboard/data/models/insight.dart';
 import 'package:day_tracker/features/dashboard/data/repositories/dashboard_repository.dart';
 import 'package:day_tracker/features/day_rating/data/models/day_rating.dart';
 import 'package:day_tracker/features/day_rating/data/models/diary_day.dart';
+import 'package:day_tracker/features/day_rating/data/models/enhanced_day_rating.dart';
 import 'package:day_tracker/features/notes/data/models/note.dart';
 import 'package:day_tracker/features/notes/data/models/note_category.dart';
 import 'package:flutter/material.dart';
@@ -239,6 +240,55 @@ void main() {
         expect(firstDay, isNotNull);
         expect(firstDay!.noteCount, 2);
         expect(firstDay.isComplete, true);
+      });
+
+      test('daily scores include moodQuadrant from enhanced rating', () {
+        final now = DateTime.now();
+        final weekStart = now.subtract(Duration(days: now.weekday - 1));
+        final enhanced = EnhancedDayRating(
+          date: weekStart,
+          quickMood: MoodPosition(
+            valence: 0.7,
+            arousal: 0.8,
+            timestamp: weekStart,
+          ),
+        );
+        final day = DiaryDay(
+          day: weekStart,
+          ratings: [
+            DayRating(dayRating: DayRatings.social, score: 3),
+            DayRating(dayRating: DayRatings.productivity, score: 3),
+            DayRating(dayRating: DayRatings.sport, score: 3),
+            DayRating(dayRating: DayRatings.food, score: 3),
+          ],
+          enhancedRating: enhanced,
+        );
+        final stats = repository.calculateWeekStats([day], []);
+
+        final matchingDay = stats.dailyScores
+            .where((ds) =>
+                ds.date.year == weekStart.year &&
+                ds.date.month == weekStart.month &&
+                ds.date.day == weekStart.day)
+            .firstOrNull;
+        expect(matchingDay, isNotNull);
+        expect(matchingDay!.moodQuadrant, MoodQuadrant.highEnergyPositive);
+      });
+
+      test('daily scores have null moodQuadrant without enhanced rating', () {
+        final now = DateTime.now();
+        final weekStart = now.subtract(Duration(days: now.weekday - 1));
+        final days = [createDiaryDay(weekStart)];
+        final stats = repository.calculateWeekStats(days, []);
+
+        final matchingDay = stats.dailyScores
+            .where((ds) =>
+                ds.date.year == weekStart.year &&
+                ds.date.month == weekStart.month &&
+                ds.date.day == weekStart.day)
+            .firstOrNull;
+        expect(matchingDay, isNotNull);
+        expect(matchingDay!.moodQuadrant, isNull);
       });
 
       test('uncompleted days have isComplete false and zero scores', () {

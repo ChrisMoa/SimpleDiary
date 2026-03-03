@@ -1,6 +1,7 @@
 import 'package:day_tracker/core/widgets/app_ui_kit.dart';
 import 'package:day_tracker/features/day_rating/data/models/diary_day.dart';
 import 'package:day_tracker/features/day_rating/data/models/day_rating.dart';
+import 'package:day_tracker/features/day_rating/presentation/widgets/mood_quadrant_display_widget.dart';
 import 'package:day_tracker/features/notes/data/models/note.dart';
 import 'package:day_tracker/features/notes/domain/providers/note_editing_page_provider.dart';
 import 'package:day_tracker/features/notes/presentation/pages/note_editing_page.dart';
@@ -114,6 +115,19 @@ class DiaryDayDetailPage extends ConsumerWidget {
             ],
           ),
         ),
+
+        // Mood quadrant card (if enhanced mood data exists)
+        if (diaryDay.enhancedRating?.quickMood != null) ...[
+          AppSpacing.verticalMd,
+          AppCard.elevated(
+            color: theme.colorScheme.surfaceContainer,
+            borderRadius: AppRadius.borderRadiusMd,
+            padding: AppSpacing.paddingAllMd,
+            child: MoodQuadrantDisplayWidget(
+              position: diaryDay.enhancedRating!.quickMood!,
+            ),
+          ),
+        ],
 
         AppSpacing.verticalXl,
 

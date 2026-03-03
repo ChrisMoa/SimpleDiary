@@ -1,3 +1,5 @@
+import 'package:day_tracker/features/day_rating/data/models/enhanced_day_rating.dart';
+
 /// Weekly statistics model
 class WeekStats {
   final double averageScore;
@@ -35,12 +37,16 @@ class DayScore {
   final int noteCount;
   final bool isComplete;
 
+  /// The mood quadrant from the enhanced day rating, if available.
+  final MoodQuadrant? moodQuadrant;
+
   DayScore({
     required this.date,
     required this.totalScore,
     required this.categoryScores,
     required this.noteCount,
     required this.isComplete,
+    this.moodQuadrant,
   });
 
   DayScore copyWith({
@@ -49,6 +55,7 @@ class DayScore {
     Map<String, int>? categoryScores,
     int? noteCount,
     bool? isComplete,
+    MoodQuadrant? moodQuadrant,
   }) {
     return DayScore(
       date: date ?? this.date,
@@ -56,6 +63,7 @@ class DayScore {
       categoryScores: categoryScores ?? this.categoryScores,
       noteCount: noteCount ?? this.noteCount,
       isComplete: isComplete ?? this.isComplete,
+      moodQuadrant: moodQuadrant ?? this.moodQuadrant,
     );
   }
 }

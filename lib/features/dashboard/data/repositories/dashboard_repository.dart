@@ -144,6 +144,7 @@ class DashboardRepository {
           categoryScores: categoryScores,
           noteCount: dayNotes,
           isComplete: dayData.ratings.isNotEmpty,
+          moodQuadrant: dayData.enhancedRating?.quickMood?.quadrant,
         ));
       } else {
         dailyScores.add(DayScore(

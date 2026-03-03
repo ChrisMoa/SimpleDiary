@@ -2270,4 +2270,37 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get streakAndProgress => 'Série & Progrès';
+
+  @override
+  String get moodQuadrant => 'Quadrant d\'Humeur';
+
+  @override
+  String get moodExcited => 'Excité';
+
+  @override
+  String get moodAnxious => 'Anxieux';
+
+  @override
+  String get moodCalm => 'Calme';
+
+  @override
+  String get moodSad => 'Triste';
+
+  @override
+  String get moodPleasant => 'Agréable';
+
+  @override
+  String get moodUnpleasant => 'Désagréable';
+
+  @override
+  String get moodNeutral => 'Neutre';
+
+  @override
+  String get moodPosition => 'Position d\'Humeur';
+
+  @override
+  String get valenceLabel => 'Valence';
+
+  @override
+  String get arousalLabel => 'Activation';
 }

@@ -1,6 +1,6 @@
 # Test Coverage
 
-**Total: 966+ passing tests** across 65 test files (+ 16 optional/skipped Supabase integration tests)
+**Total: 984+ passing tests** across 66 test files (+ 16 optional/skipped Supabase integration tests)
 
 Run all tests with:
 ```bash
@@ -109,8 +109,8 @@ flutter test test/core/ test/features/ test/l10n/ test/integration/
 
 | File | Tests | Covers |
 |------|-------|--------|
-| `repositories/dashboard_repository_test.dart` | 30 | **Streak calculation:** empty data, single day (today/yesterday), consecutive days, 2+ day gap breaks streak, single-day gap tolerance, longest vs current, inactive old entries, 7-day milestone, lastEntryDate. **isTodayLogged:** logged/not logged/empty. **Week stats:** empty data, average score, category averages, note counts per day, incomplete days. **Monthly trend:** empty data, week grouping, excludes other months. **Top activities:** empty, sorted by frequency, max 5. **Insights:** today-not-logged suggestion, perfect week achievement, best category, streak milestone. **generateDashboardStats:** combined output, empty data |
-| `models/dashboard_models_test.dart` | 22 | **StreakData:** empty factory, `isMilestone` (7/30/100/365 and non-milestones), `milestoneValue` (365/100/30/7/0), `copyWith`. **WeekStats:** construction, `copyWith`. **DayScore:** construction, `copyWith`. **Insight:** construction (with/without metadata), `copyWith`, InsightType enum values. **DashboardStats:** construction, `copyWith` |
+| `repositories/dashboard_repository_test.dart` | 32 | **Streak calculation:** empty data, single day (today/yesterday), consecutive days, 2+ day gap breaks streak, single-day gap tolerance, longest vs current, inactive old entries, 7-day milestone, lastEntryDate. **isTodayLogged:** logged/not logged/empty. **Week stats:** empty data, average score, category averages, note counts per day, incomplete days, moodQuadrant from enhanced rating (populated/null without). **Monthly trend:** empty data, week grouping, excludes other months. **Top activities:** empty, sorted by frequency, max 5. **Insights:** today-not-logged suggestion, perfect week achievement, best category, streak milestone. **generateDashboardStats:** combined output, empty data |
+| `models/dashboard_models_test.dart` | 25 | **StreakData:** empty factory, `isMilestone` (7/30/100/365 and non-milestones), `milestoneValue` (365/100/30/7/0), `copyWith`. **WeekStats:** construction, `copyWith`. **DayScore:** construction, `copyWith`, `moodQuadrant` (defaults null, construction with value, copyWith update). **Insight:** construction (with/without metadata), `copyWith`, InsightType enum values. **DashboardStats:** construction, `copyWith` |
 | `services/mood_correlation_service_test.dart` | 26 | **Correlation Analysis:** Pearson correlation (perfect positive/negative/no correlation/insufficient data/mismatched lengths/zero variance), activity-rating correlation (insufficient days/positive correlation detection/impact calculation/case-insensitive matching), strong correlation finding (empty/sorting/threshold filtering). **Day of Week Analysis:** best/worst day identification, day names, empty handling. **Trend Detection:** insufficient data/improving/declining/stable trends, all trends filtering. **Model Tests:** CorrelationResult (strengthLabel/isPositive), DayOfWeekAnalysis (variance threshold), TrendAnalysis (significance validation) |
 | `providers/granular_providers_test.dart` | 11 | **currentStreakProvider:** returns streak from stats, returns 0 before load, updates on invalidation. **todayLoggedProvider:** returns true/false, returns false before load. **weekAverageProvider:** returns average, returns 0.0 before load, handles zero average. **Selective rebuild:** all providers derive from shared source, consistent values across providers |
 
@@ -211,13 +211,14 @@ flutter test test/core/ test/features/ test/l10n/ test/integration/
 
 **Source:** `lib/features/notes/presentation/pages/note_editing_page.dart`
 
-### Day Rating (`test/features/day_rating/presentation/pages/`)
+### Day Rating (`test/features/day_rating/presentation/`)
 
 | File | Tests | Covers |
 |------|-------|--------|
-| `diary_day_wizard_page_test.dart` | 6 | Shimmer loading placeholders on first frame, transition from loading to DiaryDayEditingWizardWidget, tab navigation bar with Calendar/Note Details/Day Rating labels, tab icons (calendar_today, edit_note, rate_review_outlined), SafeArea wrapping after load, tab navigation switches between views |
+| `pages/diary_day_wizard_page_test.dart` | 6 | Shimmer loading placeholders on first frame, transition from loading to DiaryDayEditingWizardWidget, tab navigation bar with Calendar/Note Details/Day Rating labels, tab icons (calendar_today, edit_note, rate_review_outlined), SafeArea wrapping after load, tab navigation switches between views |
+| `widgets/mood_quadrant_display_widget_test.dart` | 13 | **Normal display:** renders header icon + title, mood labels for all 7 states (Excited/Anxious/Calm/Sad/Neutral/Pleasant/Unpleasant) based on valence/arousal. **Compact display:** no header/label in compact mode, custom compact size. **quadrantColor helper:** returns correct semantic color for all 4 MoodQuadrant values (orange/green/red/blueGrey) |
 
-**Source:** `lib/features/day_rating/presentation/pages/diary_day_wizard_page.dart`
+**Sources:** `lib/features/day_rating/presentation/pages/diary_day_wizard_page.dart`, `lib/features/day_rating/presentation/widgets/mood_quadrant_display_widget.dart`
 
 ### Dashboard (`test/features/dashboard/presentation/pages/`)
 
@@ -330,6 +331,7 @@ Workflow-level tests that verify multi-feature provider interactions using `Prov
 | Dashboard granular providers | Covered | currentStreakProvider, todayLoggedProvider, weekAverageProvider: value extraction, default before load, selective rebuild |
 | Widget: NewDashboardPage | Covered | FAB, RefreshIndicator, responsive layout, custom stats rendering |
 | Widget: SettingsPage | Covered | Settings title, all 6 settings sections, category management, scrollability |
+| Widget: MoodQuadrantDisplayWidget | Covered | Normal/compact display modes, all 7 mood labels, quadrantColor helper |
 | Integration: Diary entry workflow | Covered | Provider chain + wizard providers + enhanced rating reset |
 | Integration: Note search workflow | Covered | Full filteredNotesProvider chain with CRUD + filters |
 | Integration: Settings persistence | Covered | Cross-provider state + restart simulation |

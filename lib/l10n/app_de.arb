@@ -745,5 +745,17 @@
   "saturday": "Samstag",
   "sunday": "Sonntag",
   "weeklyScoreOverview": "Bewertungsübersicht",
-  "streakAndProgress": "Serie & Fortschritt"
+  "streakAndProgress": "Serie & Fortschritt",
+
+  "moodQuadrant": "Stimmungsquadrant",
+  "moodExcited": "Aufgeregt",
+  "moodAnxious": "Ängstlich",
+  "moodCalm": "Ruhig",
+  "moodSad": "Traurig",
+  "moodPleasant": "Angenehm",
+  "moodUnpleasant": "Unangenehm",
+  "moodNeutral": "Neutral",
+  "moodPosition": "Stimmungsposition",
+  "valenceLabel": "Valenz",
+  "arousalLabel": "Erregung"
 }

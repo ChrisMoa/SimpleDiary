@@ -316,6 +316,13 @@ void main() {
     group('enhanced day rating provider integration', () {
       test('enhanced rating resets when wizard date changes', () {
         final container = ProviderContainer(overrides: [
+          diaryDayLocalDbDataProvider.overrideWith(
+            (_) => TestDbRepository<DiaryDay>(
+              tableName: DiaryDay.tableName,
+              columns: DiaryDay.columns,
+              fromMap: DiaryDay.fromDbMap,
+            ),
+          ),
           notesLocalDataProvider.overrideWith(
             (_) => TestDbRepository<Note>(
               tableName: Note.tableName,
