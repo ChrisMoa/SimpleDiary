@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:day_tracker/features/day_rating/data/models/day_rating.dart';
 import 'package:day_tracker/features/goals/data/models/goal.dart';
 import 'package:day_tracker/features/goals/domain/providers/goal_providers.dart';
+import 'package:day_tracker/l10n/app_localizations.dart';
 
 class CreateGoalDialog extends ConsumerStatefulWidget {
   const CreateGoalDialog({super.key});
@@ -21,6 +22,7 @@ class _CreateGoalDialogState extends ConsumerState<CreateGoalDialog> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
     final suggestedTarget =
         ref.watch(targetSuggestionProvider(_selectedCategory));
 
@@ -39,7 +41,7 @@ class _CreateGoalDialogState extends ConsumerState<CreateGoalDialog> {
                 Icon(Icons.flag, color: theme.colorScheme.primary),
                 AppSpacing.horizontalXs,
                 Text(
-                  'Create New Goal',
+                  l10n.goalCreateNew,
                   style: theme.textTheme.headlineSmall?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: theme.colorScheme.onSurface,
@@ -67,7 +69,7 @@ class _CreateGoalDialogState extends ConsumerState<CreateGoalDialog> {
                 if (_currentStep > 0)
                   TextButton(
                     onPressed: () => setState(() => _currentStep--),
-                    child: const Text('Back'),
+                    child: Text(l10n.back),
                   )
                 else
                   const SizedBox.shrink(),
@@ -75,7 +77,7 @@ class _CreateGoalDialogState extends ConsumerState<CreateGoalDialog> {
                   onPressed: _currentStep < 2
                       ? () => setState(() => _currentStep++)
                       : () => _createGoal(context),
-                  child: Text(_currentStep < 2 ? 'Next' : 'Create'),
+                  child: Text(_currentStep < 2 ? l10n.next : l10n.goalCreate),
                 ),
               ],
             ),
@@ -109,12 +111,13 @@ class _CreateGoalDialogState extends ConsumerState<CreateGoalDialog> {
 
   Widget _buildCategoryStep(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Which area do you want to improve?',
+          l10n.goalSelectCategory,
           style: theme.textTheme.titleMedium?.copyWith(
             color: theme.colorScheme.onSurface,
           ),
@@ -123,7 +126,7 @@ class _CreateGoalDialogState extends ConsumerState<CreateGoalDialog> {
         ...DayRatings.values.map((category) => _buildCategoryOption(
               context,
               category,
-              _getCategoryName(category),
+              _getCategoryName(category, l10n),
               _getCategoryIcon(category),
               _getCategoryColor(category),
             )),
@@ -178,12 +181,13 @@ class _CreateGoalDialogState extends ConsumerState<CreateGoalDialog> {
 
   Widget _buildTimeframeStep(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Choose your timeframe',
+          l10n.goalSelectTimeframe,
           style: theme.textTheme.titleMedium?.copyWith(
             color: theme.colorScheme.onSurface,
           ),
@@ -195,9 +199,9 @@ class _CreateGoalDialogState extends ConsumerState<CreateGoalDialog> {
               child: _buildTimeframeOption(
                 context,
                 GoalTimeframe.weekly,
-                'Weekly',
+                l10n.goalWeekly,
                 Icons.calendar_view_week,
-                '7 days',
+                l10n.goalWeeklyDays,
               ),
             ),
             AppSpacing.horizontalSm,
@@ -205,9 +209,9 @@ class _CreateGoalDialogState extends ConsumerState<CreateGoalDialog> {
               child: _buildTimeframeOption(
                 context,
                 GoalTimeframe.monthly,
-                'Monthly',
+                l10n.goalMonthly,
                 Icons.calendar_month,
-                '~30 days',
+                l10n.goalMonthlyDays,
               ),
             ),
           ],
@@ -274,20 +278,21 @@ class _CreateGoalDialogState extends ConsumerState<CreateGoalDialog> {
 
   Widget _buildTargetStep(BuildContext context, double suggestedTarget) {
     final theme = Theme.of(context);
-    final categoryName = _getCategoryName(_selectedCategory);
+    final l10n = AppLocalizations.of(context);
+    final categoryName = _getCategoryName(_selectedCategory, l10n);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Set your target',
+          l10n.goalSetTarget,
           style: theme.textTheme.titleMedium?.copyWith(
             color: theme.colorScheme.onSurface,
           ),
         ),
         AppSpacing.verticalXs,
         Text(
-          'What average $categoryName score do you want to achieve?',
+          l10n.goalTargetHint(categoryName),
           style: theme.textTheme.bodySmall?.copyWith(
             color: theme.colorScheme.onSurfaceVariant,
           ),
@@ -314,7 +319,7 @@ class _CreateGoalDialogState extends ConsumerState<CreateGoalDialog> {
               AppSpacing.horizontalXs,
               Expanded(
                 child: Text(
-                  'Based on your history, we suggest ${suggestedTarget.toStringAsFixed(1)}',
+                  l10n.goalSuggestedTarget(suggestedTarget.toStringAsFixed(1)),
                   style: theme.textTheme.bodySmall?.copyWith(
                     color: theme.colorScheme.onSurface,
                   ),
@@ -322,7 +327,7 @@ class _CreateGoalDialogState extends ConsumerState<CreateGoalDialog> {
               ),
               TextButton(
                 onPressed: () => setState(() => _targetValue = suggestedTarget),
-                child: const Text('Use'),
+                child: Text(l10n.goalUseSuggestion),
               ),
             ],
           ),
@@ -353,7 +358,7 @@ class _CreateGoalDialogState extends ConsumerState<CreateGoalDialog> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text('1.0', style: theme.textTheme.bodySmall),
-            Text('Target Score', style: theme.textTheme.bodySmall),
+            Text(l10n.goalTargetLabel, style: theme.textTheme.bodySmall),
             Text('5.0', style: theme.textTheme.bodySmall),
           ],
         ),
@@ -376,16 +381,16 @@ class _CreateGoalDialogState extends ConsumerState<CreateGoalDialog> {
     Navigator.of(context).pop(goal);
   }
 
-  String _getCategoryName(DayRatings category) {
+  String _getCategoryName(DayRatings category, AppLocalizations l10n) {
     switch (category) {
       case DayRatings.social:
-        return 'Social';
+        return l10n.ratingSocial;
       case DayRatings.productivity:
-        return 'Productivity';
+        return l10n.ratingProductivity;
       case DayRatings.sport:
-        return 'Sport';
+        return l10n.ratingSport;
       case DayRatings.food:
-        return 'Food';
+        return l10n.ratingFood;
     }
   }
 

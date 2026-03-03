@@ -69,19 +69,19 @@ class GoalProgressCard extends StatelessWidget {
                 children: [
                   _buildStatItem(
                     context,
-                    'Current',
+                    l10n.goalCurrentAverage,
                     progress.currentAverage.toStringAsFixed(1),
                     theme.colorScheme.primary,
                   ),
                   _buildStatItem(
                     context,
-                    'Target',
+                    l10n.goalTarget,
                     goal.targetValue.toStringAsFixed(1),
                     _getStatusColor(progress.status, theme),
                   ),
                   _buildStatItem(
                     context,
-                    'Days Left',
+                    l10n.goalDaysRemaining,
                     goal.daysRemaining.toString(),
                     theme.colorScheme.onSurfaceVariant,
                   ),
@@ -157,6 +157,7 @@ class GoalProgressCard extends StatelessWidget {
 
   Widget _buildProgressBar(BuildContext context, GoalProgress progress) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
     final color = _getStatusColor(progress.status, theme);
 
     // Use absolute progress for display
@@ -169,7 +170,7 @@ class GoalProgressCard extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              'Progress',
+              l10n.goalProgress,
               style: theme.textTheme.bodySmall?.copyWith(
                 color: theme.colorScheme.onSurfaceVariant,
               ),
@@ -250,23 +251,23 @@ class GoalProgressCard extends StatelessWidget {
     }
   }
 
-  String _getCategoryName(DayRatings category, AppLocalizations? l10n) {
+  String _getCategoryName(DayRatings category, AppLocalizations l10n) {
     switch (category) {
       case DayRatings.social:
-        return 'Social';
+        return l10n.ratingSocial;
       case DayRatings.productivity:
-        return 'Productivity';
+        return l10n.ratingProductivity;
       case DayRatings.sport:
-        return 'Sport';
+        return l10n.ratingSport;
       case DayRatings.food:
-        return 'Food';
+        return l10n.ratingFood;
     }
   }
 
-  String _getTimeframeLabel(Goal goal, AppLocalizations? l10n) {
+  String _getTimeframeLabel(Goal goal, AppLocalizations l10n) {
     final timeframe = goal.timeframe == GoalTimeframe.weekly
-        ? 'Weekly'
-        : 'Monthly';
-    return '$timeframe • ${goal.daysRemaining} days left';
+        ? l10n.goalWeekly
+        : l10n.goalMonthly;
+    return '$timeframe • ${goal.daysRemaining} ${l10n.goalDaysLeft}';
   }
 }
