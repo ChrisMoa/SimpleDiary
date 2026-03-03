@@ -2145,4 +2145,114 @@ class AppLocalizationsEs extends AppLocalizations {
   String zipExportLargeWarning(int size) {
     return 'Advertencia: El tamaño total de las fotos supera los $size MB. La exportación puede tardar un tiempo.';
   }
+
+  @override
+  String get drawerWeeklyReview => 'Resumen Semanal';
+
+  @override
+  String get weeklyReview => 'Resumen Semanal';
+
+  @override
+  String get weeklyReviewDescription => 'Tu resumen semanal del diario';
+
+  @override
+  String weekLabel(int weekNumber) {
+    return 'Semana $weekNumber';
+  }
+
+  @override
+  String get weeklyReviewNotification => 'Notificación de Resumen Semanal';
+
+  @override
+  String get weeklyReviewDay => 'Día del Resumen';
+
+  @override
+  String get weeklyReviewTime => 'Hora del Resumen';
+
+  @override
+  String get generateReview => 'Generar Resumen';
+
+  @override
+  String get generateCurrentWeekReview => 'Generar resumen de esta semana';
+
+  @override
+  String get noReviewsYet =>
+      'Aún no hay resúmenes semanales. Se generan automáticamente al final de cada semana.';
+
+  @override
+  String completedDaysCount(int count) {
+    return '$count/7 días completados';
+  }
+
+  @override
+  String get vsLastWeek => 'vs. semana pasada';
+
+  @override
+  String get permaAverages => 'Promedios PERMA+';
+
+  @override
+  String get topEmotions => 'Emociones Principales';
+
+  @override
+  String get contextHighlights => 'Aspectos Destacados';
+
+  @override
+  String get notableEntries => 'Entradas Destacadas';
+
+  @override
+  String get moodTrend => 'Tendencia de Ánimo';
+
+  @override
+  String get weeklyReviewAvailable => '¡Tu resumen semanal está listo!';
+
+  @override
+  String get weeklyReviewBody =>
+      'Mira cómo fue tu semana — toca para ver tu resumen.';
+
+  @override
+  String get averageSleep => 'Prom. Sueño';
+
+  @override
+  String get exerciseDays => 'Días de Ejercicio';
+
+  @override
+  String get averageStress => 'Prom. Estrés';
+
+  @override
+  String get averageSleepQuality => 'Calidad de Sueño';
+
+  @override
+  String get noDataForWeek => 'Sin datos del diario para esta semana';
+
+  @override
+  String reviewGeneratedFor(String weekLabel) {
+    return 'Resumen de $weekLabel';
+  }
+
+  @override
+  String get monday => 'Lunes';
+
+  @override
+  String get tuesday => 'Martes';
+
+  @override
+  String get wednesday => 'Miércoles';
+
+  @override
+  String get thursday => 'Jueves';
+
+  @override
+  String get friday => 'Viernes';
+
+  @override
+  String get saturday => 'Sábado';
+
+  @override
+  String get sunday => 'Domingo';
+
+  @override
+  String get weeklyScoreOverview => 'Resumen de Puntuación';
+
+  @override
+  String get streakAndProgress => 'Racha y Progreso';
 }

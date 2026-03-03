@@ -1054,5 +1054,57 @@
     "placeholders": {
       "size": { "type": "int" }
     }
-  }
+  },
+
+  "drawerWeeklyReview": "Weekly Review",
+  "weeklyReview": "Weekly Review",
+  "weeklyReviewDescription": "Your weekly diary summary",
+  "weekLabel": "Week {weekNumber}",
+  "@weekLabel": {
+    "placeholders": {
+      "weekNumber": { "type": "int" }
+    }
+  },
+  "weeklyReviewNotification": "Weekly Review Notification",
+  "weeklyReviewDay": "Review Day",
+  "weeklyReviewTime": "Review Time",
+  "generateReview": "Generate Review",
+  "generateCurrentWeekReview": "Generate This Week's Review",
+  "noReviewsYet": "No weekly reviews yet. Reviews are generated automatically at the end of each week.",
+  "completedDaysCount": "{count}/7 days completed",
+  "@completedDaysCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "vsLastWeek": "vs. last week",
+  "permaAverages": "PERMA+ Averages",
+  "topEmotions": "Top Emotions",
+  "contextHighlights": "Context Highlights",
+  "notableEntries": "Notable Entries",
+  "moodTrend": "Mood Trend",
+  "weeklyReviewAvailable": "Your weekly review is ready!",
+  "weeklyReviewBody": "See how your week went — tap to view your summary.",
+  "averageSleep": "Avg. Sleep",
+  "exerciseDays": "Exercise Days",
+  "averageStress": "Avg. Stress",
+  "averageSleepQuality": "Sleep Quality",
+  "favoriteDays": "Favorite Days",
+  "favoriteNotes": "Favorite Notes",
+  "noDataForWeek": "No diary data for this week",
+  "reviewGeneratedFor": "Review for {weekLabel}",
+  "@reviewGeneratedFor": {
+    "placeholders": {
+      "weekLabel": { "type": "String" }
+    }
+  },
+  "monday": "Monday",
+  "tuesday": "Tuesday",
+  "wednesday": "Wednesday",
+  "thursday": "Thursday",
+  "friday": "Friday",
+  "saturday": "Saturday",
+  "sunday": "Sunday",
+  "weeklyScoreOverview": "Score Overview",
+  "streakAndProgress": "Streak & Progress"
 }

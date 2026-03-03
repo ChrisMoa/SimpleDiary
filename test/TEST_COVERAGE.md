@@ -1,6 +1,6 @@
 # Test Coverage
 
-**Total: 943+ passing tests** across 62 test files (+ 16 optional/skipped Supabase integration tests)
+**Total: 966+ passing tests** across 65 test files (+ 16 optional/skipped Supabase integration tests)
 
 Run all tests with:
 ```bash
@@ -47,7 +47,7 @@ flutter test test/core/ test/features/ test/l10n/ test/integration/
 
 | File | Tests | Covers |
 |------|-------|--------|
-| `notification_settings_test.dart` | 18 | NotificationSettings defaults (`fromEmpty` incl. smart reminder fields), `toMap`/`fromMap` (all fields incl. `maxSmartRemindersPerDay`/`quietHoursStartMinutes`/`quietHoursEndMinutes`, missing fields with defaults, backward compat), JSON round-trip, `copyWith` (partial/full/no-args/new fields), `toString` (time + quiet hours format), `quietHoursStart`/`quietHoursEnd` getters/setters (minutes↔TimeOfDay), list independence, map key completeness |
+| `notification_settings_test.dart` | 21 | NotificationSettings defaults (`fromEmpty` incl. smart reminder + weekly review fields), `toMap`/`fromMap` (all fields incl. `maxSmartRemindersPerDay`/`quietHoursStartMinutes`/`quietHoursEndMinutes`/`weeklyReviewEnabled`/`weeklyReviewDay`/`weeklyReviewTimeMinutes`, missing fields with defaults, backward compat), JSON round-trip, `copyWith` (partial/full/no-args/new fields/weekly review fields), `toString` (time + quiet hours + weekly review format), `quietHoursStart`/`quietHoursEnd`/`weeklyReviewTime` getters/setters (minutes↔TimeOfDay), list independence, map key completeness |
 | `biometric_settings_test.dart` | 10 | BiometricSettings defaults (`fromEmpty`), `toMap`/`fromMap` (all fields, missing fields with defaults), JSON round-trip, `copyWith` (partial/no-args), `toString`, map key completeness, zero timeout (immediate lock) |
 | `backup_settings_test.dart` | 30 | BackupSettings defaults (`fromEmpty`), `toMap`/`fromMap` (all fields incl. `cloudSyncEnabled`, missing fields with defaults), JSON round-trip, `copyWith` (partial/no-args/cloudSyncEnabled), `preferredTime` getter/setter (minutes↔TimeOfDay), `lastBackupDateTime` parsing (valid/null), `isBackupOverdue` (never/disabled/daily/weekly/monthly thresholds), `toString`, BackupFrequency enum (toJson/fromJson/unknown fallback) |
 
@@ -76,8 +76,9 @@ flutter test test/core/ test/features/ test/l10n/ test/integration/
 |------|-------|--------|
 | `smart_reminder_algorithm_test.dart` | 25 | `shouldSendReminder` (entry exists → false, max reached → false, quiet hours midnight-crossing → false, early morning → false, all conditions met → true, below max → true, boundary at end → true, boundary at start → false, exceeded max → false), `calculateIntensity` (0 → gentle, negative → gentle, 1 → normal, 2 → urgent, many → urgent), `isInQuietHours` (midnight-crossing after start/before end/outside, same-day inside/outside/at start/at end, equal start=end disables, midnight, end boundary), `ReminderIntensity` enum values |
 | `diary_status_service_test.dart` | 10 | `hasEntryForToday` (no entry → false, after mark → true, different day → false), `markEntryWritten` (stores ISO date), `getRemindersSentToday` (0 initially, preserves on same day, resets on new day), `incrementReminderCount` (single/multiple increments, increment after day reset starts from 1) |
+| `weekly_review_status_service_test.dart` | 13 | `isReviewDueForLastWeek` (true when empty, false after marking current previous week, true for older reviewed week, true when only year/week stored), `markReviewShown` (stores year+week, overwrites previous), `getLastReviewedWeek` (null initially, returns year+week after mark, null when partial data), `clear` (removes state, restores due status), full lifecycle (due→mark→not due→clear→due) |
 
-**Sources:** `lib/core/services/smart_reminder_algorithm.dart`, `lib/core/services/diary_status_service.dart`
+**Sources:** `lib/core/services/smart_reminder_algorithm.dart`, `lib/core/services/diary_status_service.dart`, `lib/core/services/weekly_review_status_service.dart`
 
 ---
 
@@ -170,6 +171,15 @@ flutter test test/core/ test/features/ test/l10n/ test/integration/
 | `data/repositories/habits_repository_test.dart` | 16 | **getCurrentStreak:** empty entries, consecutive completed days, streak breaks on missing day, skips non-due days for weekday habits. **getBestStreak:** empty entries, best streak across history. **getCompletionRate:** empty entries, correct rate for daily habit. **getHabitStats:** default stats for empty entries, total completions count. **getGridData:** empty habits, 365 days of data, completion ratio calculation. **getTodayProgress:** no habits due (1.0), correct ratio, all completed (1.0) |
 
 **Sources:** `lib/features/habits/data/models/habit.dart`, `habit_entry.dart`, `habit_frequency.dart`, `lib/features/habits/data/repositories/habits_repository.dart`
+
+### Weekly Review (`test/features/weekly_review/`)
+
+| File | Tests | Covers |
+|------|-------|--------|
+| `models/weekly_review_data_test.dart` | 24 | WeeklyReviewData construction (required fields, UUID auto-generation, defaults for optional fields), `primaryKeyValue` (returns id), `weekLabel` (formatted "CW XX / YYYY"), `toDbMap`/`fromDbMap` round-trip (all 16 columns, JSON-encoded fields), typed JSON accessors (`dailyScoresTyped`, `categoryAveragesTyped`, `permaAveragesTyped`, `topEmotionsTyped`, `contextSummaryTyped`, `moodTrendTyped`, `highlightsTyped`), `copyWith` (partial/full), `isoWeekNumber` (mid-year, early Jan, year boundary), `mondayOfWeek` (week 10, week 1, next-year week 1), schema validation (tableName, column count) |
+| `repositories/weekly_review_repository_test.dart` | 19 | **generateReview:** week boundaries (Monday–Sunday), empty data (zero scores, 0 completedDays), average score calculation, date filtering (excludes out-of-range days), daily scores array (7-day with gaps), category averages from legacy DayRating, PERMA+ averages from EnhancedDayRating wellbeing, top emotions extraction (frequency-sorted, max 5), context summary (sleep avg, sleep quality, exercise days, stress level), mood trend from quickMood positions, highlights (favorite days + notes). **previousWeek:** returns Monday of last completed week |
+
+**Sources:** `lib/features/weekly_review/data/models/weekly_review_data.dart`, `lib/features/weekly_review/data/repositories/weekly_review_repository.dart`
 
 ### Synchronization (`test/features/synchronization/`)
 
@@ -314,6 +324,7 @@ Workflow-level tests that verify multi-feature provider interactions using `Prov
 | Onboarding status & service | Covered | SharedPreferences persistence, all lifecycle states, demo mode flag |
 | Smart reminder algorithm | Covered | shouldSendReminder (all conditions), calculateIntensity, isInQuietHours (midnight-crossing, same-day, boundaries) |
 | Diary status service | Covered | SharedPreferences-based entry tracking, reminder counter with day-reset |
+| Weekly review status service | Covered | SharedPreferences-based due/shown tracking, mark/clear lifecycle, partial data handling |
 | Widget: NoteEditingPage | Covered | Form fields, category dropdown, checkbox toggle, save actions, editing pre-fill |
 | Widget: DiaryDayWizardPage | Covered | Loading shimmer, tab navigation, tab icons, SafeArea, view switching |
 | Dashboard granular providers | Covered | currentStreakProvider, todayLoggedProvider, weekAverageProvider: value extraction, default before load, selective rebuild |
@@ -322,6 +333,8 @@ Workflow-level tests that verify multi-feature provider interactions using `Prov
 | Integration: Diary entry workflow | Covered | Provider chain + wizard providers + enhanced rating reset |
 | Integration: Note search workflow | Covered | Full filteredNotesProvider chain with CRUD + filters |
 | Integration: Settings persistence | Covered | Cross-provider state + restart simulation |
+| Weekly review data model | Covered | Construction, serialization, JSON accessors, ISO week calculation, schema |
+| Weekly review repository | Covered | Review generation, aggregations (scores, PERMA+, emotions, context, mood, highlights) |
 | Integration: Export/import round-trip | Covered | Notes in diary days, encryption, large datasets |
 
 ### Not covered
