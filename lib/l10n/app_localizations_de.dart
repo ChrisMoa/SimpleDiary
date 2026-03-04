@@ -953,6 +953,21 @@ class AppLocalizationsDe extends AppLocalizations {
   String get testConnection => 'Verbindung testen';
 
   @override
+  String get autoSyncEnabled => 'Auto-Sync aktivieren';
+
+  @override
+  String get autoSyncDescription =>
+      'Automatisch mit Supabase synchronisieren, wenn Daten geändert werden (Notizen, Tagebucheinträge, Vorlagen).';
+
+  @override
+  String autoSyncLastSync(String time) {
+    return 'Zuletzt synchronisiert: $time';
+  }
+
+  @override
+  String get autoSyncNeverSynced => 'Nie synchronisiert';
+
+  @override
   String get pdfExport => 'PDF-Export';
 
   @override

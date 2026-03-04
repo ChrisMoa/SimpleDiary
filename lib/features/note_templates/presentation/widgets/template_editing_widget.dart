@@ -1,3 +1,4 @@
+import 'package:day_tracker/core/services/supabase_auto_sync_service.dart';
 import 'package:day_tracker/core/provider/theme_provider.dart';
 import 'package:day_tracker/features/note_templates/data/models/description_section.dart';
 import 'package:day_tracker/features/note_templates/data/models/note_template.dart';
@@ -468,6 +469,9 @@ class _TemplateEditingWidgetState extends ConsumerState<TemplateEditingWidget> {
         // Create new template
         ref.read(noteTemplateLocalDataProvider.notifier).addElement(_template);
       }
+
+      // Trigger auto-sync after save
+      SupabaseAutoSyncService.triggerSyncIfEnabled(ref);
 
       Navigator.of(context).pop();
 

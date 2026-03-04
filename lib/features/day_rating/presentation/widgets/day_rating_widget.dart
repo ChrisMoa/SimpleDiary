@@ -1,5 +1,6 @@
 import 'package:day_tracker/core/provider/theme_provider.dart';
 import 'package:day_tracker/core/services/diary_status_service.dart';
+import 'package:day_tracker/core/services/supabase_auto_sync_service.dart';
 import 'package:day_tracker/core/widgets/app_ui_kit.dart';
 import 'package:day_tracker/features/day_rating/data/models/day_rating.dart';
 import 'package:day_tracker/features/day_rating/data/models/diary_day.dart';
@@ -439,6 +440,7 @@ class _LegacyRatingBody extends ConsumerWidget {
 
     ref.read(diaryDayLocalDbDataProvider.notifier).addElement(diaryDay);
     DiaryStatusService.markEntryWritten();
+    SupabaseAutoSyncService.triggerSyncIfEnabled(ref);
     AppSnackBar.success(context, message: AppLocalizations.of(context)!.dayRatingSaved);
     ref.read(dayRatingsProvider.notifier).resetRatings();
   }
@@ -585,6 +587,7 @@ class _EnhancedRatingBody extends ConsumerWidget {
 
     ref.read(diaryDayLocalDbDataProvider.notifier).addElement(diaryDay);
     DiaryStatusService.markEntryWritten();
+    SupabaseAutoSyncService.triggerSyncIfEnabled(ref);
     AppSnackBar.success(context, message: AppLocalizations.of(context)!.dayRatingSaved);
     ref.read(enhancedDayRatingProvider.notifier).reset(selectedDate);
   }

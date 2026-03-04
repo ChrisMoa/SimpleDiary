@@ -487,6 +487,17 @@
   "supabaseUrl": "Supabase URL",
   "anonKey": "Anon Key",
   "testConnection": "Test Connection",
+  "autoSyncEnabled": "Enable auto-sync",
+  "autoSyncDescription": "Automatically sync to Supabase when data changes (notes, diary entries, templates).",
+  "autoSyncLastSync": "Last synced: {time}",
+  "@autoSyncLastSync": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "autoSyncNeverSynced": "Never synced",
   "pdfExport": "PDF Export",
   "pdfExportDescription": "Generate printable PDF reports with your diary entries, ratings, and statistics.",
   "quickExport": "Quick Export",

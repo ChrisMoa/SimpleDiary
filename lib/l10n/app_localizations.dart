@@ -1788,6 +1788,30 @@ abstract class AppLocalizations {
   /// **'Test Connection'**
   String get testConnection;
 
+  /// No description provided for @autoSyncEnabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable auto-sync'**
+  String get autoSyncEnabled;
+
+  /// No description provided for @autoSyncDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Automatically sync to Supabase when data changes (notes, diary entries, templates).'**
+  String get autoSyncDescription;
+
+  /// No description provided for @autoSyncLastSync.
+  ///
+  /// In en, this message translates to:
+  /// **'Last synced: {time}'**
+  String autoSyncLastSync(String time);
+
+  /// No description provided for @autoSyncNeverSynced.
+  ///
+  /// In en, this message translates to:
+  /// **'Never synced'**
+  String get autoSyncNeverSynced;
+
   /// No description provided for @pdfExport.
   ///
   /// In en, this message translates to:

@@ -175,8 +175,71 @@ class _SupabaseSettingsWidgetState
             },
           ),
         ),
+        const Divider(height: 1),
+        // Auto-sync toggle
+        _buildAutoSyncSection(theme, l10n),
       ],
     );
+  }
+
+  Widget _buildAutoSyncSection(ThemeData theme, AppLocalizations l10n) {
+    final settings = ref.watch(supabaseSettingsProvider);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SwitchListTile(
+          title: Text(l10n.autoSyncEnabled),
+          subtitle: Text(
+            l10n.autoSyncDescription,
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
+          ),
+          value: settings.autoSyncEnabled,
+          onChanged: settings.isConfigured
+              ? (value) {
+                  ref
+                      .read(supabaseSettingsProvider.notifier)
+                      .updateAutoSyncEnabled(value);
+                  ref.read(settingsProvider).activeUserSettings.supabaseSettings =
+                      ref.read(settingsProvider).activeUserSettings.supabaseSettings
+                          .copyWith(autoSyncEnabled: value);
+                  ref.read(settingsNotifierProvider).saveSettings().ignore();
+                }
+              : null,
+          secondary: Icon(
+            Icons.sync,
+            color: settings.isConfigured
+                ? theme.colorScheme.primary
+                : theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
+          ),
+        ),
+        if (settings.autoSyncEnabled) ...[
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Text(
+              settings.lastAutoSyncTimestamp != null
+                  ? l10n.autoSyncLastSync(
+                      _formatTimestamp(settings.lastAutoSyncTimestamp!))
+                  : l10n.autoSyncNeverSynced,
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: theme.colorScheme.onSurfaceVariant,
+              ),
+            ),
+          ),
+          AppSpacing.verticalSm,
+        ],
+      ],
+    );
+  }
+
+  String _formatTimestamp(String isoTimestamp) {
+    final dateTime = DateTime.tryParse(isoTimestamp);
+    if (dateTime == null) return isoTimestamp;
+    final local = dateTime.toLocal();
+    return '${local.day.toString().padLeft(2, '0')}.${local.month.toString().padLeft(2, '0')}.${local.year} '
+        '${local.hour.toString().padLeft(2, '0')}:${local.minute.toString().padLeft(2, '0')}';
   }
 
   Future<void> _testConnection() async {
