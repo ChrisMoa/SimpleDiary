@@ -281,6 +281,17 @@
   "supabaseUrl": "Supabase-URL",
   "anonKey": "Anon Key",
   "testConnection": "Verbindung testen",
+  "autoSyncEnabled": "Auto-Sync aktivieren",
+  "autoSyncDescription": "Automatisch mit Supabase synchronisieren, wenn Daten geändert werden (Notizen, Tagebucheinträge, Vorlagen).",
+  "autoSyncLastSync": "Zuletzt synchronisiert: {time}",
+  "@autoSyncLastSync": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "autoSyncNeverSynced": "Nie synchronisiert",
   "pdfExport": "PDF-Export",
   "pdfExportDescription": "Erstelle druckbare PDF-Berichte mit deinen Tagebucheinträgen, Bewertungen und Statistiken.",
   "quickExport": "Schnellexport",

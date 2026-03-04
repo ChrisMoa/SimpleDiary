@@ -281,6 +281,17 @@
   "supabaseUrl": "URL Supabase",
   "anonKey": "Clé Anonyme",
   "testConnection": "Tester la Connexion",
+  "autoSyncEnabled": "Activer la synchronisation automatique",
+  "autoSyncDescription": "Synchroniser automatiquement avec Supabase lorsque les données changent (notes, entrées de journal, modèles).",
+  "autoSyncLastSync": "Dernière synchronisation : {time}",
+  "@autoSyncLastSync": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "autoSyncNeverSynced": "Jamais synchronisé",
   "pdfExport": "Export PDF",
   "pdfExportDescription": "Générez des rapports PDF imprimables avec vos entrées de journal, évaluations et statistiques.",
   "quickExport": "Export Rapide",

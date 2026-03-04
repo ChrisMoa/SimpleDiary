@@ -1,6 +1,6 @@
 # Test Coverage
 
-**Total: 984+ passing tests** across 66 test files (+ 16 optional/skipped Supabase integration tests)
+**Total: 1001+ passing tests** across 67 test files (+ 16 optional/skipped Supabase integration tests)
 
 Run all tests with:
 ```bash
@@ -78,7 +78,9 @@ flutter test test/core/ test/features/ test/l10n/ test/integration/
 | `diary_status_service_test.dart` | 10 | `hasEntryForToday` (no entry → false, after mark → true, different day → false), `markEntryWritten` (stores ISO date), `getRemindersSentToday` (0 initially, preserves on same day, resets on new day), `incrementReminderCount` (single/multiple increments, increment after day reset starts from 1) |
 | `weekly_review_status_service_test.dart` | 13 | `isReviewDueForLastWeek` (true when empty, false after marking current previous week, true for older reviewed week, true when only year/week stored), `markReviewShown` (stores year+week, overwrites previous), `getLastReviewedWeek` (null initially, returns year+week after mark, null when partial data), `clear` (removes state, restores due status), full lifecycle (due→mark→not due→clear→due) |
 
-**Sources:** `lib/core/services/smart_reminder_algorithm.dart`, `lib/core/services/diary_status_service.dart`, `lib/core/services/weekly_review_status_service.dart`
+| `supabase_auto_sync_service_test.dart` | 1 | `resetDebounce` (clears last sync time without error) |
+
+**Sources:** `lib/core/services/smart_reminder_algorithm.dart`, `lib/core/services/diary_status_service.dart`, `lib/core/services/weekly_review_status_service.dart`, `lib/core/services/supabase_auto_sync_service.dart`
 
 ---
 
@@ -191,7 +193,7 @@ flutter test test/core/ test/features/ test/l10n/ test/integration/
 | `ics_file_provider_test.dart` | 13 | **IcsExportMetadata:** `toMap`/`fromMap`, null handling, missing noteCount. **IcsFileProvider:** `exportToString` (unencrypted with ICS metadata, encrypted), `exportPlainIcs` (raw ICS without JSON wrapper), `importFromIcs` (wrapped unencrypted/encrypted, plain ICS, missing password error). **Round-trips:** unencrypted, encrypted. Empty data export |
 | `json_serialization_test.dart` | 8 | DiaryDay list JSON round-trip (with ratings, empty, with notes), Note list JSON round-trip (timed, all-day), NoteTemplate list JSON round-trip (with sections), mixed data combined export, encryption readiness (UTF-8 encode/decode) |
 | `pdf_export_test.dart` | 68 | **DateRange factories:** `lastWeek` (7-day), `lastMonth` (30-day), `currentMonth` (1st of month), `all` (empty/non-empty), `forMonth` (non-leap/leap Feb, Dec, Jan, 30-day month), `forWeek` (Monday-Sunday, week 1, week 52). **DateRange edge cases:** equality/inequality, hashCode, single date, duplicate dates, currentMonth bounds. **File naming:** CW format (week), YYMM (currentMonth), 30d range (month), YYMMDD-YYMMDD (custom/all), `forWeek`/`forMonth` exact format, no spaces/special chars, zero-padded week numbers, year boundary. **PDF generation:** valid header (%PDF), empty data, ratings-only, notes-only, single-day range, size bounds (1KB-5MB). **PDF content verification (text extraction):** username on cover, "Diary Report" title, "Summary"/"Report Period"/"Daily Breakdown" section headers, category names, note titles, score values. **PDF page structure:** minimum 3 pages, more pages with diary entries. **Large datasets:** 30/90/365 days valid PDF, PDF size scales with data. **Edge cases:** all-day notes ("All day" text), max scores (20/20), min scores (4/20), year boundary ranges, favorite days, empty title fallback to category, all 5 note categories, notes outside range excluded from top activities, custom theme colors, empty ratings (Score: 0), multiple notes per day. **Date range filtering precision:** inclusive boundaries, exclusion of out-of-range days, empty range produces valid PDF |
-| `models/supabase_settings_test.dart` | 7 | SupabaseSettings construction (all fields, empty defaults), `toMap`/`fromMap` (round-trip, snake_case keys, missing keys), `copyWith` (partial/full) |
+| `models/supabase_settings_test.dart` | 22 | SupabaseSettings construction (all fields, empty defaults, auto-sync defaults, full settings with auto-sync), `isConfigured` (true when all set, false for each empty field, false for empty factory), `lastAutoSyncDateTime` (null when no timestamp, valid ISO parse, null for invalid), `toMap`/`fromMap` (round-trip, auto-sync round-trip, snake_case keys, missing keys defaults, missing auto-sync keys defaults), `copyWith` (partial/full, auto-sync fields, no-args preserves all) |
 | `models/sync_state_test.dart` | 14 | `SyncStatus` enum values (idle/syncing/success/error), `SyncPhase` enum values (16 phases incl. syncAttachments/uploadAttachmentFiles/downloadAttachments/downloadAttachmentFiles), `SyncState` construction (required fields, all fields), `message` getter (phase-based messages incl. attachment phases, error message, default failed), `copyWith` (preserves unchanged, updates all, no mutation), progress default, typical sync lifecycle, error state preserves progress, batch progress tracking |
 | `zip_export_service_test.dart` | 20 | **createZipExport:** basic structure (manifest.json + images/), manifest contains metadata + data keys, image files present in archive, empty attachments (no images dir), missing local file skipped gracefully, encrypted manifest (base64 data field), attachment filePaths in manifest. **extractZipImport:** round-trip (diary days + notes + attachments preserved), images restored to target dir, encrypted round-trip, missing images dir handled, manifest-only ZIP. **isZipFile:** valid ZIP detected, non-ZIP rejected, empty file rejected. **Edge cases:** multiple notes with attachments, attachment noteId grouping in archive, large manifest handling |
 | `supabase_batch_sync_test.dart` | 12 | **retryWithBackoff:** succeeds on first attempt, retries and succeeds on 2nd/3rd attempt, throws after max retries exceeded, custom max retries, correct return type, rethrows original exception type, delay increases between retries, maxRetries=1 means no retry. **SyncProgressCallback:** type definition. **Constants:** defaultBatchSize (50), defaultDelayBetweenBatches (100ms), defaultMaxRetries (3) |
@@ -316,7 +318,8 @@ Workflow-level tests that verify multi-feature provider interactions using `Prov
 | Goals & progress tracking | Covered | Goal models, progress calculation, streaks, repository logic |
 | Habits & habit entries | Covered | Models, frequency scheduling, streaks, completion rates, grid data |
 | Localization (ARB) | Covered | JSON validity, completeness, placeholders, ICU format |
-| Supabase settings | Covered | Model serialization |
+| Supabase settings | Covered | Model serialization, auto-sync fields, isConfigured, lastAutoSyncDateTime |
+| Supabase auto-sync service | Covered | resetDebounce |
 | Biometric settings | Covered | Settings model serialization, defaults, backwards compat |
 | Backup settings & metadata | Covered | Settings model, metadata model, overdue detection, frequency enum |
 | Supabase sync state | Covered | SyncStatus/SyncPhase enums (16 phases incl. attachment sync), SyncState construction/copyWith, phase-based messages, batch progress |

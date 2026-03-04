@@ -56,6 +56,20 @@ class SupabaseSettingsNotifier extends StateNotifier<SupabaseSettings> {
     LogWrapper.logger.d('Updating Supabase password');
     state = state.copyWith(password: password);
   }
+
+  void updateAutoSyncEnabled(bool enabled) {
+    LogWrapper.logger.d('Updating auto-sync enabled: $enabled');
+    state = state.copyWith(autoSyncEnabled: enabled);
+  }
+
+  void updateAutoSyncDebounceSeconds(int seconds) {
+    LogWrapper.logger.d('Updating auto-sync debounce: ${seconds}s');
+    state = state.copyWith(autoSyncDebounceSeconds: seconds);
+  }
+
+  void updateLastAutoSyncTimestamp(String timestamp) {
+    state = state.copyWith(lastAutoSyncTimestamp: timestamp);
+  }
 }
 
 // Supabase synchronization state provider

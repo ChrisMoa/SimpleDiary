@@ -1,4 +1,5 @@
 import 'package:day_tracker/core/log/logger_instance.dart';
+import 'package:day_tracker/core/services/supabase_auto_sync_service.dart';
 import 'package:day_tracker/core/utils/utils.dart';
 import 'package:day_tracker/features/notes/data/models/note.dart';
 import 'package:day_tracker/features/notes/domain/providers/category_local_db_provider.dart';
@@ -465,6 +466,9 @@ class _NoteEditingPageState extends ConsumerState<NoteEditingPage> {
     } else {
       ref.read(notesLocalDataProvider.notifier).addElement(note);
     }
+
+    // Trigger auto-sync after save
+    SupabaseAutoSyncService.triggerSyncIfEnabled(ref);
 
     /// update ui
     if (widget.navigateBack) {
