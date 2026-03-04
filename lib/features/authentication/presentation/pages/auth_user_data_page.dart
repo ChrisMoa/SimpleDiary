@@ -288,6 +288,8 @@ class _AuthUserDataPageState extends ConsumerState<AuthUserDataPage> {
 
         if (!success) {
           _showErrorDialog(l10n.invalidUsernameOrPassword);
+        } else if (mounted) {
+          Navigator.of(context).popUntil((route) => route.isFirst);
         }
       } else {
         // Create new user with password (instead of PIN)
@@ -298,6 +300,11 @@ class _AuthUserDataPageState extends ConsumerState<AuthUserDataPage> {
         );
 
         ref.read(userDataProvider.notifier).createUser(userData);
+
+        // Navigate back to MainPage so reactive routing takes over
+        if (mounted) {
+          Navigator.of(context).popUntil((route) => route.isFirst);
+        }
       }
     } on AssertionError catch (e) {
       _showErrorDialog('${e.message}');
