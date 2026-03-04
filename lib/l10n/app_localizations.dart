@@ -4259,6 +4259,54 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Arousal'**
   String get arousalLabel;
+
+  /// No description provided for @topActivities.
+  ///
+  /// In en, this message translates to:
+  /// **'Top Activities'**
+  String get topActivities;
+
+  /// No description provided for @activityDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'Activity Details'**
+  String get activityDetails;
+
+  /// No description provided for @totalNotes.
+  ///
+  /// In en, this message translates to:
+  /// **'Total Notes'**
+  String get totalNotes;
+
+  /// No description provided for @averageRating.
+  ///
+  /// In en, this message translates to:
+  /// **'Avg. Rating'**
+  String get averageRating;
+
+  /// No description provided for @associatedDays.
+  ///
+  /// In en, this message translates to:
+  /// **'Days'**
+  String get associatedDays;
+
+  /// No description provided for @dateRange.
+  ///
+  /// In en, this message translates to:
+  /// **'Date Range'**
+  String get dateRange;
+
+  /// No description provided for @notesInCategory.
+  ///
+  /// In en, this message translates to:
+  /// **'Notes'**
+  String get notesInCategory;
+
+  /// No description provided for @andMoreEntries.
+  ///
+  /// In en, this message translates to:
+  /// **'... and {count} more'**
+  String andMoreEntries(int count);
 }
 
 class _AppLocalizationsDelegate

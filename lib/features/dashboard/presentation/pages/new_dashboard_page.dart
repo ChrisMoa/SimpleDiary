@@ -7,6 +7,7 @@ import 'package:day_tracker/features/dashboard/presentation/widgets/quick_stats_
 import 'package:day_tracker/features/dashboard/presentation/widgets/week_overview_widget.dart';
 import 'package:day_tracker/core/navigation/drawer_index_provider.dart';
 import 'package:day_tracker/features/goals/presentation/widgets/goals_section.dart';
+import 'package:day_tracker/features/dashboard/presentation/widgets/top_activities_widget.dart';
 import 'package:day_tracker/features/habits/presentation/widgets/habits_summary_section.dart';
 import 'package:day_tracker/core/widgets/app_ui_kit.dart';
 import 'package:flutter/material.dart';
@@ -77,9 +78,10 @@ class _NewDashboardPageState extends ConsumerState<NewDashboardPage> {
         SliverToBoxAdapter(child: AppSpacing.verticalMd),
         SliverToBoxAdapter(child: AnimatedListItem(index: 3, child: const WeekOverviewWidget())),
         SliverToBoxAdapter(child: AnimatedListItem(index: 4, child: const FavoritesSectionWidget())),
+        SliverToBoxAdapter(child: AnimatedListItem(index: 5, child: const TopActivitiesWidget())),
         SliverToBoxAdapter(child: AppSpacing.verticalMd),
-        SliverToBoxAdapter(child: AnimatedListItem(index: 5, child: const StatisticsSection())),
-        SliverToBoxAdapter(child: AnimatedListItem(index: 6, child: const InsightsSection())),
+        SliverToBoxAdapter(child: AnimatedListItem(index: 6, child: const StatisticsSection())),
+        SliverToBoxAdapter(child: AnimatedListItem(index: 7, child: const InsightsSection())),
         const SliverToBoxAdapter(child: SizedBox(height: 80)), // Space for FAB
       ],
     );
@@ -101,6 +103,7 @@ class _NewDashboardPageState extends ConsumerState<NewDashboardPage> {
         const SliverToBoxAdapter(child: HabitsSummarySection()),
         SliverToBoxAdapter(child: AppSpacing.verticalMd),
         const SliverToBoxAdapter(child: FavoritesSectionWidget()),
+        const SliverToBoxAdapter(child: TopActivitiesWidget()),
         SliverToBoxAdapter(child: AppSpacing.verticalMd),
         const SliverToBoxAdapter(child: StatisticsSection()),
         const SliverToBoxAdapter(child: InsightsSection()),
@@ -131,6 +134,7 @@ class _NewDashboardPageState extends ConsumerState<NewDashboardPage> {
                   SliverToBoxAdapter(child: AppSpacing.verticalMd),
                   const SliverToBoxAdapter(child: WeekOverviewWidget()),
                   const SliverToBoxAdapter(child: FavoritesSectionWidget()),
+                  const SliverToBoxAdapter(child: TopActivitiesWidget()),
                   SliverToBoxAdapter(child: AppSpacing.verticalMd),
                   const SliverToBoxAdapter(child: StatisticsSection()),
                   const SliverToBoxAdapter(child: SizedBox(height: 80)), // Space for FAB

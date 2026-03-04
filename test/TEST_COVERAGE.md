@@ -1,6 +1,6 @@
 # Test Coverage
 
-**Total: 1001+ passing tests** across 67 test files (+ 16 optional/skipped Supabase integration tests)
+**Total: 1023+ passing tests** across 68 test files (+ 16 optional/skipped Supabase integration tests)
 
 Run all tests with:
 ```bash
@@ -115,8 +115,9 @@ flutter test test/core/ test/features/ test/l10n/ test/integration/
 | `models/dashboard_models_test.dart` | 25 | **StreakData:** empty factory, `isMilestone` (7/30/100/365 and non-milestones), `milestoneValue` (365/100/30/7/0), `copyWith`. **WeekStats:** construction, `copyWith`. **DayScore:** construction, `copyWith`, `moodQuadrant` (defaults null, construction with value, copyWith update). **Insight:** construction (with/without metadata), `copyWith`, InsightType enum values. **DashboardStats:** construction, `copyWith` |
 | `services/mood_correlation_service_test.dart` | 26 | **Correlation Analysis:** Pearson correlation (perfect positive/negative/no correlation/insufficient data/mismatched lengths/zero variance), activity-rating correlation (insufficient days/positive correlation detection/impact calculation/case-insensitive matching), strong correlation finding (empty/sorting/threshold filtering). **Day of Week Analysis:** best/worst day identification, day names, empty handling. **Trend Detection:** insufficient data/improving/declining/stable trends, all trends filtering. **Model Tests:** CorrelationResult (strengthLabel/isPositive), DayOfWeekAnalysis (variance threshold), TrendAnalysis (significance validation) |
 | `providers/granular_providers_test.dart` | 11 | **currentStreakProvider:** returns streak from stats, returns 0 before load, updates on invalidation. **todayLoggedProvider:** returns true/false, returns false before load. **weekAverageProvider:** returns average, returns 0.0 before load, handles zero average. **Selective rebuild:** all providers derive from shared source, consistent values across providers |
+| `repositories/activity_detail_repository_test.dart` | 22 | **getActivityStats:** empty notes/days returns zeros, correct stats for activity with notes (totalNotes/associatedDays/averageDayRating/firstOccurrence/lastOccurrence), zero average when days have no ratings, category from note when notes exist, fallback category when no notes match. **getNotesByActivity:** empty list for no matching notes, filters by activity name, sorted by date descending, empty input. **getDaysByActivity:** empty list when no notes match, returns diary days containing activity, sorted by date descending, handles multiple notes on same day, empty inputs. **extractTopActivitySummaries:** empty list for no notes, sorted by frequency, limits to top 5, includes category color, single note. **ActivityStats:** copyWith preserves/updates fields. **ActivitySummary:** construction with all fields |
 
-**Sources:** `lib/features/dashboard/data/repositories/dashboard_repository.dart`, `data/services/mood_correlation_service.dart`, `data/models/dashboard_stats.dart`, `streak_data.dart`, `week_stats.dart`, `insight.dart`, `lib/features/dashboard/domain/providers/dashboard_stats_provider.dart`
+**Sources:** `lib/features/dashboard/data/repositories/dashboard_repository.dart`, `activity_detail_repository.dart`, `data/services/mood_correlation_service.dart`, `data/models/dashboard_stats.dart`, `streak_data.dart`, `week_stats.dart`, `insight.dart`, `lib/features/dashboard/domain/providers/dashboard_stats_provider.dart`
 
 ### Day Rating (`test/features/day_rating/`)
 
@@ -331,6 +332,7 @@ Workflow-level tests that verify multi-feature provider interactions using `Prov
 | Weekly review status service | Covered | SharedPreferences-based due/shown tracking, mark/clear lifecycle, partial data handling |
 | Widget: NoteEditingPage | Covered | Form fields, category dropdown, checkbox toggle, save actions, editing pre-fill |
 | Widget: DiaryDayWizardPage | Covered | Loading shimmer, tab navigation, tab icons, SafeArea, view switching |
+| Activity detail repository | Covered | ActivityStats/ActivitySummary models, getActivityStats, getNotesByActivity, getDaysByActivity, extractTopActivitySummaries |
 | Dashboard granular providers | Covered | currentStreakProvider, todayLoggedProvider, weekAverageProvider: value extraction, default before load, selective rebuild |
 | Widget: NewDashboardPage | Covered | FAB, RefreshIndicator, responsive layout, custom stats rendering |
 | Widget: SettingsPage | Covered | Settings title, all 6 settings sections, category management, scrollability |
