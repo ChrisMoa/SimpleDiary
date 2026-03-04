@@ -771,5 +771,21 @@
   "moodNeutral": "Neutral",
   "moodPosition": "Stimmungsposition",
   "valenceLabel": "Valenz",
-  "arousalLabel": "Erregung"
+  "arousalLabel": "Erregung",
+
+  "topActivities": "Top-Aktivitäten",
+  "activityDetails": "Aktivitätsdetails",
+  "totalNotes": "Notizen gesamt",
+  "averageRating": "Durchschn.",
+  "associatedDays": "Tage",
+  "dateRange": "Zeitraum",
+  "notesInCategory": "Notizen",
+  "andMoreEntries": "... und {count} weitere",
+  "@andMoreEntries": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  }
 }

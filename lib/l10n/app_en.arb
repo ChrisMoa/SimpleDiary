@@ -1132,5 +1132,21 @@
   "moodNeutral": "Neutral",
   "moodPosition": "Mood Position",
   "valenceLabel": "Valence",
-  "arousalLabel": "Arousal"
+  "arousalLabel": "Arousal",
+
+  "topActivities": "Top Activities",
+  "activityDetails": "Activity Details",
+  "totalNotes": "Total Notes",
+  "averageRating": "Avg. Rating",
+  "associatedDays": "Days",
+  "dateRange": "Date Range",
+  "notesInCategory": "Notes",
+  "andMoreEntries": "... and {count} more",
+  "@andMoreEntries": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  }
 }

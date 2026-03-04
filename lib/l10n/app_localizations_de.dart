@@ -2319,4 +2319,30 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get arousalLabel => 'Erregung';
+
+  @override
+  String get topActivities => 'Top-Aktivitäten';
+
+  @override
+  String get activityDetails => 'Aktivitätsdetails';
+
+  @override
+  String get totalNotes => 'Notizen gesamt';
+
+  @override
+  String get averageRating => 'Durchschn.';
+
+  @override
+  String get associatedDays => 'Tage';
+
+  @override
+  String get dateRange => 'Zeitraum';
+
+  @override
+  String get notesInCategory => 'Notizen';
+
+  @override
+  String andMoreEntries(int count) {
+    return '... und $count weitere';
+  }
 }
