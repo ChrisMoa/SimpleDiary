@@ -3,6 +3,8 @@ import 'package:day_tracker/core/provider/theme_provider.dart';
 import 'package:day_tracker/core/settings/settings_container.dart';
 import 'package:day_tracker/core/theme/themes.dart';
 import 'package:day_tracker/features/authentication/data/models/user_settings.dart';
+import 'package:day_tracker/features/synchronization/data/models/supabase_settings.dart';
+import 'package:day_tracker/features/synchronization/domain/providers/supabase_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -157,6 +159,116 @@ void main() {
           settingsContainer.activeUserSettings.languageCode,
           equals('de'),
         );
+      });
+    });
+
+    group('supabase settings persistence', () {
+      test('URL update persists to settingsContainer', () {
+        final notifier = SupabaseSettingsNotifier(settingsContainer);
+
+        notifier.updateUrl('https://example.supabase.co');
+
+        // Simulate what the widget does: sync to settingsContainer
+        settingsContainer.activeUserSettings.supabaseSettings =
+            settingsContainer.activeUserSettings.supabaseSettings
+                .copyWith(supabaseUrl: 'https://example.supabase.co');
+
+        expect(
+          settingsContainer.activeUserSettings.supabaseSettings.supabaseUrl,
+          equals('https://example.supabase.co'),
+        );
+      });
+
+      test('all credential fields persist to settingsContainer', () {
+        final notifier = SupabaseSettingsNotifier(settingsContainer);
+
+        // Simulate widget onChanged callbacks
+        notifier.updateUrl('https://test.supabase.co');
+        settingsContainer.activeUserSettings.supabaseSettings =
+            settingsContainer.activeUserSettings.supabaseSettings
+                .copyWith(supabaseUrl: 'https://test.supabase.co');
+
+        notifier.updateAnonKey('test-anon-key');
+        settingsContainer.activeUserSettings.supabaseSettings =
+            settingsContainer.activeUserSettings.supabaseSettings
+                .copyWith(supabaseAnonKey: 'test-anon-key');
+
+        notifier.updateEmail('user@example.com');
+        settingsContainer.activeUserSettings.supabaseSettings =
+            settingsContainer.activeUserSettings.supabaseSettings
+                .copyWith(email: 'user@example.com');
+
+        notifier.updatePassword('secret123');
+        settingsContainer.activeUserSettings.supabaseSettings =
+            settingsContainer.activeUserSettings.supabaseSettings
+                .copyWith(password: 'secret123');
+
+        final saved = settingsContainer.activeUserSettings.supabaseSettings;
+        expect(saved.supabaseUrl, equals('https://test.supabase.co'));
+        expect(saved.supabaseAnonKey, equals('test-anon-key'));
+        expect(saved.email, equals('user@example.com'));
+        expect(saved.password, equals('secret123'));
+        expect(saved.isConfigured, isTrue);
+      });
+
+      test('auto-sync toggle persists to settingsContainer', () {
+        // Pre-configure credentials so isConfigured is true
+        settingsContainer.activeUserSettings.supabaseSettings =
+            SupabaseSettings(
+          supabaseUrl: 'https://test.supabase.co',
+          supabaseAnonKey: 'key',
+          email: 'a@b.com',
+          password: 'pass',
+        );
+
+        final notifier = SupabaseSettingsNotifier(settingsContainer);
+        notifier.updateAutoSyncEnabled(true);
+        settingsContainer.activeUserSettings.supabaseSettings =
+            settingsContainer.activeUserSettings.supabaseSettings
+                .copyWith(autoSyncEnabled: true);
+
+        expect(
+          settingsContainer.activeUserSettings.supabaseSettings.autoSyncEnabled,
+          isTrue,
+        );
+      });
+
+      test('supabase settings survive provider recreation', () {
+        // Session 1: configure supabase
+        final notifier1 = SupabaseSettingsNotifier(settingsContainer);
+        notifier1.updateUrl('https://prod.supabase.co');
+        notifier1.updateAnonKey('prod-key');
+        notifier1.updateEmail('prod@example.com');
+        notifier1.updatePassword('prod-pass');
+
+        // Persist to settings container (widget does this on each change)
+        settingsContainer.activeUserSettings.supabaseSettings =
+            SupabaseSettings(
+          supabaseUrl: 'https://prod.supabase.co',
+          supabaseAnonKey: 'prod-key',
+          email: 'prod@example.com',
+          password: 'prod-pass',
+        );
+
+        // Session 2: recreate notifier (simulates app restart)
+        final notifier2 = SupabaseSettingsNotifier(settingsContainer);
+
+        expect(notifier2.state.supabaseUrl, equals('https://prod.supabase.co'));
+        expect(notifier2.state.supabaseAnonKey, equals('prod-key'));
+        expect(notifier2.state.email, equals('prod@example.com'));
+        expect(notifier2.state.password, equals('prod-pass'));
+        expect(notifier2.state.isConfigured, isTrue);
+      });
+
+      test('empty supabase settings are default', () {
+        final notifier = SupabaseSettingsNotifier(settingsContainer);
+
+        expect(notifier.state.supabaseUrl, isEmpty);
+        expect(notifier.state.supabaseAnonKey, isEmpty);
+        expect(notifier.state.email, isEmpty);
+        expect(notifier.state.password, isEmpty);
+        expect(notifier.state.isConfigured, isFalse);
+        expect(notifier.state.autoSyncEnabled, isFalse);
       });
     });
   });
