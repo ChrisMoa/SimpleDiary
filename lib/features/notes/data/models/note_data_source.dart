@@ -27,4 +27,12 @@ class NoteDataSource extends CalendarDataSource {
   bool isAllDay(int index) {
     return getNote(index).isAllDay;
   }
+
+  @override
+  Appointment convertToCalendarAppointment(dynamic customObject) {
+    if (customObject is Note) {
+      return customObject.convertToCalendarAppointment();
+    }
+    throw ArgumentError('Expected a Note object, got ${customObject.runtimeType}');
+  }
 }
