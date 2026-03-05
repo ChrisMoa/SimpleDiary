@@ -36,6 +36,8 @@ class _SupabaseSettingsWidgetState
     });
   }
 
+  void _autoSave() => ref.read(settingsNotifierProvider).saveSettings().ignore();
+
   @override
   void dispose() {
     _urlController.dispose();
@@ -89,7 +91,7 @@ class _SupabaseSettingsWidgetState
               ref.read(settingsProvider).activeUserSettings.supabaseSettings =
                   ref.read(settingsProvider).activeUserSettings.supabaseSettings
                       .copyWith(supabaseUrl: value);
-              ref.read(settingsNotifierProvider).saveSettings().ignore();
+              _autoSave();
             },
           ),
         ),
@@ -120,7 +122,7 @@ class _SupabaseSettingsWidgetState
               ref.read(settingsProvider).activeUserSettings.supabaseSettings =
                   ref.read(settingsProvider).activeUserSettings.supabaseSettings
                       .copyWith(supabaseAnonKey: value);
-              ref.read(settingsNotifierProvider).saveSettings().ignore();
+              _autoSave();
             },
           ),
         ),
@@ -140,7 +142,7 @@ class _SupabaseSettingsWidgetState
               ref.read(settingsProvider).activeUserSettings.supabaseSettings =
                   ref.read(settingsProvider).activeUserSettings.supabaseSettings
                       .copyWith(email: value);
-              ref.read(settingsNotifierProvider).saveSettings().ignore();
+              _autoSave();
             },
           ),
         ),
@@ -171,7 +173,7 @@ class _SupabaseSettingsWidgetState
               ref.read(settingsProvider).activeUserSettings.supabaseSettings =
                   ref.read(settingsProvider).activeUserSettings.supabaseSettings
                       .copyWith(password: value);
-              ref.read(settingsNotifierProvider).saveSettings().ignore();
+              _autoSave();
             },
           ),
         ),
@@ -205,7 +207,7 @@ class _SupabaseSettingsWidgetState
                   ref.read(settingsProvider).activeUserSettings.supabaseSettings =
                       ref.read(settingsProvider).activeUserSettings.supabaseSettings
                           .copyWith(autoSyncEnabled: value);
-                  ref.read(settingsNotifierProvider).saveSettings().ignore();
+                  _autoSave();
                 }
               : null,
           secondary: Icon(
