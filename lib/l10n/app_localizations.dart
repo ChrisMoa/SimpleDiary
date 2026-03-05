@@ -936,11 +936,23 @@ abstract class AppLocalizations {
   /// **'Save Day Rating'**
   String get saveDayRating;
 
+  /// No description provided for @updateDayRating.
+  ///
+  /// In en, this message translates to:
+  /// **'Update Day Rating'**
+  String get updateDayRating;
+
   /// No description provided for @dayRatingSaved.
   ///
   /// In en, this message translates to:
   /// **'Day rating saved successfully!'**
   String get dayRatingSaved;
+
+  /// No description provided for @dayRatingUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'Day rating updated successfully!'**
+  String get dayRatingUpdated;
 
   /// No description provided for @notRated.
   ///

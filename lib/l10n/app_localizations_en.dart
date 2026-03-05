@@ -458,7 +458,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get saveDayRating => 'Save Day Rating';
 
   @override
+  String get updateDayRating => 'Update Day Rating';
+
+  @override
   String get dayRatingSaved => 'Day rating saved successfully!';
+
+  @override
+  String get dayRatingUpdated => 'Day rating updated successfully!';
 
   @override
   String get notRated => 'Not Rated';

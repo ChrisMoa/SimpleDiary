@@ -465,7 +465,13 @@ class AppLocalizationsFr extends AppLocalizations {
   String get saveDayRating => 'Enregistrer l\'Évaluation du Jour';
 
   @override
+  String get updateDayRating => 'Update Day Rating';
+
+  @override
   String get dayRatingSaved => 'Évaluation du jour enregistrée avec succès !';
+
+  @override
+  String get dayRatingUpdated => 'Day rating updated successfully!';
 
   @override
   String get notRated => 'Non Évalué';
