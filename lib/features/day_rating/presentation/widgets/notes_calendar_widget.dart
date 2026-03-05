@@ -317,6 +317,12 @@ class _NotesCalendarWidgetState extends ConsumerState<NotesCalendarWidget> {
     }
   }
 
+  /// Rounds a [DateTime] to the nearest 5-minute interval.
+  DateTime _roundToNearest5Minutes(DateTime dt) {
+    final rounded = (dt.minute / 5).round() * 5;
+    return DateTime(dt.year, dt.month, dt.day, dt.hour + rounded ~/ 60, rounded % 60);
+  }
+
   void _handleDragEnd(AppointmentDragEndDetails details) {
     try {
       LogWrapper.logger.d('Note drag ended: ${details.appointment}');
@@ -328,8 +334,8 @@ class _NotesCalendarWidgetState extends ConsumerState<NotesCalendarWidget> {
       final DateTime newEndTime;
 
       if (details.droppingTime != null) {
-        // Use dropping time for new start time
-        newStartTime = details.droppingTime!;
+        // Use dropping time for new start time, snapped to 5-min grid
+        newStartTime = _roundToNearest5Minutes(details.droppingTime!);
 
         // Calculate new end time based on original duration
         final duration = note.to.difference(note.from);
@@ -372,13 +378,13 @@ class _NotesCalendarWidgetState extends ConsumerState<NotesCalendarWidget> {
       // Get the appointment being resized
       final note = details.appointment as Note;
 
-      // Create updated note with new times
+      // Create updated note with new times, snapped to 5-min grid
       final updatedNote = Note(
         id: note.id,
         title: note.title,
         description: note.description,
-        from: details.startTime ?? note.from,
-        to: details.endTime ?? note.to,
+        from: _roundToNearest5Minutes(details.startTime ?? note.from),
+        to: _roundToNearest5Minutes(details.endTime ?? note.to),
         noteCategory: note.noteCategory,
         isAllDay: note.isAllDay,
       );
