@@ -110,6 +110,11 @@ class _LegacyRatingBody extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final ratings = ref.watch(dayRatingsProvider);
     final selectedDate = ref.watch(wizardSelectedDateProvider);
+    final existingDays = ref.watch(diaryDayLocalDbDataProvider);
+    final isEditing = existingDays.any((d) =>
+        d.day.year == selectedDate.year &&
+        d.day.month == selectedDate.month &&
+        d.day.day == selectedDate.day);
 
     final mediaQuery = MediaQuery.of(context);
     final screenWidth = mediaQuery.size.width;
@@ -117,6 +122,7 @@ class _LegacyRatingBody extends ConsumerWidget {
     final isLandscape = mediaQuery.orientation == Orientation.landscape;
 
     final enhanced = ref.watch(enhancedDayRatingProvider);
+    final l10n = AppLocalizations.of(context)!;
 
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -168,7 +174,7 @@ class _LegacyRatingBody extends ConsumerWidget {
               onPressed: () =>
                   _saveLegacyDay(context, ref, selectedDate, ratings),
               icon: const Icon(Icons.save),
-              label: Text(AppLocalizations.of(context)!.saveDayRating),
+              label: Text(isEditing ? l10n.updateDayRating : l10n.saveDayRating),
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 32,
@@ -430,6 +436,12 @@ class _LegacyRatingBody extends ConsumerWidget {
         .where((n) => n.title.isNotEmpty || n.description.isNotEmpty)
         .toList();
 
+    final existingDays = ref.read(diaryDayLocalDbDataProvider);
+    final isEditing = existingDays.any((d) =>
+        d.day.year == selectedDate.year &&
+        d.day.month == selectedDate.month &&
+        d.day.day == selectedDate.day);
+
     final isFavorite = ref.read(wizardDayFavoriteProvider);
     final diaryDay = DiaryDay(
       day: selectedDate,
@@ -438,10 +450,12 @@ class _LegacyRatingBody extends ConsumerWidget {
     );
     diaryDay.notes = validNotes;
 
-    ref.read(diaryDayLocalDbDataProvider.notifier).addElement(diaryDay);
+    ref.read(diaryDayLocalDbDataProvider.notifier).addOrUpdateElement(diaryDay);
     DiaryStatusService.markEntryWritten();
     SupabaseAutoSyncService.triggerSyncIfEnabled(ref);
-    AppSnackBar.success(context, message: AppLocalizations.of(context)!.dayRatingSaved);
+    final l10n = AppLocalizations.of(context)!;
+    AppSnackBar.success(context,
+        message: isEditing ? l10n.dayRatingUpdated : l10n.dayRatingSaved);
     ref.read(dayRatingsProvider.notifier).resetRatings();
   }
 }
@@ -459,6 +473,12 @@ class _EnhancedRatingBody extends ConsumerWidget {
     final enhanced = ref.watch(enhancedDayRatingProvider);
     final selectedDate = ref.watch(wizardSelectedDateProvider);
     final notifier = ref.read(enhancedDayRatingProvider.notifier);
+    final existingDays = ref.watch(diaryDayLocalDbDataProvider);
+    final isEditing = existingDays.any((d) =>
+        d.day.year == selectedDate.year &&
+        d.day.month == selectedDate.month &&
+        d.day.day == selectedDate.day);
+    final l10n = AppLocalizations.of(context)!;
 
     return SingleChildScrollView(
       padding: AppSpacing.paddingAllMd,
@@ -530,7 +550,7 @@ class _EnhancedRatingBody extends ConsumerWidget {
             onPressed: () =>
                 _saveEnhancedDay(context, ref, selectedDate, enhanced),
             icon: const Icon(Icons.save),
-            label: Text(AppLocalizations.of(context)!.saveDayRating),
+            label: Text(isEditing ? l10n.updateDayRating : l10n.saveDayRating),
             style: ElevatedButton.styleFrom(
               padding: const EdgeInsets.symmetric(
                 horizontal: 32,
@@ -559,6 +579,12 @@ class _EnhancedRatingBody extends ConsumerWidget {
         .where((n) => n.title.isNotEmpty || n.description.isNotEmpty)
         .toList();
 
+    final existingDays = ref.read(diaryDayLocalDbDataProvider);
+    final isEditing = existingDays.any((d) =>
+        d.day.year == selectedDate.year &&
+        d.day.month == selectedDate.month &&
+        d.day.day == selectedDate.day);
+
     // Also build legacy ratings from wellbeing so existing dashboard code works.
     // social → connection, productivity → achievement, sport → energy, food → (mood)
     final legacyRatings = [
@@ -585,10 +611,12 @@ class _EnhancedRatingBody extends ConsumerWidget {
     );
     diaryDay.notes = validNotes;
 
-    ref.read(diaryDayLocalDbDataProvider.notifier).addElement(diaryDay);
+    ref.read(diaryDayLocalDbDataProvider.notifier).addOrUpdateElement(diaryDay);
     DiaryStatusService.markEntryWritten();
     SupabaseAutoSyncService.triggerSyncIfEnabled(ref);
-    AppSnackBar.success(context, message: AppLocalizations.of(context)!.dayRatingSaved);
+    final l10n = AppLocalizations.of(context)!;
+    AppSnackBar.success(context,
+        message: isEditing ? l10n.dayRatingUpdated : l10n.dayRatingSaved);
     ref.read(enhancedDayRatingProvider.notifier).reset(selectedDate);
   }
 }

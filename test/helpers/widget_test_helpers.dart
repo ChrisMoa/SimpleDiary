@@ -72,6 +72,9 @@ class TestDbRepository<T extends DbEntity> extends DbRepository<T> {
 
   @override
   Future<void> addElement(T element) async {
+    final exists =
+        state.any((cur) => cur.primaryKeyValue == element.primaryKeyValue);
+    if (exists) return;
     state = [...state, element];
   }
 

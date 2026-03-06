@@ -313,6 +313,150 @@ void main() {
       });
     });
 
+    group('update existing day rating (issue #146)', () {
+      test('addOrUpdateElement replaces existing diary day on same date',
+          () async {
+        final container = ProviderContainer(overrides: [
+          diaryDayLocalDbDataProvider.overrideWith(
+            (_) => TestDbRepository<DiaryDay>(
+              tableName: DiaryDay.tableName,
+              columns: DiaryDay.columns,
+              fromMap: DiaryDay.fromDbMap,
+            ),
+          ),
+        ]);
+        addTearDown(container.dispose);
+
+        final date = DateTime(2026, 3, 5);
+
+        // First save
+        final firstDay = DiaryDay(day: date, ratings: [
+          DayRating(dayRating: DayRatings.social, score: 3),
+          DayRating(dayRating: DayRatings.productivity, score: 3),
+          DayRating(dayRating: DayRatings.sport, score: 3),
+          DayRating(dayRating: DayRatings.food, score: 3),
+        ]);
+        await container
+            .read(diaryDayLocalDbDataProvider.notifier)
+            .addOrUpdateElement(firstDay);
+
+        expect(container.read(diaryDayLocalDbDataProvider), hasLength(1));
+        expect(container.read(diaryDayLocalDbDataProvider).first.overallScore,
+            12);
+
+        // Second save on same date with updated ratings
+        final updatedDay = DiaryDay(day: date, ratings: [
+          DayRating(dayRating: DayRatings.social, score: 5),
+          DayRating(dayRating: DayRatings.productivity, score: 4),
+          DayRating(dayRating: DayRatings.sport, score: 5),
+          DayRating(dayRating: DayRatings.food, score: 4),
+        ]);
+        await container
+            .read(diaryDayLocalDbDataProvider.notifier)
+            .addOrUpdateElement(updatedDay);
+
+        // Should still have exactly 1 entry, not 2
+        final saved = container.read(diaryDayLocalDbDataProvider);
+        expect(saved, hasLength(1));
+        expect(saved.first.overallScore, 18);
+      });
+
+      test('addElement silently ignores duplicate date (pre-fix behavior)',
+          () async {
+        final container = ProviderContainer(overrides: [
+          diaryDayLocalDbDataProvider.overrideWith(
+            (_) => TestDbRepository<DiaryDay>(
+              tableName: DiaryDay.tableName,
+              columns: DiaryDay.columns,
+              fromMap: DiaryDay.fromDbMap,
+            ),
+          ),
+        ]);
+        addTearDown(container.dispose);
+
+        final date = DateTime(2026, 3, 5);
+
+        final firstDay = DiaryDay(day: date, ratings: defaultRatings);
+        await container
+            .read(diaryDayLocalDbDataProvider.notifier)
+            .addElement(firstDay);
+
+        expect(container.read(diaryDayLocalDbDataProvider), hasLength(1));
+
+        // addElement should silently ignore the second add
+        final secondDay = DiaryDay(day: date, ratings: [
+          DayRating(dayRating: DayRatings.social, score: 5),
+          DayRating(dayRating: DayRatings.productivity, score: 5),
+          DayRating(dayRating: DayRatings.sport, score: 5),
+          DayRating(dayRating: DayRatings.food, score: 5),
+        ]);
+        await container
+            .read(diaryDayLocalDbDataProvider.notifier)
+            .addElement(secondDay);
+
+        // Still 1 entry with original scores
+        final saved = container.read(diaryDayLocalDbDataProvider);
+        expect(saved, hasLength(1));
+        expect(saved.first.overallScore, 16); // Original defaultRatings: 4+3+5+4
+      });
+
+      test('update preserves notes associated with the day', () async {
+        final testNotes = [
+          makeTestNote(
+            title: 'Morning jog',
+            from: DateTime(2026, 3, 5, 7, 0),
+          ),
+        ];
+
+        final container = ProviderContainer(overrides: [
+          diaryDayLocalDbDataProvider.overrideWith(
+            (_) => TestDbRepository<DiaryDay>(
+              tableName: DiaryDay.tableName,
+              columns: DiaryDay.columns,
+              fromMap: DiaryDay.fromDbMap,
+            ),
+          ),
+          notesLocalDataProvider.overrideWith(
+            (_) => TestDbRepository<Note>(
+              tableName: Note.tableName,
+              columns: Note.columns,
+              fromMap: Note.fromDbMap,
+              initialData: testNotes,
+            ),
+          ),
+        ]);
+        addTearDown(container.dispose);
+
+        final date = DateTime(2026, 3, 5);
+
+        // Save day with notes
+        final firstDay = DiaryDay(day: date, ratings: defaultRatings);
+        firstDay.notes = testNotes;
+        await container
+            .read(diaryDayLocalDbDataProvider.notifier)
+            .addOrUpdateElement(firstDay);
+
+        // Update ratings
+        final updatedDay = DiaryDay(day: date, ratings: [
+          DayRating(dayRating: DayRatings.social, score: 5),
+          DayRating(dayRating: DayRatings.productivity, score: 5),
+          DayRating(dayRating: DayRatings.sport, score: 5),
+          DayRating(dayRating: DayRatings.food, score: 5),
+        ]);
+        updatedDay.notes = testNotes;
+        await container
+            .read(diaryDayLocalDbDataProvider.notifier)
+            .addOrUpdateElement(updatedDay);
+
+        // Notes should still be associated via diaryDayFullDataProvider
+        final fullDays = container.read(diaryDayFullDataProvider);
+        expect(fullDays, hasLength(1));
+        expect(fullDays.first.notes, hasLength(1));
+        expect(fullDays.first.notes.first.title, 'Morning jog');
+        expect(fullDays.first.overallScore, 20);
+      });
+    });
+
     group('enhanced day rating provider integration', () {
       test('enhanced rating resets when wizard date changes', () {
         final container = ProviderContainer(overrides: [

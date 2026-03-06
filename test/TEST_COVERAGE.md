@@ -1,6 +1,6 @@
 # Test Coverage
 
-**Total: 1023+ passing tests** across 68 test files (+ 16 optional/skipped Supabase integration tests)
+**Total: 1026+ passing tests** across 68 test files (+ 16 optional/skipped Supabase integration tests)
 
 Run all tests with:
 ```bash
@@ -266,7 +266,7 @@ Workflow-level tests that verify multi-feature provider interactions using `Prov
 
 | File | Tests | Covers |
 |------|-------|--------|
-| `diary_entry_workflow_test.dart` | 9 | **Provider chain:** DayRatingsNotifier updates, DiaryDay construction + save, `diaryDayFullDataProvider` note association, `isDiaryOfDayCompleteProvider` (complete/empty). **Wizard providers:** `wizardDayNotesProvider` date filtering, dynamic note addition, `createEmptyNoteProvider` defaults. **Enhanced rating:** resets on date change |
+| `diary_entry_workflow_test.dart` | 12 | **Provider chain:** DayRatingsNotifier updates, DiaryDay construction + save, `diaryDayFullDataProvider` note association, `isDiaryOfDayCompleteProvider` (complete/empty). **Wizard providers:** `wizardDayNotesProvider` date filtering, dynamic note addition, `createEmptyNoteProvider` defaults. **Enhanced rating:** resets on date change. **Update existing day (issue #146):** `addOrUpdateElement` replaces existing diary day on same date, `addElement` silently ignores duplicate date, update preserves associated notes |
 
 **Sources:** `lib/features/day_rating/domain/providers/diary_wizard_providers.dart`, `diary_day_local_db_provider.dart`
 
