@@ -387,10 +387,10 @@ class _MainPageState extends ConsumerState<MainPage> {
 
   Future<void> _decryptDatabase(UserData oldUserData, UserData newUserData) async {
     // Encrypt old database if we have a valid user
-    if (oldUserData.username.isNotEmpty && oldUserData.clearPassword.isNotEmpty) {
+    if (oldUserData.username.isNotEmpty && oldUserData.sessionEncryptionKey.isNotEmpty) {
       try {
         LogWrapper.logger.i('Generating encryption key for user ${oldUserData.username}');
-        String encryptionKey = PasswordAuthService.getDatabaseEncryptionKey(oldUserData.clearPassword, oldUserData.salt);
+        String encryptionKey = oldUserData.sessionEncryptionKey;
 
         if (encryptionKey.isNotEmpty) {
           var aesEncryptor = AesEncryptor(encryptionKey: encryptionKey);
@@ -429,10 +429,10 @@ class _MainPageState extends ConsumerState<MainPage> {
     }
 
     // Decrypt new database if we have a valid user
-    if (newUserData.username.isNotEmpty && newUserData.clearPassword.isNotEmpty) {
+    if (newUserData.username.isNotEmpty && newUserData.sessionEncryptionKey.isNotEmpty) {
       try {
         LogWrapper.logger.i('Generating decryption key for user ${newUserData.username}');
-        String encryptionKey = PasswordAuthService.getDatabaseEncryptionKey(newUserData.clearPassword, newUserData.salt);
+        String encryptionKey = newUserData.sessionEncryptionKey;
 
         if (encryptionKey.isNotEmpty) {
           // Change database file to new user

@@ -24,11 +24,17 @@ class UserDataProvider extends StateNotifier<UserData> {
     bool userExists = _settings.checkIfUserExists(userData.username);
     assert(!userExists, '${userData.username} already exists in the database');
 
-    // Store original clear password
-    String originalPassword = userData.clearPassword;
+    // Read raw password from constructor parameter, then discard
+    final rawPassword = userData.initialPassword;
 
     // Hash password and generate salt
-    final passwordData = PasswordAuthService.hashPassword(originalPassword);
+    final passwordData = PasswordAuthService.hashPassword(rawPassword);
+
+    // Derive encryption key (never store raw password)
+    final encryptionKey = rawPassword.isNotEmpty
+        ? PasswordAuthService.getDatabaseEncryptionKey(
+            rawPassword, passwordData['salt']!)
+        : '';
 
     var savedUser = UserData(
       username: userData.username,
@@ -45,10 +51,11 @@ class UserDataProvider extends StateNotifier<UserData> {
     _settings.userSettings.add(newUserSettings);
     _settings.lastLoggedInUsername = userData.username;
     _settings.activeUserSettings = newUserSettings;
-    _settings.activeUserSettings.savedUserData.clearPassword = originalPassword;
+    _settings.activeUserSettings.savedUserData.sessionEncryptionKey =
+        encryptionKey;
     _settings.saveSettings();
 
-    // Create a new UserData for state with clearPassword
+    // Create session state with derived encryption key (not raw password)
     UserData sessionUser = UserData(
       username: savedUser.username,
       password: savedUser.password,
@@ -56,7 +63,7 @@ class UserDataProvider extends StateNotifier<UserData> {
       email: savedUser.email,
       userId: savedUser.userId,
       isLoggedIn: true,
-      clearPassword: originalPassword,
+      sessionEncryptionKey: encryptionKey,
     );
 
     state = sessionUser;
@@ -80,7 +87,13 @@ class UserDataProvider extends StateNotifier<UserData> {
       return false;
     }
 
-    // Password is valid, create session user data
+    // Derive encryption key from raw password, then discard raw password
+    final encryptionKey = password.isNotEmpty
+        ? PasswordAuthService.getDatabaseEncryptionKey(
+            password, savedUserData.salt)
+        : '';
+
+    // Create session state with derived key (not raw password)
     var stateUserData = UserData(
       username: savedUserData.username,
       password: savedUserData.password,
@@ -88,13 +101,14 @@ class UserDataProvider extends StateNotifier<UserData> {
       email: savedUserData.email,
       userId: savedUserData.userId,
       isLoggedIn: true,
-      clearPassword: password, // Store cleartext password for session
+      sessionEncryptionKey: encryptionKey,
     );
 
     state = stateUserData;
     _settings.lastLoggedInUsername = stateUserData.username;
     _settings.activeUserSettings = _settings.getUserSettings();
-    _settings.activeUserSettings.savedUserData.clearPassword = password;
+    _settings.activeUserSettings.savedUserData.sessionEncryptionKey =
+        encryptionKey;
     _settings.saveSettings();
     LogWrapper.logger.i('logged in as ${state.username}');
     return true;
@@ -111,18 +125,19 @@ class UserDataProvider extends StateNotifier<UserData> {
                 userSetting.savedUserData.username == oldUsername)
         .savedUserData;
 
-    // Store original clear password if available
-    String originalPassword = userData.clearPassword.isNotEmpty
-        ? userData.clearPassword
-        : state.clearPassword;
+    // Check if password is being changed
+    final newRawPassword = userData.initialPassword;
+    String encryptionKey = state.sessionEncryptionKey;
 
     // Update password if new one provided
-    if (userData.clearPassword.isNotEmpty &&
-        userData.clearPassword != state.clearPassword) {
+    if (newRawPassword.isNotEmpty) {
       final passwordData =
-          PasswordAuthService.hashPassword(userData.clearPassword);
+          PasswordAuthService.hashPassword(newRawPassword);
       savedUserData.password = passwordData['hashedPassword']!;
       savedUserData.salt = passwordData['salt']!;
+      // Derive new encryption key from new password
+      encryptionKey = PasswordAuthService.getDatabaseEncryptionKey(
+          newRawPassword, passwordData['salt']!);
     }
 
     // Update username
@@ -133,7 +148,8 @@ class UserDataProvider extends StateNotifier<UserData> {
 
     // update saved user
     _settings.activeUserSettings.savedUserData = savedUserData;
-    _settings.activeUserSettings.savedUserData.clearPassword = originalPassword;
+    _settings.activeUserSettings.savedUserData.sessionEncryptionKey =
+        encryptionKey;
     _settings.lastLoggedInUsername = userData.username;
     var existingUserIndex = _settings.userSettings.indexWhere(
         (userSetting) => userSetting == _settings.activeUserSettings);
@@ -143,7 +159,7 @@ class UserDataProvider extends StateNotifier<UserData> {
     }
     _settings.saveSettings();
 
-    // update state user with clear password
+    // update state user with derived encryption key
     UserData updatedStateUser = UserData(
       username: savedUserData.username,
       password: savedUserData.password,
@@ -151,7 +167,7 @@ class UserDataProvider extends StateNotifier<UserData> {
       email: savedUserData.email,
       userId: savedUserData.userId,
       isLoggedIn: true,
-      clearPassword: originalPassword,
+      sessionEncryptionKey: encryptionKey,
     );
 
     state = updatedStateUser;
@@ -168,7 +184,7 @@ class UserDataProvider extends StateNotifier<UserData> {
       email: state.email,
       userId: state.userId,
       isLoggedIn: false,
-      clearPassword: state.clearPassword,
+      sessionEncryptionKey: state.sessionEncryptionKey,
     );
   }
 
@@ -244,14 +260,13 @@ class UserDataProvider extends StateNotifier<UserData> {
 
   // Helper method to get database encryption key for current user
   String getDatabaseEncryptionKey() {
-    if (state.username.isEmpty || state.clearPassword.isEmpty) {
+    if (state.username.isEmpty || state.sessionEncryptionKey.isEmpty) {
       LogWrapper.logger
           .e('Cannot generate encryption key: invalid credentials');
       return '';
     }
 
-    return PasswordAuthService.getDatabaseEncryptionKey(
-        state.clearPassword, state.salt);
+    return state.sessionEncryptionKey;
   }
 }
 

@@ -1,3 +1,4 @@
+import 'package:day_tracker/core/authentication/password_auth_service.dart';
 import 'package:day_tracker/core/log/logger_instance.dart';
 import 'package:day_tracker/core/services/biometric_service.dart';
 import 'package:day_tracker/core/settings/settings_provider.dart';
@@ -203,20 +204,24 @@ class _BiometricSettingsWidgetState
         return;
       }
 
+      // Prompt user for password since raw password is not stored in memory
+      final password = await _promptForPassword(l10n);
+      if (password == null) return; // cancelled
+
       final userData = ref.read(userDataProvider);
-      if (userData.clearPassword.isNotEmpty) {
-        await _biometricService.storeCredentials(
-          userData.username,
-          userData.clearPassword,
-        );
-      } else {
-        LogWrapper.logger
-            .e('Cannot store biometric credentials: no clear password');
+      final isValid = PasswordAuthService.verifyPassword(
+        password, userData.password, userData.salt);
+      if (!isValid) {
         if (mounted) {
           AppSnackBar.error(context, message: l10n.biometricEnrollFailed);
         }
         return;
       }
+
+      await _biometricService.storeCredentials(
+        userData.username,
+        password,
+      );
 
       if (mounted) {
         AppSnackBar.success(context, message: l10n.biometricEnrollSuccess);
@@ -246,5 +251,33 @@ class _BiometricSettingsWidgetState
     } else {
       AppSnackBar.error(context, message: l10n.biometricTestFailed);
     }
+  }
+
+  Future<String?> _promptForPassword(AppLocalizations l10n) async {
+    final controller = TextEditingController();
+    return showDialog<String>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(l10n.password),
+        content: TextField(
+          controller: controller,
+          obscureText: true,
+          autofocus: true,
+          decoration: InputDecoration(
+            hintText: l10n.password,
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(l10n.cancel),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, controller.text),
+            child: Text(l10n.ok),
+          ),
+        ],
+      ),
+    );
   }
 }
