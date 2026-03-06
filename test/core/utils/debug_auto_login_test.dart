@@ -54,10 +54,10 @@ void main() {
     });
 
     group('hasValidCredentials', () {
-      test('returns true with valid username and password >= 8 chars', () {
+      test('returns true with valid username and password >= 12 chars', () {
         dotenv.testLoad(mergeWith: {
           'DEBUG_USERNAME': 'testuser',
-          'DEBUG_PASSWORD': 'testpass123',
+          'DEBUG_PASSWORD': 'testpass12345',
         });
         expect(DebugAutoLogin.hasValidCredentials, true);
       });
@@ -65,19 +65,19 @@ void main() {
       test('returns false with empty username', () {
         dotenv.testLoad(mergeWith: {
           'DEBUG_USERNAME': '',
-          'DEBUG_PASSWORD': 'testpass123',
+          'DEBUG_PASSWORD': 'testpass12345',
         });
         expect(DebugAutoLogin.hasValidCredentials, false);
       });
 
       test('returns false with no username set', () {
         dotenv.testLoad(mergeWith: {
-          'DEBUG_PASSWORD': 'testpass123',
+          'DEBUG_PASSWORD': 'testpass12345',
         });
         expect(DebugAutoLogin.hasValidCredentials, false);
       });
 
-      test('returns false with short password (< 8 chars)', () {
+      test('returns false with short password (< 12 chars)', () {
         dotenv.testLoad(mergeWith: {
           'DEBUG_USERNAME': 'testuser',
           'DEBUG_PASSWORD': 'short',
@@ -93,12 +93,20 @@ void main() {
         expect(DebugAutoLogin.hasValidCredentials, false);
       });
 
-      test('returns true with password exactly 8 chars', () {
+      test('returns true with password exactly 12 chars', () {
         dotenv.testLoad(mergeWith: {
           'DEBUG_USERNAME': 'testuser',
-          'DEBUG_PASSWORD': '12345678',
+          'DEBUG_PASSWORD': '123456789012',
         });
         expect(DebugAutoLogin.hasValidCredentials, true);
+      });
+
+      test('returns false with password of 11 chars', () {
+        dotenv.testLoad(mergeWith: {
+          'DEBUG_USERNAME': 'testuser',
+          'DEBUG_PASSWORD': '12345678901',
+        });
+        expect(DebugAutoLogin.hasValidCredentials, false);
       });
     });
   });

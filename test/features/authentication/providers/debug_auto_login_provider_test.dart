@@ -40,7 +40,7 @@ void main() {
         'PROJECT_NAME': 'test_project',
         'DEBUG_AUTO_LOGIN': 'true',
         'DEBUG_USERNAME': 'testuser',
-        'DEBUG_PASSWORD': 'testpass123',
+        'DEBUG_PASSWORD': 'testpass12345',
         'DEBUG_EMAIL': 'test@test.com',
       });
 
@@ -49,7 +49,7 @@ void main() {
 
       expect(provider.debugState.isLoggedIn, true);
       expect(provider.debugState.username, 'testuser');
-      expect(provider.debugState.clearPassword, 'testpass123');
+      expect(provider.debugState.clearPassword, 'testpass12345');
       expect(settingsContainer.checkIfUserExists('testuser'), true);
     });
 
@@ -58,7 +58,7 @@ void main() {
         'PROJECT_NAME': 'test_project',
         'DEBUG_AUTO_LOGIN': 'true',
         'DEBUG_USERNAME': 'testuser',
-        'DEBUG_PASSWORD': 'testpass123',
+        'DEBUG_PASSWORD': 'testpass12345',
         'DEBUG_EMAIL': 'test@test.com',
       });
 
@@ -78,7 +78,7 @@ void main() {
 
       expect(provider2.debugState.isLoggedIn, true);
       expect(provider2.debugState.username, 'testuser');
-      expect(provider2.debugState.clearPassword, 'testpass123');
+      expect(provider2.debugState.clearPassword, 'testpass12345');
     });
 
     test('does nothing when auto-login is disabled', () {
@@ -86,7 +86,7 @@ void main() {
         'PROJECT_NAME': 'test_project',
         'DEBUG_AUTO_LOGIN': 'false',
         'DEBUG_USERNAME': 'testuser',
-        'DEBUG_PASSWORD': 'testpass123',
+        'DEBUG_PASSWORD': 'testpass12345',
       });
 
       final provider = UserDataProvider(settingsContainer);
@@ -100,7 +100,7 @@ void main() {
       dotenv.testLoad(mergeWith: {
         'PROJECT_NAME': 'test_project',
         'DEBUG_USERNAME': 'testuser',
-        'DEBUG_PASSWORD': 'testpass123',
+        'DEBUG_PASSWORD': 'testpass12345',
       });
 
       final provider = UserDataProvider(settingsContainer);
@@ -128,7 +128,7 @@ void main() {
         'PROJECT_NAME': 'test_project',
         'DEBUG_AUTO_LOGIN': 'true',
         'DEBUG_USERNAME': '',
-        'DEBUG_PASSWORD': 'testpass123',
+        'DEBUG_PASSWORD': 'testpass12345',
       });
 
       final provider = UserDataProvider(settingsContainer);

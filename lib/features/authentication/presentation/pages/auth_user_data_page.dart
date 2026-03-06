@@ -1,3 +1,4 @@
+import 'package:day_tracker/core/authentication/password_validator.dart';
 import 'package:day_tracker/core/settings/settings_provider.dart';
 import 'package:day_tracker/features/authentication/data/models/user_data.dart';
 import 'package:day_tracker/features/authentication/domain/providers/user_data_provider.dart';
@@ -121,6 +122,14 @@ class _AuthUserDataPageState extends ConsumerState<AuthUserDataPage> {
         if (value == null || value.isEmpty) {
           return l10n.pleaseEnterUsername;
         }
+        if (!_isLogin) {
+          if (value.length < 3) {
+            return l10n.usernameMinLength;
+          }
+          if (!RegExp(r'^[\w\s\-]+$').hasMatch(value)) {
+            return l10n.usernameInvalidChars;
+          }
+        }
         return null;
       },
     );
@@ -154,13 +163,13 @@ class _AuthUserDataPageState extends ConsumerState<AuthUserDataPage> {
         },
       ),
       validator: (value) {
-        if (value == null || value.isEmpty) {
-          return l10n.pleaseEnterPassword;
+        if (_isLogin) {
+          if (value == null || value.isEmpty) {
+            return l10n.pleaseEnterPassword;
+          }
+          return null;
         }
-        if (!_isLogin && value.length < 8) {
-          return l10n.passwordMinLength;
-        }
-        return null;
+        return PasswordValidator.validate(value, l10n);
       },
     );
   }

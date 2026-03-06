@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:day_tracker/core/settings/settings_container.dart';
 import 'package:day_tracker/core/utils/utils.dart';
+import 'package:flutter/foundation.dart';
 import 'package:logger/logger.dart';
 
 class LogWrapper {
@@ -28,15 +29,14 @@ class LogWrapper {
   }
 
   static Logger logger = Logger(
-    level: Level.trace,
+    level: kDebugMode ? Level.trace : Level.warning,
     output: ConsoleOutput(),
     printer: PrettyPrinter(
-      // printTime: true,
       noBoxingByDefault: true,
-      methodCount: 2, // Number of method calls to display
-      errorMethodCount: 3, // Number of method calls to display for errors
-      lineLength: 80, // Width of log output
-      colors: true, // Colorize log messages
+      methodCount: 2,
+      errorMethodCount: 3,
+      lineLength: 80,
+      colors: true,
     ),
   );
 }

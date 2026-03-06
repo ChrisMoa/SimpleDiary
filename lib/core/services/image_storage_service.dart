@@ -7,6 +7,8 @@ import 'package:day_tracker/features/notes/data/models/note_attachment.dart';
 import 'package:path/path.dart' as p;
 
 class ImageStorageService {
+  static const allowedExtensions = {'.jpg', '.jpeg', '.png', '.gif', '.webp'};
+
   Directory _imagesDir() {
     // ignore: deprecated_member_use
     final basePath = settingsContainer.applicationDocumentsPath;
@@ -25,9 +27,14 @@ class ImageStorageService {
       noteDir.createSync(recursive: true);
     }
 
-    final ext = p.extension(sourceFile.path).isNotEmpty
-        ? p.extension(sourceFile.path)
-        : '.jpg';
+    final rawExt = p.extension(sourceFile.path).toLowerCase();
+    final ext = rawExt.isNotEmpty ? rawExt : '.jpg';
+    if (!allowedExtensions.contains(ext)) {
+      throw ArgumentError(
+        'Unsupported image file extension: $ext. '
+        'Allowed: ${allowedExtensions.join(', ')}',
+      );
+    }
     final attachmentId = Utils.uuid.v4();
     final destPath = p.join(noteDir.path, '$attachmentId$ext');
     final destFile = await sourceFile.copy(destPath);

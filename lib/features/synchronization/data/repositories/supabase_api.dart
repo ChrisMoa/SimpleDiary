@@ -34,6 +34,12 @@ class SupabaseApi {
 
   // Initialize Supabase client
   Future<void> initialize(String url, String anonKey) async {
+    if (!url.startsWith('https://')) {
+      throw ArgumentError(
+        'Supabase URL must use HTTPS. Got: $url',
+      );
+    }
+
     try {
       if (!_initialized) {
         LogWrapper.logger.i('Initializing Supabase with URL: $url');

@@ -1,6 +1,6 @@
 # Test Coverage
 
-**Total: 1026+ passing tests** across 68 test files (+ 16 optional/skipped Supabase integration tests)
+**Total: 1042+ passing tests** across 71 test files (+ 16 optional/skipped Supabase integration tests)
 
 Run all tests with:
 ```bash
@@ -16,8 +16,9 @@ flutter test test/core/ test/features/ test/l10n/ test/integration/
 | File | Tests | Covers |
 |------|-------|--------|
 | `password_auth_service_test.dart` | 15 | PBKDF2 password hashing, salt generation (32-byte random), password verification (correct/wrong/empty/special chars/unicode), database encryption key derivation (consistency, differs from hash), base64 output validation |
+| `password_validator_test.dart` | 8 | **strengthScore:** empty (0), lowercase-only (2), fully compliant (5), missing special char (4), missing number+special (3), short password (4). **Validation logic:** minLength constant (12), strong password criteria, rejection of passwords missing uppercase/lowercase/number/special char, short password rejection |
 
-**Source:** `lib/core/authentication/password_auth_service.dart`
+**Sources:** `lib/core/authentication/password_auth_service.dart`, `lib/core/authentication/password_validator.dart`
 
 ### Database (`test/core/database/`)
 
@@ -31,9 +32,17 @@ flutter test test/core/ test/features/ test/l10n/ test/integration/
 
 | File | Tests | Covers |
 |------|-------|--------|
-| `aes_encryptor_test.dart` | 14 | AES-256-CBC initialization (valid key, short key padding), string encrypt/decrypt round-trip (plain text, unicode), base64 encrypt/decrypt (round-trip, random IV verification, long text, JSON data), invalid data handling, wrong key detection, file encrypt/decrypt round-trip, IV prepending |
+| `aes_encryptor_test.dart` | 14 | AES-256-CBC initialization (valid key, short key padding), string encrypt/decrypt round-trip with random IV (plain text, unicode), base64 encrypt/decrypt (round-trip, random IV verification, long text, JSON data), invalid data handling, wrong key detection, file encrypt/decrypt round-trip, IV prepending |
 
 **Source:** `lib/core/encryption/aes_encryptor.dart`
+
+### Security (`test/core/security/`)
+
+| File | Tests | Covers |
+|------|-------|--------|
+| `security_hardening_test.dart` | 10 | **AES random IV (#161):** encryptString produces different output for same input, encryptString/decryptString round-trip with random IV, decryptString rejects short data. **HTTPS enforcement (#158):** SupabaseApi.initialize rejects HTTP URL, SupabaseSettings.isConfigured rejects HTTP/accepts HTTPS. **Credential encryption (#153):** Supabase email/password encrypted in serialized map, credentials survive round-trip, backward compat with unencrypted settings, empty credentials not encrypted |
+
+**Sources:** `lib/core/encryption/aes_encryptor.dart`, `lib/features/synchronization/data/repositories/supabase_api.dart`, `lib/features/synchronization/data/models/supabase_settings.dart`
 
 ### Providers (`test/core/provider/`)
 
@@ -79,8 +88,9 @@ flutter test test/core/ test/features/ test/l10n/ test/integration/
 | `weekly_review_status_service_test.dart` | 13 | `isReviewDueForLastWeek` (true when empty, false after marking current previous week, true for older reviewed week, true when only year/week stored), `markReviewShown` (stores year+week, overwrites previous), `getLastReviewedWeek` (null initially, returns year+week after mark, null when partial data), `clear` (removes state, restores due status), full lifecycle (due→mark→not due→clear→due) |
 
 | `supabase_auto_sync_service_test.dart` | 1 | `resetDebounce` (clears last sync time without error) |
+| `image_storage_service_test.dart` | 3 | `allowedExtensions` whitelist (contains jpg/jpeg/png/gif/webp, has exactly 5 entries, does not contain executable/document extensions) |
 
-**Sources:** `lib/core/services/smart_reminder_algorithm.dart`, `lib/core/services/diary_status_service.dart`, `lib/core/services/weekly_review_status_service.dart`, `lib/core/services/supabase_auto_sync_service.dart`
+**Sources:** `lib/core/services/smart_reminder_algorithm.dart`, `lib/core/services/diary_status_service.dart`, `lib/core/services/weekly_review_status_service.dart`, `lib/core/services/supabase_auto_sync_service.dart`, `lib/core/services/image_storage_service.dart`
 
 ---
 
@@ -89,7 +99,7 @@ flutter test test/core/ test/features/ test/l10n/ test/integration/
 | File | Tests | Covers |
 |------|-------|--------|
 | `utils_test.dart` | 25 | Date formatting round-trips (`toDateTime`/`fromDateTimeString`, `toDate`/`fromDate`), `removeTime`, `isSameDay` (same/different day/month/year), `isDateTimeWithinTimeSpan` (within/boundary/outside), `generateRandomString` (length, uniqueness), UUID v4 generation, `toTime`, `toFileDateTime`, `printMonth`, `colorToRGBInt` |
-| `debug_auto_login_test.dart` | 12 | Debug auto-login utility enable/disable logic, credential retrieval from environment variables, password/username validation rules |
+| `debug_auto_login_test.dart` | 13 | Debug auto-login utility enable/disable logic, credential retrieval from environment variables, password/username validation rules (12-char minimum) |
 
 **Source:** `lib/core/utils/utils.dart`, `lib/core/utils/debug_auto_login.dart`
 
@@ -194,7 +204,7 @@ flutter test test/core/ test/features/ test/l10n/ test/integration/
 | `ics_file_provider_test.dart` | 13 | **IcsExportMetadata:** `toMap`/`fromMap`, null handling, missing noteCount. **IcsFileProvider:** `exportToString` (unencrypted with ICS metadata, encrypted), `exportPlainIcs` (raw ICS without JSON wrapper), `importFromIcs` (wrapped unencrypted/encrypted, plain ICS, missing password error). **Round-trips:** unencrypted, encrypted. Empty data export |
 | `json_serialization_test.dart` | 8 | DiaryDay list JSON round-trip (with ratings, empty, with notes), Note list JSON round-trip (timed, all-day), NoteTemplate list JSON round-trip (with sections), mixed data combined export, encryption readiness (UTF-8 encode/decode) |
 | `pdf_export_test.dart` | 68 | **DateRange factories:** `lastWeek` (7-day), `lastMonth` (30-day), `currentMonth` (1st of month), `all` (empty/non-empty), `forMonth` (non-leap/leap Feb, Dec, Jan, 30-day month), `forWeek` (Monday-Sunday, week 1, week 52). **DateRange edge cases:** equality/inequality, hashCode, single date, duplicate dates, currentMonth bounds. **File naming:** CW format (week), YYMM (currentMonth), 30d range (month), YYMMDD-YYMMDD (custom/all), `forWeek`/`forMonth` exact format, no spaces/special chars, zero-padded week numbers, year boundary. **PDF generation:** valid header (%PDF), empty data, ratings-only, notes-only, single-day range, size bounds (1KB-5MB). **PDF content verification (text extraction):** username on cover, "Diary Report" title, "Summary"/"Report Period"/"Daily Breakdown" section headers, category names, note titles, score values. **PDF page structure:** minimum 3 pages, more pages with diary entries. **Large datasets:** 30/90/365 days valid PDF, PDF size scales with data. **Edge cases:** all-day notes ("All day" text), max scores (20/20), min scores (4/20), year boundary ranges, favorite days, empty title fallback to category, all 5 note categories, notes outside range excluded from top activities, custom theme colors, empty ratings (Score: 0), multiple notes per day. **Date range filtering precision:** inclusive boundaries, exclusion of out-of-range days, empty range produces valid PDF |
-| `models/supabase_settings_test.dart` | 22 | SupabaseSettings construction (all fields, empty defaults, auto-sync defaults, full settings with auto-sync), `isConfigured` (true when all set, false for each empty field, false for empty factory), `lastAutoSyncDateTime` (null when no timestamp, valid ISO parse, null for invalid), `toMap`/`fromMap` (round-trip, auto-sync round-trip, snake_case keys, missing keys defaults, missing auto-sync keys defaults), `copyWith` (partial/full, auto-sync fields, no-args preserves all) |
+| `models/supabase_settings_test.dart` | 28 | SupabaseSettings construction (all fields, empty defaults, auto-sync defaults, full settings with auto-sync), `isConfigured` (true when all set, false for each empty field, false for empty factory, false for HTTP URL, true for HTTPS URL), `lastAutoSyncDateTime` (null when no timestamp, valid ISO parse, null for invalid), `toMap`/`fromMap` (round-trip, auto-sync round-trip, snake_case keys, missing keys defaults, missing auto-sync keys defaults), `copyWith` (partial/full, auto-sync fields, no-args preserves all), **credential encryption at rest:** email/password encrypted in map, URL/anonKey not encrypted, decrypt round-trip, backward compat with unencrypted legacy data, empty fields not encrypted |
 | `models/sync_state_test.dart` | 14 | `SyncStatus` enum values (idle/syncing/success/error), `SyncPhase` enum values (16 phases incl. syncAttachments/uploadAttachmentFiles/downloadAttachments/downloadAttachmentFiles), `SyncState` construction (required fields, all fields), `message` getter (phase-based messages incl. attachment phases, error message, default failed), `copyWith` (preserves unchanged, updates all, no mutation), progress default, typical sync lifecycle, error state preserves progress, batch progress tracking |
 | `zip_export_service_test.dart` | 20 | **createZipExport:** basic structure (manifest.json + images/), manifest contains metadata + data keys, image files present in archive, empty attachments (no images dir), missing local file skipped gracefully, encrypted manifest (base64 data field), attachment filePaths in manifest. **extractZipImport:** round-trip (diary days + notes + attachments preserved), images restored to target dir, encrypted round-trip, missing images dir handled, manifest-only ZIP. **isZipFile:** valid ZIP detected, non-ZIP rejected, empty file rejected. **Edge cases:** multiple notes with attachments, attachment noteId grouping in archive, large manifest handling |
 | `supabase_batch_sync_test.dart` | 12 | **retryWithBackoff:** succeeds on first attempt, retries and succeeds on 2nd/3rd attempt, throws after max retries exceeded, custom max retries, correct return type, rethrows original exception type, delay increases between retries, maxRetries=1 means no retry. **SyncProgressCallback:** type definition. **Constants:** defaultBatchSize (50), defaultDelayBetweenBatches (100ms), defaultMaxRetries (3) |
@@ -302,7 +312,7 @@ Workflow-level tests that verify multi-feature provider interactions using `Prov
 |------|--------|-------|
 | Password hashing & verification | Covered | PBKDF2, salt, key derivation |
 | Database schema (DbColumn) | Covered | SQL generation, column types, CREATE TABLE |
-| AES encryption/decryption | Covered | String, base64, file, IV handling |
+| AES encryption/decryption | Covered | String, base64, file, random IV for all operations |
 | Locale/language management | Covered | Switching, persistence, unsupported locales |
 | Date/time utilities | Covered | Formatting, parsing, comparisons |
 | Debug auto-login | Covered | Utility + provider, credentials, validation |
@@ -319,7 +329,7 @@ Workflow-level tests that verify multi-feature provider interactions using `Prov
 | Goals & progress tracking | Covered | Goal models, progress calculation, streaks, repository logic |
 | Habits & habit entries | Covered | Models, frequency scheduling, streaks, completion rates, grid data |
 | Localization (ARB) | Covered | JSON validity, completeness, placeholders, ICU format |
-| Supabase settings | Covered | Model serialization, auto-sync fields, isConfigured, lastAutoSyncDateTime |
+| Supabase settings | Covered | Model serialization, auto-sync fields, isConfigured (incl. HTTPS validation), lastAutoSyncDateTime, credential encryption at rest |
 | Supabase auto-sync service | Covered | resetDebounce |
 | Biometric settings | Covered | Settings model serialization, defaults, backwards compat |
 | Backup settings & metadata | Covered | Settings model, metadata model, overdue detection, frequency enum |
@@ -343,6 +353,9 @@ Workflow-level tests that verify multi-feature provider interactions using `Prov
 | Weekly review data model | Covered | Construction, serialization, JSON accessors, ISO week calculation, schema |
 | Weekly review repository | Covered | Review generation, aggregations (scores, PERMA+, emotions, context, mood, highlights) |
 | Integration: Export/import round-trip | Covered | Notes in diary days, encryption, large datasets |
+| Password strength validation | Covered | Strength scoring, min 12 chars, uppercase/lowercase/number/special char requirements |
+| Image file extension validation | Covered | Allowed extensions whitelist, rejects executable/document extensions |
+| Security hardening | Covered | Random IV for all AES methods, HTTPS enforcement for Supabase, credential encryption at rest, backward compat |
 
 ### Not covered
 

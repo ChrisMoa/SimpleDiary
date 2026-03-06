@@ -381,8 +381,44 @@ abstract class AppLocalizations {
   /// No description provided for @passwordMinLength.
   ///
   /// In en, this message translates to:
-  /// **'Password must be at least 8 characters'**
+  /// **'Password must be at least 12 characters'**
   String get passwordMinLength;
+
+  /// No description provided for @passwordRequiresUppercase.
+  ///
+  /// In en, this message translates to:
+  /// **'Password must contain an uppercase letter'**
+  String get passwordRequiresUppercase;
+
+  /// No description provided for @passwordRequiresLowercase.
+  ///
+  /// In en, this message translates to:
+  /// **'Password must contain a lowercase letter'**
+  String get passwordRequiresLowercase;
+
+  /// No description provided for @passwordRequiresNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Password must contain a number'**
+  String get passwordRequiresNumber;
+
+  /// No description provided for @passwordRequiresSpecialChar.
+  ///
+  /// In en, this message translates to:
+  /// **'Password must contain a special character'**
+  String get passwordRequiresSpecialChar;
+
+  /// No description provided for @usernameMinLength.
+  ///
+  /// In en, this message translates to:
+  /// **'Username must be at least 3 characters'**
+  String get usernameMinLength;
+
+  /// No description provided for @usernameInvalidChars.
+  ///
+  /// In en, this message translates to:
+  /// **'Username may only contain letters, numbers, spaces, hyphens and underscores'**
+  String get usernameInvalidChars;
 
   /// No description provided for @pleaseEnterValidEmail.
   ///
