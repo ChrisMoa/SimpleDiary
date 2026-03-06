@@ -20,7 +20,6 @@ class AesEncryptor {
 
       _key = Key(validKeyBytes);
       _encrypter = Encrypter(AES(_key, mode: _aesMode));
-      _stringDefaultIV = IV.fromLength(16); // Use a standard IV length
       LogWrapper.logger.d('AES encryptor initialized successfully');
     } catch (e) {
       LogWrapper.logger.e('Error initializing AES encryptor: $e');
@@ -43,19 +42,21 @@ class AesEncryptor {
 
   //* public methods ---------------------------------------------------------------------------------------------------------------------------------
 
-  /// encrypts the given plain text
+  /// Encrypts the given plain text with a random IV prepended to the output.
   /// [plainText] the plainText that should be encrypted
-  /// [return] the encrypted cipherText as byte array
+  /// [return] the encrypted cipherText as byte array (IV + encrypted data)
   Uint8List encryptString(String plainText) {
-    return _encrypter.encrypt(plainText, iv: _stringDefaultIV).bytes;
+    final iv = IV.fromSecureRandom(16);
+    final encrypted = _encrypter.encrypt(plainText, iv: iv);
+    return Uint8List.fromList([...iv.bytes, ...encrypted.bytes]);
   }
 
   /// encrypts the given plain text
   /// [plainText] the plainText that should be encrypted
   /// [return] the encrypted cipherText as base64String (includes IV)
   String encryptStringAsBase64(String plainText) {
-    // Generate a random IV for each encryption
-    IV iv = IV.fromLength(16);
+    // Generate a cryptographically secure random IV for each encryption
+    IV iv = IV.fromSecureRandom(16);
     
     // Encrypt the data
     Encrypted encrypted = _encrypter.encrypt(plainText, iv: iv);
@@ -65,11 +66,16 @@ class AesEncryptor {
     return base64.encode(combined);
   }
 
-  /// decrypts the given plain ciptherText
-  /// [cipherText] the cipherText that should be decrypted as byte array
+  /// Decrypts the given cipherText (expects IV prepended).
+  /// [cipherText] the cipherText as byte array (IV + encrypted data)
   /// [return] the decrypted plainText as String
   String decryptString(Uint8List cipherText) {
-    return _encrypter.decrypt(Encrypted(cipherText), iv: _stringDefaultIV);
+    if (cipherText.length <= 16) {
+      throw Exception('Invalid encrypted data: too short');
+    }
+    final iv = IV(Uint8List.fromList(cipherText.sublist(0, 16)));
+    final encryptedData = cipherText.sublist(16);
+    return _encrypter.decrypt(Encrypted(encryptedData), iv: iv);
   }
 
   /// decrypts the given plain ciptherText from base64 (expects IV prepended)
@@ -104,8 +110,8 @@ class AesEncryptor {
       Uint8List fileBytes = Uint8List.fromList(file.readAsBytesSync());
       LogWrapper.logger.d('Read ${fileBytes.length} bytes from file');
 
-      // Generate a random IV (Initialization Vector)
-      IV iv = IV.fromLength(16);
+      // Generate a cryptographically secure random IV
+      IV iv = IV.fromSecureRandom(16);
       LogWrapper.logger.d('Generated IV for encryption');
 
       // Encrypt the file using AES
@@ -174,5 +180,4 @@ class AesEncryptor {
   late Key _key; // The key for aes encryption
   late Encrypter _encrypter; // The aes encryption module
   final _aesMode = AESMode.cbc; // Using CBC mode for better security
-  late IV _stringDefaultIV; // The default iv for string encryption
 }

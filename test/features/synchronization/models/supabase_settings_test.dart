@@ -5,7 +5,7 @@ void main() {
   group('SupabaseSettings', () {
     SupabaseSettings createSampleSettings() {
       return SupabaseSettings(
-        supabaseUrl: 'http://localhost:8000',
+        supabaseUrl: 'https://localhost:8000',
         supabaseAnonKey: 'test-anon-key-123',
         email: 'user@example.com',
         password: 'testPassword',
@@ -14,7 +14,7 @@ void main() {
 
     SupabaseSettings createFullSettings() {
       return SupabaseSettings(
-        supabaseUrl: 'http://localhost:8000',
+        supabaseUrl: 'https://localhost:8000',
         supabaseAnonKey: 'test-anon-key-123',
         email: 'user@example.com',
         password: 'testPassword',
@@ -27,7 +27,7 @@ void main() {
     group('construction', () {
       test('creates with all fields', () {
         final settings = createSampleSettings();
-        expect(settings.supabaseUrl, 'http://localhost:8000');
+        expect(settings.supabaseUrl, 'https://localhost:8000');
         expect(settings.supabaseAnonKey, 'test-anon-key-123');
         expect(settings.email, 'user@example.com');
         expect(settings.password, 'testPassword');
@@ -228,6 +228,74 @@ void main() {
             original.autoSyncDebounceSeconds);
         expect(
             copy.lastAutoSyncTimestamp, original.lastAutoSyncTimestamp);
+      });
+    });
+
+    group('HTTPS validation', () {
+      test('isConfigured returns false for HTTP URL', () {
+        final settings = SupabaseSettings(
+          supabaseUrl: 'http://insecure.example.com',
+          supabaseAnonKey: 'key',
+          email: 'user@test.com',
+          password: 'pass',
+        );
+        expect(settings.isConfigured, false);
+      });
+
+      test('isConfigured returns true for HTTPS URL', () {
+        final settings = createSampleSettings();
+        expect(settings.isConfigured, true);
+      });
+    });
+
+    group('credential encryption at rest', () {
+      test('toMap encrypts email and password', () {
+        final settings = createSampleSettings();
+        final map = settings.toMap();
+
+        // The stored values should NOT be plaintext
+        expect(map['email'], isNot(equals('user@example.com')));
+        expect(map['password'], isNot(equals('testPassword')));
+        expect(map['credentials_encrypted'], true);
+      });
+
+      test('toMap does not encrypt URL or anonKey', () {
+        final settings = createSampleSettings();
+        final map = settings.toMap();
+
+        expect(map['supabase_url'], equals('https://localhost:8000'));
+        expect(map['supabase_anon_key'], equals('test-anon-key-123'));
+      });
+
+      test('fromMap decrypts encrypted credentials', () {
+        final original = createSampleSettings();
+        final map = original.toMap();
+        final restored = SupabaseSettings.fromMap(map);
+
+        expect(restored.email, equals('user@example.com'));
+        expect(restored.password, equals('testPassword'));
+      });
+
+      test('fromMap handles legacy unencrypted data (backward compat)', () {
+        final legacyMap = {
+          'supabase_url': 'https://test.supabase.co',
+          'supabase_anon_key': 'key123',
+          'email': 'plain@example.com',
+          'password': 'plainPassword',
+          // No 'credentials_encrypted' key = legacy format
+        };
+        final settings = SupabaseSettings.fromMap(legacyMap);
+
+        expect(settings.email, equals('plain@example.com'));
+        expect(settings.password, equals('plainPassword'));
+      });
+
+      test('empty fields are not encrypted', () {
+        final settings = SupabaseSettings.empty();
+        final map = settings.toMap();
+
+        expect(map['email'], equals(''));
+        expect(map['password'], equals(''));
       });
     });
   });

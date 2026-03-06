@@ -155,7 +155,31 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get passwordMinLength =>
-      'Le mot de passe doit contenir au moins 8 caractères';
+      'Le mot de passe doit contenir au moins 12 caractères';
+
+  @override
+  String get passwordRequiresUppercase =>
+      'Le mot de passe doit contenir une lettre majuscule';
+
+  @override
+  String get passwordRequiresLowercase =>
+      'Le mot de passe doit contenir une lettre minuscule';
+
+  @override
+  String get passwordRequiresNumber =>
+      'Le mot de passe doit contenir un chiffre';
+
+  @override
+  String get passwordRequiresSpecialChar =>
+      'Le mot de passe doit contenir un caractère spécial';
+
+  @override
+  String get usernameMinLength =>
+      'Le nom d\'utilisateur doit contenir au moins 3 caractères';
+
+  @override
+  String get usernameInvalidChars =>
+      'Le nom d\'utilisateur ne peut contenir que des lettres, des chiffres, des espaces, des tirets et des traits de soulignement';
 
   @override
   String get pleaseEnterValidEmail =>

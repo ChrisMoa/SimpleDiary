@@ -10,5 +10,5 @@ class DebugAutoLogin {
   static String get email => dotenv.env['DEBUG_EMAIL'] ?? '';
 
   static bool get hasValidCredentials =>
-      username.isNotEmpty && password.length >= 8;
+      username.isNotEmpty && password.length >= 12;
 }
