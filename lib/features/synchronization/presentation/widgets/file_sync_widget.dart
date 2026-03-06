@@ -329,6 +329,7 @@ class FileSyncWidget extends ConsumerWidget {
       LogWrapper.logger.i('Exporting ${diaryDays.length} diary days with ${allNotes.length} total notes');
 
       // Generate export content before showing file picker
+      final userData = ref.read(settingsProvider).activeUserSettings.savedUserData;
       final content = ref.read(fileDbStateProvider.notifier).exportToString(
             diaryDays: diaryDays,
             username: userData.username.isNotEmpty ? userData.username : null,
@@ -535,6 +536,7 @@ class FileSyncWidget extends ConsumerWidget {
       LogWrapper.logger.i('Exporting ${notes.length} notes in range');
 
       // Generate export content before showing file picker
+      final userData = ref.read(settingsProvider).activeUserSettings.savedUserData;
       final content = ref.read(icsFileStateProvider.notifier).exportToString(
             notes: notes,
             username: userData.username.isNotEmpty ? userData.username : null,
@@ -762,6 +764,7 @@ class FileSyncWidget extends ConsumerWidget {
       }
 
       // Create ZIP archive
+      final userData = ref.read(settingsProvider).activeUserSettings.savedUserData;
       final zipService = ZipExportService();
       final zipBytes = zipService.createZipExport(
         diaryDays: diaryDays,
