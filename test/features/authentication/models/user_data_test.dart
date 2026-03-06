@@ -53,24 +53,44 @@ void main() {
         expect(user.salt, '');
         expect(user.email, '');
         expect(user.isLoggedIn, false);
+        // ignore: deprecated_member_use
         expect(user.clearPassword, '');
+        expect(user.sessionEncryptionKey, '');
       });
     });
 
-    group('clearPassword', () {
+    group('sessionEncryptionKey', () {
       test('is not included in toMap', () {
         final user = createSampleUser();
-        user.clearPassword = 'mySecretPassword';
+        user.sessionEncryptionKey = 'derivedKey123';
 
         final map = user.toMap();
-        expect(map.containsKey('clearPassword'), false);
-        expect(map.values.contains('mySecretPassword'), false);
+        expect(map.containsKey('sessionEncryptionKey'), false);
+        expect(map.values.contains('derivedKey123'), false);
       });
 
       test('getter and setter work', () {
         final user = createSampleUser();
-        user.clearPassword = 'secret';
-        expect(user.clearPassword, 'secret');
+        user.sessionEncryptionKey = 'myKey';
+        expect(user.sessionEncryptionKey, 'myKey');
+      });
+
+      test('deprecated clearPassword getter returns empty string', () {
+        final user = UserData(
+          username: 'test',
+          password: 'pass',
+          sessionEncryptionKey: 'key123',
+        );
+        // ignore: deprecated_member_use
+        expect(user.clearPassword, '');
+      });
+
+      test('constructor accepts sessionEncryptionKey', () {
+        final user = UserData(
+          username: 'test',
+          sessionEncryptionKey: 'myEncKey',
+        );
+        expect(user.sessionEncryptionKey, 'myEncKey');
       });
     });
 

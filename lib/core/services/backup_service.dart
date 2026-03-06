@@ -2,7 +2,6 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:day_tracker/core/authentication/password_auth_service.dart';
 import 'package:day_tracker/core/backup/backup_metadata.dart';
 import 'package:day_tracker/core/encryption/aes_encryptor.dart';
 import 'package:day_tracker/core/log/logger_instance.dart';
@@ -34,21 +33,17 @@ class BackupService {
     return dir;
   }
 
-  /// Create an [AesEncryptor] from the current user's credentials.
-  /// Returns null if no clear password is available (user not logged in).
-  AesEncryptor? _createEncryptor() {
-    // ignore: deprecated_member_use
+  /// Create an [AesEncryptor] from the current user's session encryption key.
+  /// Throws [StateError] if no encryption key is available (user not logged in).
+  AesEncryptor _createEncryptor() {
     final userData = settingsContainer.activeUserSettings.savedUserData;
-    final clearPassword = userData.clearPassword;
-    final salt = userData.salt;
+    final encryptionKey = userData.sessionEncryptionKey;
 
-    if (clearPassword.isEmpty || salt.isEmpty) {
-      LogWrapper.logger.w('Cannot create encryptor: missing password or salt');
-      return null;
+    if (encryptionKey.isEmpty) {
+      throw StateError(
+        'Cannot create backup: no encryption key available. User must be logged in.');
     }
 
-    final encryptionKey =
-        PasswordAuthService.getDatabaseEncryptionKey(clearPassword, salt);
     return AesEncryptor(encryptionKey: encryptionKey);
   }
 
@@ -85,27 +80,19 @@ class BackupService {
         if (attachmentsJson.isNotEmpty) 'attachments': attachmentsJson,
       };
 
-      // Encrypt data if credentials are available
+      // Always encrypt backups — throws if no encryption key available
       final encryptor = _createEncryptor();
-      final bool encrypted = encryptor != null;
-      dynamic dataField;
-
-      if (encrypted) {
-        final plainDataJson = jsonEncode(dataMap);
-        dataField = encryptor.encryptStringAsBase64(plainDataJson);
-        LogWrapper.logger.i(
-          'Backup data encrypted (${plainDataJson.length} → ${(dataField as String).length} chars)',
-        );
-      } else {
-        dataField = dataMap;
-        LogWrapper.logger.w('Backup created WITHOUT encryption (no credentials available)');
-      }
+      final plainDataJson = jsonEncode(dataMap);
+      final dataField = encryptor.encryptStringAsBase64(plainDataJson);
+      LogWrapper.logger.i(
+        'Backup data encrypted (${plainDataJson.length} → ${dataField.length} chars)',
+      );
 
       final backupContent = {
         'version': '2.0',
         'createdAt': now.toIso8601String(),
         'type': type.toJson(),
-        'encrypted': encrypted,
+        'encrypted': true,
         'diaryDayCount': diaryDaysJson.length,
         'noteCount': notesJson.length,
         'habitCount': habitsJson.length,
@@ -127,7 +114,7 @@ class BackupService {
         noteCount: notesJson.length,
         habitCount: habitsJson.length,
         habitEntryCount: habitEntriesJson.length,
-        encrypted: encrypted,
+        encrypted: true,
       );
 
       await _saveMetadataToIndex(metadata);
@@ -142,7 +129,7 @@ class BackupService {
       LogWrapper.logger.i(
         'Backup created: $id (${metadata.formattedSize}, '
         '${diaryDaysJson.length} days, ${notesJson.length} notes, '
-        '${habitsJson.length} habits, encrypted: $encrypted)',
+        '${habitsJson.length} habits, encrypted: true)',
       );
 
       // Prune old backups after successful creation
@@ -196,10 +183,6 @@ class BackupService {
 
     if (isEncrypted) {
       final encryptor = _createEncryptor();
-      if (encryptor == null) {
-        throw Exception('Cannot decrypt backup: no credentials available');
-      }
-
       final encryptedData = backupMap['data'] as String;
       try {
         final decryptedJson = encryptor.decryptStringFromBase64(encryptedData);

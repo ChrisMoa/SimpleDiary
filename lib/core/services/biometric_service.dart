@@ -1,4 +1,7 @@
 // ignore_for_file: public_member_api_docs
+import 'dart:convert';
+
+import 'package:day_tracker/core/encryption/aes_encryptor.dart';
 import 'package:day_tracker/core/log/logger_instance.dart';
 import 'package:day_tracker/core/utils/platform_utils.dart';
 import 'package:flutter/services.dart';
@@ -21,6 +24,18 @@ class BiometricService {
 
   final LocalAuthentication _localAuth = LocalAuthentication();
   final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
+
+  /// App-level encryptor for defense-in-depth credential encryption.
+  /// Adds an encryption layer on top of flutter_secure_storage's OS-level encryption.
+  static AesEncryptor? _encryptor;
+  static AesEncryptor get _credentialEncryptor {
+    _encryptor ??= AesEncryptor(
+      encryptionKey: base64.encode(
+        utf8.encode('day_tracker_biometric_credential_k!'),
+      ),
+    );
+    return _encryptor!;
+  }
 
   /// Check if biometric authentication is available on this device
   Future<bool> isAvailable() async {
@@ -87,24 +102,38 @@ class BiometricService {
     }
   }
 
-  /// Store user credentials securely for auto-login after biometric success
+  /// Store user credentials securely for auto-login after biometric success.
+  /// Password is encrypted with app-level AES before storing in secure storage.
   Future<void> storeCredentials(String username, String password) async {
     try {
+      final encrypted = _credentialEncryptor.encryptStringAsBase64(password);
       await _secureStorage.write(
         key: _credentialKey(username),
-        value: password,
+        value: encrypted,
       );
-      LogWrapper.logger.i('Stored biometric credentials for $username');
+      LogWrapper.logger.i('Stored encrypted biometric credentials for $username');
     } catch (e) {
       LogWrapper.logger.e('Error storing biometric credentials: $e');
       rethrow;
     }
   }
 
-  /// Retrieve stored credentials after biometric authentication success
+  /// Retrieve stored credentials after biometric authentication success.
+  /// Decrypts the app-level AES encryption layer.
+  /// Handles backward compatibility with legacy plaintext credentials.
   Future<String?> getStoredPassword(String username) async {
     try {
-      return await _secureStorage.read(key: _credentialKey(username));
+      final stored = await _secureStorage.read(key: _credentialKey(username));
+      if (stored == null) return null;
+      try {
+        return _credentialEncryptor.decryptStringFromBase64(stored);
+      } catch (_) {
+        // Backward compatibility: stored value is plaintext (pre-encryption)
+        // Re-store it encrypted for next time
+        LogWrapper.logger.i('Migrating legacy plaintext biometric credential for $username');
+        await storeCredentials(username, stored);
+        return stored;
+      }
     } catch (e) {
       LogWrapper.logger.e('Error reading biometric credentials: $e');
       return null;

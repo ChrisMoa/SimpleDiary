@@ -63,6 +63,15 @@ class BackupScheduler {
       return null;
     }
 
+    // Verify encryption key is available (mandatory for backups)
+    final encryptionKey =
+        settingsContainer.activeUserSettings.savedUserData.sessionEncryptionKey;
+    if (encryptionKey.isEmpty) {
+      LogWrapper.logger.w(
+          'Skipping overdue backup: no encryption key (user not logged in)');
+      return null;
+    }
+
     LogWrapper.logger.i('Backup is overdue, running scheduled backup...');
     return await runBackup(
       diaryDays: diaryDays,

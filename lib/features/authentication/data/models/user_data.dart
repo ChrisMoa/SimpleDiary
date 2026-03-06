@@ -10,7 +10,8 @@ class UserData {
   String email;
   String? userId;
   bool isLoggedIn;
-  String _clearPassword; // Transient field, not stored
+  String _sessionEncryptionKey; // Derived encryption key, transient, not stored
+  String _initialPassword; // Raw password, only for createUser/updateUser, never persisted
 
   UserData({
     username,
@@ -20,17 +21,28 @@ class UserData {
     userId,
     isLoggedIn,
     String? clearPassword,
+    String? sessionEncryptionKey,
   })  : username = username ?? '',
         password = password ?? '',
         salt = salt ?? '',
         email = email ?? '',
         userId = userId ?? Utils.uuid.v4(),
         isLoggedIn = isLoggedIn ?? false,
-        _clearPassword = clearPassword ?? '';
+        _sessionEncryptionKey = sessionEncryptionKey ?? '',
+        _initialPassword = clearPassword ?? '';
 
-  // Getter and setter for clearPassword
-  String get clearPassword => _clearPassword;
-  set clearPassword(String value) => _clearPassword = value;
+  /// Derived encryption key for the current session. Not persisted.
+  String get sessionEncryptionKey => _sessionEncryptionKey;
+  set sessionEncryptionKey(String value) => _sessionEncryptionKey = value;
+
+  /// The raw password passed via constructor, used only by createUser/updateUser.
+  /// Not persisted, not stored in memory after key derivation.
+  String get initialPassword => _initialPassword;
+
+  /// Deprecated: Raw password is no longer stored in memory after login.
+  /// Use [sessionEncryptionKey] for encryption operations.
+  @Deprecated('Use sessionEncryptionKey instead')
+  String get clearPassword => '';
 
   factory UserData.fromEmpty() {
     return UserData();
@@ -43,7 +55,7 @@ class UserData {
       'salt': salt,
       'email': email,
       'userId': userId ?? Utils.uuid.v4(),
-      // clearPassword is not stored in the map
+      // sessionEncryptionKey is transient and not stored in the map
     };
   }
 

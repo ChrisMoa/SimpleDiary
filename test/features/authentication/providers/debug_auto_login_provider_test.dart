@@ -49,7 +49,7 @@ void main() {
 
       expect(provider.debugState.isLoggedIn, true);
       expect(provider.debugState.username, 'testuser');
-      expect(provider.debugState.clearPassword, 'testpass12345');
+      expect(provider.debugState.sessionEncryptionKey, isNotEmpty);
       expect(settingsContainer.checkIfUserExists('testuser'), true);
     });
 
@@ -78,7 +78,7 @@ void main() {
 
       expect(provider2.debugState.isLoggedIn, true);
       expect(provider2.debugState.username, 'testuser');
-      expect(provider2.debugState.clearPassword, 'testpass12345');
+      expect(provider2.debugState.sessionEncryptionKey, isNotEmpty);
     });
 
     test('does nothing when auto-login is disabled', () {

@@ -8,7 +8,6 @@ import 'package:archive/archive.dart';
 import 'package:day_tracker/core/log/logger_instance.dart';
 import 'package:day_tracker/core/provider/theme_provider.dart';
 import 'package:day_tracker/core/utils/utils.dart';
-import 'package:day_tracker/features/authentication/domain/providers/user_data_provider.dart';
 import 'package:day_tracker/features/day_rating/data/models/diary_day.dart';
 import 'package:day_tracker/features/day_rating/domain/providers/diary_day_local_db_provider.dart';
 import 'package:day_tracker/features/notes/data/models/note.dart';
@@ -287,13 +286,9 @@ class FileSyncWidget extends ConsumerWidget {
       }
 
       // Prompt for encryption password
-      final userData = ref.read(userDataProvider);
-      final defaultPassword = userData.clearPassword;
-
       final password = await _promptForPassword(
         context,
         l10n.encryptJsonExport,
-        defaultValue: defaultPassword,
       );
 
       final defaultFileName = 'data_export_${Utils.toFileDateTime(DateTime.now())}.json';
@@ -430,15 +425,12 @@ class FileSyncWidget extends ConsumerWidget {
           }
 
           // Prompt for password if encrypted
-          final userData = ref.read(userDataProvider);
-          final defaultPassword = userData.clearPassword;
           String? password;
 
           if (isEncrypted) {
             password = await _promptForPassword(
               context,
               l10n.decryptJsonImport,
-              defaultValue: defaultPassword,
             );
 
             if (password == null || password.isEmpty) {
@@ -525,13 +517,9 @@ class FileSyncWidget extends ConsumerWidget {
       }
 
       // Prompt for encryption password
-      final userData = ref.read(userDataProvider);
-      final defaultPassword = userData.clearPassword;
-
       final password = await _promptForPassword(
         context,
         l10n.encryptIcsExport,
-        defaultValue: defaultPassword,
       );
 
       final defaultFileName = 'diary_export_${Utils.toFileDateTime(DateTime.now())}.ics';
@@ -647,15 +635,12 @@ class FileSyncWidget extends ConsumerWidget {
           }
 
           // Prompt for password if encrypted
-          final userData = ref.read(userDataProvider);
-          final defaultPassword = userData.clearPassword;
           String? password;
 
           if (isEncrypted) {
             password = await _promptForPassword(
               context,
               l10n.decryptIcsImport,
-              defaultValue: defaultPassword,
             );
 
             if (password == null || password.isEmpty) {
@@ -718,13 +703,9 @@ class FileSyncWidget extends ConsumerWidget {
       }
 
       // Prompt for encryption password
-      final userData = ref.read(userDataProvider);
-      final defaultPassword = userData.clearPassword;
-
       final password = await _promptForPassword(
         context,
         l10n.encryptJsonExport,
-        defaultValue: defaultPassword,
       );
 
       final defaultFileName = 'data_export_${Utils.toFileDateTime(DateTime.now())}.zip';
@@ -865,15 +846,12 @@ class FileSyncWidget extends ConsumerWidget {
         }
 
         // Prompt for password if encrypted
-        final userData = ref.read(userDataProvider);
-        final defaultPassword = userData.clearPassword;
         String? password;
 
         if (isEncrypted) {
           password = await _promptForPassword(
             context,
             l10n.decryptJsonImport,
-            defaultValue: defaultPassword,
           );
 
           if (password == null || password.isEmpty) {

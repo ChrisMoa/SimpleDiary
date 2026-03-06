@@ -1,6 +1,6 @@
 # Test Coverage
 
-**Total: 1042+ passing tests** across 71 test files (+ 16 optional/skipped Supabase integration tests)
+**Total: 1051+ passing tests** across 72 test files (+ 16 optional/skipped Supabase integration tests)
 
 Run all tests with:
 ```bash
@@ -89,8 +89,9 @@ flutter test test/core/ test/features/ test/l10n/ test/integration/
 
 | `supabase_auto_sync_service_test.dart` | 1 | `resetDebounce` (clears last sync time without error) |
 | `image_storage_service_test.dart` | 3 | `allowedExtensions` whitelist (contains jpg/jpeg/png/gif/webp, has exactly 5 entries, does not contain executable/document extensions) |
+| `biometric_credential_encryption_test.dart` | 7 | App-level AES encryption for biometric credentials: encrypt/decrypt round-trip, encrypted differs from plaintext, different passwords produce different outputs, random IV (same password different output), special characters, unicode, backward compat (plaintext fails decryption) |
 
-**Sources:** `lib/core/services/smart_reminder_algorithm.dart`, `lib/core/services/diary_status_service.dart`, `lib/core/services/weekly_review_status_service.dart`, `lib/core/services/supabase_auto_sync_service.dart`, `lib/core/services/image_storage_service.dart`
+**Sources:** `lib/core/services/smart_reminder_algorithm.dart`, `lib/core/services/diary_status_service.dart`, `lib/core/services/weekly_review_status_service.dart`, `lib/core/services/supabase_auto_sync_service.dart`, `lib/core/services/image_storage_service.dart`, `lib/core/services/biometric_service.dart`
 
 ---
 
@@ -111,7 +112,7 @@ flutter test test/core/ test/features/ test/l10n/ test/integration/
 
 | File | Tests | Covers |
 |------|-------|--------|
-| `models/user_data_test.dart` | 10 | UserData construction (all fields, auto-generated userId, fromEmpty, defaults), `clearPassword` not in serialized output, `toMap`/`fromMap` round-trip, backward compatibility (missing salt), `toJson`/`fromJson` |
+| `models/user_data_test.dart` | 12 | UserData construction (all fields, auto-generated userId, fromEmpty, defaults), `sessionEncryptionKey` not in serialized output, getter/setter, deprecated `clearPassword` returns empty, constructor accepts sessionEncryptionKey, `toMap`/`fromMap` round-trip, backward compatibility (missing salt), `toJson`/`fromJson` |
 | `models/user_settings_test.dart` | 10 | UserSettings construction (all fields, fromEmpty defaults), `toMap`/`fromMap` round-trip, missing supabaseSettings handling, `toJson`/`fromJson` string serialization, `name` property |
 | `providers/debug_auto_login_provider_test.dart` | 6 | UserDataProvider debug auto-login: creating new debug users, logging in existing users, credential validation, enable/disable states |
 
@@ -356,6 +357,9 @@ Workflow-level tests that verify multi-feature provider interactions using `Prov
 | Password strength validation | Covered | Strength scoring, min 12 chars, uppercase/lowercase/number/special char requirements |
 | Image file extension validation | Covered | Allowed extensions whitelist, rejects executable/document extensions |
 | Security hardening | Covered | Random IV for all AES methods, HTTPS enforcement for Supabase, credential encryption at rest, backward compat |
+| Biometric credential encryption | Covered | App-level AES encryption for biometric secure storage, round-trip, special chars, unicode, backward compat |
+| Session encryption key (clearPassword removal) | Covered | sessionEncryptionKey field, deprecated clearPassword getter, UserDataProvider key derivation |
+| Mandatory backup encryption | Covered | Backups always encrypted, StateError when no key, backward compat read of unencrypted |
 
 ### Not covered
 
