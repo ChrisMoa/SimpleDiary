@@ -4,7 +4,6 @@ import 'dart:typed_data';
 import 'package:day_tracker/core/authentication/password_auth_service.dart';
 import 'package:day_tracker/core/encryption/aes_encryptor.dart';
 import 'package:day_tracker/features/synchronization/data/models/supabase_settings.dart';
-import 'package:day_tracker/features/synchronization/data/repositories/supabase_api.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -45,37 +44,33 @@ void main() {
       });
     });
 
-    group('HTTPS enforcement (issue #158)', () {
-      test('SupabaseApi.initialize rejects HTTP URL', () async {
-        final api = SupabaseApi();
-        expect(
-          () => api.initialize('http://insecure.example.com', 'key'),
-          throwsA(isA<ArgumentError>().having(
-            (e) => e.message,
-            'message',
-            contains('HTTPS'),
-          )),
-        );
-      });
-
-      test('SupabaseSettings.isConfigured rejects HTTP URL', () {
-        final settings = SupabaseSettings(
-          supabaseUrl: 'http://insecure.example.com',
+    group('URL protocol support (issue #170)', () {
+      test('SupabaseSettings.isConfigured accepts both HTTP and HTTPS URLs', () {
+        final httpSettings = SupabaseSettings(
+          supabaseUrl: 'http://localhost:8000',
           supabaseAnonKey: 'key',
           email: 'user@test.com',
           password: 'pass',
         );
-        expect(settings.isConfigured, false);
-      });
+        expect(httpSettings.isConfigured, true);
 
-      test('SupabaseSettings.isConfigured accepts HTTPS URL', () {
-        final settings = SupabaseSettings(
+        final httpsSettings = SupabaseSettings(
           supabaseUrl: 'https://secure.example.com',
           supabaseAnonKey: 'key',
           email: 'user@test.com',
           password: 'pass',
         );
-        expect(settings.isConfigured, true);
+        expect(httpsSettings.isConfigured, true);
+      });
+
+      test('SupabaseSettings.isHttpUrl detects insecure HTTP URLs', () {
+        final settings = SupabaseSettings(
+          supabaseUrl: 'http://localhost:8000',
+          supabaseAnonKey: 'key',
+          email: 'user@test.com',
+          password: 'pass',
+        );
+        expect(settings.isHttpUrl, true);
       });
     });
 

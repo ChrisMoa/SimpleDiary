@@ -258,6 +258,22 @@ class _SupabaseSettingsWidgetState
       return;
     }
 
+    // Show warning for HTTP URLs (issue #170)
+    if (settings.isHttpUrl) {
+      if (mounted) {
+        final l10n = AppLocalizations.of(context);
+        final confirmed = await AppDialog.confirm(
+          context,
+          title: l10n.insecureConnectionWarning,
+          content: l10n.insecureConnectionDescription,
+          confirmLabel: l10n.continueAnyway,
+          cancelLabel: l10n.cancel,
+        );
+
+        if (!confirmed) return;
+      }
+    }
+
     try {
       if (mounted) {
         final l10n = AppLocalizations.of(context);

@@ -23,13 +23,15 @@ class SupabaseSettings {
   });
 
   /// Whether Supabase connection credentials are fully configured.
-  /// Requires HTTPS URL for security.
+  /// Supports both HTTP (for local/development) and HTTPS (recommended for production).
   bool get isConfigured =>
       supabaseUrl.isNotEmpty &&
-      supabaseUrl.startsWith('https://') &&
       supabaseAnonKey.isNotEmpty &&
       email.isNotEmpty &&
       password.isNotEmpty;
+
+  /// Check if the Supabase URL is using HTTP (insecure, only for development)
+  bool get isHttpUrl => supabaseUrl.startsWith('http://') && !supabaseUrl.startsWith('https://');
 
   /// Get the last auto-sync as DateTime, or null if never synced
   DateTime? get lastAutoSyncDateTime {

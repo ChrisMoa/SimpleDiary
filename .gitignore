@@ -6,6 +6,7 @@
 .dart_tool/
 .packages
 build/
+flutter_build/
 # pubspec.lock is committed for reproducible CI builds
 
 # Directory created by dartdoc
