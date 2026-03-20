@@ -419,6 +419,9 @@
       }
     }
   },
+  "insecureConnectionWarning": "Insecure Connection (HTTP)",
+  "insecureConnectionDescription": "You are using an insecure HTTP connection. This is only recommended for local development. For production use, please use HTTPS.",
+  "continueAnyway": "Continue",
   "synchronization": "Synchronization",
   "supabaseSynchronization": "Supabase Synchronization",
   "supabaseSyncDescription": "Sync your diary data with Supabase cloud storage for backup and cross-device access.",

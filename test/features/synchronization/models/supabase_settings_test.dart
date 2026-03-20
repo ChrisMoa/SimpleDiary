@@ -231,20 +231,45 @@ void main() {
       });
     });
 
-    group('HTTPS validation', () {
-      test('isConfigured returns false for HTTP URL', () {
+    group('URL validation', () {
+      test('isConfigured returns true for HTTP URL (issue #170)', () {
         final settings = SupabaseSettings(
           supabaseUrl: 'http://insecure.example.com',
           supabaseAnonKey: 'key',
           email: 'user@test.com',
           password: 'pass',
         );
-        expect(settings.isConfigured, false);
+        expect(settings.isConfigured, true);
       });
 
       test('isConfigured returns true for HTTPS URL', () {
         final settings = createSampleSettings();
         expect(settings.isConfigured, true);
+      });
+
+      test('isHttpUrl detects HTTP URLs', () {
+        final httpSettings = SupabaseSettings(
+          supabaseUrl: 'http://localhost:8000',
+          supabaseAnonKey: 'key',
+          email: 'user@test.com',
+          password: 'pass',
+        );
+        expect(httpSettings.isHttpUrl, true);
+      });
+
+      test('isHttpUrl returns false for HTTPS URLs', () {
+        final httpsSettings = SupabaseSettings(
+          supabaseUrl: 'https://secure.example.com',
+          supabaseAnonKey: 'key',
+          email: 'user@test.com',
+          password: 'pass',
+        );
+        expect(httpsSettings.isHttpUrl, false);
+      });
+
+      test('isHttpUrl returns false for empty URL', () {
+        final settings = SupabaseSettings.empty();
+        expect(settings.isHttpUrl, false);
       });
     });
 

@@ -1656,6 +1656,24 @@ abstract class AppLocalizations {
   /// **'Connection failed: {error}'**
   String connectionFailed(String error);
 
+  /// No description provided for @insecureConnectionWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'Insecure Connection (HTTP)'**
+  String get insecureConnectionWarning;
+
+  /// No description provided for @insecureConnectionDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'You are using an insecure HTTP connection. This is only recommended for local development. For production use, please use HTTPS.'**
+  String get insecureConnectionDescription;
+
+  /// No description provided for @continueAnyway.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get continueAnyway;
+
   /// No description provided for @synchronization.
   ///
   /// In en, this message translates to:

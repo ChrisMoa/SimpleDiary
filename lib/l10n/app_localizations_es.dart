@@ -871,6 +871,16 @@ class AppLocalizationsEs extends AppLocalizations {
   }
 
   @override
+  String get insecureConnectionWarning => 'Insecure Connection (HTTP)';
+
+  @override
+  String get insecureConnectionDescription =>
+      'You are using an insecure HTTP connection. This is only recommended for local development. For production use, please use HTTPS.';
+
+  @override
+  String get continueAnyway => 'Continue';
+
+  @override
   String get synchronization => 'Sincronización';
 
   @override
